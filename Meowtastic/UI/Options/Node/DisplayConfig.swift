@@ -9,7 +9,7 @@ struct DisplayConfig: View {
 	@Environment(\.managedObjectContext)
 	private var context
 	@EnvironmentObject
-	private var connectedDevice: ConnectedDevice
+	private var connectedDevice: CurrentDevice
 	@EnvironmentObject
 	private var nodeConfig: NodeConfig
 	@Environment(\.dismiss)

@@ -31,6 +31,7 @@ enum AnalyticEvents: String {
 
 	// MARK: - events
 	case backgroundUpdate
+	case backgroundWantConfig
 	case ble
 	case bleTimeout
 	case bleCancelConnecting

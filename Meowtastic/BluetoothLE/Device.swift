@@ -1,22 +1,22 @@
 import CoreBluetooth
 import Foundation
 
-struct Device: Identifiable, Equatable {
-	var id: String
-	var num: Int64
-	var name: String
-	var shortName: String
-	var longName: String
-	var firmwareVersion: String
-	var rssi: Int
-	var lastUpdate: Date
-	var peripheral: CBPeripheral
+public struct Device: Identifiable, Equatable {
+	public var id: String
+	public var num: Int64
+	public var name: String
+	public var shortName: String
+	public var longName: String
+	public var firmwareVersion: String
+	public var rssi: Int
+	public var lastUpdate: Date
+	public var peripheral: CBPeripheral
 
-	static func == (lhs: Device, rhs: Device) -> Bool {
+	public static func == (lhs: Device, rhs: Device) -> Bool {
 		lhs.id == rhs.id
 	}
 
-	func getSignalStrength() -> BLESignalStrength {
+	public func getSignalStrength() -> BLESignalStrength {
 		if rssi > -65 {
 			return BLESignalStrength.strong
 		}

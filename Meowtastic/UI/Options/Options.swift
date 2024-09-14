@@ -6,7 +6,7 @@ struct Options: View {
 	@Environment(\.managedObjectContext)
 	private var context
 	@EnvironmentObject
-	private var connectedDevice: ConnectedDevice
+	private var connectedDevice: CurrentDevice
 	@State
 	private var connectedNodeNum: Int = 0
 	@State

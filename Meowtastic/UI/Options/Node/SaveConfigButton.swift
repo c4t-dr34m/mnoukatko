@@ -7,7 +7,7 @@ struct SaveConfigButton: View {
 	let onConfirmation: () -> Void
 
 	@EnvironmentObject
-	private var connectedDevice: ConnectedDevice
+	private var connectedDevice: CurrentDevice
 	@State
 	private var isPresentingSaveConfirm = false
 

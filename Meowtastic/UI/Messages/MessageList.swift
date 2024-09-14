@@ -18,7 +18,7 @@ struct MessageList: View {
 	@AppStorage("preferredPeripheralNum")
 	private var preferredPeripheralNum = -1
 	@EnvironmentObject
-	private var connectedDevice: ConnectedDevice
+	private var connectedDevice: CurrentDevice
 	@StateObject
 	private var appState = AppState.shared
 	@FocusState

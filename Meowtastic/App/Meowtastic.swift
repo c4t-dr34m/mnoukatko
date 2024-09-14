@@ -116,7 +116,7 @@ struct Meowtastic: App {
 			}
 		}
 		.backgroundTask(.appRefresh(AppConstants.backgroundTaskID)) {
-			Logger.app.debug("Background task started")
+			Analytics.logEvent(AnalyticEvents.backgroundUpdate.id, parameters: nil)
 
 			await refreshApp()
 		}
@@ -147,14 +147,17 @@ struct Meowtastic: App {
 
 	private func scheduleAppRefresh() {
 		let request = BGProcessingTaskRequest(identifier: AppConstants.backgroundTaskID)
-		try? BGTaskScheduler.shared.submit(request)
+		do {
+			try BGTaskScheduler.shared.submit(request)
 
-		Logger.app.debug("Background task scheduled")
+			Logger.app.debug("Background task scheduled")
+		}
+		catch(let error) {
+			Logger.app.warning("Failed to schedule background task: \(error.localizedDescription)")
+		}
 	}
 
 	private func refreshApp() async {
-		Analytics.logEvent(AnalyticEvents.backgroundUpdate.id, parameters: nil)
-
 		scheduleAppRefresh()
 
 		bleManager.devicesDelegate = self
@@ -179,6 +182,8 @@ extension Meowtastic: DevicesDelegate {
 	}
 
 	func onWantConfigFinished() {
+		Analytics.logEvent(AnalyticEvents.backgroundWantConfig.id, parameters: nil)
+
 		// TODO
 		let content = UNMutableNotificationContent()
 		content.title = "Meowtastic"
@@ -186,7 +191,11 @@ extension Meowtastic: DevicesDelegate {
 		content.sound = UNNotificationSound.default
 
 		let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-		let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+		let request = UNNotificationRequest(
+			identifier: UUID().uuidString,
+			content: content,
+			trigger: trigger
+		)
 
 		UNUserNotificationCenter.current().add(request)
 	}

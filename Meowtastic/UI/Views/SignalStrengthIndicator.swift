@@ -86,7 +86,7 @@ struct Divided<S: Shape>: Shape {
 	}
 }
 
-enum BLESignalStrength: Int {
+public enum BLESignalStrength: Int {
 	case weak = 0
 	case normal = 1
 	case strong = 2

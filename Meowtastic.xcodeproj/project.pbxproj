@@ -29,7 +29,7 @@
 		6D825E622C34786C008DBEE4 /* CommonRegex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D825E612C34786C008DBEE4 /* CommonRegex.swift */; };
 		6DA39D8E2A92DC52007E311C /* MeowtasticDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DA39D8D2A92DC52007E311C /* MeowtasticDelegate.swift */; };
 		6DEDA55C2A9592F900321D2E /* MessageEntity+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DEDA55B2A9592F900321D2E /* MessageEntity+Extension.swift */; };
-		B23D3C5F2C944D4B007CEFE2 /* ConnectedDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = B23D3C5E2C944D4B007CEFE2 /* ConnectedDevice.swift */; };
+		B23D3C5F2C944D4B007CEFE2 /* CurrentDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = B23D3C5E2C944D4B007CEFE2 /* CurrentDevice.swift */; };
 		B23D3C612C946542007CEFE2 /* BLEActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B23D3C602C946542007CEFE2 /* BLEActions.swift */; };
 		B25A0B532C5F9A16004288DC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B25A0B522C5F9A16004288DC /* GoogleService-Info.plist */; };
 		B25D5CB42C5BC3840007F90F /* AvatarAbstract.swift in Sources */ = {isa = PBXBuildFile; fileRef = B25D5CB32C5BC3840007F90F /* AvatarAbstract.swift */; };
@@ -243,7 +243,7 @@
 		6D825E612C34786C008DBEE4 /* CommonRegex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonRegex.swift; sourceTree = "<group>"; };
 		6DA39D8D2A92DC52007E311C /* MeowtasticDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeowtasticDelegate.swift; sourceTree = "<group>"; };
 		6DEDA55B2A9592F900321D2E /* MessageEntity+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageEntity+Extension.swift"; sourceTree = "<group>"; };
-		B23D3C5E2C944D4B007CEFE2 /* ConnectedDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedDevice.swift; sourceTree = "<group>"; };
+		B23D3C5E2C944D4B007CEFE2 /* CurrentDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentDevice.swift; sourceTree = "<group>"; };
 		B23D3C602C946542007CEFE2 /* BLEActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEActions.swift; sourceTree = "<group>"; };
 		B25A0B522C5F9A16004288DC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B25D5CB32C5BC3840007F90F /* AvatarAbstract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarAbstract.swift; sourceTree = "<group>"; };
@@ -464,7 +464,7 @@
 				B23D3C602C946542007CEFE2 /* BLEActions.swift */,
 				DDAF8C5226EB1DF10058C060 /* BLEManager.swift */,
 				B284A4322C6F8AE400D5122B /* BluetoothUUID.swift */,
-				B23D3C5E2C944D4B007CEFE2 /* ConnectedDevice.swift */,
+				B23D3C5E2C944D4B007CEFE2 /* CurrentDevice.swift */,
 				DD23A50E26FD1B4400D9B90C /* Device.swift */,
 				B29C39172C92E6660082A3FC /* DevicesDelegate.swift */,
 				B284A42B2C6F877D00D5122B /* Extensions */,
@@ -1072,7 +1072,7 @@
 				DDDB444629F8A96500EE2349 /* Character.swift in Sources */,
 				DD23A50F26FD1B4400D9B90C /* Device.swift in Sources */,
 				B266A76A2C59293B00DFC723 /* GPSMode.swift in Sources */,
-				B23D3C5F2C944D4B007CEFE2 /* ConnectedDevice.swift in Sources */,
+				B23D3C5F2C944D4B007CEFE2 /* CurrentDevice.swift in Sources */,
 				B2CC14B22C66280000588C16 /* UIColor+Extension.swift in Sources */,
 				DD964FC2297272AE007C176F /* WaypointEntity+Extension.swift in Sources */,
 				6DA39D8E2A92DC52007E311C /* MeowtasticDelegate.swift in Sources */,

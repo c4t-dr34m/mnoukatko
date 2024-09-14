@@ -14,7 +14,7 @@ struct NodeListItem: View {
 	@EnvironmentObject
 	private var locationManager: LocationManager
 	@EnvironmentObject
-	private var connectedDevice: ConnectedDevice
+	private var connectedDevice: CurrentDevice
 
 	private var isSignal: Bool {
 		node.snr != 0 && node.rssi != 0

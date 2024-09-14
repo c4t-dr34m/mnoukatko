@@ -7,7 +7,7 @@ struct ConfigHeader<T>: View {
 	let node: NodeInfoEntity?
 
 	@EnvironmentObject
-	private var connectedDevice: ConnectedDevice
+	private var connectedDevice: CurrentDevice
 
 	var body: some View {
 		if let node {

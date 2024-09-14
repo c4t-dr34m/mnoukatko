@@ -183,7 +183,7 @@ extension BLEManager: CBPeripheralDelegate {
 			guard
 				let value = characteristic.value,
 				let info = try? FromRadio(serializedData: value),
-				let device = getConnectedDevice()
+				var device = getConnectedDevice()
 			else {
 				return
 			}
@@ -213,9 +213,11 @@ extension BLEManager: CBPeripheralDelegate {
 					) {
 						UserDefaults.preferredPeripheralNum = Int(myInfo.myNodeNum)
 
-						currentDevice.device?.num = myInfo.myNodeNum
-						currentDevice.device?.name = myInfo.bleName ?? "unknown".localized
-						currentDevice.device?.longName = myInfo.bleName ?? "unknown".localized
+						device.num = myInfo.myNodeNum
+						device.name = myInfo.bleName ?? "unknown".localized
+						device.longName = myInfo.bleName ?? "unknown".localized
+
+						currentDevice.set(device: device)
 					}
 
 					tryClearExistingChannels()
@@ -232,8 +234,10 @@ extension BLEManager: CBPeripheralDelegate {
 						let user = nodeInfo.user,
 						device.num == nodeInfo.num
 					{
-						currentDevice.device?.shortName = user.shortName ?? "?"
-						currentDevice.device?.longName = user.longName ?? "unknown".localized
+						device.shortName = user.shortName ?? "?"
+						device.longName = user.longName ?? "unknown".localized
+
+						currentDevice.set(device: device)
 					}
 				}
 
@@ -272,7 +276,9 @@ extension BLEManager: CBPeripheralDelegate {
 
 				// Device Metadata
 				if info.metadata.firmwareVersion.count > 0, !isInvalidFwVersion {
-					currentDevice.device?.firmwareVersion = info.metadata.firmwareVersion
+					device.firmwareVersion = info.metadata.firmwareVersion
+
+					currentDevice.set(device: device)
 
 					deviceMetadataPacket(
 						metadata: info.metadata,

@@ -8,7 +8,7 @@ struct FavoriteNodeButton: View {
 	var context: NSManagedObjectContext
 
 	@EnvironmentObject
-	private var connectedDevice: ConnectedDevice
+	private var connectedDevice: CurrentDevice
 
 	var body: some View {
 		Button {

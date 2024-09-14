@@ -18,7 +18,7 @@ struct NodeList: View {
 	@Environment(\.colorScheme)
 	private var colorScheme: ColorScheme
 	@EnvironmentObject
-	private var connectedDevice: ConnectedDevice
+	private var connectedDevice: CurrentDevice
 	@EnvironmentObject
 	private var nodeConfig: NodeConfig
 	@StateObject

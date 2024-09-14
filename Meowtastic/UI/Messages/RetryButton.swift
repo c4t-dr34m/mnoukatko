@@ -13,7 +13,7 @@ struct RetryButton: View {
 	@EnvironmentObject
 	private var bleActions: BLEActions
 	@EnvironmentObject
-	private var connectedDevice: ConnectedDevice
+	private var connectedDevice: CurrentDevice
 
 	var body: some View {
 		Button {

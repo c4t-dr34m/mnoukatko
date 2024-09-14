@@ -121,7 +121,7 @@ extension BLEManager: CBCentralManagerDelegate {
 		}
 
 		device.peripheral.delegate = self
-		currentDevice.device = device
+		currentDevice.set(device: device)
 
 		peripheral.discoverServices(
 			[BluetoothUUID.meshtasticService]
