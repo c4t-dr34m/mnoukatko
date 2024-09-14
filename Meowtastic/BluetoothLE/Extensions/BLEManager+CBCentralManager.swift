@@ -109,19 +109,19 @@ extension BLEManager: CBCentralManagerDelegate {
 		timeoutCount = 0
 		lastConnectionError = ""
 
-		currentDevice.device = devices.first(where: {
-			$0.peripheral.identifier == peripheral.identifier
-		})
-
-		if currentDevice.device != nil {
-			currentDevice.device?.peripheral.delegate = self
-		}
+		guard
+			let device = devices.first(where: { device in
+				device.peripheral.identifier == peripheral.identifier
+			})
 		else {
 			lastConnectionError = "🚫 [BLE] Bluetooth connection error, please try again."
 
 			disconnectDevice()
 			return
 		}
+
+		device.peripheral.delegate = self
+		currentDevice.device = device
 
 		peripheral.discoverServices(
 			[BluetoothUUID.meshtasticService]
