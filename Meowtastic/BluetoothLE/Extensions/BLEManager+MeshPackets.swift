@@ -1021,7 +1021,7 @@ extension BLEManager {
 				let manager = LocalNotificationManager()
 				manager.notifications = [
 					Notification(
-						id: ("notification.id.\(newMessage.messageId)"),
+						id: "notification.id.\(newMessage.messageId)",
 						title: "\(fromUser.longName ?? "unknown".localized)",
 						subtitle: "AKA \(fromUser.shortName ?? "?")",
 						content: messageText,
@@ -1057,7 +1057,7 @@ extension BLEManager {
 						let manager = LocalNotificationManager()
 						manager.notifications = [
 							Notification(
-								id: ("notification.id.\(newMessage.messageId)"),
+								id: "notification.id.\(newMessage.messageId)",
 								title: "\(fromUser.longName ?? "unknown".localized)",
 								subtitle: "AKA \(fromUser.shortName ?? "?")",
 								content: messageText,
@@ -1115,7 +1115,7 @@ extension BLEManager {
 
 			manager.notifications = [
 				Notification(
-					id: ("notification.id.\(waypoint.id)"),
+					id: "notification.id.\(waypoint.id)",
 					title: "New Waypoint Received",
 					subtitle: "\(icon) \(waypoint.name ?? "Dropped Pin")",
 					content: "\(waypoint.longDescription ?? "\(latitude), \(longitude)")",

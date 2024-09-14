@@ -162,7 +162,7 @@ extension BLEManager: CBCentralManagerDelegate {
 				if UserDefaults.preferredPeripheralId == peripheral.identifier.uuidString {
 					manager.notifications = [
 						Notification(
-							id: (peripheral.identifier.uuidString),
+							id: peripheral.identifier.uuidString,
 							title: "Radio Disconnected",
 							subtitle: "\(peripheral.name ?? "unknown".localized)",
 							content: error.localizedDescription,

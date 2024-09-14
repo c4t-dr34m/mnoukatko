@@ -102,43 +102,6 @@ struct NodeIconListView: View {
 					.frame(width: detailIconSize)
 			}
 
-			if !small, node.hasPositions {
-				divider
-
-				if
-					!small,
-					let currentCoordinate = locationManager.lastKnownLocation?.coordinate,
-					let lastCoordinate = (node.positions?.lastObject as? PositionEntity)?.coordinate
-				{
-					let myLocation = CLLocation(
-						latitude: currentCoordinate.latitude,
-						longitude: currentCoordinate.longitude
-					)
-					let location = CLLocation(
-						latitude: lastCoordinate.latitude,
-						longitude: lastCoordinate.longitude
-					)
-					let distance = location.distance(from: myLocation) / 1000 // km
-					let distanceFormatted = String(format: "%.0f", distance) + "km"
-
-					Image(systemName: "mappin.and.ellipse")
-						.font(detailInfoIconFont)
-						.foregroundColor(.gray)
-
-					Text(distanceFormatted)
-						.font(detailInfoTextFont)
-						.lineLimit(1)
-						.minimumScaleFactor(0.7)
-						.foregroundColor(.gray)
-				}
-				else {
-					Image(systemName: "mappin.and.ellipse")
-						.font(detailInfoIconFont)
-						.foregroundColor(.gray)
-						.frame(width: detailIconSize)
-				}
-			}
-
 			if !small, node.isStoreForwardRouter {
 				divider
 
@@ -157,50 +120,105 @@ struct NodeIconListView: View {
 					.frame(width: detailIconSize)
 			}
 
-			if !small, node.hasEnvironmentMetrics {
-				divider
-
-				if !small, let nodeEnvironment {
-					let temp = nodeEnvironment.temperature
-					let tempFormatted = String(format: "%.0f", temp) + "°C"
-					if temp < 10 {
-						Image(systemName: "thermometer.low")
-							.font(detailInfoIconFont)
-							.foregroundColor(.gray)
-					}
-					else if temp < 25 {
-						Image(systemName: "thermometer.medium")
-							.font(detailInfoIconFont)
-							.foregroundColor(.gray)
-					}
-					else {
-						Image(systemName: "thermometer.high")
-							.font(detailInfoIconFont)
-							.foregroundColor(.gray)
-					}
-
-					Text(tempFormatted)
-						.font(detailInfoTextFont)
-						.lineLimit(1)
-						.minimumScaleFactor(0.7)
-						.foregroundColor(.gray)
-				}
-				else {
-					Image(systemName: "thermometer.variable")
-						.font(detailInfoIconFont)
-						.foregroundColor(.gray)
-						.frame(width: detailIconSize)
-				}
+			if !small {
+				locationInfo
+				environmentInfo
 			}
-
-			if small, !node.isOnline {
+			else if !node.isOnline {
 				divider
 
 				Image(systemName: "antenna.radiowaves.left.and.right.slash")
 					.font(detailInfoIconFont)
 					.foregroundColor(.gray)
 					.frame(width: detailIconSize)
+			}
+		}
+	}
 
+	@ViewBuilder
+	private var locationInfo: some View {
+		if node.hasPositions {
+			let detailInfoIconFont = Font.system(size: small ? 12 : 14, weight: .regular, design: .rounded)
+			let detailInfoTextFont = Font.system(size: small ? 10 : 12, weight: .semibold, design: .rounded)
+
+			divider
+
+			if
+				!small,
+				let currentCoordinate = locationManager.lastKnownLocation?.coordinate,
+				let lastCoordinate = (node.positions?.lastObject as? PositionEntity)?.coordinate
+			{
+				let myLocation = CLLocation(
+					latitude: currentCoordinate.latitude,
+					longitude: currentCoordinate.longitude
+				)
+				let location = CLLocation(
+					latitude: lastCoordinate.latitude,
+					longitude: lastCoordinate.longitude
+				)
+				let distance = location.distance(from: myLocation) / 1000 // km
+				let distanceFormatted = String(format: "%.0f", distance) + "km"
+
+				Image(systemName: "mappin.and.ellipse")
+					.font(detailInfoIconFont)
+					.foregroundColor(.gray)
+
+				Text(distanceFormatted)
+					.font(detailInfoTextFont)
+					.lineLimit(1)
+					.minimumScaleFactor(0.7)
+					.foregroundColor(.gray)
+			}
+			else {
+				Image(systemName: "mappin.and.ellipse")
+					.font(detailInfoIconFont)
+					.foregroundColor(.gray)
+					.frame(width: detailIconSize)
+			}
+		}
+		else {
+			EmptyView()
+		}
+	}
+
+	@ViewBuilder
+	private var environmentInfo: some View {
+		if node.hasEnvironmentMetrics {
+			let detailInfoIconFont = Font.system(size: small ? 12 : 14, weight: .regular, design: .rounded)
+			let detailInfoTextFont = Font.system(size: small ? 10 : 12, weight: .semibold, design: .rounded)
+
+			divider
+
+			if !small, let nodeEnvironment {
+				let temp = nodeEnvironment.temperature
+				let tempFormatted = String(format: "%.0f", temp) + "°C"
+				if temp < 10 {
+					Image(systemName: "thermometer.low")
+						.font(detailInfoIconFont)
+						.foregroundColor(.gray)
+				}
+				else if temp < 25 {
+					Image(systemName: "thermometer.medium")
+						.font(detailInfoIconFont)
+						.foregroundColor(.gray)
+				}
+				else {
+					Image(systemName: "thermometer.high")
+						.font(detailInfoIconFont)
+						.foregroundColor(.gray)
+				}
+
+				Text(tempFormatted)
+					.font(detailInfoTextFont)
+					.lineLimit(1)
+					.minimumScaleFactor(0.7)
+					.foregroundColor(.gray)
+			}
+			else {
+				Image(systemName: "thermometer.variable")
+					.font(detailInfoIconFont)
+					.foregroundColor(.gray)
+					.frame(width: detailIconSize)
 			}
 		}
 	}

@@ -150,7 +150,6 @@ extension CoreDataTools {
 							let manager = LocalNotificationManager()
 							manager.notifications = [
 								Notification(
-									id: (UUID().uuidString),
 									title: "New Node",
 									subtitle: "\(newUser.longName ?? "unknown".localized)",
 									content: "New Node has been discovered",

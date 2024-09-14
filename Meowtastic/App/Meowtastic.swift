@@ -116,6 +116,7 @@ struct Meowtastic: App {
 			}
 		}
 		.backgroundTask(.appRefresh(AppConstants.backgroundTaskID)) {
+			Logger.app.debug("Background task started")
 			Analytics.logEvent(AnalyticEvents.backgroundUpdate.id, parameters: nil)
 
 			await refreshApp()
@@ -147,12 +148,15 @@ struct Meowtastic: App {
 
 	private func scheduleAppRefresh() {
 		let request = BGProcessingTaskRequest(identifier: AppConstants.backgroundTaskID)
+		request.requiresNetworkConnectivity = false
+		request.requiresExternalPower = false
+
 		do {
 			try BGTaskScheduler.shared.submit(request)
 
 			Logger.app.debug("Background task scheduled")
 		}
-		catch(let error) {
+		catch let error {
 			Logger.app.warning("Failed to schedule background task: \(error.localizedDescription)")
 		}
 	}
@@ -185,18 +189,15 @@ extension Meowtastic: DevicesDelegate {
 		Analytics.logEvent(AnalyticEvents.backgroundWantConfig.id, parameters: nil)
 
 		// TODO
-		let content = UNMutableNotificationContent()
-		content.title = "Meowtastic"
-		content.subtitle = "Want config finished"
-		content.sound = UNNotificationSound.default
-
-		let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-		let request = UNNotificationRequest(
-			identifier: UUID().uuidString,
-			content: content,
-			trigger: trigger
-		)
-
-		UNUserNotificationCenter.current().add(request)
+		let manager = LocalNotificationManager()
+		manager.notifications = [
+			Notification(
+				title: "Update",
+				subtitle: "Background update finished",
+				content: "Yay, new data!",
+				target: "nodes"
+			)
+		]
+		manager.schedule()
 	}
 }

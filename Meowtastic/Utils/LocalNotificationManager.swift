@@ -35,11 +35,11 @@ final class LocalNotificationManager {
 	private func scheduleNotifications() {
 		for notification in notifications {
 			let content = UNMutableNotificationContent()
-			content.subtitle = notification.subtitle
 			content.title = notification.title
+			content.subtitle = notification.subtitle
 			content.body = notification.content
 			content.sound = .default
-			content.interruptionLevel = .timeSensitive
+			content.interruptionLevel = .passive
 
 			if let target = notification.target {
 				content.userInfo["target"] = target
