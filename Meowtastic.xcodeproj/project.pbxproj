@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		081C3AEB2C971E1900F93C46 /* BLEWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 081C3AEA2C971E1600F93C46 /* BLEWatcher.swift */; };
+		081C3AED2C97494000F93C46 /* CBManagerState+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 081C3AEC2C97493900F93C46 /* CBManagerState+Extension.swift */; };
 		084A3D422C7651EC0026433E /* StateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084A3D412C7651E70026433E /* StateMachine.swift */; };
 		084A3D442C76520A0026433E /* SafeStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084A3D432C7652080026433E /* SafeStorage.swift */; };
 		084A3D462C76522A0026433E /* Debounce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084A3D452C7652280026433E /* Debounce.swift */; };
@@ -187,6 +188,7 @@
 
 /* Begin PBXFileReference section */
 		081C3AEA2C971E1600F93C46 /* BLEWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEWatcher.swift; sourceTree = "<group>"; };
+		081C3AEC2C97493900F93C46 /* CBManagerState+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CBManagerState+Extension.swift"; sourceTree = "<group>"; };
 		084A3D412C7651E70026433E /* StateMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateMachine.swift; sourceTree = "<group>"; };
 		084A3D432C7652080026433E /* SafeStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeStorage.swift; sourceTree = "<group>"; };
 		084A3D452C7652280026433E /* Debounce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debounce.swift; sourceTree = "<group>"; };
@@ -560,6 +562,7 @@
 		B284A42B2C6F877D00D5122B /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				081C3AEC2C97493900F93C46 /* CBManagerState+Extension.swift */,
 				B284A42C2C6F87B200D5122B /* BLEManager+CBCentralManager.swift */,
 				B284A42E2C6F889000D5122B /* BLEManager+CBPeripheralDelegate.swift */,
 				DDA6B2E828419CF2003E8C16 /* BLEManager+MeshPackets.swift */,
@@ -1116,6 +1119,7 @@
 				DDB6ABE228B13FB500384BA1 /* GPSFormats.swift in Sources */,
 				DD994B69295F88B60013760A /* UpdateIntervals.swift in Sources */,
 				B2A5F30F2C5668FD009457AB /* SimpleNodeMap.swift in Sources */,
+				081C3AED2C97494000F93C46 /* CBManagerState+Extension.swift in Sources */,
 				B266A76C2C59298900DFC723 /* GPSUpdateIntervals.swift in Sources */,
 				DD3CC6C028E7A60700FA9159 /* Tapbacks.swift in Sources */,
 				B2A5F30B2C5668FD009457AB /* NodeMapContent.swift in Sources */,

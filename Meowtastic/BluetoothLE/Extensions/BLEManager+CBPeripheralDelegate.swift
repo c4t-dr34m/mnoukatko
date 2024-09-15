@@ -148,7 +148,7 @@ extension BLEManager: CBPeripheralDelegate {
 		case BluetoothUUID.logRadio:
 			guard
 				let value = characteristic.value,
-				let logRecord = try? LogRecord(serializedData: value)
+				let logRecord = try? LogRecord(serializedBytes: value)
 			else {
 				return
 			}
@@ -182,7 +182,7 @@ extension BLEManager: CBPeripheralDelegate {
 		case BluetoothUUID.fromRadio:
 			guard
 				let value = characteristic.value,
-				let info = try? FromRadio(serializedData: value),
+				let info = try? FromRadio(serializedBytes: value),
 				var device = getConnectedDevice()
 			else {
 				return
@@ -466,7 +466,7 @@ extension BLEManager: CBPeripheralDelegate {
 
 			case .tracerouteApp:
 				guard
-					let routingMessage = try? RouteDiscovery(serializedData: info.packet.decoded.payload),
+					let routingMessage = try? RouteDiscovery(serializedBytes: info.packet.decoded.payload),
 					!routingMessage.route.isEmpty
 				else {
 					break
@@ -639,7 +639,7 @@ extension BLEManager: CBPeripheralDelegate {
 		connectedNodeNum: Int64,
 		context: NSManagedObjectContext
 	) {
-		if let storeAndForwardMessage = try? StoreAndForward(serializedData: packet.decoded.payload) {
+		if let storeAndForwardMessage = try? StoreAndForward(serializedBytes: packet.decoded.payload) {
 			MeshLogger.log(
 				"Store & Forward: Message \(storeAndForwardMessage.rr.rawValue) received from \(packet.from.toHex())"
 			)

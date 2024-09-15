@@ -6,42 +6,12 @@ extension BLEManager: CBCentralManagerDelegate {
 		_ central: CBCentralManager
 	) {
 		if central.state == .poweredOn {
-
-			Logger.services.info("✅ [BLE] powered on")
-
 			isSwitchedOn = true
 			startScanning()
 		}
 		else {
 			isSwitchedOn = false
 		}
-
-		var status = ""
-
-		switch central.state {
-		case .poweredOff:
-			status = "BLE is powered off"
-
-		case .poweredOn:
-			status = "BLE is poweredOn"
-
-		case .resetting:
-			status = "BLE is resetting"
-
-		case .unauthorized:
-			status = "BLE is unauthorized"
-
-		case .unknown:
-			status = "BLE is unknown"
-
-		case .unsupported:
-			status = "BLE is unsupported"
-
-		default:
-			status = "default"
-		}
-
-		Logger.services.info("📜 [BLE] Bluetooth status: \(status)")
 	}
 
 	func centralManager(
@@ -51,14 +21,6 @@ extension BLEManager: CBCentralManagerDelegate {
 		rssi RSSI: NSNumber
 	) {
 		Logger.services.info("BLE peripheral discovered: \(peripheral.name ?? "N/A")")
-
-		if
-			automaticallyReconnect,
-			let preferred = UserDefaults.standard.object(forKey: "preferredPeripheralId") as? String,
-			peripheral.identifier.uuidString == preferred
-		{
-			connectTo(peripheral: peripheral)
-		}
 
 		let name = advertisementData[CBAdvertisementDataLocalNameKey] as? String
 		let device = Device(
@@ -72,8 +34,8 @@ extension BLEManager: CBCentralManagerDelegate {
 			lastUpdate: Date.now,
 			peripheral: peripheral
 		)
-		let index = devices.map {
-			$0.peripheral
+		let index = devices.map { device in
+			device.peripheral
 		}
 			.firstIndex(of: peripheral)
 
@@ -84,15 +46,14 @@ extension BLEManager: CBCentralManagerDelegate {
 			devices.append(device)
 		}
 
-		let today = Date()
 		// swiftlint:disable:next force_unwrapping
-		let visibleDuration = Calendar.current.date(byAdding: .second, value: -5, to: today)!
+		let visibleDuration = Calendar.current.date(byAdding: .second, value: -5, to: .now)!
 
 		devices.removeAll(where: {
 			$0.lastUpdate < visibleDuration
 		})
 
-		devicesDelegate?.onChange(devices: devices)
+		onDevicesChange()
 	}
 
 	func centralManager(

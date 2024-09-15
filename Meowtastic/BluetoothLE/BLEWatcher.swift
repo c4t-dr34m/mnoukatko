@@ -41,8 +41,8 @@ final class BLEWatcher: DevicesDelegate {
 			return
 		}
 
-		bleManager.stopScanning()
 		bleManager.connectTo(peripheral: device.peripheral)
+		bleManager.stopScanning()
 	}
 
 	func onDeviceConnected(name: String?) {

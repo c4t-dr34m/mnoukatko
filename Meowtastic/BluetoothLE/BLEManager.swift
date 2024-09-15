@@ -21,7 +21,7 @@ final class BLEManager: NSObject, ObservableObject {
 	}
 
 	@Published
-	var devices: [Device] = []
+	var devices = [Device]()
 	@Published
 	var currentDevice: CurrentDevice
 	@Published
@@ -71,7 +71,10 @@ final class BLEManager: NSObject, ObservableObject {
 
 		super.init()
 
+		isSwitchedOn = centralManager.state == .poweredOn
 		centralManager.delegate = self
+
+		onDevicesChange()
 	}
 
 	func connectMQTT(config: MQTTConfigEntity) {
@@ -97,7 +100,10 @@ final class BLEManager: NSObject, ObservableObject {
 	}
 
 	func startScanning() {
-		guard isSwitchedOn else {
+		guard centralManager.state == .poweredOn else {
+			Logger.services.info(
+				"Peripheral scanning denied. Central state: \(self.centralManager.state.name)"
+			)
 			return
 		}
 
@@ -106,7 +112,7 @@ final class BLEManager: NSObject, ObservableObject {
 			options: [CBCentralManagerScanOptionAllowDuplicatesKey: false]
 		)
 
-		Logger.services.info("✅ [BLE] Scanning Started")
+		Logger.services.info("Peripheral scanning started. Status: \(self.centralManager.isScanning)")
 	}
 
 	func stopScanning() {
@@ -119,8 +125,18 @@ final class BLEManager: NSObject, ObservableObject {
 		Logger.services.info("🛑 [BLE] Stopped Scanning")
 	}
 
-	func setIsInvalidFwVersion() {
-		isInvalidFwVersion = true
+	func onDevicesChange() {
+		if
+			automaticallyReconnect,
+			let preferred = UserDefaults.standard.object(forKey: "preferredPeripheralId") as? String,
+			let preferredDevice = devices.first(where: { device in
+				device.peripheral.identifier.uuidString == preferred
+			})
+		{
+			connectTo(peripheral: preferredDevice.peripheral)
+		}
+
+		devicesDelegate?.onChange(devices: devices)
 	}
 
 	func connectTo(peripheral: CBPeripheral) {
@@ -215,6 +231,10 @@ final class BLEManager: NSObject, ObservableObject {
 
 		stopScanning()
 		startScanning()
+	}
+
+	func setIsInvalidFwVersion() {
+		isInvalidFwVersion = true
 	}
 
 	@discardableResult
