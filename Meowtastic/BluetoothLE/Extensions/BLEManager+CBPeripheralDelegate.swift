@@ -626,7 +626,7 @@ extension BLEManager: CBPeripheralDelegate {
 			}
 
 		default:
-			Logger.services.error("Unhandled characteristic UUID: \(characteristic.uuid, privacy: .public)")
+			break
 		}
 
 		if let characteristicFromRadio {

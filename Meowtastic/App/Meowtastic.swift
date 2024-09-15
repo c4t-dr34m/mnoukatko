@@ -7,6 +7,8 @@ import SwiftUI
 
 @main
 struct Meowtastic: App {
+	private static let bgTaskLifespan: TimeInterval = 2 * 60 // 2 minutes
+
 	@UIApplicationDelegateAdaptor(MeowtasticDelegate.self)
 	var appDelegate
 	@Environment(\.scenePhase)
@@ -164,40 +166,27 @@ struct Meowtastic: App {
 	private func refreshApp() async {
 		scheduleAppRefresh()
 
-		bleManager.devicesDelegate = self
-		bleManager.startScanning()
-	}
-}
+		let bgTaskStarted = Date.now
+		let watcher = BLEWatcher(bleManager: bleManager)
+		watcher.start()
 
-extension Meowtastic: DevicesDelegate {
-	func onChange(devices: [Device]) {
-		let device = devices.first(where: { device in
-			device.peripheral.state != CBPeripheralState.connected
-			&& device.peripheral.state != CBPeripheralState.connecting
-			&& device.peripheral.identifier.uuidString == UserDefaults.preferredPeripheralId
-		})
-
-		guard let device else {
-			return
+		while
+			Date.now < bgTaskStarted.addingTimeInterval(Self.bgTaskLifespan)
+				&& !watcher.allTasksDone()
+		{
+			// TODO: record some key changes in ble manager
+			sleep(1)
 		}
 
-		bleManager.stopScanning()
-		bleManager.connectTo(peripheral: device.peripheral)
-	}
+		Analytics.logEvent(
+			AnalyticEvents.backgroundFinished.id,
+			parameters: [
+				"tasks_done": watcher.allTasksDone()
+			]
+		)
 
-	func onWantConfigFinished() {
-		Analytics.logEvent(AnalyticEvents.backgroundWantConfig.id, parameters: nil)
-
-		// TODO
-		let manager = LocalNotificationManager()
-		manager.notifications = [
-			Notification(
-				title: "Update",
-				subtitle: "Background update finished",
-				content: "Yay, new data!",
-				target: "nodes"
-			)
-		]
-		manager.schedule()
+		Logger.app.warning(
+			"Background task finished in \(bgTaskStarted.distance(to: .now))s. Tasks done: \(watcher.allTasksDone())"
+		)
 	}
 }

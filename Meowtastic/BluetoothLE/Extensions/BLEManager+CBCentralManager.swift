@@ -50,16 +50,14 @@ extension BLEManager: CBCentralManagerDelegate {
 		advertisementData: [String: Any],
 		rssi RSSI: NSNumber
 	) {
+		Logger.services.info("BLE peripheral discovered: \(peripheral.name ?? "N/A")")
+
 		if
 			automaticallyReconnect,
 			let preferred = UserDefaults.standard.object(forKey: "preferredPeripheralId") as? String,
 			peripheral.identifier.uuidString == preferred
 		{
 			connectTo(peripheral: peripheral)
-
-			Logger.services.info(
-				"✅ [BLE] Reconnecting to prefered peripheral: \(peripheral.name ?? "Unknown", privacy: .public)"
-			)
 		}
 
 		let name = advertisementData[CBAdvertisementDataLocalNameKey] as? String
@@ -126,6 +124,8 @@ extension BLEManager: CBCentralManagerDelegate {
 		peripheral.discoverServices(
 			[BluetoothUUID.meshtasticService]
 		)
+
+		devicesDelegate?.onDeviceConnected(name: peripheral.name)
 
 		Logger.services.info("✅ [BLE] Connected: \(peripheral.name ?? "Unknown", privacy: .public)")
 	}

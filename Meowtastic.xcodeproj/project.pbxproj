@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		081C3AEB2C971E1900F93C46 /* BLEWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 081C3AEA2C971E1600F93C46 /* BLEWatcher.swift */; };
 		084A3D422C7651EC0026433E /* StateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084A3D412C7651E70026433E /* StateMachine.swift */; };
 		084A3D442C76520A0026433E /* SafeStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084A3D432C7652080026433E /* SafeStorage.swift */; };
 		084A3D462C76522A0026433E /* Debounce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084A3D452C7652280026433E /* Debounce.swift */; };
@@ -185,6 +186,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		081C3AEA2C971E1600F93C46 /* BLEWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEWatcher.swift; sourceTree = "<group>"; };
 		084A3D412C7651E70026433E /* StateMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateMachine.swift; sourceTree = "<group>"; };
 		084A3D432C7652080026433E /* SafeStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeStorage.swift; sourceTree = "<group>"; };
 		084A3D452C7652280026433E /* Debounce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debounce.swift; sourceTree = "<group>"; };
@@ -461,6 +463,7 @@
 		B25AF8A42C6F6B3200A2BA85 /* BluetoothLE */ = {
 			isa = PBXGroup;
 			children = (
+				081C3AEA2C971E1600F93C46 /* BLEWatcher.swift */,
 				B23D3C602C946542007CEFE2 /* BLEActions.swift */,
 				DDAF8C5226EB1DF10058C060 /* BLEManager.swift */,
 				B284A4322C6F8AE400D5122B /* BluetoothUUID.swift */,
@@ -990,6 +993,7 @@
 				B26C91F42C5971880029F249 /* LocationHelperManager.swift in Sources */,
 				259792252C2F114500AD1659 /* ChannelEntity+Extension.swift in Sources */,
 				259792262C2F114500AD1659 /* PositionEntity+Extension.swift in Sources */,
+				081C3AEB2C971E1900F93C46 /* BLEWatcher.swift in Sources */,
 				B2A5F2FE2C5668FD009457AB /* ExchangePositionsButton.swift in Sources */,
 				259792272C2F114500AD1659 /* TraceRouteEntity+Extension.swift in Sources */,
 				B266A74E2C591F5E00DFC723 /* TabTag.swift in Sources */,

@@ -469,18 +469,6 @@ struct NodeList: View {
 		self.loraNodes = loraNodes
 		self.loraSingleHopNodes = loraSingleHopNodes
 		self.mqttNodes = mqttNodes
-
-		Analytics.logEvent(
-			AnalyticEvents.nodeListCount.id,
-			parameters: [
-				"nodes_online": onlineNodes,
-				"nodes_offline": offlineNodes,
-				"nodes_favorite": favoriteNodes,
-				"nodes_lora": loraNodes,
-				"nodes_lora_single_hop": loraSingleHopNodes,
-				"nodes_mqtt": mqttNodes
-			]
-		)
 	}
 
 	private func updateFilter() async {
@@ -503,7 +491,7 @@ struct NodeList: View {
 	}
 }
 
-extension FetchedResults<NodeInfoEntity>: Equatable {
+extension FetchedResults<NodeInfoEntity>: @retroactive Equatable {
 	public static func == (
 		lhs: FetchedResults<NodeInfoEntity>,
 		rhs: FetchedResults<NodeInfoEntity>

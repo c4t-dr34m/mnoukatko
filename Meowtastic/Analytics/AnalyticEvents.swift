@@ -31,7 +31,9 @@ enum AnalyticEvents: String {
 
 	// MARK: - events
 	case backgroundUpdate
+	case backgroundDeviceConnected
 	case backgroundWantConfig
+	case backgroundFinished
 	case ble
 	case bleTimeout
 	case bleCancelConnecting
@@ -43,7 +45,6 @@ enum AnalyticEvents: String {
 	case mqttDisconnect
 	case mqttMessage
 	case mqttError
-	case nodeListCount
 
 	// MARK: - specific events
 	enum PeripheralEvents: String {

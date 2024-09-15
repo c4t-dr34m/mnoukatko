@@ -82,9 +82,7 @@ final class MQTTManager {
 		client.autoReconnect = true
 		client.cleanSession = false // allow delivering old messages
 		client.willMessage = CocoaMQTTMessage(topic: "/will", string: "dieout")
-		#if DEBUG
-		client.logLevel = .debug
-		#endif
+		client.logLevel = .warning
 
 		if !client.connect() {
 			delegate?.onMqttError(message: "Mqtt connect error")
