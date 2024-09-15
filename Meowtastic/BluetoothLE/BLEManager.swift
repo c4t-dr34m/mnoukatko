@@ -140,12 +140,18 @@ final class BLEManager: NSObject, ObservableObject {
 	}
 
 	func connectTo(peripheral: CBPeripheral) {
+		if peripheral.identifier != currentDevice.device?.peripheral.identifier {
+			Logger.services.debug("We want to connect to different device. Disconnecting...")
+
+			disconnectDevice()
+		}
+
 		isConnecting = true
 		lastConnectionError = ""
 		automaticallyReconnect = true
 		timeoutTimer?.invalidate()
 
-		disconnectDevice()
+		Logger.services.debug("Attempting to connect to \(peripheral.name ?? peripheral.identifier.uuidString)")
 
 		centralManager.connect(peripheral)
 
@@ -153,7 +159,7 @@ final class BLEManager: NSObject, ObservableObject {
 			timeInterval: 1.5,
 			target: self,
 			selector: #selector(timeoutTimerFired),
-			userInfo: ["name": "\(peripheral.name ?? "Unknown")"],
+			userInfo: ["name": "\(peripheral.name ?? peripheral.identifier.uuidString)"],
 			repeats: true
 		)
 		RunLoop.current.add(timer, forMode: .common)

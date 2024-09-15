@@ -32,17 +32,21 @@ final class BLEWatcher: DevicesDelegate {
 		Logger.app.debug("Background: devices \(devices)")
 
 		let device = devices.first(where: { device in
-			device.peripheral.state != CBPeripheralState.connected
-			&& device.peripheral.state != CBPeripheralState.connecting
-			&& device.peripheral.identifier.uuidString == UserDefaults.preferredPeripheralId
+			device.peripheral.identifier.uuidString == UserDefaults.preferredPeripheralId
 		})
 
 		guard let device else {
 			return
 		}
 
-		bleManager.connectTo(peripheral: device.peripheral)
 		bleManager.stopScanning()
+
+		if device.peripheral.state == .connected  {
+			onDeviceConnected(name: device.peripheral.name)
+		}
+		else if device.peripheral.state != .connecting {
+			bleManager.connectTo(peripheral: device.peripheral)
+		}
 	}
 
 	func onDeviceConnected(name: String?) {

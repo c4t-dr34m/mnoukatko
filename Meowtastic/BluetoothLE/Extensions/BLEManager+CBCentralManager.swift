@@ -20,7 +20,7 @@ extension BLEManager: CBCentralManagerDelegate {
 		advertisementData: [String: Any],
 		rssi RSSI: NSNumber
 	) {
-		Logger.services.info("BLE peripheral discovered: \(peripheral.name ?? "N/A")")
+		Logger.services.info("BLE peripheral discovered: \(peripheral.name ?? peripheral.identifier.uuidString)")
 
 		let name = advertisementData[CBAdvertisementDataLocalNameKey] as? String
 		let device = Device(
@@ -88,7 +88,9 @@ extension BLEManager: CBCentralManagerDelegate {
 
 		devicesDelegate?.onDeviceConnected(name: peripheral.name)
 
-		Logger.services.info("✅ [BLE] Connected: \(peripheral.name ?? "Unknown", privacy: .public)")
+		Logger.services.info(
+			"✅ [BLE] Connected: \(peripheral.name ?? peripheral.identifier.uuidString, privacy: .public)"
+		)
 	}
 
 	func centralManager(
@@ -98,7 +100,9 @@ extension BLEManager: CBCentralManagerDelegate {
 	) {
 		cancelPeripheralConnection()
 
-		Logger.services.error("🚫 [BLE] Failed to Connect: \(peripheral.name ?? "Unknown", privacy: .public)")
+		Logger.services.error(
+			"🚫 [BLE] Failed to Connect: \(peripheral.name ?? peripheral.identifier.uuidString, privacy: .public)"
+		)
 	}
 
 	func centralManager(
@@ -125,7 +129,7 @@ extension BLEManager: CBCentralManagerDelegate {
 						Notification(
 							id: peripheral.identifier.uuidString,
 							title: "Radio Disconnected",
-							subtitle: "\(peripheral.name ?? "unknown".localized)",
+							subtitle: "\(peripheral.name ?? peripheral.identifier.uuidString)",
 							content: error.localizedDescription,
 							target: "bluetooth",
 							path: "meshtastic:///bluetooth"
@@ -145,7 +149,7 @@ extension BLEManager: CBCentralManagerDelegate {
 						Notification(
 							id: (peripheral.identifier.uuidString),
 							title: "Radio Disconnected",
-							subtitle: "\(peripheral.name ?? "unknown".localized)",
+							subtitle: "\(peripheral.name ?? peripheral.identifier.uuidString)",
 							content: error.localizedDescription,
 							target: "bluetooth",
 							path: "meshtastic:///bluetooth"
