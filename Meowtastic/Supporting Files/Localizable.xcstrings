@@ -26,10 +26,10 @@
     "%d hops" : {
 
     },
-    "%f" : {
+    "%lld" : {
 
     },
-    "%lld" : {
+    "%lld °C" : {
 
     },
     "%lld hop(s)" : {
@@ -20171,7 +20171,7 @@
         }
       }
     },
-    "Temp" : {
+    "Temperature" : {
 
     },
     "The compass heading on the screen outside of the circle will always point north." : {

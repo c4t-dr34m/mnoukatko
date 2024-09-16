@@ -1,4 +1,5 @@
 import Charts
+import CoreGraphics
 import FirebaseAnalytics
 import MapKit
 import OSLog
@@ -26,9 +27,9 @@ struct NodeDetail: View {
 	@State
 	private var showingRebootConfirm = false
 	@State
-	private var yesterdayMidnight = Calendar.current.startOfDay(
+	private var fiveDaysAgoMidnight = Calendar.current.startOfDay(
 		// swiftlint:disable:next force_unwrapping
-		for: Calendar.current.date(byAdding: .day, value: -1, to: .now)!
+		for: Calendar.current.date(byAdding: .day, value: -5, to: .now)!
 	)
 	@State
 	private var tomorrowMidnight = Calendar.current.startOfDay(
@@ -129,8 +130,7 @@ struct NodeDetail: View {
 
 					if
 						let connectedNode,
-						let nodeMetadata = node.metadata,
-						connectedDevice != nil
+						let nodeMetadata = node.metadata
 					{
 						Section("Administration") {
 							admin(node: connectedNode, metadata: nodeMetadata)
@@ -457,36 +457,49 @@ struct NodeDetail: View {
 	private var temperatureHistory: some View {
 		if let nodeEnvironmentHistory {
 			Chart(nodeEnvironmentHistory, id: \.time) { measurement in
-				if let time = measurement.time, time >= yesterdayMidnight {
+				if let time = measurement.time, time >= fiveDaysAgoMidnight {
 					LineMark(
 						x: .value("Time", time),
-						y: .value("Temp", measurement.temperature)
+						y: .value("Temperature", measurement.temperature),
+						series: .value("Temperature", "A")
 					)
-					.interpolationMethod(.monotone)
-					.foregroundStyle(.gray)
+					.symbol {
+						Circle()
+							.fill(.blue)
+							.frame(width: 4, height: 4)
+					}
+					.interpolationMethod(.cardinal)
+					.foregroundStyle(.blue)
 					.lineStyle(
-						StrokeStyle(lineWidth: 3)
+						StrokeStyle(lineWidth: 2)
 					)
-					.cornerRadius(8)
-					.accessibilityLabel(time.formatted(date: .omitted, time: .shortened))
-					.accessibilityValue("\(measurement.temperature)")
 
 					BarMark(
 						x: .value("Time", time),
-						y: .value("Temp", measurement.temperature),
+						y: .value("Temperature", measurement.temperature),
 						width: 1
 					)
 					.foregroundStyle(.gray)
 				}
 			}
-			.chartXAxis(.visible)
 			.chartXScale(
 				domain: [
-					yesterdayMidnight,
+					fiveDaysAgoMidnight,
 					tomorrowMidnight
 				]
 			)
-			.chartYAxis(.visible)
+			.chartXAxis {
+				AxisMarks(preset: .extended, values: .stride(by: .day)) { _ in
+					AxisValueLabel(format: .dateTime.day())
+				}
+			}
+			.chartYAxis {
+				AxisMarks(position: .leading, values: .stride(by: 10)) { axis in
+					AxisTick()
+					AxisGridLine()
+					AxisValueLabel("\(axis.index * 10) °C", centered: false)
+				}
+			}
 		}
 		else {
 			EmptyView()
