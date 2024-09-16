@@ -50,6 +50,10 @@ final class BLEWatcher: DevicesDelegate {
 	}
 
 	func onDeviceConnected(name: String?) {
+		guard !tasksDone.contains(.deviceConnected) else {
+			return
+		}
+
 		Analytics.logEvent(
 			AnalyticEvents.backgroundDeviceConnected.id,
 			parameters: [
@@ -61,19 +65,11 @@ final class BLEWatcher: DevicesDelegate {
 	}
 
 	func onWantConfigFinished() {
-		Analytics.logEvent(AnalyticEvents.backgroundWantConfig.id, parameters: nil)
+		guard !tasksDone.contains(.wantConfig) else {
+			return
+		}
 
-		// TODO
-		let manager = LocalNotificationManager()
-		manager.notifications = [
-			Notification(
-				title: "Update",
-				subtitle: "Background update finished",
-				content: "Yay, new data!",
-				target: "nodes"
-			)
-		]
-		manager.schedule()
+		Analytics.logEvent(AnalyticEvents.backgroundWantConfig.id, parameters: nil)
 
 		tasksDone.append(.wantConfig)
 	}

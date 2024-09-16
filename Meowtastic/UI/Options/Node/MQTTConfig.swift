@@ -349,9 +349,7 @@ struct MQTTConfig: View {
 				let connectedNode = coreDataTools.getNodeInfo(id: peripheral.num, context: context),
 				node.mqttConfig == nil
 			{
-				Logger.mesh.info("empty mqtt module config")
-
-				nodeConfig.requestMQTTModuleConfig(
+				nodeConfig.requestMQTTConfig(
 					fromUser: connectedNode.user!,
 					toUser: node.user!,
 					adminIndex: connectedNode.myInfo?.adminIndex ?? 0

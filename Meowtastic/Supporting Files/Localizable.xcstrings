@@ -5069,6 +5069,9 @@
     "Device Logging Enabled" : {
 
     },
+    "Device Metrics" : {
+
+    },
     "Device Role" : {
 
     },
@@ -6208,6 +6211,9 @@
 
     },
     "Display Config" : {
+
+    },
+    "Display Fahrenheit" : {
 
     },
     "Display Mode" : {
@@ -7792,6 +7798,15 @@
 
     },
     "How long the screen remains on after the user button is pressed or messages are received." : {
+
+    },
+    "How often device metrics are sent out over the mesh. Default is 30 minutes." : {
+
+    },
+    "How often power metrics are sent out over the mesh. Default is 30 minutes." : {
+
+    },
+    "How often sensor metrics are sent out over the mesh. Default is 30 minutes." : {
 
     },
     "How often should we try to get a GPS position." : {
@@ -15950,6 +15965,15 @@
     "Power Config" : {
 
     },
+    "Power Metrics" : {
+
+    },
+    "Power Options" : {
+
+    },
+    "Power Screen" : {
+
+    },
     "Precise Location" : {
 
     },
@@ -18315,6 +18339,12 @@
         }
       }
     },
+    "Sensor Metrics" : {
+
+    },
+    "Sensor Options" : {
+
+    },
     "Sequence number" : {
 
     },
@@ -18991,6 +19021,9 @@
     "Show Alerts" : {
 
     },
+    "Show on device screen" : {
+
+    },
     "Shut Down" : {
 
     },
@@ -19479,6 +19512,9 @@
           }
         }
       }
+    },
+    "Supported I2C Connected sensors will be detected automatically, sensors are BMP280, BME280, BME680, MCP9808, INA219, INA260, LPS22 and SHTC3." : {
+
     },
     "tapback" : {
       "extractionState" : "stale",
@@ -20069,6 +20105,12 @@
           }
         }
       }
+    },
+    "Telemetry" : {
+
+    },
+    "Telemetry Config" : {
+
     },
     "telemetry.config" : {
       "extractionState" : "stale",

@@ -146,6 +146,16 @@ final class BLEManager: NSObject, ObservableObject {
 			disconnectDevice()
 		}
 
+		guard peripheral.state != .connected else {
+			Logger.services.debug(
+				"Device \(peripheral.name ?? peripheral.identifier.uuidString) is already connected"
+			)
+
+			devicesDelegate?.onDeviceConnected(name: peripheral.name)
+
+			return
+		}
+
 		isConnecting = true
 		lastConnectionError = ""
 		automaticallyReconnect = true
@@ -168,33 +178,6 @@ final class BLEManager: NSObject, ObservableObject {
 		Analytics.logEvent(AnalyticEvents.bleConnect.id, parameters: nil)
 	}
 
-	func connectToPreferredPeripheral() -> Bool {
-		if getConnectedDevice() != nil {
-			disconnectDevice()
-			startScanning()
-
-			// Try and connect to the preferredPeripherial first
-			let preferredPeripheral = devices.first(where: { device in
-				guard let preferred = UserDefaults.standard.object(forKey: "preferredPeripheralId") as? String else {
-					return false
-				}
-
-				return device.peripheral.identifier.uuidString == preferred
-			})
-
-			if let peripheral = preferredPeripheral?.peripheral {
-				connectTo(peripheral: peripheral)
-
-				return true
-			}
-		}
-		else if currentDevice.device != nil, isSubscribed {
-			return true
-		}
-
-		return false
-	}
-
 	func cancelPeripheralConnection() {
 		if let mqttClientProxy = mqttManager?.client, mqttConnected {
 			mqttClientProxy.disconnect()
@@ -211,18 +194,11 @@ final class BLEManager: NSObject, ObservableObject {
 		automaticallyReconnect = false
 
 		Analytics.logEvent(AnalyticEvents.bleCancelConnecting.id, parameters: nil)
-
-		stopScanning()
-		startScanning()
 	}
 
 	func disconnectDevice(reconnect: Bool = true) {
 		guard let device = currentDevice.device else {
 			return
-		}
-
-		if let mqttClientProxy = mqttManager?.client, mqttConnected {
-			mqttClientProxy.disconnect()
 		}
 
 		automaticallyReconnect = reconnect
@@ -233,10 +209,11 @@ final class BLEManager: NSObject, ObservableObject {
 		isInvalidFwVersion = false
 		connectedVersion = "0.0.0"
 
-		Analytics.logEvent(AnalyticEvents.bleDisconnect.id, parameters: nil)
+		if let mqttClientProxy = mqttManager?.client, mqttConnected {
+			mqttClientProxy.disconnect()
+		}
 
-		stopScanning()
-		startScanning()
+		Analytics.logEvent(AnalyticEvents.bleDisconnect.id, parameters: nil)
 	}
 
 	func setIsInvalidFwVersion() {

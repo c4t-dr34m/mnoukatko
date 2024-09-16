@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		081C3AEB2C971E1900F93C46 /* BLEWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 081C3AEA2C971E1600F93C46 /* BLEWatcher.swift */; };
 		081C3AED2C97494000F93C46 /* CBManagerState+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 081C3AEC2C97493900F93C46 /* CBManagerState+Extension.swift */; };
+		081C3AEF2C989B8F00F93C46 /* TelemetryConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 081C3AEE2C989B8C00F93C46 /* TelemetryConfig.swift */; };
 		084A3D422C7651EC0026433E /* StateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084A3D412C7651E70026433E /* StateMachine.swift */; };
 		084A3D442C76520A0026433E /* SafeStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084A3D432C7652080026433E /* SafeStorage.swift */; };
 		084A3D462C76522A0026433E /* Debounce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084A3D452C7652280026433E /* Debounce.swift */; };
@@ -189,6 +190,7 @@
 /* Begin PBXFileReference section */
 		081C3AEA2C971E1600F93C46 /* BLEWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEWatcher.swift; sourceTree = "<group>"; };
 		081C3AEC2C97493900F93C46 /* CBManagerState+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CBManagerState+Extension.swift"; sourceTree = "<group>"; };
+		081C3AEE2C989B8C00F93C46 /* TelemetryConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryConfig.swift; sourceTree = "<group>"; };
 		084A3D412C7651E70026433E /* StateMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateMachine.swift; sourceTree = "<group>"; };
 		084A3D432C7652080026433E /* SafeStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeStorage.swift; sourceTree = "<group>"; };
 		084A3D452C7652280026433E /* Debounce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debounce.swift; sourceTree = "<group>"; };
@@ -692,18 +694,19 @@
 		DD61937A2863876A00E59241 /* Node */ = {
 			isa = PBXGroup;
 			children = (
-				DD93800C2BA74CE3008BEC06 /* Channels */,
-				DDCE4E2B2869F92900BE9F8F /* UserConfig.swift */,
-				DD2160AE28C5552500C17253 /* MQTTConfig.swift */,
-				D93068DC2B81CA820066FBC8 /* ConfigHeader.swift */,
-				D93069072B81DF040066FBC8 /* SaveConfigButton.swift */,
 				DDB6ABD528AE742000384BA1 /* BluetoothConfig.swift */,
+				DD93800C2BA74CE3008BEC06 /* Channels */,
+				D93068DC2B81CA820066FBC8 /* ConfigHeader.swift */,
 				DD41582528582E9B009B0E59 /* DeviceConfig.swift */,
 				DD8EBF42285058FA00426DCA /* DisplayConfig.swift */,
 				DD2553562855B02500E55709 /* LoRaConfig.swift */,
-				DD2553582855B52700E55709 /* PositionConfig.swift */,
+				DD2160AE28C5552500C17253 /* MQTTConfig.swift */,
 				DD8ED9C42898D51F00B3B0AB /* NetworkConfig.swift */,
+				DD2553582855B52700E55709 /* PositionConfig.swift */,
 				D93068DA2B81C85E0066FBC8 /* PowerConfig.swift */,
+				D93069072B81DF040066FBC8 /* SaveConfigButton.swift */,
+				081C3AEE2C989B8C00F93C46 /* TelemetryConfig.swift */,
+				DDCE4E2B2869F92900BE9F8F /* UserConfig.swift */,
 			);
 			path = Node;
 			sourceTree = "<group>";
@@ -1031,6 +1034,7 @@
 				B284A42F2C6F889000D5122B /* BLEManager+CBPeripheralDelegate.swift in Sources */,
 				DDC4D568275499A500A4208E /* Persistence.swift in Sources */,
 				DDDB445429F8AD1600EE2349 /* Data.swift in Sources */,
+				081C3AEF2C989B8F00F93C46 /* TelemetryConfig.swift in Sources */,
 				08933D3B2C821901006D57EA /* NSManagedObjectContext+Extensions.swift in Sources */,
 				08DD7E552C41D63800548159 /* AppConstants.swift in Sources */,
 				B2A5F3002C5668FD009457AB /* NodeAlertsButton.swift in Sources */,

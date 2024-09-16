@@ -290,7 +290,7 @@ extension BLEManager {
 		newMetadata.canShutdown = metadata.canShutdown
 		newMetadata.hasWifi = metadata.hasWifi_p
 		newMetadata.hasBluetooth = metadata.hasBluetooth_p
-		newMetadata.hasEthernet	= metadata.hasEthernet_p
+		newMetadata.hasEthernet = metadata.hasEthernet_p
 		newMetadata.role = Int32(metadata.role.rawValue)
 		newMetadata.positionFlags = Int32(metadata.positionFlags)
 

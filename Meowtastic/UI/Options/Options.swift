@@ -210,6 +210,18 @@ struct Options: View {
 
 			NavigationLink {
 				NavigationLazyView(
+					TelemetryConfig(node: nodeSelected)
+				)
+			} label: {
+				Label {
+					Text("Telemetry")
+				} icon: {
+					Image(systemName: "thermometer.medium")
+				}
+			}
+
+			NavigationLink {
+				NavigationLazyView(
 					DisplayConfig(node: nodeSelected)
 				)
 			} label: {

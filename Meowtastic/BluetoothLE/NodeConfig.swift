@@ -476,7 +476,7 @@ final class NodeConfig: ObservableObject {
 	// MARK: - modules
 
 	@discardableResult
-	func requestMQTTModuleConfig(
+	func requestMQTTConfig(
 		fromUser: UserEntity,
 		toUser: UserEntity,
 		adminIndex: Int32
@@ -515,6 +515,45 @@ final class NodeConfig: ObservableObject {
 		}
 	}
 
+	@discardableResult
+	func requestTelemetryConfig(
+		fromUser: UserEntity,
+		toUser: UserEntity,
+		adminIndex: Int32
+	) -> Bool {
+		sendConfigRequest(
+			to: toUser,
+			from: fromUser,
+			index: adminIndex,
+			type: AdminMessage.ModuleConfigType.telemetryConfig,
+			event: .mqttConfig
+		)
+	}
+
+	@discardableResult
+	func saveTelemetryConfig(
+		config: ModuleConfig.TelemetryConfig,
+		fromUser: UserEntity,
+		toUser: UserEntity,
+		adminIndex: Int32
+	) -> Int64 {
+		var message = AdminMessage()
+		message.setModuleConfig.telemetry = config
+
+		return sendRequest(
+			to: toUser,
+			from: fromUser,
+			index: adminIndex,
+			message: message,
+			event: .mqttConfigSave
+		) {
+			self.coreDataTools.upsertTelemetryModuleConfigPacket(
+				config: config,
+				nodeNum: toUser.num,
+				context: self.context
+			)
+		}
+	}
 	// MARK: - requests
 
 	func sendWantConfig() -> UInt32 {
