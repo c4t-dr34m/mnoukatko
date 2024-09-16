@@ -186,7 +186,7 @@ struct Meowtastic: App {
 		)
 
 		Logger.app.warning(
-			"Background task finished in \(bgTaskStarted.distance(to: .now))s. Tasks done: \(watcher.allTasksDone())"
+			"Background task finished in \(bgTaskStarted.distance(to: .now))s. Tasks done: \(watcher.tasksDone)"
 		)
 	}
 }

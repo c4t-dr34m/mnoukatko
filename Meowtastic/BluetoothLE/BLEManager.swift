@@ -73,8 +73,6 @@ final class BLEManager: NSObject, ObservableObject {
 
 		isSwitchedOn = centralManager.state == .poweredOn
 		centralManager.delegate = self
-
-		onDevicesChange()
 	}
 
 	func connectMQTT(config: MQTTConfigEntity) {
@@ -112,6 +110,8 @@ final class BLEManager: NSObject, ObservableObject {
 			options: [CBCentralManagerScanOptionAllowDuplicatesKey: false]
 		)
 
+		onDevicesChange() // Check devices we got before scanning started
+
 		Logger.services.info("Peripheral scanning started. Status: \(self.centralManager.isScanning)")
 	}
 
@@ -126,6 +126,8 @@ final class BLEManager: NSObject, ObservableObject {
 	}
 
 	func onDevicesChange() {
+		devicesDelegate?.onChange(devices: devices)
+
 		if
 			automaticallyReconnect,
 			let preferred = UserDefaults.standard.object(forKey: "preferredPeripheralId") as? String,
@@ -135,8 +137,6 @@ final class BLEManager: NSObject, ObservableObject {
 		{
 			connectTo(peripheral: preferredDevice.peripheral)
 		}
-
-		devicesDelegate?.onChange(devices: devices)
 	}
 
 	func connectTo(peripheral: CBPeripheral) {

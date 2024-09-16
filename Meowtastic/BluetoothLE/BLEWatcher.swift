@@ -4,14 +4,14 @@ import MeshtasticProtobufs
 import OSLog
 
 final class BLEWatcher: DevicesDelegate {
-	private enum Tasks: CaseIterable {
+	enum Tasks: CaseIterable {
 		case deviceConnected
 		case wantConfig
 	}
 
-	private let bleManager: BLEManager
+	private(set) var tasksDone = [Tasks]()
 
-	private var tasksDone = [Tasks]()
+	private let bleManager: BLEManager
 
 	init(bleManager: BLEManager) {
 		self.bleManager = bleManager
