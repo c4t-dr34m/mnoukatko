@@ -317,6 +317,7 @@ struct NodeList: View {
 				}
 				.frame(alignment: .leading)
 			}
+			.padding(.bottom, 8)
 		}
 	}
 

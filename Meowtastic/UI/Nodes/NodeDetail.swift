@@ -90,6 +90,7 @@ struct NodeDetail: View {
 						VStack(alignment: .leading, spacing: 8) {
 							environmentInfo
 							temperatureHistory
+								.padding(.top, 8)
 						}
 						.padding(.horizontal, 4)
 					}
@@ -399,19 +400,19 @@ struct NodeDetail: View {
 				if temp < 10 {
 					Image(systemName: "thermometer.low")
 						.font(detailInfoFont)
-						.foregroundColor(.gray)
+						.foregroundColor(.blue)
 						.frame(width: detailIconSize)
 				}
 				else if temp < 25 {
 					Image(systemName: "thermometer.medium")
 						.font(detailInfoFont)
-						.foregroundColor(.gray)
+						.foregroundColor(.blue)
 						.frame(width: detailIconSize)
 				}
 				else {
 					Image(systemName: "thermometer.high")
 						.font(detailInfoFont)
-						.foregroundColor(.gray)
+						.foregroundColor(.blue)
 						.frame(width: detailIconSize)
 				}
 
@@ -425,7 +426,7 @@ struct NodeDetail: View {
 
 					Image(systemName: "humidity")
 						.font(detailInfoFont)
-						.foregroundColor(.gray)
+						.foregroundColor(.green)
 						.frame(width: detailIconSize)
 
 					Text(humidityFormatted)
@@ -439,7 +440,7 @@ struct NodeDetail: View {
 
 					Image(systemName: "barometer")
 						.font(detailInfoFont)
-						.foregroundColor(.gray)
+						.foregroundColor(.red)
 						.frame(width: detailIconSize)
 
 					Text(pressureFormatted)
@@ -479,7 +480,7 @@ struct NodeDetail: View {
 						y: .value("Temperature", measurement.temperature),
 						width: 1
 					)
-					.foregroundStyle(.gray)
+					.foregroundStyle(.gray.opacity(0.33))
 				}
 			}
 			.chartXScale(
