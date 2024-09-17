@@ -391,8 +391,8 @@ struct NodeDetail: View {
 		if let nodeEnvironment {
 			let temp = nodeEnvironment.temperature
 			let tempFormatted = String(format: "%.1f", temp) + "°C"
-			let humidityFormatted = String(format: "%.0f", nodeEnvironment.relativeHumidity.rounded()) + "%"
 			let pressureFormatted = String(format: "%.0f", nodeEnvironment.barometricPressure.rounded()) + "hPa"
+			let humidityFormatted = String(format: "%.0f", nodeEnvironment.relativeHumidity.rounded()) + "%"
 			let windFormatted = String(format: "%.0f", nodeEnvironment.windSpeed.rounded()) + "m/s"
 
 			HStack(alignment: .center, spacing: 8) {
@@ -434,20 +434,6 @@ struct NodeDetail: View {
 					.font(detailInfoFont)
 					.foregroundColor(.gray)
 
-				if nodeEnvironment.relativeHumidity > 0, nodeEnvironment.relativeHumidity < 100 {
-					Spacer()
-						.frame(width: 4)
-
-					Image(systemName: "humidity")
-						.font(detailInfoFont)
-						.foregroundColor(.green)
-						.frame(width: detailIconSize)
-
-					Text(humidityFormatted)
-						.font(detailInfoFont)
-						.foregroundColor(.gray)
-				}
-
 				if nodeEnvironment.barometricPressure > 0 {
 					Spacer()
 						.frame(width: 4)
@@ -458,6 +444,20 @@ struct NodeDetail: View {
 						.frame(width: detailIconSize)
 
 					Text(pressureFormatted)
+						.font(detailInfoFont)
+						.foregroundColor(.gray)
+				}
+
+				if nodeEnvironment.relativeHumidity > 0, nodeEnvironment.relativeHumidity < 100 {
+					Spacer()
+						.frame(width: 4)
+
+					Image(systemName: "humidity")
+						.font(detailInfoFont)
+						.foregroundColor(.gray)
+						.frame(width: detailIconSize)
+
+					Text(humidityFormatted)
 						.font(detailInfoFont)
 						.foregroundColor(.gray)
 				}
@@ -473,8 +473,7 @@ struct NodeDetail: View {
 		if let nodeEnvironmentHistory {
 			HStack(spacing: 8) {
 				let tempMinMax = findTemperatureMinMax()
-				let tempMin = (tempMinMax?.min ?? 5) - 5
-				let tempMax = (tempMinMax?.max ?? 45) + 5
+				let tempOvershoot = (tempMinMax.max - tempMinMax.min) / 3
 
 				Chart(nodeEnvironmentHistory, id: \.time) { measurement in
 					if let time = measurement.time {
@@ -492,7 +491,7 @@ struct NodeDetail: View {
 						.lineStyle(
 							StrokeStyle(lineWidth: 2)
 						)
-						
+
 						BarMark(
 							x: .value("Date", time),
 							y: .value("Temperature", measurement.temperature),
@@ -520,12 +519,17 @@ struct NodeDetail: View {
 						}
 					}
 				}
-				.chartYScale(domain: [tempMin, tempMax])
+				.chartYScale(
+					domain: [
+						tempMinMax.min - tempOvershoot,
+						tempMinMax.max + tempOvershoot
+					]
+				)
 				.chartYAxis {
 					AxisMarks(
 						preset: .aligned,
 						position: .trailing,
-						values: .automatic(desiredCount: 3)
+						values: .automatic(desiredCount: 5)
 					) { value in
 						AxisTick()
 						AxisGridLine()
@@ -538,8 +542,7 @@ struct NodeDetail: View {
 				}
 
 				let pressMinMax = findPresureMinMax()
-				let pressMin = (pressMinMax?.min ?? 5) - 5
-				let pressMax = (pressMinMax?.max ?? 45) + 5
+				let pressOvershoot = (pressMinMax.max - pressMinMax.min) / 3
 
 				Chart(nodeEnvironmentHistory, id: \.time) { measurement in
 					if let time = measurement.time {
@@ -585,12 +588,17 @@ struct NodeDetail: View {
 						}
 					}
 				}
-				.chartYScale(domain: [pressMin, pressMax])
+				.chartYScale(
+					domain: [
+						pressMinMax.min - pressOvershoot,
+						pressMinMax.max + pressOvershoot
+					]
+				)
 				.chartYAxis {
 					AxisMarks(
 						preset: .aligned,
 						position: .trailing,
-						values: .automatic(desiredCount: 3)
+						values: .automatic(desiredCount: 5)
 					) { value in
 						AxisTick()
 						AxisGridLine()
@@ -989,13 +997,13 @@ struct NodeDetail: View {
 		}
 	}
 
-	private func findTemperatureMinMax() -> (min: Float, max: Float)? {
+	private func findTemperatureMinMax() -> (min: Float, max: Float) {
 		guard let nodeEnvironmentHistory else {
-			return nil
+			return (min: -20, max: 50)
 		}
 
 		var min = Float.greatestFiniteMagnitude
-		var max = Float.leastNonzeroMagnitude
+		var max = Float.leastNormalMagnitude
 
 		for measurement in nodeEnvironmentHistory {
 			if measurement.temperature < min {
@@ -1009,13 +1017,13 @@ struct NodeDetail: View {
 		return (min: min, max: max)
 	}
 
-	private func findPresureMinMax() -> (min: Float, max: Float)? {
+	private func findPresureMinMax() -> (min: Float, max: Float) {
 		guard let nodeEnvironmentHistory else {
-			return nil
+			return (min: 960, max: 1070)
 		}
 
 		var min = Float.greatestFiniteMagnitude
-		var max = Float.leastNonzeroMagnitude
+		var max = Float.leastNormalMagnitude
 
 		for measurement in nodeEnvironmentHistory {
 			if measurement.barometricPressure < min {
