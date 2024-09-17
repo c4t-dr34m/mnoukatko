@@ -25,6 +25,11 @@ struct NodeMapContent: MapContent {
 	private var showNodeHistory = false
 	@AppStorage("mapLayer")
 	private var selectedMapLayer: MapLayer = .standard
+	@State
+	private var mapHistory = Calendar.current.startOfDay(
+		// swiftlint:disable:next force_unwrapping
+		for: Calendar.current.date(byAdding: .day, value: -5, to: .now)!
+	)
 
 	private var nodeColor: Color {
 		if colorScheme == .dark {
@@ -98,7 +103,16 @@ struct NodeMapContent: MapContent {
 	@MapContentBuilder
 	private var history: some MapContent {
 		let positionsFiltered = positions.filter { position in
-			!position.latest
+			if
+				let time = position.time,
+				time > mapHistory,
+				!position.latest
+			{
+				 return true
+			}
+			else {
+				return false
+			}
 		}
 		let coordinates = positionsFiltered.compactMap { position -> CLLocationCoordinate2D? in
 			position.nodeCoordinate
