@@ -14,7 +14,7 @@ struct NodeIconListView: View {
 	@State
 	private var telemetryHistory = Calendar.current.startOfDay(
 		// swiftlint:disable:next force_unwrapping
-		for: Calendar.current.date(byAdding: .day, value: -1, to: .now)!
+		for: Calendar.current.date(byAdding: .day, value: -5, to: .now)!
 	)
 
 	private var nodePosition: PositionEntity? {
@@ -200,42 +200,53 @@ struct NodeIconListView: View {
 
 	@ViewBuilder
 	private var environmentInfo: some View {
-		if node.hasEnvironmentMetrics {
+		if let nodeEnvironment {
 			let detailInfoIconFont = Font.system(size: small ? 12 : 14, weight: .regular, design: .rounded)
 			let detailInfoTextFont = Font.system(size: small ? 10 : 12, weight: .semibold, design: .rounded)
 
 			divider
 
-			if !small, let nodeEnvironment {
-				let temp = nodeEnvironment.temperature
-				let tempFormatted = String(format: "%.0f", temp) + "°C"
-				if temp < 10 {
-					Image(systemName: "thermometer.low")
-						.font(detailInfoIconFont)
-						.foregroundColor(.gray)
-				}
-				else if temp < 25 {
-					Image(systemName: "thermometer.medium")
-						.font(detailInfoIconFont)
-						.foregroundColor(.gray)
-				}
-				else {
-					Image(systemName: "thermometer.high")
-						.font(detailInfoIconFont)
-						.foregroundColor(.gray)
-				}
-
-				Text(tempFormatted)
-					.font(detailInfoTextFont)
-					.lineLimit(1)
-					.minimumScaleFactor(0.7)
-					.foregroundColor(.gray)
-			}
-			else {
+			if small {
 				Image(systemName: "thermometer.variable")
 					.font(detailInfoIconFont)
 					.foregroundColor(.gray)
 					.frame(width: detailIconSize)
+			}
+			else {
+				if
+					let time = nodeEnvironment.time,
+					time >= Date.now.advanced(by: -24 * 60 * 60)
+				{
+					let temp = nodeEnvironment.temperature
+					let tempFormatted = String(format: "%.0f", temp) + "°C"
+
+					if temp < 10 {
+						Image(systemName: "thermometer.low")
+							.font(detailInfoIconFont)
+							.foregroundColor(.gray)
+					}
+					else if temp < 25 {
+						Image(systemName: "thermometer.medium")
+							.font(detailInfoIconFont)
+							.foregroundColor(.gray)
+					}
+					else {
+						Image(systemName: "thermometer.high")
+							.font(detailInfoIconFont)
+							.foregroundColor(.gray)
+					}
+
+					Text(tempFormatted)
+						.font(detailInfoTextFont)
+						.lineLimit(1)
+						.minimumScaleFactor(0.7)
+						.foregroundColor(.gray)
+				}
+				else {
+					Image(systemName: "thermometer.medium.slash")
+						.font(detailInfoIconFont)
+						.foregroundColor(.gray)
+				}
 			}
 		}
 	}

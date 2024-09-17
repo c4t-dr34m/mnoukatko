@@ -11,8 +11,8 @@ struct NodeDetail: View {
 	private let node: NodeInfoEntity
 	private let isInSheet: Bool
 	private let distanceFormatter = MKDistanceFormatter()
-	private let detailInfoFont = Font.system(size: 12, weight: .regular, design: .rounded)
-	private let detailIconSize: CGFloat = 12
+	private let detailInfoFont = Font.system(size: 14, weight: .regular, design: .rounded)
+	private let detailIconSize: CGFloat = 14
 
 	@Environment(\.managedObjectContext)
 	private var context
@@ -80,6 +80,9 @@ struct NodeDetail: View {
 				return false
 			}
 		}
+	}
+	private var nodeEnvironmentCount: Int {
+		nodeEnvironmentHistory?.count ?? 0
 	}
 	private var nodeEnvironment: TelemetryEntity? {
 		nodeEnvironmentHistory?.last
@@ -386,19 +389,19 @@ struct NodeDetail: View {
 				if temp < 10 {
 					Image(systemName: "thermometer.low")
 						.font(detailInfoFont)
-						.foregroundColor(.blue)
+						.foregroundColor(nodeEnvironmentCount > 1 ? .blue : .gray)
 						.frame(width: detailIconSize)
 				}
 				else if temp < 25 {
 					Image(systemName: "thermometer.medium")
 						.font(detailInfoFont)
-						.foregroundColor(.blue)
+						.foregroundColor(nodeEnvironmentCount > 1 ? .blue : .gray)
 						.frame(width: detailIconSize)
 				}
 				else {
 					Image(systemName: "thermometer.high")
 						.font(detailInfoFont)
-						.foregroundColor(.blue)
+						.foregroundColor(nodeEnvironmentCount > 1 ? .blue : .gray)
 						.frame(width: detailIconSize)
 				}
 
@@ -412,7 +415,7 @@ struct NodeDetail: View {
 
 					Image(systemName: "barometer")
 						.font(detailInfoFont)
-						.foregroundColor(.red)
+						.foregroundColor(nodeEnvironmentCount > 1 ? .red : .gray)
 						.frame(width: detailIconSize)
 
 					Text(pressureFormatted)
@@ -445,6 +448,13 @@ struct NodeDetail: View {
 		if let nodeEnvironmentHistory, nodeEnvironmentHistory.count > 1 {
 			let tempMinMax = findTemperatureMinMax()
 			let tempOvershoot = (tempMinMax.max - tempMinMax.min) / 3
+			let chartMin = tempMinMax.min - tempOvershoot
+			let chartMax = tempMinMax.max + tempOvershoot
+			let yValues = [
+				Int(tempMinMax.min.rounded()),
+				Int((tempMinMax.min + (tempMinMax.max - tempMinMax.min) / 2).rounded()),
+				Int(tempMinMax.max.rounded())
+			]
 
 			Chart(nodeEnvironmentHistory, id: \.time) { measurement in
 				if let time = measurement.time {
@@ -485,26 +495,21 @@ struct NodeDetail: View {
 					}
 				}
 			}
-			.chartYScale(
-				domain: [
-					tempMinMax.min - tempOvershoot,
-					tempMinMax.max + tempOvershoot
-				]
-			)
+			.chartYScale(domain: [chartMin, chartMax])
 			.chartYAxis {
 				AxisMarks(
-					preset: .aligned,
+					preset: .extended,
 					position: .trailing,
-					values: .automatic(desiredCount: 5)
+					values: yValues
 				) { value in
 					AxisTick()
 					AxisGridLine()
 					AxisValueLabel {
 						if let temperature = value.as(Float.self) {
-							Text("\(Int(temperature))°C")
+							Text(String(format: "%.1f", temperature) + "°C")
 								.lineLimit(1)
 								.minimumScaleFactor(0.5)
-								.frame(width: 40, alignment: .leading)
+								.frame(width: 50, alignment: .leading)
 						}
 					}
 				}
@@ -517,12 +522,24 @@ struct NodeDetail: View {
 
 	@ViewBuilder
 	private var pressureHistory: some View {
-		if let nodeEnvironmentHistory, nodeEnvironmentHistory.count > 1 {
+		if
+			let nodeEnvironmentHistory = nodeEnvironmentHistory?.filter({ measurement in
+				measurement.barometricPressure > 0
+			}),
+			nodeEnvironmentHistory.count > 1
+		{
 			let pressMinMax = findPresureMinMax()
 			let pressOvershoot = (pressMinMax.max - pressMinMax.min) / 3
+			let chartMin = pressMinMax.min - pressOvershoot
+			let chartMax = pressMinMax.max + pressOvershoot
+			let yValues = [
+				Int(pressMinMax.min.rounded()),
+				Int((pressMinMax.min + (pressMinMax.max - pressMinMax.min) / 2).rounded()),
+				Int(pressMinMax.max.rounded())
+			]
 
 			Chart(nodeEnvironmentHistory, id: \.time) { measurement in
-				if let time = measurement.time {
+				if let time = measurement.time, measurement.barometricPressure > 0 {
 					LineMark(
 						x: .value("Date", time),
 						y: .value("Pressure", measurement.barometricPressure)
@@ -560,26 +577,21 @@ struct NodeDetail: View {
 					}
 				}
 			}
-			.chartYScale(
-				domain: [
-					pressMinMax.min - pressOvershoot,
-					pressMinMax.max + pressOvershoot
-				]
-			)
+			.chartYScale(domain: [chartMin, chartMax])
 			.chartYAxis {
 				AxisMarks(
-					preset: .aligned,
+					preset: .extended,
 					position: .trailing,
-					values: .automatic(desiredCount: 5)
+					values: yValues
 				) { value in
 					AxisTick()
 					AxisGridLine()
 					AxisValueLabel {
-						if let temperature = value.as(Float.self) {
-							Text("\(Int(temperature))hPa")
+						if let pressure = value.as(Float.self) {
+							Text(String(format: "%.0f", pressure) + "hPa")
 								.lineLimit(1)
 								.minimumScaleFactor(0.5)
-								.frame(width: 40, alignment: .leading)
+								.frame(width: 50, alignment: .leading)
 						}
 					}
 				}

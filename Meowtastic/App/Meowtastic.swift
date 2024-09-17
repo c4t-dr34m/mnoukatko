@@ -166,19 +166,6 @@ struct Meowtastic: App {
 	private func refreshApp() async {
 		scheduleAppRefresh()
 
-		let manager = LocalNotificationManager()
-		#if DEBUG
-		manager.notifications = [
-			Notification(
-				title: "Meowtastic",
-				subtitle: "Background task started",
-				content: "That's it. Now we wait.",
-				target: "nodes"
-			)
-		]
-		manager.schedule()
-		#endif
-
 		let bgTaskStarted = Date.now
 		let watcher = BLEWatcher(bleManager: bleManager)
 		watcher.start()
@@ -190,18 +177,6 @@ struct Meowtastic: App {
 			// TODO: record some key changes in ble manager
 			sleep(1)
 		}
-
-		#if DEBUG
-		manager.notifications = [
-			Notification(
-				title: "Meowtastic",
-				subtitle: "Background task finished",
-				content: "Tasks done: \(watcher.tasksDone)",
-				target: "nodes"
-			)
-		]
-		manager.schedule()
-		#endif
 
 		Logger.app.warning(
 			"Background task finished in \(bgTaskStarted.distance(to: .now))s. Tasks done: \(watcher.tasksDone)"
