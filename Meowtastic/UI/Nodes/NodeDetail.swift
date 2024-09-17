@@ -30,7 +30,7 @@ struct NodeDetail: View {
 	@State
 	private var chartHistory = Calendar.current.startOfDay(
 		// swiftlint:disable:next force_unwrapping
-		for: Calendar.current.date(byAdding: .day, value: -2, to: .now)!
+		for: Calendar.current.date(byAdding: .day, value: -5, to: .now)!
 	)
 	@State
 	private var tomorrowMidnight = Calendar.current.startOfDay(
@@ -93,46 +93,45 @@ struct NodeDetail: View {
 		NavigationStack {
 			List {
 				Section("Info") {
-					hardwareInfo
+					NodeInfoView(node: node)
+				}
 
+				Section("Location") {
 					if nodePosition != nil {
 						locationInfo
 							.padding(.horizontal, 4)
 					}
 
-					if nodeEnvironment != nil {
-						VStack(alignment: .leading, spacing: 8) {
-							environmentInfo
-							temperatureHistory
+					if node.hasPositions {
+						if isInSheet {
+							SimpleNodeMap(node: node)
+								.frame(width: .infinity, height: 120)
+								.cornerRadius(8)
 								.padding(.top, 8)
+								.disabled(true)
+								.toolbar(.hidden)
 						}
-						.padding(.horizontal, 4)
+						else {
+							NavigationLink {
+								NavigationLazyView(
+									NodeMap(node: node)
+								)
+							} label: {
+								SimpleNodeMap(node: node)
+									.frame(height: 200)
+									.cornerRadius(8)
+									.padding(.top, 8)
+									.disabled(true)
+							}
+						}
 					}
+				}
 
-					if nodePositionStale || nodeEnvironmentStale {
-						HStack(alignment: .center, spacing: 8) {
-							Image(systemName: "exclamationmark.triangle.fill")
-								.font(detailInfoFont)
-								.foregroundColor(.orange)
-								.frame(width: detailIconSize)
-
-							if nodePositionStale, nodeEnvironmentStale {
-								Text("Position & environment data are stale")
-									.font(detailInfoFont)
-									.foregroundColor(.gray)
-							}
-							else if nodePositionStale {
-								Text("Position data are stale")
-									.font(detailInfoFont)
-									.foregroundColor(.gray)
-							}
-							else if nodeEnvironmentStale {
-								Text("Environment data are stale")
-									.font(detailInfoFont)
-									.foregroundColor(.gray)
-							}
-						}
-						.padding(.horizontal, 4)
+				if nodeEnvironment != nil {
+					Section("Environment") {
+						environmentInfo
+						temperatureHistory
+						pressureHistory
 					}
 				}
 
@@ -229,37 +228,6 @@ struct NodeDetail: View {
 					Image(systemName: "bubble.left.and.bubble.right")
 						.symbolRenderingMode(.monochrome)
 						.foregroundColor(.accentColor)
-				}
-			}
-		}
-	}
-
-	@ViewBuilder
-	private var hardwareInfo: some View {
-		VStack {
-			NodeInfoView(node: node)
-
-			if node.hasPositions {
-				if isInSheet {
-					SimpleNodeMap(node: node)
-						.frame(width: .infinity, height: 120)
-						.cornerRadius(8)
-						.padding(.top, 8)
-						.disabled(true)
-						.toolbar(.hidden)
-				}
-				else {
-					NavigationLink {
-						NavigationLazyView(
-							NodeMap(node: node)
-						)
-					} label: {
-						SimpleNodeMap(node: node)
-							.frame(height: 200)
-							.cornerRadius(8)
-							.padding(.top, 8)
-							.disabled(true)
-					}
 				}
 			}
 		}
@@ -471,141 +439,146 @@ struct NodeDetail: View {
 	@ViewBuilder
 	private var temperatureHistory: some View {
 		if let nodeEnvironmentHistory {
-			HStack(spacing: 8) {
-				let tempMinMax = findTemperatureMinMax()
-				let tempOvershoot = (tempMinMax.max - tempMinMax.min) / 3
+			let tempMinMax = findTemperatureMinMax()
+			let tempOvershoot = (tempMinMax.max - tempMinMax.min) / 3
 
-				Chart(nodeEnvironmentHistory, id: \.time) { measurement in
-					if let time = measurement.time {
-						LineMark(
-							x: .value("Date", time),
-							y: .value("Temperature", measurement.temperature)
-						)
-						.symbol {
-							Circle()
-								.fill(.blue)
-								.frame(width: 4, height: 4)
-						}
-						.interpolationMethod(.cardinal)
-						.foregroundStyle(.blue)
-						.lineStyle(
-							StrokeStyle(lineWidth: 2)
-						)
+			Chart(nodeEnvironmentHistory, id: \.time) { measurement in
+				if let time = measurement.time {
+					LineMark(
+						x: .value("Date", time),
+						y: .value("Temperature", measurement.temperature)
+					)
+					.symbol {
+						Circle()
+							.fill(.blue)
+							.frame(width: 4, height: 4)
+					}
+					.interpolationMethod(.cardinal)
+					.foregroundStyle(.blue)
+					.lineStyle(
+						StrokeStyle(lineWidth: 2)
+					)
 
-						BarMark(
-							x: .value("Date", time),
-							y: .value("Temperature", measurement.temperature),
-							width: 1
-						)
-						.foregroundStyle(.gray.opacity(0.33))
-					}
+					BarMark(
+						x: .value("Date", time),
+						y: .value("Temperature", measurement.temperature),
+						width: 1
+					)
+					.foregroundStyle(.gray.opacity(0.33))
 				}
-				.chartXScale(
-					domain: [
-						chartHistory,
-						tomorrowMidnight
-					]
-				)
-				.chartXAxis {
-					AxisMarks(
-						preset: .extended,
-						position: .bottom,
-						values: .stride(by: .day)
-					) { value in
-						AxisValueLabel {
-							if let date = value.as(Date.self) {
-								Text(date, format: .dateTime.month().day())
-							}
+			}
+			.chartXScale(
+				domain: [
+					chartHistory,
+					tomorrowMidnight
+				]
+			)
+			.chartXAxis {
+				AxisMarks(
+					preset: .extended,
+					position: .bottom,
+					values: .stride(by: .day)
+				) { value in
+					AxisValueLabel {
+						if let date = value.as(Date.self) {
+							Text(date, format: .dateTime.month().day())
 						}
 					}
 				}
-				.chartYScale(
-					domain: [
-						tempMinMax.min - tempOvershoot,
-						tempMinMax.max + tempOvershoot
-					]
-				)
-				.chartYAxis {
-					AxisMarks(
-						preset: .aligned,
-						position: .trailing,
-						values: .automatic(desiredCount: 5)
-					) { value in
-						AxisTick()
-						AxisGridLine()
-						AxisValueLabel {
-							if let temperature = value.as(Float.self) {
-								Text("\(Int(temperature))°C")
-							}
+			}
+			.chartYScale(
+				domain: [
+					tempMinMax.min - tempOvershoot,
+					tempMinMax.max + tempOvershoot
+				]
+			)
+			.chartYAxis {
+				AxisMarks(
+					preset: .aligned,
+					position: .trailing,
+					values: .automatic(desiredCount: 5)
+				) { value in
+					AxisTick()
+					AxisGridLine()
+					AxisValueLabel {
+						if let temperature = value.as(Float.self) {
+							Text("\(Int(temperature))°C")
 						}
 					}
 				}
+			}
+		}
+		else {
+			EmptyView()
+		}
+	}
+	@ViewBuilder
+	private var pressureHistory: some View {
+		if let nodeEnvironmentHistory {
+			let pressMinMax = findPresureMinMax()
+			let pressOvershoot = (pressMinMax.max - pressMinMax.min) / 3
 
-				let pressMinMax = findPresureMinMax()
-				let pressOvershoot = (pressMinMax.max - pressMinMax.min) / 3
-
-				Chart(nodeEnvironmentHistory, id: \.time) { measurement in
-					if let time = measurement.time {
-						LineMark(
-							x: .value("Date", time),
-							y: .value("Pressure", measurement.barometricPressure)
-						)
-						.symbol {
-							Circle()
-								.fill(.red)
-								.frame(width: 4, height: 4)
-						}
-						.interpolationMethod(.cardinal)
-						.foregroundStyle(.red)
-						.lineStyle(
-							StrokeStyle(lineWidth: 2)
-						)
-						
-						BarMark(
-							x: .value("Date", time),
-							y: .value("Pressure", measurement.barometricPressure),
-							width: 1
-						)
-						.foregroundStyle(.gray.opacity(0.33))
+			Chart(nodeEnvironmentHistory, id: \.time) { measurement in
+				if let time = measurement.time {
+					LineMark(
+						x: .value("Date", time),
+						y: .value("Pressure", measurement.barometricPressure)
+					)
+					.symbol {
+						Circle()
+							.fill(.red)
+							.frame(width: 4, height: 4)
 					}
+					.interpolationMethod(.cardinal)
+					.foregroundStyle(.red)
+					.lineStyle(
+						StrokeStyle(lineWidth: 2)
+					)
+					
+					BarMark(
+						x: .value("Date", time),
+						y: .value("Pressure", measurement.barometricPressure),
+						width: 1
+					)
+					.foregroundStyle(.gray.opacity(0.33))
 				}
-				.chartXScale(
-					domain: [
-						chartHistory,
-						tomorrowMidnight
-					]
-				)
-				.chartXAxis {
-					AxisMarks(
-						preset: .extended,
-						position: .bottom,
-						values: .stride(by: .day)
-					) { value in
-						AxisValueLabel {
-							if let date = value.as(Date.self) {
-								Text(date, format: .dateTime.month().day())
-							}
+			}
+			.chartXScale(
+				domain: [
+					chartHistory,
+					tomorrowMidnight
+				]
+			)
+			.chartXAxis {
+				AxisMarks(
+					preset: .extended,
+					position: .bottom,
+					values: .stride(by: .day)
+				) { value in
+					AxisValueLabel {
+						if let date = value.as(Date.self) {
+							Text(date, format: .dateTime.month().day())
 						}
 					}
 				}
-				.chartYScale(
-					domain: [
-						pressMinMax.min - pressOvershoot,
-						pressMinMax.max + pressOvershoot
-					]
-				)
-				.chartYAxis {
-					AxisMarks(
-						preset: .aligned,
-						position: .trailing,
-						values: .automatic(desiredCount: 5)
-					) { value in
-						AxisTick()
-						AxisGridLine()
-						AxisValueLabel {
-							if let temperature = value.as(Float.self) {
-								Text("\(Int(temperature))hPa")
-							}
+			}
+			.chartYScale(
+				domain: [
+					pressMinMax.min - pressOvershoot,
+					pressMinMax.max + pressOvershoot
+				]
+			)
+			.chartYAxis {
+				AxisMarks(
+					preset: .aligned,
+					position: .trailing,
+					values: .automatic(desiredCount: 5)
+				) { value in
+					AxisTick()
+					AxisGridLine()
+					AxisValueLabel {
+						if let temperature = value.as(Float.self) {
+							Text("\(Int(temperature))hPa")
 						}
 					}
 				}

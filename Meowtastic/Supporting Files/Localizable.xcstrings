@@ -6605,7 +6605,7 @@
     "Encryption Enabled" : {
 
     },
-    "Environment data are stale" : {
+    "Environment" : {
 
     },
     "Erase all device and app data?" : {
@@ -10328,6 +10328,9 @@
 
     },
     "Licensed Operator" : {
+
+    },
+    "Location" : {
 
     },
     "log.category" : {
@@ -15859,13 +15862,7 @@
         }
       }
     },
-    "Position & environment data are stale" : {
-
-    },
     "Position Config" : {
-
-    },
-    "Position data are stale" : {
 
     },
     "Position Flags" : {

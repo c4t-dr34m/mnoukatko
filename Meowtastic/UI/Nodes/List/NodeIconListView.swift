@@ -11,17 +11,35 @@ struct NodeIconListView: View {
 
 	@EnvironmentObject
 	private var locationManager: LocationManager
+	@State
+	private var telemetryHistory = Calendar.current.startOfDay(
+		// swiftlint:disable:next force_unwrapping
+		for: Calendar.current.date(byAdding: .day, value: -1, to: .now)!
+	)
 
 	private var nodePosition: PositionEntity? {
 		node.positions?.lastObject as? PositionEntity
 	}
 	private var nodeEnvironment: TelemetryEntity? {
-		node
-			.telemetries?
-			.filtered(
-				using: NSPredicate(format: "metricsType == 1")
-			)
-			.lastObject as? TelemetryEntity
+		guard
+			let history = node
+				.telemetries?
+				.filtered(
+					using: NSPredicate(format: "metricsType == 1")
+				)
+				.array as? [TelemetryEntity]
+		else {
+			return nil
+		}
+
+		return history.last(where: { measurement in
+			if let time = measurement.time, time >= telemetryHistory {
+				return true
+			}
+			else {
+				return false
+			}
+		})
 	}
 	private var detailIconSize: CGFloat {
 		small ? 12 : 16
@@ -36,7 +54,6 @@ struct NodeIconListView: View {
 	@ViewBuilder
 	var body: some View {
 		let detailInfoIconFont = Font.system(size: small ? 12 : 14, weight: .regular, design: .rounded)
-		let detailInfoTextFont = Font.system(size: small ? 10 : 12, weight: .semibold, design: .rounded)
 		let detailHopsIconFont = Font.system(size: small ? 8 : 10, weight: .semibold, design: .rounded)
 
 		HStack(alignment: .center, spacing: detailIconSpacing) {
