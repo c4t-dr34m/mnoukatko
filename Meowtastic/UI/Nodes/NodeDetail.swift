@@ -442,7 +442,7 @@ struct NodeDetail: View {
 
 	@ViewBuilder
 	private var temperatureHistory: some View {
-		if let nodeEnvironmentHistory {
+		if let nodeEnvironmentHistory, nodeEnvironmentHistory.count > 1 {
 			let tempMinMax = findTemperatureMinMax()
 			let tempOvershoot = (tempMinMax.max - tempMinMax.min) / 3
 
@@ -476,6 +476,8 @@ struct NodeDetail: View {
 					position: .bottom,
 					values: .stride(by: .day)
 				) { value in
+					AxisTick()
+					AxisGridLine()
 					AxisValueLabel {
 						if let date = value.as(Date.self) {
 							Text(date, format: .dateTime.month().day())
@@ -502,7 +504,7 @@ struct NodeDetail: View {
 							Text("\(Int(temperature))°C")
 								.lineLimit(1)
 								.minimumScaleFactor(0.5)
-								.frame(width: 80)
+								.frame(width: 40, alignment: .leading)
 						}
 					}
 				}
@@ -512,9 +514,10 @@ struct NodeDetail: View {
 			EmptyView()
 		}
 	}
+
 	@ViewBuilder
 	private var pressureHistory: some View {
-		if let nodeEnvironmentHistory {
+		if let nodeEnvironmentHistory, nodeEnvironmentHistory.count > 1 {
 			let pressMinMax = findPresureMinMax()
 			let pressOvershoot = (pressMinMax.max - pressMinMax.min) / 3
 
@@ -548,6 +551,8 @@ struct NodeDetail: View {
 					position: .bottom,
 					values: .stride(by: .day)
 				) { value in
+					AxisTick()
+					AxisGridLine()
 					AxisValueLabel {
 						if let date = value.as(Date.self) {
 							Text(date, format: .dateTime.month().day())
@@ -574,7 +579,7 @@ struct NodeDetail: View {
 							Text("\(Int(temperature))hPa")
 								.lineLimit(1)
 								.minimumScaleFactor(0.5)
-								.frame(width: 80)
+								.frame(width: 40, alignment: .leading)
 						}
 					}
 				}

@@ -40,6 +40,11 @@ struct NodeList: View {
 	private var mqttNodes = 0
 	@State
 	private var searchText = ""
+	@State
+	private var telemetryHistory = Calendar.current.startOfDay(
+		// swiftlint:disable:next force_unwrapping
+		for: Calendar.current.date(byAdding: .day, value: -1, to: .now)!
+	)
 
 	@FetchRequest(
 		sortDescriptors: [
@@ -148,71 +153,71 @@ struct NodeList: View {
 				.foregroundColor(.gray)
 
 			Text("Online: \(onlineNodes) nodes")
-				.font(.system(size: 12, weight: .regular))
+				.font(.system(size: 14, weight: .regular))
 				.foregroundColor(colorScheme == .dark ? .white : .black)
 
 			VStack(alignment: .leading, spacing: 4) {
 				HStack(alignment: .center, spacing: 4) {
 					Image(systemName: "minus")
-						.font(.system(size: 12, weight: .light))
+						.font(.system(size: 14, weight: .light))
 						.foregroundColor(.gray)
 
 					Image(systemName: "star.circle")
-						.font(.system(size: 12, weight: .light))
+						.font(.system(size: 14, weight: .light))
 						.foregroundColor(.gray)
 
 					Text(String(favoriteNodes))
-						.font(.system(size: 12, weight: .light))
+						.font(.system(size: 14, weight: .light))
 						.foregroundColor(.gray)
 				}
 
 				HStack(alignment: .center, spacing: 4) {
 					Image(systemName: "minus")
-						.font(.system(size: 12, weight: .light))
+						.font(.system(size: 14, weight: .light))
 						.foregroundColor(.gray)
 
 					Image(systemName: "antenna.radiowaves.left.and.right.circle")
-						.font(.system(size: 12, weight: .light))
+						.font(.system(size: 14, weight: .light))
 						.foregroundColor(.gray)
 
 					Text(String(loraNodes))
-						.font(.system(size: 12, weight: .light))
+						.font(.system(size: 14, weight: .light))
 						.foregroundColor(.gray)
 
 					Spacer()
 						.frame(width: 4)
 
 					Image(systemName: "1.circle")
-						.font(.system(size: 12, weight: .light))
+						.font(.system(size: 14, weight: .light))
 						.foregroundColor(.gray)
 
 					Text(String(loraSingleHopNodes))
-						.font(.system(size: 12, weight: .light))
+						.font(.system(size: 14, weight: .light))
 						.foregroundColor(.gray)
 
 					Spacer()
 						.frame(width: 4)
 
 					Image(systemName: "plus.circle")
-						.font(.system(size: 12, weight: .light))
+						.font(.system(size: 14, weight: .light))
 						.foregroundColor(.gray)
 
 					Text(String(loraNodes - loraSingleHopNodes))
-						.font(.system(size: 12, weight: .light))
+						.font(.system(size: 14, weight: .light))
 						.foregroundColor(.gray)
 				}
 
 				HStack(alignment: .center, spacing: 4) {
 					Image(systemName: "minus")
-						.font(.system(size: 12, weight: .light))
+						.font(.system(size: 14, weight: .light))
 						.foregroundColor(.gray)
 
 					Image(systemName: "network")
-						.font(.system(size: 12, weight: .light))
+						.font(.system(size: 14, weight: .light))
 						.foregroundColor(.gray)
 
 					Text(String(mqttNodes))
-						.font(.system(size: 12, weight: .light))
+						.font(.system(size: 14, weight: .light))
 						.foregroundColor(.gray)
 				}
 			}
@@ -221,7 +226,7 @@ struct NodeList: View {
 				.foregroundColor(.gray)
 
 			Text("Offline: \(offlineNodes) nodes")
-				.font(.system(size: 12, weight: .regular))
+				.font(.system(size: 14, weight: .regular))
 				.foregroundColor(colorScheme == .dark ? .white : .black)
 		}
 	}
@@ -287,6 +292,7 @@ struct NodeList: View {
 								Image(systemName: "arrow.left.arrow.right.circle.fill")
 									.font(detailInfoFont)
 									.foregroundColor(.gray)
+									.frame(width: 18)
 
 								Text("Channel: " + chUtilFormatted)
 									.font(detailInfoFont)
@@ -301,10 +307,72 @@ struct NodeList: View {
 								Image(systemName: "wave.3.right.circle.fill")
 									.font(detailInfoFont)
 									.foregroundColor(.gray)
+									.frame(width: 18)
 
 								Text("Air Time: " + airUtilFormatted)
 									.font(detailInfoFont)
 									.foregroundColor(.gray)
+							}
+						}
+
+						let nodeEnvironment: TelemetryEntity? = {
+							guard
+								let history = connectedNode
+									.telemetries?
+									.filtered(
+										using: NSPredicate(format: "metricsType == 1")
+									)
+									.array as? [TelemetryEntity]
+							else {
+								return nil
+							}
+
+							return history.last(where: { measurement in
+								if let time = measurement.time, time >= telemetryHistory {
+									return true
+								}
+								else {
+									return false
+								}
+							})
+						}()
+
+						if let nodeEnvironment {
+							HStack {
+								let temp = nodeEnvironment.temperature
+								let dateFormatted = nodeEnvironment.time?.relative()
+								let tempFormatted = String(format: "%.0f", temp) + "°C"
+
+								if temp < 10 {
+									Image(systemName: "thermometer.low")
+										.font(detailInfoFont)
+										.foregroundColor(.gray)
+										.frame(width: 18)
+								}
+								else if temp < 25 {
+									Image(systemName: "thermometer.medium")
+										.font(detailInfoFont)
+										.foregroundColor(.gray)
+										.frame(width: 18)
+								}
+								else {
+									Image(systemName: "thermometer.high")
+										.font(detailInfoFont)
+										.foregroundColor(.gray)
+										.frame(width: 18)
+								}
+
+								HStack(spacing: 4) {
+									Text(tempFormatted)
+										.font(detailInfoFont)
+										.foregroundColor(.gray)
+
+									if let dateFormatted {
+										Text("(\(dateFormatted))")
+											.font(detailInfoFont)
+											.foregroundColor(.gray)
+									}
+								}
 							}
 						}
 					}

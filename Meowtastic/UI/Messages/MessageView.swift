@@ -11,13 +11,6 @@ struct MessageView: View {
 
 	private let linkColor = Color(red: 0.4627, green: 0.8392, blue: 1) /* #76d6ff */
 	private let statusFontSize: CGFloat = 12
-	private let dateFormatter = {
-		let formatter = DateFormatter()
-		formatter.dateStyle = .medium
-		formatter.timeStyle = .short
-
-		return formatter
-	}()
 
 	@Environment(\.managedObjectContext)
 	private var context
@@ -73,7 +66,8 @@ struct MessageView: View {
 										for: originalMessage,
 										isCurrentUser: isCurrentUser
 									)
-									.opacity(0.8))
+									.opacity(0.8)
+								)
 
 							Text(payload)
 								.font(.system(size: 14))

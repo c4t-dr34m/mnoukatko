@@ -4,6 +4,9 @@
     "" : {
 
     },
+    "(%@)" : {
+
+    },
     "(Re)define PIN_GPS_EN for your board." : {
 
     },
