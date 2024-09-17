@@ -96,32 +96,32 @@ struct NodeDetail: View {
 					NodeInfoView(node: node)
 				}
 
-				Section("Location") {
-					if nodePosition != nil {
+				if nodePosition != nil {
+					Section("Location") {
 						locationInfo
 							.padding(.horizontal, 4)
-					}
 
-					if node.hasPositions {
-						if isInSheet {
-							SimpleNodeMap(node: node)
-								.frame(width: .infinity, height: 120)
-								.cornerRadius(8)
-								.padding(.top, 8)
-								.disabled(true)
-								.toolbar(.hidden)
-						}
-						else {
-							NavigationLink {
-								NavigationLazyView(
-									NodeMap(node: node)
-								)
-							} label: {
+						if node.hasPositions {
+							if isInSheet {
 								SimpleNodeMap(node: node)
-									.frame(height: 200)
+									.frame(width: .infinity, height: 120)
 									.cornerRadius(8)
 									.padding(.top, 8)
 									.disabled(true)
+									.toolbar(.hidden)
+							}
+							else {
+								NavigationLink {
+									NavigationLazyView(
+										NodeMap(node: node)
+									)
+								} label: {
+									SimpleNodeMap(node: node)
+										.frame(height: 200)
+										.cornerRadius(8)
+										.padding(.top, 8)
+										.disabled(true)
+								}
 							}
 						}
 					}
@@ -130,8 +130,12 @@ struct NodeDetail: View {
 				if nodeEnvironment != nil {
 					Section("Environment") {
 						environmentInfo
+
 						temperatureHistory
+							.padding(.vertical, 4)
+
 						pressureHistory
+							.padding(.vertical, 4)
 					}
 				}
 
@@ -453,18 +457,11 @@ struct NodeDetail: View {
 							.fill(.blue)
 							.frame(width: 4, height: 4)
 					}
-					.interpolationMethod(.cardinal)
+					.interpolationMethod(.cardinal(tension: 0.2))
 					.foregroundStyle(.blue)
 					.lineStyle(
 						StrokeStyle(lineWidth: 2)
 					)
-
-					BarMark(
-						x: .value("Date", time),
-						y: .value("Temperature", measurement.temperature),
-						width: 1
-					)
-					.foregroundStyle(.gray.opacity(0.33))
 				}
 			}
 			.chartXScale(
@@ -503,6 +500,9 @@ struct NodeDetail: View {
 					AxisValueLabel {
 						if let temperature = value.as(Float.self) {
 							Text("\(Int(temperature))°C")
+								.lineLimit(1)
+								.minimumScaleFactor(0.5)
+								.frame(width: 80)
 						}
 					}
 				}
@@ -529,18 +529,11 @@ struct NodeDetail: View {
 							.fill(.red)
 							.frame(width: 4, height: 4)
 					}
-					.interpolationMethod(.cardinal)
+					.interpolationMethod(.cardinal(tension: 0.2))
 					.foregroundStyle(.red)
 					.lineStyle(
 						StrokeStyle(lineWidth: 2)
 					)
-					
-					BarMark(
-						x: .value("Date", time),
-						y: .value("Pressure", measurement.barometricPressure),
-						width: 1
-					)
-					.foregroundStyle(.gray.opacity(0.33))
 				}
 			}
 			.chartXScale(
@@ -579,6 +572,9 @@ struct NodeDetail: View {
 					AxisValueLabel {
 						if let temperature = value.as(Float.self) {
 							Text("\(Int(temperature))hPa")
+								.lineLimit(1)
+								.minimumScaleFactor(0.5)
+								.frame(width: 80)
 						}
 					}
 				}
