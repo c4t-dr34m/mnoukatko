@@ -5,6 +5,7 @@ import MapKit
 import OSLog
 import SwiftUI
 
+// swiftlint:disable file_length
 struct NodeDetail: View {
 	private let coreDataTools = CoreDataTools()
 	private let node: NodeInfoEntity
@@ -27,9 +28,9 @@ struct NodeDetail: View {
 	@State
 	private var showingRebootConfirm = false
 	@State
-	private var fiveDaysAgoMidnight = Calendar.current.startOfDay(
+	private var chartHistory = Calendar.current.startOfDay(
 		// swiftlint:disable:next force_unwrapping
-		for: Calendar.current.date(byAdding: .day, value: -5, to: .now)!
+		for: Calendar.current.date(byAdding: .day, value: -2, to: .now)!
 	)
 	@State
 	private var tomorrowMidnight = Calendar.current.startOfDay(
@@ -60,12 +61,25 @@ struct NodeDetail: View {
 			.lastObject as? TelemetryEntity
 	}
 	private var nodeEnvironmentHistory: [TelemetryEntity]? {
-		node
-			.telemetries?
-			.filtered(
-				using: NSPredicate(format: "metricsType == 1")
-			)
-			.array as? [TelemetryEntity]
+		guard
+			let history = node
+				.telemetries?
+				.filtered(
+					using: NSPredicate(format: "metricsType == 1")
+				)
+				.array as? [TelemetryEntity]
+		else {
+			return nil
+		}
+
+		return history.filter { measurement in
+			if let time = measurement.time, time >= chartHistory {
+				return true
+			}
+			else {
+				return false
+			}
+		}
 	}
 	private var nodeEnvironment: TelemetryEntity? {
 		nodeEnvironmentHistory?.last
@@ -457,48 +471,135 @@ struct NodeDetail: View {
 	@ViewBuilder
 	private var temperatureHistory: some View {
 		if let nodeEnvironmentHistory {
-			Chart(nodeEnvironmentHistory, id: \.time) { measurement in
-				if let time = measurement.time, time >= fiveDaysAgoMidnight {
-					LineMark(
-						x: .value("Time", time),
-						y: .value("Temperature", measurement.temperature),
-						series: .value("Temperature", "A")
-					)
-					.symbol {
-						Circle()
-							.fill(.blue)
-							.frame(width: 4, height: 4)
-					}
-					.interpolationMethod(.cardinal)
-					.foregroundStyle(.blue)
-					.lineStyle(
-						StrokeStyle(lineWidth: 2)
-					)
+			HStack(spacing: 8) {
+				let tempMinMax = findTemperatureMinMax()
+				let tempMin = (tempMinMax?.min ?? 5) - 5
+				let tempMax = (tempMinMax?.max ?? 45) + 5
 
-					BarMark(
-						x: .value("Time", time),
-						y: .value("Temperature", measurement.temperature),
-						width: 1
-					)
-					.foregroundStyle(.gray.opacity(0.33))
+				Chart(nodeEnvironmentHistory, id: \.time) { measurement in
+					if let time = measurement.time {
+						LineMark(
+							x: .value("Date", time),
+							y: .value("Temperature", measurement.temperature)
+						)
+						.symbol {
+							Circle()
+								.fill(.blue)
+								.frame(width: 4, height: 4)
+						}
+						.interpolationMethod(.cardinal)
+						.foregroundStyle(.blue)
+						.lineStyle(
+							StrokeStyle(lineWidth: 2)
+						)
+						
+						BarMark(
+							x: .value("Date", time),
+							y: .value("Temperature", measurement.temperature),
+							width: 1
+						)
+						.foregroundStyle(.gray.opacity(0.33))
+					}
 				}
-			}
-			.chartXScale(
-				domain: [
-					fiveDaysAgoMidnight,
-					tomorrowMidnight
-				]
-			)
-			.chartXAxis {
-				AxisMarks(preset: .extended, values: .stride(by: .day)) { _ in
-					AxisValueLabel(format: .dateTime.day())
+				.chartXScale(
+					domain: [
+						chartHistory,
+						tomorrowMidnight
+					]
+				)
+				.chartXAxis {
+					AxisMarks(
+						preset: .extended,
+						position: .bottom,
+						values: .stride(by: .day)
+					) { value in
+						AxisValueLabel {
+							if let date = value.as(Date.self) {
+								Text(date, format: .dateTime.month().day())
+							}
+						}
+					}
 				}
-			}
-			.chartYAxis {
-				AxisMarks(position: .leading, values: .stride(by: 10)) { axis in
-					AxisTick()
-					AxisGridLine()
-					AxisValueLabel("\(axis.index * 10) °C", centered: false)
+				.chartYScale(domain: [tempMin, tempMax])
+				.chartYAxis {
+					AxisMarks(
+						preset: .aligned,
+						position: .trailing,
+						values: .automatic(desiredCount: 3)
+					) { value in
+						AxisTick()
+						AxisGridLine()
+						AxisValueLabel {
+							if let temperature = value.as(Float.self) {
+								Text("\(Int(temperature))°C")
+							}
+						}
+					}
+				}
+
+				let pressMinMax = findPresureMinMax()
+				let pressMin = (pressMinMax?.min ?? 5) - 5
+				let pressMax = (pressMinMax?.max ?? 45) + 5
+
+				Chart(nodeEnvironmentHistory, id: \.time) { measurement in
+					if let time = measurement.time {
+						LineMark(
+							x: .value("Date", time),
+							y: .value("Pressure", measurement.barometricPressure)
+						)
+						.symbol {
+							Circle()
+								.fill(.red)
+								.frame(width: 4, height: 4)
+						}
+						.interpolationMethod(.cardinal)
+						.foregroundStyle(.red)
+						.lineStyle(
+							StrokeStyle(lineWidth: 2)
+						)
+						
+						BarMark(
+							x: .value("Date", time),
+							y: .value("Pressure", measurement.barometricPressure),
+							width: 1
+						)
+						.foregroundStyle(.gray.opacity(0.33))
+					}
+				}
+				.chartXScale(
+					domain: [
+						chartHistory,
+						tomorrowMidnight
+					]
+				)
+				.chartXAxis {
+					AxisMarks(
+						preset: .extended,
+						position: .bottom,
+						values: .stride(by: .day)
+					) { value in
+						AxisValueLabel {
+							if let date = value.as(Date.self) {
+								Text(date, format: .dateTime.month().day())
+							}
+						}
+					}
+				}
+				.chartYScale(domain: [pressMin, pressMax])
+				.chartYAxis {
+					AxisMarks(
+						preset: .aligned,
+						position: .trailing,
+						values: .automatic(desiredCount: 3)
+					) { value in
+						AxisTick()
+						AxisGridLine()
+						AxisValueLabel {
+							if let temperature = value.as(Float.self) {
+								Text("\(Int(temperature))hPa")
+							}
+						}
+					}
 				}
 			}
 		}
@@ -887,4 +988,45 @@ struct NodeDetail: View {
 			}
 		}
 	}
+
+	private func findTemperatureMinMax() -> (min: Float, max: Float)? {
+		guard let nodeEnvironmentHistory else {
+			return nil
+		}
+
+		var min = Float.greatestFiniteMagnitude
+		var max = Float.leastNonzeroMagnitude
+
+		for measurement in nodeEnvironmentHistory {
+			if measurement.temperature < min {
+				min = measurement.temperature
+			}
+			if measurement.temperature > max {
+				max = measurement.temperature
+			}
+		}
+
+		return (min: min, max: max)
+	}
+
+	private func findPresureMinMax() -> (min: Float, max: Float)? {
+		guard let nodeEnvironmentHistory else {
+			return nil
+		}
+
+		var min = Float.greatestFiniteMagnitude
+		var max = Float.leastNonzeroMagnitude
+
+		for measurement in nodeEnvironmentHistory {
+			if measurement.barometricPressure < min {
+				min = measurement.barometricPressure
+			}
+			if measurement.barometricPressure > max {
+				max = measurement.barometricPressure
+			}
+		}
+
+		return (min: min, max: max)
+	}
 }
+// swiftlint:enable file_length

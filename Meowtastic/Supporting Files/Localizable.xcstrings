@@ -29,16 +29,19 @@
     "%lld" : {
 
     },
-    "%lld °C" : {
+    "%lld hop(s)" : {
 
     },
-    "%lld hop(s)" : {
+    "%lld°C" : {
 
     },
     "%llddb Transmit Power" : {
 
     },
     "%llddBm Transmit Power" : {
+
+    },
+    "%lldhPa" : {
 
     },
     "🦕 End of life Version 🦖 ☄️" : {
@@ -4727,6 +4730,9 @@
           }
         }
       }
+    },
+    "Date" : {
+
     },
     "Debug" : {
 
@@ -16039,6 +16045,9 @@
     "Presets" : {
 
     },
+    "Pressure" : {
+
+    },
     "Primary" : {
 
     },
@@ -20220,9 +20229,6 @@
 
     },
     "This will send a current position from your phone and enable fixed position." : {
-
-    },
-    "Time" : {
 
     },
     "Time Zone" : {
