@@ -25,7 +25,12 @@ extension BLEManager: CBCentralManagerDelegate {
 		advertisementData: [String: Any],
 		rssi RSSI: NSNumber
 	) {
-		Logger.services.info("New peripheral discovered: \(peripheral.name ?? peripheral.identifier.uuidString)")
+		let id = peripheral.identifier.uuidString
+		if !devices.contains(where: { device in
+			device.id == id
+		}) {
+			Logger.services.info("New peripheral discovered: \(peripheral.name ?? peripheral.identifier.uuidString)")
+		}
 
 		let name = advertisementData[CBAdvertisementDataLocalNameKey] as? String
 		let device = Device(
