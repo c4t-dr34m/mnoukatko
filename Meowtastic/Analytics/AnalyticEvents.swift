@@ -40,42 +40,10 @@ enum AnalyticEvents: String {
 	case bleConnect
 	case bleDisconnect
 	case bleTraceRoute
-	case peripheral
 	case mqttConnect
 	case mqttDisconnect
 	case mqttMessage
 	case mqttError
-
-	// MARK: - specific events
-	enum PeripheralEvents: String {
-		case didDiscoverServices
-		case didDiscoverCharacteristics
-		case didUpdate
-
-		enum Characteristics: String {
-			case fromRadio
-			case logRadio
-			case logRadioLegacy
-			case unhandled
-		}
-
-		enum App: String {
-			case admin
-			case message
-			case nodeInfo
-			case paxCounter
-			case position
-			case rangeTest
-			case reply
-			case routing
-			case storeAndForward
-			case telemetry
-			case traceRoute
-			case waypoint
-			case unhandled
-			case unknown
-		}
-	}
 
 	enum BLERequest: String {
 		case bluetoothConfig
@@ -155,27 +123,6 @@ enum AnalyticEvents: String {
 				operation.rawValue: status.description
 			]
 		)
-	}
-
-	static func trackPeripheralEvent(
-		for operation: PeripheralEvents,
-		status: OperationStatus,
-		characteristic: PeripheralEvents.Characteristics? = nil,
-		app: PeripheralEvents.App? = nil
-	) {
-		var params = [
-			operation.rawValue: status.description
-		]
-
-		if let characteristic {
-			params["characteristic"] = characteristic.rawValue
-		}
-
-		if let app {
-			params["app"] = app.rawValue
-		}
-
-		Analytics.logEvent(AnalyticEvents.peripheral.id, parameters: params)
 	}
 
 	static func getParams(
