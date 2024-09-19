@@ -413,7 +413,7 @@ struct NodeDetail: View {
 
 					Image(systemName: "barometer")
 						.font(detailInfoFont)
-						.foregroundColor(nodePressureHistory?.count ?? 0 > 1 ? .blue : .gray)
+						.foregroundColor(nodePressureHistory?.count ?? 0 > 1 ? .red : .gray)
 						.frame(width: detailIconSize)
 
 					Text(pressureFormatted)
