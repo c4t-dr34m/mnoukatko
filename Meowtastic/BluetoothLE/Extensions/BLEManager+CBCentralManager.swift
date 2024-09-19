@@ -111,7 +111,7 @@ extension BLEManager: CBCentralManagerDelegate {
 		cancelPeripheralConnection()
 
 		Logger.services.error(
-			"Connection to \(peripheral.name ?? peripheral.identifier.uuidString) failed: \(error.debugDescription)"
+			"Connected to \(peripheral.name ?? peripheral.identifier.uuidString) failed: \(error.debugDescription)"
 		)
 	}
 
@@ -120,6 +120,10 @@ extension BLEManager: CBCentralManagerDelegate {
 		didDisconnectPeripheral peripheral: CBPeripheral,
 		error: Error?
 	) {
+		Logger.services.debug(
+			"Disconnected from \(peripheral.name ?? peripheral.identifier.uuidString)"
+		)
+
 		currentDevice.clear()
 
 		isConnecting = false
