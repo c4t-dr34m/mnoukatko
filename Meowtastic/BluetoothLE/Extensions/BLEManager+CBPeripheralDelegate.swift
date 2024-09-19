@@ -475,7 +475,10 @@ extension BLEManager: CBPeripheralDelegate {
 				var routeString = "You --> "
 				var hopNodes: [TraceRouteHopEntity] = []
 
-				let traceRoute = coreDataTools.getTraceRoute(id: Int64(info.packet.decoded.requestID), context: context)
+				let traceRoute = coreDataTools.getTraceRoute(
+					id: Int64(info.packet.decoded.requestID),
+					context: context
+				)
 				traceRoute?.response = true
 				traceRoute?.route = routingMessage.route
 
@@ -525,11 +528,28 @@ extension BLEManager: CBPeripheralDelegate {
 					routeString += "\(hopNode?.user?.longName ?? (node == 4294967295 ? "Repeater" : String(hopNode?.num.toHex() ?? "unknown".localized))) \(hopNode?.viaMqtt ?? false ? "MQTT" : "") --> "
 				}
 				routeString += traceRoute?.node?.user?.longName ?? "unknown".localized
+
 				traceRoute?.routeText = routeString
 				traceRoute?.hops = NSOrderedSet(array: hopNodes)
 
 				debounce.emit { [weak self] in
 					await self?.saveData()
+				}
+
+				devicesDelegate?.onTraceRouteReceived(for: traceRoute?.node)
+
+				if let user = traceRoute?.node?.user {
+					let manager = LocalNotificationManager()
+					manager.notifications = [
+						Notification(
+							title: "Trace Route",
+							subtitle: "\(user.longName ?? "Node without a name")",
+							content: "Trace route was received",
+							target: "nodes",
+							path: "meshtastic:///nodes?nodenum=\(user.num)"
+						)
+					]
+					manager.schedule()
 				}
 
 				AnalyticEvents.trackPeripheralEvent(

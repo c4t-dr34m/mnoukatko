@@ -151,7 +151,7 @@ extension CoreDataTools {
 							manager.notifications = [
 								Notification(
 									title: "New Node",
-									subtitle: "\(newUser.longName ?? "unknown".localized)",
+									subtitle: "\(newUser.longName ?? "Node without a name")",
 									content: "New Node has been discovered",
 									target: "nodes",
 									path: "meshtastic:///nodes?nodenum=\(newUser.num)"

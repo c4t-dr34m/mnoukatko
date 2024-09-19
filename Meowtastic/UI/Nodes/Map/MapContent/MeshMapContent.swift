@@ -58,7 +58,7 @@ struct MeshMapContent: MapContent {
 				if node.hopsAway == 0 {
 					HStack(spacing: 0) {
 						Spacer()
-						Image(systemName: "wifi.circle.fill")
+						Image(systemName: "eye.circle.fill")
 							.font(.system(size: 20))
 							.background(color)
 							.foregroundColor(color.isLight() ? .black.opacity(0.5) : .white.opacity(0.5))

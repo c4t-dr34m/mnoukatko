@@ -73,4 +73,8 @@ final class BLEWatcher: DevicesDelegate {
 
 		tasksDone.append(.wantConfig)
 	}
+
+	func onTraceRouteReceived(for node: NodeInfoEntity?) {
+		// no-op
+	}
 }
