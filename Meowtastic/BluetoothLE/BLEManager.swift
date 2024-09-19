@@ -111,8 +111,6 @@ final class BLEManager: NSObject, ObservableObject {
 		)
 
 		onDevicesChange() // Check devices we got before scanning started
-
-		Logger.services.info("Peripheral scanning started. Status: \(self.centralManager.isScanning)")
 	}
 
 	func stopScanning() {
@@ -121,8 +119,6 @@ final class BLEManager: NSObject, ObservableObject {
 		}
 
 		centralManager.stopScan()
-
-		Logger.services.info("🛑 [BLE] Stopped Scanning")
 	}
 
 	func onDevicesChange() {
@@ -130,6 +126,7 @@ final class BLEManager: NSObject, ObservableObject {
 
 		if
 			automaticallyReconnect,
+			getConnectedDevice() == nil,
 			let preferred = UserDefaults.standard.object(forKey: "preferredPeripheralId") as? String,
 			let preferredDevice = devices.first(where: { device in
 				device.peripheral.identifier.uuidString == preferred
@@ -140,20 +137,25 @@ final class BLEManager: NSObject, ObservableObject {
 	}
 
 	func connectTo(peripheral: CBPeripheral) {
-		if peripheral.identifier != currentDevice.device?.peripheral.identifier {
-			Logger.services.debug("We want to connect to different device. Disconnecting...")
-
-			disconnectDevice()
+		if peripheral.state == .connecting {
+			return
 		}
 
-		guard peripheral.state != .connected else {
-			Logger.services.debug(
-				"Device \(peripheral.name ?? peripheral.identifier.uuidString) is already connected"
-			)
+		if peripheral.state == .connected {
+			if peripheral.identifier == currentDevice.device?.peripheral.identifier {
+				Logger.services.debug(
+					"Device \(peripheral.name ?? peripheral.identifier.uuidString) is already connected"
+				)
 
-			devicesDelegate?.onDeviceConnected(name: peripheral.name)
+				devicesDelegate?.onDeviceConnected(name: peripheral.name)
 
-			return
+				return
+			}
+			else {
+				Logger.services.debug("We want to connect to different device. Disconnecting...")
+
+				disconnectDevice()
+			}
 		}
 
 		isConnecting = true
