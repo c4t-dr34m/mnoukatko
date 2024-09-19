@@ -181,19 +181,9 @@ struct Meowtastic: App {
 			// TODO: record some key changes in ble manager
 			sleep(1)
 		}
-		bleManager.disconnectDevice()
+
+		watcher.stop(runtime: bgTaskStarted.distance(to: .now))
 
 		scheduleAppRefresh()
-
-		Logger.app.warning(
-			"Background task finished in \(Int(bgTaskStarted.distance(to: .now)))s; tasks done: \(watcher.tasksDone)"
-		)
-
-		Analytics.logEvent(
-			AnalyticEvents.backgroundFinished.id,
-			parameters: [
-				"tasks_done": watcher.allTasksDone()
-			]
-		)
 	}
 }

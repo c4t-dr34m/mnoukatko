@@ -24,6 +24,22 @@ final class BLEWatcher: DevicesDelegate {
 		bleManager.startScanning()
 	}
 
+	func stop(runtime: TimeInterval) {
+		bleManager.disconnectDevice()
+		bleManager.stopScanning()
+
+		Logger.app.warning(
+			"Background task finished in \(Int(runtime))s; tasks done: \(self.tasksDone)"
+		)
+
+		Analytics.logEvent(
+			AnalyticEvents.backgroundFinished.id,
+			parameters: [
+				"tasks_done": allTasksDone()
+			]
+		)
+	}
+
 	func allTasksDone() -> Bool {
 		tasksDone.count == Tasks.allCases.count
 	}
