@@ -427,9 +427,12 @@ struct Connect: View {
 	}
 
 	private func loadPeripherals() async {
+		// swiftlint:disable:next force_unwrapping
+		let visibleDuration = Calendar.current.date(byAdding: .second, value: -5, to: .now)!
 		let devices = bleManager.devices.filter { device in
 			device.peripheral.state != CBPeripheralState.connected
 			&& device.peripheral.state != CBPeripheralState.connecting
+			&& device.lastUpdate >= visibleDuration
 		}
 
 		visibleDevices = devices.sorted(by: {

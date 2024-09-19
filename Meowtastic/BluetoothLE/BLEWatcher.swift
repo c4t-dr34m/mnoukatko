@@ -22,6 +22,15 @@ final class BLEWatcher: DevicesDelegate {
 
 		bleManager.devicesDelegate = self
 		bleManager.startScanning()
+
+		// let's try to force connection without waiting for discovery
+		if
+			let preferredDevice = bleManager.devices.first(where: { device in
+				device.peripheral.identifier.uuidString == UserDefaults.preferredPeripheralId
+			})
+		{
+			bleManager.connectTo(peripheral: preferredDevice.peripheral)
+		}
 	}
 
 	func stop(runtime: TimeInterval) {

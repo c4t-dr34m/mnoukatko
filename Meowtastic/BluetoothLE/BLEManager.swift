@@ -129,7 +129,6 @@ final class BLEManager: NSObject, ObservableObject {
 		Logger.services.debug("Device scanning stopped")
 
 		centralManager.stopScan()
-		devices.removeAll()
 	}
 
 	func onDevicesChange() {
@@ -169,14 +168,14 @@ final class BLEManager: NSObject, ObservableObject {
 			}
 		}
 
+		Logger.services.debug(
+			"Attempting to connect to \(peripheral.name ?? peripheral.identifier.uuidString) [central:\(self.centralManager.state.name)]"
+		)
+
 		isConnecting = true
 		lastConnectionError = ""
 		automaticallyReconnect = true
 		timeoutTimer?.invalidate()
-
-		Logger.services.debug(
-			"Attempting to connect to \(peripheral.name ?? peripheral.identifier.uuidString) [central:\(self.centralManager.state.name)]"
-		)
 
 		centralManager.connect(peripheral)
 

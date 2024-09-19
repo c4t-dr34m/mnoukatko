@@ -34,6 +34,7 @@ extension BLEManager: CBCentralManagerDelegate {
 
 		let name = advertisementData[CBAdvertisementDataLocalNameKey] as? String
 		let device = Device(
+			peripheral: peripheral,
 			id: peripheral.identifier.uuidString,
 			num: 0,
 			name: name ?? "Unknown",
@@ -41,8 +42,7 @@ extension BLEManager: CBCentralManagerDelegate {
 			longName: name ?? "Unknown",
 			firmwareVersion: "Unknown",
 			rssi: RSSI.intValue,
-			lastUpdate: Date.now,
-			peripheral: peripheral
+			lastUpdate: Date.now
 		)
 		let index = devices.map { device in
 			device.peripheral
@@ -55,13 +55,6 @@ extension BLEManager: CBCentralManagerDelegate {
 		else {
 			devices.append(device)
 		}
-
-		// swiftlint:disable:next force_unwrapping
-		let visibleDuration = Calendar.current.date(byAdding: .second, value: -5, to: .now)!
-
-		devices.removeAll(where: {
-			$0.lastUpdate < visibleDuration
-		})
 
 		onDevicesChange()
 	}
