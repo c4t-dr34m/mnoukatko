@@ -5,9 +5,14 @@ extension BLEManager: CBCentralManagerDelegate {
 	func centralManagerDidUpdateState(
 		_ central: CBCentralManager
 	) {
+		Logger.services.info("Central manager changed state to: \(central.state.name)")
+
 		if central.state == .poweredOn {
 			isSwitchedOn = true
-			startScanning()
+
+			if !central.isScanning {
+				startScanning()
+			}
 		}
 		else {
 			isSwitchedOn = false
@@ -20,7 +25,7 @@ extension BLEManager: CBCentralManagerDelegate {
 		advertisementData: [String: Any],
 		rssi RSSI: NSNumber
 	) {
-		Logger.services.info("BLE peripheral discovered: \(peripheral.name ?? peripheral.identifier.uuidString)")
+		Logger.services.info("New peripheral discovered: \(peripheral.name ?? peripheral.identifier.uuidString)")
 
 		let name = advertisementData[CBAdvertisementDataLocalNameKey] as? String
 		let device = Device(
@@ -73,7 +78,7 @@ extension BLEManager: CBCentralManagerDelegate {
 				device.peripheral.identifier == peripheral.identifier
 			})
 		else {
-			lastConnectionError = "🚫 [BLE] Bluetooth connection error, please try again."
+			lastConnectionError = "Bluetooth connection error, please try again."
 
 			disconnectDevice()
 			return
@@ -89,7 +94,7 @@ extension BLEManager: CBCentralManagerDelegate {
 		devicesDelegate?.onDeviceConnected(name: peripheral.name)
 
 		Logger.services.info(
-			"✅ [BLE] Connected: \(peripheral.name ?? peripheral.identifier.uuidString, privacy: .public)"
+			"Connected to \(peripheral.name ?? peripheral.identifier.uuidString)"
 		)
 	}
 
@@ -101,7 +106,7 @@ extension BLEManager: CBCentralManagerDelegate {
 		cancelPeripheralConnection()
 
 		Logger.services.error(
-			"🚫 [BLE] Failed to Connect: \(peripheral.name ?? peripheral.identifier.uuidString, privacy: .public)"
+			"Connection to \(peripheral.name ?? peripheral.identifier.uuidString) failed: \(error.debugDescription)"
 		)
 	}
 
@@ -111,6 +116,7 @@ extension BLEManager: CBCentralManagerDelegate {
 		error: Error?
 	) {
 		currentDevice.clear()
+
 		isConnecting = false
 		isConnected = false
 		isSubscribed = false
@@ -161,7 +167,5 @@ extension BLEManager: CBCentralManagerDelegate {
 				lastConnectionError = error.localizedDescription
 			}
 		}
-
-		startScanning()
 	}
 }

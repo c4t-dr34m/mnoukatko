@@ -8,6 +8,7 @@ extension CBManagerState {
 
 		case .resetting:
 			return "Resetting"
+
 		case .unsupported:
 			return "Unsupported"
 

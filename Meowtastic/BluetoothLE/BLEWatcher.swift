@@ -39,8 +39,6 @@ final class BLEWatcher: DevicesDelegate {
 			return
 		}
 
-		bleManager.stopScanning()
-
 		if device.peripheral.state == .connected  {
 			onDeviceConnected(name: device.peripheral.name)
 		}

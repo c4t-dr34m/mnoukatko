@@ -19,7 +19,19 @@ public final class CurrentDevice: ObservableObject, Equatable {
 		self.device = device
 	}
 
+	@discardableResult
+	public func update(with newDevice: Device) -> Bool {
+		guard let device, device.peripheral.state == .connected else {
+			return false
+		}
+
+		self.device = newDevice
+
+		return true
+	}
+
 	public func clear() {
+		self.device?.peripheral.delegate = nil
 		self.device = nil
 	}
 

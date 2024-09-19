@@ -23,10 +23,13 @@ extension BLEManager {
 		let uuid = peripheral.identifier.uuidString
 
 		// connected peripheral
-		if var device = getConnectedDevice(), uuid == device.id {
+		if
+			var device = getConnectedDevice(),
+			device.id == uuid
+		{
 			device.rssi = RSSI.intValue
 
-			currentDevice.set(device: device)
+			currentDevice.update(with: device)
 		}
 
 		// some other peripheral

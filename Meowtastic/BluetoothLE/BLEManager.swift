@@ -98,6 +98,10 @@ final class BLEManager: NSObject, ObservableObject {
 	}
 
 	func startScanning() {
+		guard !centralManager.isScanning else {
+			return
+		}
+
 		guard centralManager.state == .poweredOn else {
 			Logger.services.info(
 				"Peripheral scanning denied. Central state: \(self.centralManager.state.name)"
@@ -110,7 +114,11 @@ final class BLEManager: NSObject, ObservableObject {
 			options: [CBCentralManagerScanOptionAllowDuplicatesKey: false]
 		)
 
-		onDevicesChange() // Check devices we got before scanning started
+		Logger.services.debug("Device scanning started")
+
+		if !devices.isEmpty {
+			onDevicesChange() // Check devices we got before scanning started
+		}
 	}
 
 	func stopScanning() {
@@ -118,7 +126,10 @@ final class BLEManager: NSObject, ObservableObject {
 			return
 		}
 
+		Logger.services.debug("Device scanning stopped")
+
 		centralManager.stopScan()
+		devices.removeAll()
 	}
 
 	func onDevicesChange() {
@@ -163,7 +174,9 @@ final class BLEManager: NSObject, ObservableObject {
 		automaticallyReconnect = true
 		timeoutTimer?.invalidate()
 
-		Logger.services.debug("Attempting to connect to \(peripheral.name ?? peripheral.identifier.uuidString)")
+		Logger.services.debug(
+			"Attempting to connect to \(peripheral.name ?? peripheral.identifier.uuidString) [central:\(self.centralManager.state.name)]"
+		)
 
 		centralManager.connect(peripheral)
 
@@ -186,14 +199,15 @@ final class BLEManager: NSObject, ObservableObject {
 		}
 
 		currentDevice.clear()
-		characteristicFromRadio = nil
+
 		isConnecting = false
 		isConnected = false
 		isSubscribed = false
 		isInvalidFwVersion = false
+		characteristicFromRadio = nil
 		connectedVersion = "0.0.0"
-		timeoutTimer?.invalidate()
 		automaticallyReconnect = false
+		timeoutTimer?.invalidate()
 
 		Analytics.logEvent(AnalyticEvents.bleCancelConnecting.id, parameters: nil)
 	}
@@ -203,17 +217,19 @@ final class BLEManager: NSObject, ObservableObject {
 			return
 		}
 
-		automaticallyReconnect = reconnect
-		centralManager.cancelPeripheralConnection(device.peripheral)
-		characteristicFromRadio = nil
-		isConnected = false
-		isSubscribed = false
-		isInvalidFwVersion = false
-		connectedVersion = "0.0.0"
-
 		if let mqttClientProxy = mqttManager?.client, mqttConnected {
 			mqttClientProxy.disconnect()
 		}
+
+		centralManager.cancelPeripheralConnection(device.peripheral)
+		currentDevice.clear()
+
+		isConnected = false
+		isSubscribed = false
+		isInvalidFwVersion = false
+		characteristicFromRadio = nil
+		connectedVersion = "0.0.0"
+		automaticallyReconnect = reconnect
 
 		Analytics.logEvent(AnalyticEvents.bleDisconnect.id, parameters: nil)
 	}
@@ -510,7 +526,9 @@ final class BLEManager: NSObject, ObservableObject {
 	}
 
 	@objc
-	private func timeoutTimerFired(timer: Timer) {
+	private func timeoutTimerFired() {
+		Logger.services.warning("Bluetooth connection timed out; attempt: \(self.timeoutCount)")
+
 		timeoutCount += 1
 		lastConnectionError = ""
 
@@ -527,8 +545,6 @@ final class BLEManager: NSObject, ObservableObject {
 			lastConnectionError = "Bluetooth connection timed out"
 
 			Analytics.logEvent(AnalyticEvents.bleTimeout.id, parameters: nil)
-
-			startScanning()
 		}
 	}
 }

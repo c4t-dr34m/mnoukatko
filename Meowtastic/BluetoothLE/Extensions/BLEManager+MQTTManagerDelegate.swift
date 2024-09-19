@@ -19,22 +19,22 @@ extension BLEManager: MQTTManagerDelegate {
 
 		client.subscribe(topic)
 
+		Logger.mqtt.info("Connected")
+
 		Analytics.logEvent(
 			AnalyticEvents.mqttConnect.id,
 			parameters: [
 				"topic": topic
 			]
 		)
-
-		Logger.mqtt.info("MQTT connected")
 	}
 
 	func onMqttDisconnected() {
 		mqttConnected = false
 
-		Analytics.logEvent(AnalyticEvents.mqttDisconnect.id, parameters: nil)
+		Logger.mqtt.info("Disconnected")
 
-		Logger.mqtt.info("MQTT disconnected")
+		Analytics.logEvent(AnalyticEvents.mqttDisconnect.id, parameters: nil)
 	}
 
 	func onMqttMessageReceived(message: CocoaMQTTMessage) {
@@ -73,6 +73,8 @@ extension BLEManager: MQTTManagerDelegate {
 	func onMqttError(message: String) {
 		mqttConnected = false
 		mqttError = message
+
+		Logger.mqtt.info("Error occured: \(message)")
 
 		Analytics.logEvent(
 			AnalyticEvents.mqttError.id,

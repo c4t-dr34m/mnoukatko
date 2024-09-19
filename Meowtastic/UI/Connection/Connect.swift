@@ -66,8 +66,6 @@ struct Connect: View {
 			}
 		}
 		.onAppear {
-			bleManager.startScanning()
-
 			Analytics.logEvent(
 				AnalyticEvents.connect.id,
 				parameters: [
@@ -75,9 +73,6 @@ struct Connect: View {
 					"visible_devices": visibleDevices.count
 				]
 			)
-		}
-		.onDisappear {
-			bleManager.stopScanning()
 		}
 		.onChange(of: bleManager.devices, initial: true) {
 			debounce.emit {

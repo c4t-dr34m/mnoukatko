@@ -167,7 +167,7 @@ extension BLEManager: CBPeripheralDelegate {
 						device.name = myInfo.bleName ?? "unknown".localized
 						device.longName = myInfo.bleName ?? "unknown".localized
 
-						currentDevice.set(device: device)
+						currentDevice.update(with: device)
 					}
 
 					tryClearExistingChannels()
@@ -187,7 +187,7 @@ extension BLEManager: CBPeripheralDelegate {
 						device.shortName = user.shortName ?? "?"
 						device.longName = user.longName ?? "unknown".localized
 
-						currentDevice.set(device: device)
+						currentDevice.update(with: device)
 					}
 				}
 
@@ -228,7 +228,7 @@ extension BLEManager: CBPeripheralDelegate {
 				if info.metadata.firmwareVersion.count > 0, !isInvalidFwVersion {
 					device.firmwareVersion = info.metadata.firmwareVersion
 
-					currentDevice.set(device: device)
+					currentDevice.update(with: device)
 
 					deviceMetadataPacket(
 						metadata: info.metadata,

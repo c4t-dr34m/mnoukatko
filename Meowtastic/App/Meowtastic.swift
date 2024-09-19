@@ -7,7 +7,7 @@ import SwiftUI
 
 @main
 struct Meowtastic: App {
-	private static let bgTaskLifespan: TimeInterval = 2 * 60 // 2 minutes
+	private static let bgTaskLifespan: TimeInterval = 5 * 60
 
 	@UIApplicationDelegateAdaptor(MeowtasticDelegate.self)
 	var appDelegate
@@ -114,7 +114,13 @@ struct Meowtastic: App {
 			if scenePhase == .background {
 				try? Persistence.shared.container.viewContext.save()
 
+				bleManager.stopScanning()
+				bleManager.disconnectDevice()
+
 				scheduleAppRefresh()
+			}
+			else {
+				bleManager.startScanning()
 			}
 		}
 		.backgroundTask(.appRefresh(AppConstants.backgroundTaskID)) {
@@ -164,8 +170,6 @@ struct Meowtastic: App {
 	}
 
 	private func refreshApp() async {
-		scheduleAppRefresh()
-
 		let bgTaskStarted = Date.now
 		let watcher = BLEWatcher(bleManager: bleManager)
 		watcher.start()
@@ -177,9 +181,12 @@ struct Meowtastic: App {
 			// TODO: record some key changes in ble manager
 			sleep(1)
 		}
+		bleManager.disconnectDevice()
+
+		scheduleAppRefresh()
 
 		Logger.app.warning(
-			"Background task finished in \(bgTaskStarted.distance(to: .now))s. Tasks done: \(watcher.tasksDone)"
+			"Background task finished in \(Int(bgTaskStarted.distance(to: .now)))s; tasks done: \(watcher.tasksDone)"
 		)
 
 		Analytics.logEvent(
