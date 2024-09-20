@@ -7,6 +7,8 @@ struct ConnectionInfo: View {
 
 	@EnvironmentObject
 	private var bleManager: BLEManager
+	@State
+	private var rssiTimer: Timer?
 
 	@ViewBuilder
 	var body: some View {
@@ -36,9 +38,12 @@ struct ConnectionInfo: View {
 						.background(.green.opacity(0.3))
 						.clipShape(Circle())
 						.onAppear {
-							Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+							rssiTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
 								connectedDevice.peripheral.readRSSI()
 							}
+						}
+						.onDisappear {
+							rssiTimer?.invalidate()
 						}
 					}
 					else {

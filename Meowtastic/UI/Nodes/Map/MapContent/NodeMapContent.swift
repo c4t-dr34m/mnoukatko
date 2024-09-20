@@ -17,7 +17,6 @@ struct NodeMapContent: MapContent {
 	var isMeshMap = false
 
 	private let node: NodeInfoEntity?
-	private let historyColor = Color.accentColor
 
 	@Environment(\.colorScheme)
 	private var colorScheme: ColorScheme
@@ -89,7 +88,7 @@ struct NodeMapContent: MapContent {
 					.font(.system(size: 32))
 					.foregroundColor(nodeColor)
 			} label: {
-				
+				// nothing
 			}
 			.tag(latest.time)
 			.annotationTitles(.automatic)
@@ -105,10 +104,10 @@ struct NodeMapContent: MapContent {
 		let positionsFiltered = positions.filter { position in
 			if
 				let time = position.time,
-				time > mapHistory,
+				time >= mapHistory,
 				!position.latest
 			{
-				 return true
+				return true
 			}
 			else {
 				return false
@@ -118,38 +117,22 @@ struct NodeMapContent: MapContent {
 			position.nodeCoordinate
 		}
 
-		let gradientBackground = LinearGradient(
-			colors: [
-				nodeColor.opacity(0.30),
-				nodeColor.opacity(0.20)
-			],
-			startPoint: .leading,
-			endPoint: .trailing
-		)
-		let strokeBackground = StrokeStyle(
-			lineWidth: 7,
-			lineCap: .round,
-			lineJoin: .round
-		)
-
-		let gradientMain = LinearGradient(
-			colors: [
-				historyColor.opacity(1.0),
-				historyColor.opacity(0.5)
-			],
-			startPoint: .leading,
-			endPoint: .trailing
-		)
 		let strokeMain = StrokeStyle(
-			lineWidth: 3,
+			lineWidth: 2,
+			lineCap: .round,
+			lineJoin: .round
+		)
+
+		let strokeOutline = StrokeStyle(
+			lineWidth: 5,
 			lineCap: .round,
 			lineJoin: .round
 		)
 
 		MapPolyline(coordinates: coordinates)
-			.stroke(gradientBackground, style: strokeBackground)
+			.stroke(Color.white.opacity(0.5), style: strokeOutline)
 		MapPolyline(coordinates: coordinates)
-			.stroke(gradientMain, style: strokeMain)
+			.stroke(Color.accentColor, style: strokeMain)
 	}
 
 	init(node: NodeInfoEntity?) {

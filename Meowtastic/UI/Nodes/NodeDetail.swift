@@ -81,15 +81,13 @@ struct NodeDetail: View {
 			}
 		}
 	}
-	private var nodeEnvironmentCount: Int {
-		nodeEnvironmentHistory?.count ?? 0
+	private var nodePressureHistory: [TelemetryEntity]? {
+		nodeEnvironmentHistory?.filter { measurement in
+			measurement.barometricPressure > 0
+		}
 	}
 	private var nodeEnvironment: TelemetryEntity? {
 		nodeEnvironmentHistory?.last
-	}
-	private var nodeEnvironmentStale: Bool {
-		nodeEnvironment != nil
-		&& nodeEnvironment?.time?.isStale(threshold: AppConstants.nodeTelemetryThreshold) ?? true
 	}
 
 	var body: some View {
@@ -389,19 +387,19 @@ struct NodeDetail: View {
 				if temp < 10 {
 					Image(systemName: "thermometer.low")
 						.font(detailInfoFont)
-						.foregroundColor(nodeEnvironmentCount > 1 ? .blue : .gray)
+						.foregroundColor(nodeEnvironmentHistory?.count ?? 0 > 1 ? .blue : .gray)
 						.frame(width: detailIconSize)
 				}
 				else if temp < 25 {
 					Image(systemName: "thermometer.medium")
 						.font(detailInfoFont)
-						.foregroundColor(nodeEnvironmentCount > 1 ? .blue : .gray)
+						.foregroundColor(nodeEnvironmentHistory?.count ?? 0 > 1 ? .blue : .gray)
 						.frame(width: detailIconSize)
 				}
 				else {
 					Image(systemName: "thermometer.high")
 						.font(detailInfoFont)
-						.foregroundColor(nodeEnvironmentCount > 1 ? .blue : .gray)
+						.foregroundColor(nodeEnvironmentHistory?.count ?? 0 > 1 ? .blue : .gray)
 						.frame(width: detailIconSize)
 				}
 
@@ -415,7 +413,7 @@ struct NodeDetail: View {
 
 					Image(systemName: "barometer")
 						.font(detailInfoFont)
-						.foregroundColor(nodeEnvironmentCount > 1 ? .red : .gray)
+						.foregroundColor(nodePressureHistory?.count ?? 0 > 1 ? .red : .gray)
 						.frame(width: detailIconSize)
 
 					Text(pressureFormatted)
@@ -522,12 +520,7 @@ struct NodeDetail: View {
 
 	@ViewBuilder
 	private var pressureHistory: some View {
-		if
-			let nodeEnvironmentHistory = nodeEnvironmentHistory?.filter({ measurement in
-				measurement.barometricPressure > 0
-			}),
-			nodeEnvironmentHistory.count > 1
-		{
+		if let nodePressureHistory, nodePressureHistory.count > 1 {
 			let pressMinMax = findPresureMinMax()
 			let pressOvershoot = (pressMinMax.max - pressMinMax.min) / 3
 			let chartMin = pressMinMax.min - pressOvershoot
@@ -538,8 +531,8 @@ struct NodeDetail: View {
 				Int(pressMinMax.max.rounded())
 			]
 
-			Chart(nodeEnvironmentHistory, id: \.time) { measurement in
-				if let time = measurement.time, measurement.barometricPressure > 0 {
+			Chart(nodePressureHistory, id: \.time) { measurement in
+				if let time = measurement.time {
 					LineMark(
 						x: .value("Date", time),
 						y: .value("Pressure", measurement.barometricPressure)

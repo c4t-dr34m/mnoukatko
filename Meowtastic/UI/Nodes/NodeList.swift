@@ -560,7 +560,7 @@ struct NodeList: View {
 	}
 }
 
-extension FetchedResults<NodeInfoEntity>: Equatable {
+extension FetchedResults<NodeInfoEntity>: @retroactive Equatable {
 	public static func == (
 		lhs: FetchedResults<NodeInfoEntity>,
 		rhs: FetchedResults<NodeInfoEntity>

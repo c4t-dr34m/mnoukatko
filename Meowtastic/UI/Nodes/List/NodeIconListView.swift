@@ -213,40 +213,30 @@ struct NodeIconListView: View {
 					.frame(width: detailIconSize)
 			}
 			else {
-				if
-					let time = nodeEnvironment.time,
-					time >= Date.now.advanced(by: -24 * 60 * 60)
-				{
-					let temp = nodeEnvironment.temperature
-					let tempFormatted = String(format: "%.0f", temp) + "°C"
+				let temp = nodeEnvironment.temperature
+				let tempFormatted = String(format: "%.0f", temp) + "°C"
 
-					if temp < 10 {
-						Image(systemName: "thermometer.low")
-							.font(detailInfoIconFont)
-							.foregroundColor(.gray)
-					}
-					else if temp < 25 {
-						Image(systemName: "thermometer.medium")
-							.font(detailInfoIconFont)
-							.foregroundColor(.gray)
-					}
-					else {
-						Image(systemName: "thermometer.high")
-							.font(detailInfoIconFont)
-							.foregroundColor(.gray)
-					}
-
-					Text(tempFormatted)
-						.font(detailInfoTextFont)
-						.lineLimit(1)
-						.minimumScaleFactor(0.7)
-						.foregroundColor(.gray)
-				}
-				else {
-					Image(systemName: "thermometer.medium.slash")
+				if temp < 10 {
+					Image(systemName: "thermometer.low")
 						.font(detailInfoIconFont)
 						.foregroundColor(.gray)
 				}
+				else if temp < 25 {
+					Image(systemName: "thermometer.medium")
+						.font(detailInfoIconFont)
+						.foregroundColor(.gray)
+				}
+				else {
+					Image(systemName: "thermometer.high")
+						.font(detailInfoIconFont)
+						.foregroundColor(.gray)
+				}
+
+				Text(tempFormatted)
+					.font(detailInfoTextFont)
+					.lineLimit(1)
+					.minimumScaleFactor(0.7)
+					.foregroundColor(.gray)
 			}
 		}
 	}

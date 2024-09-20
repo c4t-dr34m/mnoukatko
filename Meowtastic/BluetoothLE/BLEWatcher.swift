@@ -22,6 +22,31 @@ final class BLEWatcher: DevicesDelegate {
 
 		bleManager.devicesDelegate = self
 		bleManager.startScanning()
+
+		// let's try to force connection without waiting for discovery
+		if
+			let preferredDevice = bleManager.devices.first(where: { device in
+				device.peripheral.identifier.uuidString == UserDefaults.preferredPeripheralId
+			})
+		{
+			bleManager.connectTo(peripheral: preferredDevice.peripheral)
+		}
+	}
+
+	func stop(runtime: TimeInterval) {
+		bleManager.disconnectDevice()
+		bleManager.stopScanning()
+
+		Logger.app.warning(
+			"Background task finished in \(Int(runtime))s; tasks done: \(self.tasksDone)"
+		)
+
+		Analytics.logEvent(
+			AnalyticEvents.backgroundFinished.id,
+			parameters: [
+				"tasks_done": allTasksDone()
+			]
+		)
 	}
 
 	func allTasksDone() -> Bool {
@@ -38,8 +63,6 @@ final class BLEWatcher: DevicesDelegate {
 		guard let device else {
 			return
 		}
-
-		bleManager.stopScanning()
 
 		if device.peripheral.state == .connected  {
 			onDeviceConnected(name: device.peripheral.name)
@@ -72,5 +95,9 @@ final class BLEWatcher: DevicesDelegate {
 		Analytics.logEvent(AnalyticEvents.backgroundWantConfig.id, parameters: nil)
 
 		tasksDone.append(.wantConfig)
+	}
+
+	func onTraceRouteReceived(for node: NodeInfoEntity?) {
+		// no-op
 	}
 }

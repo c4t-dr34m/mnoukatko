@@ -23,10 +23,13 @@ extension BLEManager {
 		let uuid = peripheral.identifier.uuidString
 
 		// connected peripheral
-		if var device = getConnectedDevice(), uuid == device.id {
+		if
+			var device = getConnectedDevice(),
+			device.id == uuid
+		{
 			device.rssi = RSSI.intValue
 
-			currentDevice.set(device: device)
+			currentDevice.update(with: device)
 		}
 
 		// some other peripheral
@@ -40,6 +43,7 @@ extension BLEManager {
 
 		let old = devices[updatedPeripheralIndex]
 		let new = Device(
+			peripheral: old.peripheral,
 			id: old.id,
 			num: old.num,
 			name: old.name,
@@ -47,8 +51,7 @@ extension BLEManager {
 			longName: old.longName,
 			firmwareVersion: old.firmwareVersion,
 			rssi: RSSI.intValue,
-			lastUpdate: old.lastUpdate,
-			peripheral: old.peripheral
+			lastUpdate: old.lastUpdate
 		)
 		devices[updatedPeripheralIndex] = new
 	}

@@ -10,11 +10,6 @@ extension BLEManager: CBPeripheralDelegate {
 		didDiscoverServices error: Error?
 	) {
 		guard let services = peripheral.services else {
-			AnalyticEvents.trackPeripheralEvent(
-				for: .didDiscoverServices,
-				status: .failureProcess
-			)
-
 			return
 		}
 
@@ -28,19 +23,6 @@ extension BLEManager: CBPeripheralDelegate {
 					BluetoothUUID.logRadio
 				],
 				for: service
-			)
-		}
-
-		if let error {
-			AnalyticEvents.trackPeripheralEvent(
-				for: .didDiscoverServices,
-				status: .error(error.localizedDescription)
-			)
-		}
-		else {
-			AnalyticEvents.trackPeripheralEvent(
-				for: .didDiscoverServices,
-				status: .success
 			)
 		}
 	}
@@ -58,20 +40,10 @@ extension BLEManager: CBPeripheralDelegate {
 
 			disconnectDevice()
 
-			AnalyticEvents.trackPeripheralEvent(
-				for: .didDiscoverCharacteristics,
-				status: .error(error.localizedDescription)
-			)
-
 			return
 		}
 
 		guard let characteristics = service.characteristics else {
-			AnalyticEvents.trackPeripheralEvent(
-				for: .didDiscoverCharacteristics,
-				status: .failureProcess
-			)
-
 			return
 		}
 
@@ -109,11 +81,6 @@ extension BLEManager: CBPeripheralDelegate {
 			let nodeConfig = NodeConfig(bleManager: self, context: context)
 			lastConfigNonce = nodeConfig.sendWantConfig()
 		}
-
-		AnalyticEvents.trackPeripheralEvent(
-			for: .didDiscoverCharacteristics,
-			status: .success
-		)
 	}
 
 	// swiftlint:disable:next cyclomatic_complexity
@@ -136,11 +103,6 @@ extension BLEManager: CBPeripheralDelegate {
 				disconnectDevice(reconnect: false)
 			}
 
-			AnalyticEvents.trackPeripheralEvent(
-				for: .didUpdate,
-				status: .error(error.localizedDescription)
-			)
-
 			return
 		}
 
@@ -157,12 +119,6 @@ extension BLEManager: CBPeripheralDelegate {
 				"\(logRecord.level.rawValue) | [\(logRecord.source)] \(logRecord.message)"
 			)
 
-			AnalyticEvents.trackPeripheralEvent(
-				for: .didUpdate,
-				status: .success,
-				characteristic: .logRadio
-			)
-
 		case BluetoothUUID.logRadioLegacy:
 			guard
 				let value = characteristic.value,
@@ -172,12 +128,6 @@ extension BLEManager: CBPeripheralDelegate {
 			}
 
 			handleRadioLog(log)
-
-			AnalyticEvents.trackPeripheralEvent(
-				for: .didUpdate,
-				status: .success,
-				characteristic: .logRadioLegacy
-			)
 
 		case BluetoothUUID.fromRadio:
 			guard
@@ -217,7 +167,7 @@ extension BLEManager: CBPeripheralDelegate {
 						device.name = myInfo.bleName ?? "unknown".localized
 						device.longName = myInfo.bleName ?? "unknown".localized
 
-						currentDevice.set(device: device)
+						currentDevice.update(with: device)
 					}
 
 					tryClearExistingChannels()
@@ -237,7 +187,7 @@ extension BLEManager: CBPeripheralDelegate {
 						device.shortName = user.shortName ?? "?"
 						device.longName = user.longName ?? "unknown".localized
 
-						currentDevice.set(device: device)
+						currentDevice.update(with: device)
 					}
 				}
 
@@ -278,7 +228,7 @@ extension BLEManager: CBPeripheralDelegate {
 				if info.metadata.firmwareVersion.count > 0, !isInvalidFwVersion {
 					device.firmwareVersion = info.metadata.firmwareVersion
 
-					currentDevice.set(device: device)
+					currentDevice.update(with: device)
 
 					deviceMetadataPacket(
 						metadata: info.metadata,
@@ -307,13 +257,6 @@ extension BLEManager: CBPeripheralDelegate {
 					}
 				}
 
-				AnalyticEvents.trackPeripheralEvent(
-					for: .didUpdate,
-					status: .success,
-					characteristic: .fromRadio,
-					app: .unknown
-				)
-
 			case .textMessageApp, .detectionSensorApp:
 				textMessageAppPacket(
 					packet: info.packet,
@@ -323,32 +266,11 @@ extension BLEManager: CBPeripheralDelegate {
 					appState: appState
 				)
 
-				AnalyticEvents.trackPeripheralEvent(
-					for: .didUpdate,
-					status: .success,
-					characteristic: .fromRadio,
-					app: .message
-				)
-
 			case .positionApp:
 				coreDataTools.upsertPositionPacket(packet: info.packet, context: context)
 
-				AnalyticEvents.trackPeripheralEvent(
-					for: .didUpdate,
-					status: .success,
-					characteristic: .fromRadio,
-					app: .position
-				)
-
 			case .waypointApp:
 				waypointPacket(packet: info.packet, context: context)
-
-				AnalyticEvents.trackPeripheralEvent(
-					for: .didUpdate,
-					status: .success,
-					characteristic: .fromRadio,
-					app: .waypoint
-				)
 
 			case .nodeinfoApp:
 				guard !isInvalidFwVersion else {
@@ -356,13 +278,6 @@ extension BLEManager: CBPeripheralDelegate {
 				}
 
 				coreDataTools.upsertNodeInfoPacket(packet: info.packet, context: context)
-
-				AnalyticEvents.trackPeripheralEvent(
-					for: .didUpdate,
-					status: .success,
-					characteristic: .fromRadio,
-					app: .nodeInfo
-				)
 
 			case .routingApp:
 				guard !isInvalidFwVersion else {
@@ -375,22 +290,8 @@ extension BLEManager: CBPeripheralDelegate {
 					context: context
 				)
 
-				AnalyticEvents.trackPeripheralEvent(
-					for: .didUpdate,
-					status: .success,
-					characteristic: .fromRadio,
-					app: .routing
-				)
-
 			case .adminApp:
 				adminAppPacket(packet: info.packet, context: context)
-
-				AnalyticEvents.trackPeripheralEvent(
-					for: .didUpdate,
-					status: .success,
-					characteristic: .fromRadio,
-					app: .admin
-				)
 
 			case .replyApp:
 				textMessageAppPacket(
@@ -399,13 +300,6 @@ extension BLEManager: CBPeripheralDelegate {
 					connectedNode: device.num,
 					context: context,
 					appState: appState
-				)
-
-				AnalyticEvents.trackPeripheralEvent(
-					for: .didUpdate,
-					status: .success,
-					characteristic: .fromRadio,
-					app: .reply
 				)
 
 			case .storeForwardApp:
@@ -417,13 +311,6 @@ extension BLEManager: CBPeripheralDelegate {
 					packet: info.packet,
 					connectedNodeNum: device.num,
 					context: context
-				)
-
-				AnalyticEvents.trackPeripheralEvent(
-					for: .didUpdate,
-					status: .success,
-					characteristic: .fromRadio,
-					app: .storeAndForward
 				)
 
 			case .rangeTestApp:
@@ -439,13 +326,6 @@ extension BLEManager: CBPeripheralDelegate {
 					appState: appState
 				)
 
-				AnalyticEvents.trackPeripheralEvent(
-					for: .didUpdate,
-					status: .success,
-					characteristic: .fromRadio,
-					app: .rangeTest
-				)
-
 			case .telemetryApp:
 				guard !isInvalidFwVersion else {
 					break
@@ -455,13 +335,6 @@ extension BLEManager: CBPeripheralDelegate {
 					packet: info.packet,
 					connectedNode: device.num,
 					context: context
-				)
-
-				AnalyticEvents.trackPeripheralEvent(
-					for: .didUpdate,
-					status: .success,
-					characteristic: .fromRadio,
-					app: .telemetry
 				)
 
 			case .tracerouteApp:
@@ -475,7 +348,10 @@ extension BLEManager: CBPeripheralDelegate {
 				var routeString = "You --> "
 				var hopNodes: [TraceRouteHopEntity] = []
 
-				let traceRoute = coreDataTools.getTraceRoute(id: Int64(info.packet.decoded.requestID), context: context)
+				let traceRoute = coreDataTools.getTraceRoute(
+					id: Int64(info.packet.decoded.requestID),
+					context: context
+				)
 				traceRoute?.response = true
 				traceRoute?.route = routingMessage.route
 
@@ -525,6 +401,7 @@ extension BLEManager: CBPeripheralDelegate {
 					routeString += "\(hopNode?.user?.longName ?? (node == 4294967295 ? "Repeater" : String(hopNode?.num.toHex() ?? "unknown".localized))) \(hopNode?.viaMqtt ?? false ? "MQTT" : "") --> "
 				}
 				routeString += traceRoute?.node?.user?.longName ?? "unknown".localized
+
 				traceRoute?.routeText = routeString
 				traceRoute?.hops = NSOrderedSet(array: hopNodes)
 
@@ -532,30 +409,27 @@ extension BLEManager: CBPeripheralDelegate {
 					await self?.saveData()
 				}
 
-				AnalyticEvents.trackPeripheralEvent(
-					for: .didUpdate,
-					status: .success,
-					characteristic: .fromRadio,
-					app: .traceRoute
-				)
+				devicesDelegate?.onTraceRouteReceived(for: traceRoute?.node)
+
+				if let user = traceRoute?.node?.user {
+					let manager = LocalNotificationManager()
+					manager.notifications = [
+						Notification(
+							title: "Trace Route",
+							subtitle: "\(user.longName ?? "Node without a name")",
+							content: "Trace route was received",
+							target: "nodes",
+							path: "meshtastic:///nodes?nodenum=\(user.num)"
+						)
+					]
+					manager.schedule()
+				}
 
 			case .paxcounterApp:
 				paxCounterPacket(packet: info.packet, context: context)
 
-				AnalyticEvents.trackPeripheralEvent(
-					for: .didUpdate,
-					status: .success,
-					characteristic: .fromRadio,
-					app: .paxCounter
-				)
-
 			default:
-				AnalyticEvents.trackPeripheralEvent(
-					for: .didUpdate,
-					status: .success,
-					characteristic: .fromRadio,
-					app: .unhandled
-				)
+				break
 			}
 
 			let id = info.configCompleteID
@@ -564,9 +438,11 @@ extension BLEManager: CBPeripheralDelegate {
 				lastConnectionError = ""
 				isSubscribed = true
 
+				/*
 				devices.removeAll(where: {
 					$0.peripheral.state == .disconnected
 				})
+				 */
 
 				if device.num > 0 {
 					let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
