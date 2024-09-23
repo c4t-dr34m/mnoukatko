@@ -18,6 +18,8 @@ final class BLEWatcher: DevicesDelegate {
 	}
 
 	func start() {
+		Logger.app.debug("Background task started")
+
 		tasksDone.removeAll()
 
 		bleManager.devicesDelegate = self

@@ -124,7 +124,6 @@ struct Meowtastic: App {
 			}
 		}
 		.backgroundTask(.appRefresh(AppConstants.backgroundTaskID)) {
-			Logger.app.debug("Background task started")
 			Analytics.logEvent(AnalyticEvents.backgroundUpdate.id, parameters: nil)
 
 			await refreshApp()
@@ -174,6 +173,7 @@ struct Meowtastic: App {
 		let watcher = BLEWatcher(bleManager: bleManager)
 		watcher.start()
 
+		/*
 		while
 			Date.now < bgTaskStarted.addingTimeInterval(Self.bgTaskLifespan)
 				&& !watcher.allTasksDone()
@@ -183,6 +183,7 @@ struct Meowtastic: App {
 		}
 
 		watcher.stop(runtime: bgTaskStarted.distance(to: .now))
+		*/
 
 		scheduleAppRefresh()
 	}
