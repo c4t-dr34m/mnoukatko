@@ -58,7 +58,7 @@ final class BLEWatcher: DevicesDelegate {
 	func onChange(devices: [Device]) {
 		Logger.app.debug("Background: devices \(devices)")
 
-		let device = devices.first(where: { device in
+		let device = devices.last(where: { device in
 			device.peripheral.identifier.uuidString == UserDefaults.preferredPeripheralId
 		})
 
