@@ -63,6 +63,10 @@ extension BLEManager: CBCentralManagerDelegate {
 		_ central: CBCentralManager,
 		didConnect peripheral: CBPeripheral
 	) {
+		Logger.services.debug(
+			"Central did connect to \(peripheral.name ?? peripheral.identifier.uuidString)"
+		)
+
 		UserDefaults.preferredPeripheralId = peripheral.identifier.uuidString
 
 		isConnecting = false
@@ -76,6 +80,7 @@ extension BLEManager: CBCentralManagerDelegate {
 				device.peripheral.identifier == peripheral.identifier
 			})
 		else {
+			Logger.services.error("Can't find device it just connected to")
 			lastConnectionError = "Bluetooth connection error, please try again."
 
 			disconnectDevice()

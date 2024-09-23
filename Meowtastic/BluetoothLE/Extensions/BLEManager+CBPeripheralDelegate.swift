@@ -438,12 +438,6 @@ extension BLEManager: CBPeripheralDelegate {
 				lastConnectionError = ""
 				isSubscribed = true
 
-				/*
-				devices.removeAll(where: {
-					$0.peripheral.state == .disconnected
-				})
-				 */
-
 				if device.num > 0 {
 					let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
 					fetchNodeInfoRequest.predicate = NSPredicate(

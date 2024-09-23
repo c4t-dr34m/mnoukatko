@@ -179,15 +179,31 @@ final class BLEManager: NSObject, ObservableObject {
 
 		centralManager.connect(peripheral)
 
-		let timer = Timer.scheduledTimer(
-			timeInterval: 1.5,
-			target: self,
-			selector: #selector(timeoutTimerFired),
-			userInfo: ["name": "\(peripheral.name ?? peripheral.identifier.uuidString)"],
-			repeats: true
-		)
-		RunLoop.current.add(timer, forMode: .common)
-		timeoutTimer = timer
+		timeoutTimer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: true) { [weak self] _ in
+			guard let self else { return }
+
+			Logger.services.warning("Bluetooth connection timed out; attempt: \(self.timeoutCount)")
+
+			timeoutCount += 1
+			lastConnectionError = ""
+
+			guard timeoutCount >= 10 else {
+				return
+			}
+
+			if let device = currentDevice.device {
+				centralManager.cancelPeripheralConnection(device.peripheral)
+			}
+
+			currentDevice.clear()
+			isConnected = false
+			isConnecting = false
+			timeoutCount = 0
+			timeoutTimer?.invalidate()
+			lastConnectionError = "Bluetooth connection timed out"
+
+			Analytics.logEvent(AnalyticEvents.bleTimeout.id, parameters: nil)
+		}
 
 		Analytics.logEvent(AnalyticEvents.bleConnect.id, parameters: nil)
 	}

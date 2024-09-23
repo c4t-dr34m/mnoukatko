@@ -173,7 +173,6 @@ struct Meowtastic: App {
 		let watcher = BLEWatcher(bleManager: bleManager)
 		watcher.start()
 
-		/*
 		while
 			Date.now < bgTaskStarted.addingTimeInterval(Self.bgTaskLifespan)
 				&& !watcher.allTasksDone()
@@ -183,7 +182,6 @@ struct Meowtastic: App {
 		}
 
 		watcher.stop(runtime: bgTaskStarted.distance(to: .now))
-		*/
 
 		scheduleAppRefresh()
 	}
