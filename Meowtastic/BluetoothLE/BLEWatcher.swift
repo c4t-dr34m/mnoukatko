@@ -37,7 +37,6 @@ final class BLEWatcher: DevicesDelegate {
 
 	func stop(runtime: TimeInterval) {
 		bleManager.disconnectDevice()
-		bleManager.stopScanning()
 
 		Logger.app.warning(
 			"Background task finished in \(Int(runtime))s; tasks done: \(self.tasksDone)"
@@ -66,10 +65,12 @@ final class BLEWatcher: DevicesDelegate {
 			return
 		}
 
+		bleManager.stopScanning()
+
 		if device.peripheral.state == .connected  {
 			onDeviceConnected(name: device.peripheral.name)
 		}
-		else if device.peripheral.state != .connecting {
+		else {
 			bleManager.connectTo(peripheral: device.peripheral)
 		}
 	}

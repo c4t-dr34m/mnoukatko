@@ -7,7 +7,8 @@ import SwiftUI
 
 @main
 struct Meowtastic: App {
-	private static let bgTaskLifespan: TimeInterval = 5 * 60
+	private static let bgTaskStartDelay: TimeInterval = 10 * 60
+	private static let bgTaskLifespan: TimeInterval = 2 * 60
 
 	@UIApplicationDelegateAdaptor(MeowtasticDelegate.self)
 	var appDelegate
@@ -115,7 +116,7 @@ struct Meowtastic: App {
 				try? Persistence.shared.container.viewContext.save()
 
 				bleManager.stopScanning()
-				bleManager.disconnectDevice()
+				bleManager.disconnectDevice(reconnect: false)
 
 				scheduleAppRefresh()
 			}
@@ -157,6 +158,7 @@ struct Meowtastic: App {
 		let request = BGProcessingTaskRequest(identifier: AppConstants.backgroundTaskID)
 		request.requiresNetworkConnectivity = false
 		request.requiresExternalPower = false
+		request.earliestBeginDate = .now.addingTimeInterval(Self.bgTaskStartDelay)
 
 		do {
 			try BGTaskScheduler.shared.submit(request)
@@ -171,18 +173,12 @@ struct Meowtastic: App {
 	private func refreshApp() async {
 		let bgTaskStarted = Date.now
 		let watcher = BLEWatcher(bleManager: bleManager)
-		watcher.start()
 
-		while
-			Date.now < bgTaskStarted.addingTimeInterval(Self.bgTaskLifespan)
-				&& !watcher.allTasksDone()
-		{
-			// TODO: record some key changes in ble manager
-			sleep(1)
+		let timer = Timer.scheduledTimer(withTimeInterval: Self.bgTaskLifespan, repeats: false) { _ in
+			watcher.stop(runtime: bgTaskStarted.distance(to: .now))
 		}
 
-		watcher.stop(runtime: bgTaskStarted.distance(to: .now))
-
 		scheduleAppRefresh()
+		watcher.start()
 	}
 }
