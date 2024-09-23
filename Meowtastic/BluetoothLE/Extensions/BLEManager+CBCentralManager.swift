@@ -63,10 +63,6 @@ extension BLEManager: CBCentralManagerDelegate {
 		_ central: CBCentralManager,
 		didConnect peripheral: CBPeripheral
 	) {
-		Logger.services.debug(
-			"Central did connect to \(peripheral.name ?? peripheral.identifier.uuidString)"
-		)
-
 		UserDefaults.preferredPeripheralId = peripheral.identifier.uuidString
 
 		isConnecting = false

@@ -148,7 +148,6 @@ final class BLEManager: NSObject, ObservableObject {
 
 	func connectTo(peripheral: CBPeripheral) {
 		if peripheral.state == .connecting {
-			Logger.services.debug("Device \(peripheral.name ?? peripheral.identifier.uuidString) is connecting")
 			return
 		}
 
