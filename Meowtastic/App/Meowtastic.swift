@@ -121,6 +121,7 @@ struct Meowtastic: App {
 				scheduleAppRefresh()
 			}
 			else {
+				bleManager.automaticallyReconnect = true
 				bleManager.startScanning()
 			}
 		}
