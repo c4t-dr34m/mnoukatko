@@ -39,16 +39,48 @@ struct Messages: View {
 	private var isPresentingDeleteChannelMessagesConfirm: Bool = false
 	@State
 	private var isPresentingDeleteUserMessagesConfirm = false
-
-	@FetchRequest(
-		sortDescriptors: [
-			NSSortDescriptor(key: "lastMessage", ascending: false),
-			NSSortDescriptor(key: "userNode.favorite", ascending: false),
-			NSSortDescriptor(key: "longName", ascending: true)
-		],
-		animation: .default
-	)
+	@FetchRequest(sortDescriptors: [])
 	private var users: FetchedResults<UserEntity>
+
+	private var usersFiltered: [UserEntity] {
+		var filtered = users.filter { user in
+			guard user.userNode != nil else {
+				return false
+			}
+
+			if let num = connectedDevice.device?.num, user.num == num {
+				return false
+			}
+
+			return true
+		}
+
+		filtered.sort { user1, user2 in
+			let u1lm = user1.lastMessage
+			let u2lm = user2.lastMessage
+			let u1ln = user1.longName
+			let u2ln = user2.longName
+
+			// swiftlint:disable:next force_unwrapping
+			if let u1lm, u2lm == nil || u1lm > u2lm! {
+				return true
+			}
+			// swiftlint:disable:next force_unwrapping
+			if let u2lm, u1lm == nil || u1lm! >= u2lm {
+				return false
+			}
+
+			// swiftlint:disable:next force_unwrapping
+			if let u1ln, u2ln == nil || u1ln.compare(u2ln!, options: .caseInsensitive) == .orderedAscending {
+				return true
+			}
+			else {
+				return false
+			}
+		}
+
+		return filtered
+	}
 
 	private var channels: [ChannelEntity] {
 		if let channels = node?.myInfo?.channels?.array as? [ChannelEntity] {
@@ -62,19 +94,6 @@ struct Messages: View {
 		}
 
 		return []
-	}
-	private var usersFiltered: [UserEntity] {
-		users.filter { user in
-			guard user.userNode != nil else {
-				return false
-			}
-
-			if let num = connectedDevice.device?.num, user.num == num {
-				return false
-			}
-
-			return true
-		}
 	}
 
 	var body: some View {
