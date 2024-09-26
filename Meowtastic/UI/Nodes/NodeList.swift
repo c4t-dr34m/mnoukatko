@@ -25,6 +25,8 @@ struct NodeList: View {
 	private var appState = AppState.shared
 
 	@State
+	private var showOfflineNodes: Bool = false
+	@State
 	private var selectedNode: NodeInfoEntity?
 	@State
 	private var favoriteNodes = 0
@@ -52,7 +54,12 @@ struct NodeList: View {
 			NSSortDescriptor(key: "lastHeard", ascending: false),
 			NSSortDescriptor(key: "hopsAway", ascending: true),
 			NSSortDescriptor(key: "user.longName", ascending: true)
-		]
+		],
+		predicate: NSPredicate( // TODO: make this optional
+			format: "lastHeard >= %@",
+			// swiftlint:disable:next force_unwrapping
+			Calendar.current.date(byAdding: .minute, value: -15, to: .now)! as NSDate
+		)
 	)
 	private var nodes: FetchedResults<NodeInfoEntity>
 
