@@ -14,7 +14,7 @@ extension CoreDataTools {
 			)
 
 			debounce.emit { [weak self] in
-				await self?.saveData()
+				await self?.saveData(with: context)
 			}
 
 			return true
@@ -34,7 +34,7 @@ extension CoreDataTools {
 			)
 
 			debounce.emit { [weak self] in
-				await self?.saveData()
+				await self?.saveData(with: context)
 			}
 
 			return true
@@ -53,7 +53,7 @@ extension CoreDataTools {
 		}
 
 		debounce.emit { [weak self] in
-			await self?.saveData()
+			await self?.saveData(with: context)
 		}
 	}
 
@@ -67,7 +67,7 @@ extension CoreDataTools {
 		}
 
 		debounce.emit { [weak self] in
-			await self?.saveData()
+			await self?.saveData(with: context)
 		}
 	}
 
@@ -176,7 +176,7 @@ extension CoreDataTools {
 				myInfoEntity.rebootCount = 0
 
 				debounce.emit { [weak self] in
-					await self?.saveData()
+					await self?.saveData(with: context)
 				}
 
 				newNode.myInfo = myInfoEntity
@@ -239,7 +239,7 @@ extension CoreDataTools {
 				}
 
 				debounce.emit { [weak self] in
-					await self?.saveData()
+					await self?.saveData(with: context)
 				}
 			}
 		}
@@ -316,7 +316,7 @@ extension CoreDataTools {
 						fetchedNode[0].positions = mutablePositions.copy() as? NSOrderedSet
 
 						debounce.emit { [weak self] in
-							await self?.saveData()
+							await self?.saveData(with: context)
 						}
 					}
 				} else {
@@ -360,7 +360,7 @@ extension CoreDataTools {
 				}
 
 				debounce.emit { [weak self] in
-					await self?.saveData()
+					await self?.saveData(with: context)
 				}
 			} else {
 				Logger.data.error("💥 [BluetoothConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save Bluetooth Config")
@@ -411,7 +411,7 @@ extension CoreDataTools {
 				}
 
 				debounce.emit { [weak self] in
-					await self?.saveData()
+					await self?.saveData(with: context)
 				}
 			}
 		} catch {
@@ -461,7 +461,7 @@ extension CoreDataTools {
 				}
 
 				debounce.emit { [weak self] in
-					await self?.saveData()
+					await self?.saveData(with: context)
 				}
 			} else {
 				Logger.data.error("💥 [DisplayConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex()) unable to save Display Config")
@@ -522,7 +522,7 @@ extension CoreDataTools {
 				}
 
 				debounce.emit { [weak self] in
-					await self?.saveData()
+					await self?.saveData(with: context)
 				}
 			} else {
 				Logger.data.error("💥 [LoRaConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save Lora Config")
@@ -560,7 +560,7 @@ extension CoreDataTools {
 				}
 
 				debounce.emit { [weak self] in
-					await self?.saveData()
+					await self?.saveData(with: context)
 				}
 			} else {
 				Logger.data.error("💥 [NetworkConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save Network Config")
@@ -616,7 +616,7 @@ extension CoreDataTools {
 				}
 
 				debounce.emit { [weak self] in
-					await self?.saveData()
+					await self?.saveData(with: context)
 				}
 			} else {
 				Logger.data.error("💥 [PositionConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save Position Config")
@@ -659,7 +659,7 @@ extension CoreDataTools {
 				}
 
 				debounce.emit { [weak self] in
-					await self?.saveData()
+					await self?.saveData(with: context)
 				}
 			} else {
 				Logger.data.error("💥 [PowerConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save Power Config")
@@ -707,7 +707,7 @@ extension CoreDataTools {
 				}
 
 				debounce.emit { [weak self] in
-					await self?.saveData()
+					await self?.saveData(with: context)
 				}
 			} else {
 				Logger.data.error("💥 [AmbientLightingConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save Ambient Lighting Module Config")
@@ -763,7 +763,7 @@ extension CoreDataTools {
 				}
 
 				debounce.emit { [weak self] in
-					await self?.saveData()
+					await self?.saveData(with: context)
 				}
 			} else {
 				Logger.data.error("💥 [CannedMessageConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save Canned Message Module Config")
@@ -813,7 +813,7 @@ extension CoreDataTools {
 				}
 
 				debounce.emit { [weak self] in
-					await self?.saveData()
+					await self?.saveData(with: context)
 				}
 			} else {
 				Logger.data.error("💥 [DetectionSensorConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save Detection Sensor Module Config")
@@ -876,7 +876,7 @@ extension CoreDataTools {
 				}
 
 				debounce.emit { [weak self] in
-					await self?.saveData()
+					await self?.saveData(with: context)
 				}
 			} else {
 				Logger.data.error("💥 [ExternalNotificationConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save External Notification Module Config")
@@ -913,7 +913,7 @@ extension CoreDataTools {
 				}
 
 				debounce.emit { [weak self] in
-					await self?.saveData()
+					await self?.saveData(with: context)
 				}
 			} else {
 				Logger.data.error("💥 [PaxCounterConfigEntity] No Nodes found in local database matching node number \(nodeNum.toHex(), privacy: .public) unable to save PAX Counter Module Config")
@@ -945,7 +945,7 @@ extension CoreDataTools {
 				}
 
 				debounce.emit { [weak self] in
-					await self?.saveData()
+					await self?.saveData(with: context)
 				}
 			} else {
 				Logger.data.error("💥 [RtttlConfigEntity] No nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save RTTTL Ringtone Config")
@@ -1000,7 +1000,7 @@ extension CoreDataTools {
 				}
 
 				debounce.emit { [weak self] in
-					await self?.saveData()
+					await self?.saveData(with: context)
 				}
 			} else {
 				Logger.data.error("💥 [MQTTConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save MQTT Module Config")
@@ -1036,7 +1036,7 @@ extension CoreDataTools {
 				}
 
 				debounce.emit { [weak self] in
-					await self?.saveData()
+					await self?.saveData(with: context)
 				}
 			} else {
 				Logger.data.error("💥 [RangeTestConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save Range Test Module Config")
@@ -1083,7 +1083,7 @@ extension CoreDataTools {
 				}
 
 				debounce.emit { [weak self] in
-					await self?.saveData()
+					await self?.saveData(with: context)
 				}
 			} else {
 				Logger.data.error("💥 [SerialConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save Serial Module Config")
@@ -1127,7 +1127,7 @@ extension CoreDataTools {
 				}
 
 				debounce.emit { [weak self] in
-					await self?.saveData()
+					await self?.saveData(with: context)
 				}
 			} else {
 				Logger.data.error("💥 [StoreForwardConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save Store & Forward Module Config")
@@ -1176,7 +1176,7 @@ extension CoreDataTools {
 				}
 
 				debounce.emit { [weak self] in
-					await self?.saveData()
+					await self?.saveData(with: context)
 				}
 			} else {
 				Logger.data.error("💥 [TelemetryConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save Telemetry Module Config")

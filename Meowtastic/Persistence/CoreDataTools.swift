@@ -5,25 +5,20 @@ final class CoreDataTools {
 		await action()
 	}
 
-	private let privateContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-
 	@discardableResult
-	func saveData() async -> Bool {
-		privateContext.performAndWait { [weak self] in
-			guard
-				let self,
-				privateContext.hasChanges
-			else {
+	func saveData(with context: NSManagedObjectContext) async -> Bool {
+		await context.perform {
+			guard context.hasChanges else {
 				return false
 			}
 
 			do {
-				try privateContext.save()
+				try context.save()
 
 				return true
 			}
-			catch {
-				privateContext.rollback()
+			catch let error {
+				context.rollback()
 
 				return false
 			}

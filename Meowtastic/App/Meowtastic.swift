@@ -175,7 +175,7 @@ struct Meowtastic: App {
 		let bgTaskStarted = Date.now
 		let watcher = BLEWatcher(bleManager: bleManager)
 
-		let timer = Timer.scheduledTimer(withTimeInterval: Self.bgTaskLifespan, repeats: false) { _ in
+		Timer.scheduledTimer(withTimeInterval: Self.bgTaskLifespan, repeats: false) { _ in
 			watcher.stop(runtime: bgTaskStarted.distance(to: .now))
 		}
 

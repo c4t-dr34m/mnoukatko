@@ -12,7 +12,6 @@ import SwiftUI
 final class BLEManager: NSObject, ObservableObject {
 	let appState: AppState
 	let context: NSManagedObjectContext
-	let privateContext: NSManagedObjectContext
 	let centralManager: CBCentralManager
 	let coreDataTools = CoreDataTools()
 	let minimumVersion = "2.0.0"
@@ -61,7 +60,6 @@ final class BLEManager: NSObject, ObservableObject {
 	) {
 		self.appState = appState
 		self.context = context
-		self.privateContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
 		self.centralManager = CBCentralManager()
 		self.mqttManager = MQTTManager()
 		self.currentDevice = CurrentDevice(context: context)
@@ -517,23 +515,18 @@ final class BLEManager: NSObject, ObservableObject {
 
 	@discardableResult
 	func saveData() async -> Bool {
-		privateContext.performAndWait { [weak self] in
-			guard
-				let self,
-				privateContext.hasChanges
-			else {
+		await context.perform { [weak self] in
+			guard let self, self.context.hasChanges else {
 				return false
 			}
 
 			do {
-				try privateContext.save()
+				try self.context.save()
 
 				return true
 			}
 			catch let error {
-				privateContext.rollback()
-
-				Logger.app.debug("context save failed misrably: \(error.localizedDescription)")
+				self.context.rollback()
 
 				return false
 			}
