@@ -6,16 +6,11 @@ import SwiftUI
 struct Messages: View {
 	private let coreDataTools = CoreDataTools()
 	private let restrictedChannels = ["gpio", "mqtt", "serial"]
-	private let dateFormatter = {
-		let formatter = DateFormatter()
-		formatter.dateStyle = .none
-		formatter.timeStyle = .short
-
-		return formatter
-	}()
 	private let debounce = Debounce<() async -> Void>(duration: .milliseconds(250)) { action in
 		await action()
 	}
+	private let detailInfoFont = Font.system(size: 14, weight: .regular, design: .rounded)
+	private let detailIconSize: CGFloat = 16
 
 	@Environment(\.managedObjectContext)
 	private var context
@@ -245,26 +240,40 @@ struct Messages: View {
 				avatar(for: channel)
 
 				HStack(alignment: .top) {
-					if let name = channel.name, !name.isEmpty {
-						Text(name.camelCaseToWords())
-							.lineLimit(1)
-							.font(.headline)
-							.minimumScaleFactor(0.5)
-					}
-					else {
-						if channel.role == 1 {
-							Text("Primary Channel")
-								.font(.headline)
+					VStack(alignment: .leading, spacing: 8) {
+						if let name = channel.name, !name.isEmpty {
+							Text(name.camelCaseToWords())
 								.lineLimit(1)
 								.font(.headline)
 								.minimumScaleFactor(0.5)
 						}
 						else {
-							Text("Channel #\(channel.index)")
-								.font(.headline)
-								.lineLimit(1)
-								.font(.headline)
-								.minimumScaleFactor(0.5)
+							if channel.role == 1 {
+								Text("Primary Channel")
+									.font(.headline)
+									.lineLimit(1)
+									.font(.headline)
+									.minimumScaleFactor(0.5)
+							}
+							else {
+								Text("Channel #\(channel.index)")
+									.font(.headline)
+									.lineLimit(1)
+									.font(.headline)
+									.minimumScaleFactor(0.5)
+							}
+						}
+
+						if let lastMessage = channel.allPrivateMessages?.last?.timestamp {
+							HStack {
+								Image(systemName: "bubble.fill")
+									.font(detailInfoFont)
+									.foregroundColor(.gray)
+
+								Text(lastMessage.relative())
+									.font(detailInfoFont)
+									.foregroundColor(.gray)
+							}
 						}
 					}
 
@@ -285,10 +294,24 @@ struct Messages: View {
 				avatar(for: user)
 
 				HStack(alignment: .top) {
-					Text(user.longName ?? "Unknown user")
-						.lineLimit(1)
-						.font(.headline)
-						.minimumScaleFactor(0.5)
+					VStack(alignment: .leading, spacing: 8) {
+						Text(user.longName ?? "Unknown user")
+							.lineLimit(1)
+							.font(.headline)
+							.minimumScaleFactor(0.5)
+
+						if let lastMessage = user.lastMessage {
+							HStack {
+								Image(systemName: "bubble.fill")
+									.font(detailInfoFont)
+									.foregroundColor(.gray)
+
+								Text(lastMessage.relative())
+									.font(detailInfoFont)
+									.foregroundColor(.gray)
+							}
+						}
+					}
 
 					Spacer()
 				}
