@@ -16,7 +16,7 @@ final class BLEManager: NSObject, ObservableObject {
 	let centralManager: CBCentralManager
 	let coreDataTools = CoreDataTools()
 	let minimumVersion = "2.0.0"
-	let debounce = Debounce<() async -> Void>(duration: .milliseconds(33)) { action in
+	let debounce = Debounce<() async -> Void>(duration: .milliseconds(808)) { action in
 		await action()
 	}
 

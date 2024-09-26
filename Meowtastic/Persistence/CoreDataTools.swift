@@ -1,7 +1,7 @@
 import CoreData
 
 final class CoreDataTools {
-	let debounce = Debounce<() async -> Void>(duration: .milliseconds(175)) { action in
+	let debounce = Debounce<() async -> Void>(duration: .milliseconds(606)) { action in
 		await action()
 	}
 

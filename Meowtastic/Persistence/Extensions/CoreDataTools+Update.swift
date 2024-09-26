@@ -246,10 +246,6 @@ extension CoreDataTools {
 	}
 
 	func upsertPositionPacket (packet: MeshPacket, context: NSManagedObjectContext) {
-
-		let logString = String.localizedStringWithFormat("mesh.log.position.received %@".localized, String(packet.from))
-		MeshLogger.log("📍 \(logString)")
-
 		let fetchNodePositionRequest = NodeInfoEntity.fetchRequest()
 		fetchNodePositionRequest.predicate = NSPredicate(format: "num == %lld", Int64(packet.from))
 
