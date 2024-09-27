@@ -74,7 +74,16 @@ struct Content: View {
 				.tag(TabTag.settings)
 		}
 		.onChange(of: bleManager.isSubscribed, initial: true) {
-			if bleManager.isSubscribed {
+			if bleManager.isSubscribed, bleManager.isConnected {
+				connectWasDismissed = false
+				connectPresented = false
+			}
+			else if !connectWasDismissed {
+				connectPresented = true
+			}
+		}
+		.onChange(of: bleManager.isConnected, initial: true) {
+			if bleManager.isSubscribed, bleManager.isConnected {
 				connectWasDismissed = false
 				connectPresented = false
 			}
@@ -92,7 +101,7 @@ struct Content: View {
 			connectWasDismissed = true
 		} content: {
 			Connect(isInSheet: true)
-				.presentationDetents([.medium])
+				.presentationDetents([.large])
 				.presentationDragIndicator(.visible)
 		}
 	}

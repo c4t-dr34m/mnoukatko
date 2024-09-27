@@ -4409,9 +4409,6 @@
         }
       }
     },
-    "Hide" : {
-
-    },
     "Hide alerts" : {
 
     },
@@ -10200,6 +10197,9 @@
         }
       }
     },
+    "None" : {
+
+    },
     "Not connected" : {
 
     },
@@ -12871,9 +12871,6 @@
       }
     },
     "Short Name" : {
-
-    },
-    "Show" : {
 
     },
     "Show alerts" : {

@@ -57,7 +57,7 @@ struct AvatarAbstract: View {
 				Image(systemName: icon)
 					.resizable()
 					.scaledToFit()
-					.foregroundColor(foreground.opacity(0.5))
+					.foregroundColor(foreground)
 					.padding(.all, size / 8)
 					.frame(width: size, height: size)
 			}

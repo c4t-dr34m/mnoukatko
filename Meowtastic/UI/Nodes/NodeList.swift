@@ -149,18 +149,19 @@ struct NodeList: View {
 
 	@ViewBuilder
 	private var nodeListOffline: some View {
+		let nodeList = nodes.filter { node in
+			node.num != connectedNodeNum && node.isOnline == false
+		}
+
 		Section(
 			header: listHeader(
 				title: "Offline",
+				nodesCount: nodeList.count,
 				collapsible: true,
 				property: $showOffline
 			)
 		) {
 			if showOffline {
-				let nodeList = nodes.filter { node in
-					node.num != connectedNodeNum && node.isOnline == false
-				}
-
 				ForEach(nodeList, id: \.num) { node in
 					NodeListItem(
 						node: node,
@@ -199,12 +200,15 @@ struct NodeList: View {
 						}
 					},
 					label: {
+						// swiftlint:disable:next force_unwrapping
+						let nodesCountText = nodesCount != nil ? " \(nodesCount!) nodes" : ""
+
 						if property?.wrappedValue == true {
-							Text("Hide")
+							Text("Hide" + nodesCountText)
 								.fontDesign(.rounded)
 						}
 						else {
-							Text("Show")
+							Text("Show" + nodesCountText)
 								.fontDesign(.rounded)
 						}
 					}

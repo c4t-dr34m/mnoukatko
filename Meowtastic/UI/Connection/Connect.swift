@@ -39,31 +39,31 @@ struct Connect: View {
 
 	var body: some View {
 		NavigationStack {
-			if isInSheet {
-				List {
+			List {
+				Section(
+					header: Text("Bluetooth").fontDesign(.rounded)
+				) {
 					connection
+				}
+				.headerProminence(.increased)
 
+				Section(
+					header: Text("Visible Devices").fontDesign(.rounded)
+				) {
 					if !visibleDevices.isEmpty {
 						visible
 					}
-				}
-				.navigationTitle("Connection")
-				.navigationBarTitleDisplayMode(.inline)
-			}
-			else {
-				List {
-					connection
-
-					if !visibleDevices.isEmpty {
-						visible
+					else {
+						Text("None")
 					}
 				}
-				.navigationTitle("Connection")
-				.navigationBarTitleDisplayMode(.automatic)
-				.navigationBarItems(
-					trailing: ConnectionInfo()
-				)
+				.headerProminence(.increased)
 			}
+			.navigationTitle("Connection")
+			.navigationBarTitleDisplayMode(.large)
+			.navigationBarItems(
+				trailing: ConnectionInfo()
+			)
 		}
 		.onAppear {
 			Analytics.logEvent(
@@ -144,17 +144,23 @@ struct Connect: View {
 				node.num == device.num
 			})
 
-			HStack(alignment: .top, spacing: 8) {
+			HStack(alignment: .top) {
 				connectionAvatar(for: node)
 
 				VStack(alignment: .leading, spacing: 8) {
 					if node != nil {
 						Text(device.longName)
+							.fontWeight(.medium)
 							.font(.title2)
+							.lineLimit(1)
+							.minimumScaleFactor(0.5)
 					}
 					else {
 						Text("N/A")
+							.fontWeight(.medium)
 							.font(.title2)
+							.lineLimit(1)
+							.minimumScaleFactor(0.5)
 					}
 
 					HStack(spacing: 8) {
@@ -171,7 +177,10 @@ struct Connect: View {
 						}
 					}
 
-					if let loRaConfig = node?.loRaConfig, loRaConfig.regionCode == RegionCodes.unset.rawValue {
+					if
+						let loRaConfig = node?.loRaConfig,
+						loRaConfig.regionCode == RegionCodes.unset.rawValue
+					{
 						HStack(spacing: 8) {
 							Image(systemName: "gear.badge.xmark")
 								.font(detailInfoFont)
@@ -226,7 +235,7 @@ struct Connect: View {
 					color: .green,
 					size: 64
 				)
-				.padding(.trailing, 10)
+				.padding([.top, .bottom, .trailing], 10)
 			}
 			else if connecting {
 				AvatarAbstract(
@@ -234,7 +243,7 @@ struct Connect: View {
 					color: .orange,
 					size: 64
 				)
-				.padding(.trailing, 10)
+				.padding([.top, .bottom, .trailing], 10)
 			}
 			else {
 				AvatarAbstract(
@@ -242,7 +251,7 @@ struct Connect: View {
 					color: .red,
 					size: 64
 				)
-				.padding(.trailing, 10)
+				.padding([.top, .bottom, .trailing], 10)
 			}
 		}
 		else {
@@ -251,7 +260,7 @@ struct Connect: View {
 				color: .gray,
 				size: 64
 			)
-			.padding(.trailing, 10)
+			.padding([.top, .bottom, .trailing], 10)
 		}
 	}
 
@@ -300,31 +309,29 @@ struct Connect: View {
 
 	@ViewBuilder
 	private var visible: some View {
-		Section("Visible Devices") {
-			ForEach(visibleDevices) { device in
-				Button {
-					bleManager.connectTo(peripheral: device.peripheral)
-				} label: {
-					HStack(alignment: .center, spacing: 16) {
-						HStack(spacing: 16) {
-							SignalStrengthIndicator(
-								signalStrength: device.getSignalStrength(),
-								size: 14,
-								color: .gray
-							)
+		ForEach(visibleDevices) { device in
+			Button {
+				bleManager.connectTo(peripheral: device.peripheral)
+			} label: {
+				HStack(alignment: .center, spacing: 16) {
+					HStack(spacing: 16) {
+						SignalStrengthIndicator(
+							signalStrength: device.getSignalStrength(),
+							size: 14,
+							color: .gray
+						)
 
-							Text(device.name)
-								.font(deviceFont)
-								.foregroundColor(.gray)
-						}
+						Text(device.name)
+							.font(deviceFont)
+							.foregroundColor(.gray)
+					}
 
-						if UserDefaults.preferredPeripheralId == device.peripheral.identifier.uuidString {
-							Spacer()
+					if UserDefaults.preferredPeripheralId == device.peripheral.identifier.uuidString {
+						Spacer()
 
-							Image(systemName: "star.fill")
-								.font(deviceFont)
-								.foregroundColor(.gray)
-						}
+						Image(systemName: "star.fill")
+							.font(deviceFont)
+							.foregroundColor(.gray)
 					}
 				}
 			}
