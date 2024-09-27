@@ -111,6 +111,8 @@ struct NodeListItem: View {
 
 				Text(lastHeard.relative())
 					.font(detailInfoFont)
+					.lineLimit(1)
+					.minimumScaleFactor(0.5)
 					.foregroundColor(.gray)
 			}
 		}
@@ -138,6 +140,8 @@ struct NodeListItem: View {
 
 				Text(hwModel)
 					.font(detailInfoFont)
+					.lineLimit(1)
+					.minimumScaleFactor(0.5)
 					.foregroundColor(.gray)
 			}
 		}
