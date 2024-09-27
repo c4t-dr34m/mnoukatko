@@ -93,12 +93,15 @@ struct NodeDetail: View {
 	var body: some View {
 		NavigationStack {
 			List {
-				Section("Info") {
+				Section {
 					NodeInfoView(node: node)
 				}
+				.headerProminence(.increased)
 
 				if nodePosition != nil {
-					Section("Location") {
+					Section(
+						header: Text("Location").fontDesign(.rounded)
+					) {
 						locationInfo
 							.padding(.horizontal, 4)
 
@@ -126,10 +129,13 @@ struct NodeDetail: View {
 							}
 						}
 					}
+					.headerProminence(.increased)
 				}
 
 				if nodeEnvironment != nil {
-					Section("Environment") {
+					Section(
+						header: Text("Environment").fontDesign(.rounded)
+					) {
 						environmentInfo
 
 						temperatureHistory
@@ -138,11 +144,15 @@ struct NodeDetail: View {
 						pressureHistory
 							.padding(.vertical, 4)
 					}
+					.headerProminence(.increased)
 				}
 
-				Section("Details") {
+				Section(
+					header: Text("Details").fontDesign(.rounded)
+				) {
 					nodeInfo
 				}
+				.headerProminence(.increased)
 
 				if !isInSheet {
 					actions
@@ -151,9 +161,12 @@ struct NodeDetail: View {
 						let connectedNode,
 						let nodeMetadata = node.metadata
 					{
-						Section("Administration") {
+						Section(
+							header: Text("Administration").fontDesign(.rounded)
+						) {
 							admin(node: connectedNode, metadata: nodeMetadata)
 						}
+						.headerProminence(.increased)
 					}
 				}
 			}
@@ -873,7 +886,9 @@ struct NodeDetail: View {
 	@ViewBuilder
 	private var actions: some View {
 		if let device = connectedDevice.device, node.num != device.num {
-			Section("Actions") {
+			Section(
+				header: Text("Actions").fontDesign(.rounded)
+			) {
 				ExchangePositionsButton(
 					node: node
 				)
@@ -887,6 +902,7 @@ struct NodeDetail: View {
 					)
 				}
 			}
+			.headerProminence(.increased)
 		}
 	}
 

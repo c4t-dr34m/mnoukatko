@@ -8,6 +8,7 @@ struct NodeListItem: View {
 	private let node: NodeInfoEntity
 	private let detailInfoFont = Font.system(size: 14, weight: .regular, design: .rounded)
 	private let detailIconSize: CGFloat = 16
+	private let detailIconWidth: CGFloat = 20
 
 	@Environment(\.colorScheme)
 	private var colorScheme: ColorScheme
@@ -15,24 +16,6 @@ struct NodeListItem: View {
 	private var locationManager: LocationManager
 	@EnvironmentObject
 	private var connectedDevice: CurrentDevice
-
-	private var isSignal: Bool {
-		node.snr != 0 && node.rssi != 0
-	}
-	private var isBattery: Bool {
-		let deviceMetrics = node.telemetries?.filtered(
-			using: NSPredicate(format: "metricsType == 0")
-		)
-		let mostRecent = deviceMetrics?.lastObject as? TelemetryEntity
-		let batteryLevel = mostRecent?.batteryLevel
-		let voltage = mostRecent?.voltage
-
-		if let voltage, let batteryLevel, voltage > 0 || batteryLevel > 0 {
-			return true
-		}
-
-		return false
-	}
 
 	var body: some View {
 		NavigationLink {
@@ -45,17 +28,11 @@ struct NodeListItem: View {
 
 				VStack(alignment: .leading, spacing: 8) {
 					name
-
-					if node.isOnline, isSignal || isBattery {
-						HStack(alignment: .center, spacing: 16) {
-							signalStrength
-							battery
-						}
-					}
-
 					lastHeard
 
-					if let device = connectedDevice.device {
+					if node.isOnline, let device = connectedDevice.device {
+						hardwareInfo
+
 						NodeIconListView(connectedNode: device.num, node: node)
 							.padding(.vertical, 4)
 							.padding(.horizontal, 12)
@@ -68,7 +45,8 @@ struct NodeListItem: View {
 							)
 					}
 				}
-				.frame(maxWidth: .infinity, alignment: .leading)
+
+				Spacer()
 			}
 		}
 	}
@@ -120,39 +98,14 @@ struct NodeListItem: View {
 	}
 
 	@ViewBuilder
-	private var signalStrength: some View {
-		if isSignal {
-			LoraSignalView(
-				snr: node.snr,
-				rssi: node.rssi,
-				preset: modemPreset
-			)
-		}
-		else {
-			Color.clear
-		}
-	}
-
-	@ViewBuilder
-	private var battery: some View {
-		if isBattery {
-			BatteryView(
-				node: node
-			)
-		}
-		else {
-			Color.clear
-		}
-	}
-
-	@ViewBuilder
 	private var lastHeard: some View {
 		if
 			let lastHeard = node.lastHeard,
 			lastHeard.timeIntervalSince1970 > 0
 		{
 			HStack {
-				Image(systemName: node.isOnline ? "clock.badge.checkmark.fill" : "clock.badge.exclamationmark.fill")
+				Image(systemName: node.isOnline ? "clock.badge.checkmark" : "clock.badge.exclamationmark")
+					.frame(width: detailIconWidth)
 					.font(detailInfoFont)
 					.foregroundColor(node.isOnline ? .green : .gray)
 
@@ -163,14 +116,33 @@ struct NodeListItem: View {
 		}
 		else {
 			HStack {
-				Image(systemName: "clock.badge.questionmark.fill")
+				Image(systemName: "clock.badge.questionmark")
 					.font(detailInfoFont)
-					.foregroundColor(node.isOnline ? .green : .gray)
+					.foregroundColor(.gray)
 
 				Text("No idea")
 					.font(detailInfoFont)
 					.foregroundColor(.gray)
 			}
+		}
+	}
+
+	@ViewBuilder
+	private var hardwareInfo: some View {
+		if let hwModel = node.user?.hwModel {
+			HStack {
+				Image(systemName: "flipphone")
+					.frame(width: detailIconWidth)
+					.font(detailInfoFont)
+					.foregroundColor(.gray)
+
+				Text(hwModel)
+					.font(detailInfoFont)
+					.foregroundColor(.gray)
+			}
+		}
+		else {
+			EmptyView()
 		}
 	}
 

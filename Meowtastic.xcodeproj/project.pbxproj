@@ -54,6 +54,8 @@
 		B26C91F22C5970A40029F249 /* LocationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B26C91F12C5970A40029F249 /* LocationHelper.swift */; };
 		B26C91F42C5971880029F249 /* LocationHelperManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B26C91F32C5971880029F249 /* LocationHelperManager.swift */; };
 		B26C91F62C59740F0029F249 /* PositionFlags.swift in Sources */ = {isa = PBXBuildFile; fileRef = B26C91F52C59740F0029F249 /* PositionFlags.swift */; };
+		B27A4B9A2CA6A96900F813C3 /* NodeListSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27A4B992CA6A96500F813C3 /* NodeListSummary.swift */; };
+		B27A4B9C2CA6B8D200F813C3 /* NodeListConnectedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27A4B9B2CA6B8CC00F813C3 /* NodeListConnectedItem.swift */; };
 		B284A42D2C6F87B200D5122B /* BLEManager+CBCentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B284A42C2C6F87B200D5122B /* BLEManager+CBCentralManager.swift */; };
 		B284A42F2C6F889000D5122B /* BLEManager+CBPeripheralDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B284A42E2C6F889000D5122B /* BLEManager+CBPeripheralDelegate.swift */; };
 		B284A4312C6F88F400D5122B /* BLEManager+MQTTManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B284A4302C6F88F400D5122B /* BLEManager+MQTTManagerDelegate.swift */; };
@@ -229,6 +231,8 @@
 		B26C91F12C5970A40029F249 /* LocationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationHelper.swift; sourceTree = "<group>"; };
 		B26C91F32C5971880029F249 /* LocationHelperManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationHelperManager.swift; sourceTree = "<group>"; };
 		B26C91F52C59740F0029F249 /* PositionFlags.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionFlags.swift; sourceTree = "<group>"; };
+		B27A4B992CA6A96500F813C3 /* NodeListSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeListSummary.swift; sourceTree = "<group>"; };
+		B27A4B9B2CA6B8CC00F813C3 /* NodeListConnectedItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeListConnectedItem.swift; sourceTree = "<group>"; };
 		B284A42C2C6F87B200D5122B /* BLEManager+CBCentralManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BLEManager+CBCentralManager.swift"; sourceTree = "<group>"; };
 		B284A42E2C6F889000D5122B /* BLEManager+CBPeripheralDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BLEManager+CBPeripheralDelegate.swift"; sourceTree = "<group>"; };
 		B284A4302C6F88F400D5122B /* BLEManager+MQTTManagerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BLEManager+MQTTManagerDelegate.swift"; sourceTree = "<group>"; };
@@ -587,6 +591,8 @@
 		B2A5F31A2C566B69009457AB /* List */ = {
 			isa = PBXGroup;
 			children = (
+				B27A4B9B2CA6B8CC00F813C3 /* NodeListConnectedItem.swift */,
+				B27A4B992CA6A96500F813C3 /* NodeListSummary.swift */,
 				B2A5F2E32C5668FD009457AB /* NodeIconListView.swift */,
 				B2A5F2E62C5668FD009457AB /* NodeInfoView.swift */,
 				B2A5F2E82C5668FD009457AB /* NodeListItem.swift */,
@@ -959,6 +965,7 @@
 				259792272C2F114500AD1659 /* TraceRouteEntity+Extension.swift in Sources */,
 				B266A74E2C591F5E00DFC723 /* TabTag.swift in Sources */,
 				DDDB444829F8A9C900EE2349 /* String.swift in Sources */,
+				B27A4B9A2CA6A96900F813C3 /* NodeListSummary.swift in Sources */,
 				DDFFA7472B3A7F3C004730DB /* Bundle.swift in Sources */,
 				DD457188293C7E63000C49FB /* SignalStrengthIndicator.swift in Sources */,
 				B23D3C612C946542007CEFE2 /* BLEActions.swift in Sources */,
@@ -1061,6 +1068,7 @@
 				B2A5F3132C5668FD009457AB /* MeshMap.swift in Sources */,
 				D93068DD2B81CA820066FBC8 /* ConfigHeader.swift in Sources */,
 				DDA1C48E28DB49D3009933EC /* ChannelRoles.swift in Sources */,
+				B27A4B9C2CA6B8D200F813C3 /* NodeListConnectedItem.swift in Sources */,
 				B284A4312C6F88F400D5122B /* BLEManager+MQTTManagerDelegate.swift in Sources */,
 				DD8ED9C8289CE4B900B3B0AB /* RoutingError.swift in Sources */,
 				DD964FC62975DBFD007C176F /* CoreDataTools+Query.swift in Sources */,

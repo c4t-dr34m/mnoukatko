@@ -110,7 +110,9 @@ struct Options: View {
 
 	@ViewBuilder
 	private var nodeConfig: some View {
-		Section("Node") {
+		Section(
+			header: Text("Node").fontDesign(.rounded)
+		) {
 			NavigationLink {
 				NavigationLazyView(
 					LoRaConfig(node: nodeSelected)
@@ -244,11 +246,14 @@ struct Options: View {
 				}
 			}
 		}
+		.headerProminence(.increased)
 	}
 
 	@ViewBuilder
 	private var appConfig: some View {
-		Section("Application") {
+		Section(
+			header: Text("Application").fontDesign(.rounded)
+		) {
 			NavigationLink {
 				NavigationLazyView(
 					AppSettings()
@@ -273,5 +278,6 @@ struct Options: View {
 				}
 			}
 		}
+		.headerProminence(.increased)
 	}
 }

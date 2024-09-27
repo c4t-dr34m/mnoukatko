@@ -2454,6 +2454,9 @@
     "Connected" : {
 
     },
+    "Connected Device" : {
+
+    },
     "Connecting" : {
 
     },
@@ -4406,6 +4409,9 @@
         }
       }
     },
+    "Hide" : {
+
+    },
     "Hide alerts" : {
 
     },
@@ -4606,9 +4612,6 @@
           }
         }
       }
-    },
-    "Info" : {
-
     },
     "inputevent.back" : {
       "extractionState" : "manual",
@@ -12870,6 +12873,9 @@
     "Short Name" : {
 
     },
+    "Show" : {
+
+    },
     "Show alerts" : {
 
     },
@@ -13072,6 +13078,9 @@
           }
         }
       }
+    },
+    "Summary" : {
+
     },
     "Supported I2C Connected sensors will be detected automatically, sensors are BMP280, BME280, BME680, MCP9808, INA219, INA260, LPS22 and SHTC3." : {
 
@@ -13673,6 +13682,9 @@
 
     },
     "TLS Enabled" : {
+
+    },
+    "Total: %lld nodes" : {
 
     },
     "Trace Route" : {
