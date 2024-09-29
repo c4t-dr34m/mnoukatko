@@ -336,9 +336,8 @@ struct MessageList: View {
 							.foregroundColor(.gray)
 
 						if let node = message.fromUser?.userNode, let nodeNum = connectedDevice.device?.num {
-							NodeIconListView(
+							NodeIconsCompactView(
 								connectedNode: nodeNum,
-								small: true,
 								node: node
 							)
 						}

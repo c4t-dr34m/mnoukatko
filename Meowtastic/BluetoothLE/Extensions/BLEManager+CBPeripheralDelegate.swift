@@ -169,8 +169,6 @@ extension BLEManager: CBPeripheralDelegate {
 
 						currentDevice.update(with: device)
 					}
-
-					tryClearExistingChannels()
 				}
 
 				// NodeInfo
@@ -596,29 +594,6 @@ extension BLEManager: CBPeripheralDelegate {
 
 	private func handleRadioLog(_ message: String) {
 		Logger.radio.info("\(message, privacy: .public)")
-	}
-
-	private func tryClearExistingChannels() {
-		guard let connectedDevice = getConnectedDevice() else {
-			return
-		}
-
-		let fetchMyInfoRequest = MyInfoEntity.fetchRequest()
-		fetchMyInfoRequest.predicate = NSPredicate(
-			format: "myNodeNum == %lld",
-			Int64(connectedDevice.num)
-		)
-
-		if
-			let myInfo = try? context.fetch(fetchMyInfoRequest),
-			!myInfo.isEmpty
-		{
-			myInfo[0].channels = NSOrderedSet()
-
-			debounce.emit { [weak self] in
-				await self?.saveData()
-			}
-		}
 	}
 
 	@objc

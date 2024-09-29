@@ -13,6 +13,7 @@
 		084A3D422C7651EC0026433E /* StateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084A3D412C7651E70026433E /* StateMachine.swift */; };
 		084A3D442C76520A0026433E /* SafeStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084A3D432C7652080026433E /* SafeStorage.swift */; };
 		084A3D462C76522A0026433E /* Debounce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084A3D452C7652280026433E /* Debounce.swift */; };
+		084DCFFA2CA9BEF40032EF46 /* NodeIconsCompactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084DCFF92CA9BEE00032EF46 /* NodeIconsCompactView.swift */; };
 		085721B62C76220B000CE2B7 /* Meowtastic.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0857218B2C76220B000CE2B7 /* Meowtastic.xcdatamodeld */; };
 		08933D342C81BE80006D57EA /* MQTTManager+CocoaMQTTDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08933D332C81BE7C006D57EA /* MQTTManager+CocoaMQTTDelegate.swift */; };
 		08933D362C81CAA5006D57EA /* MQTTManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08933D352C81CA9F006D57EA /* MQTTManagerDelegate.swift */; };
@@ -74,7 +75,7 @@
 		B2A5F3002C5668FD009457AB /* NodeAlertsButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2DE2C5668FD009457AB /* NodeAlertsButton.swift */; };
 		B2A5F3022C5668FD009457AB /* BLEManager+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2E12C5668FD009457AB /* BLEManager+Extensions.swift */; };
 		B2A5F3032C5668FD009457AB /* NodeDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2E22C5668FD009457AB /* NodeDetail.swift */; };
-		B2A5F3042C5668FD009457AB /* NodeIconListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2E32C5668FD009457AB /* NodeIconListView.swift */; };
+		B2A5F3042C5668FD009457AB /* NodeIconsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2E32C5668FD009457AB /* NodeIconsView.swift */; };
 		B2A5F3062C5668FD009457AB /* NodeInfoEntity+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2E52C5668FD009457AB /* NodeInfoEntity+Extensions.swift */; };
 		B2A5F3072C5668FD009457AB /* NodeInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2E62C5668FD009457AB /* NodeInfoView.swift */; };
 		B2A5F3092C5668FD009457AB /* NodeListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2E82C5668FD009457AB /* NodeListItem.swift */; };
@@ -195,6 +196,7 @@
 		084A3D412C7651E70026433E /* StateMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateMachine.swift; sourceTree = "<group>"; };
 		084A3D432C7652080026433E /* SafeStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeStorage.swift; sourceTree = "<group>"; };
 		084A3D452C7652280026433E /* Debounce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debounce.swift; sourceTree = "<group>"; };
+		084DCFF92CA9BEE00032EF46 /* NodeIconsCompactView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeIconsCompactView.swift; sourceTree = "<group>"; };
 		0857219E2C76220B000CE2B7 /* MeshtasticDataModelV 42.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MeshtasticDataModelV 42.xcdatamodel"; sourceTree = "<group>"; };
 		08933D332C81BE7C006D57EA /* MQTTManager+CocoaMQTTDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MQTTManager+CocoaMQTTDelegate.swift"; sourceTree = "<group>"; };
 		08933D352C81CA9F006D57EA /* MQTTManagerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MQTTManagerDelegate.swift; sourceTree = "<group>"; };
@@ -248,7 +250,7 @@
 		B2A5F2DE2C5668FD009457AB /* NodeAlertsButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeAlertsButton.swift; sourceTree = "<group>"; };
 		B2A5F2E12C5668FD009457AB /* BLEManager+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "BLEManager+Extensions.swift"; sourceTree = "<group>"; };
 		B2A5F2E22C5668FD009457AB /* NodeDetail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeDetail.swift; sourceTree = "<group>"; };
-		B2A5F2E32C5668FD009457AB /* NodeIconListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeIconListView.swift; sourceTree = "<group>"; };
+		B2A5F2E32C5668FD009457AB /* NodeIconsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeIconsView.swift; sourceTree = "<group>"; };
 		B2A5F2E52C5668FD009457AB /* NodeInfoEntity+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NodeInfoEntity+Extensions.swift"; sourceTree = "<group>"; };
 		B2A5F2E62C5668FD009457AB /* NodeInfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeInfoView.swift; sourceTree = "<group>"; };
 		B2A5F2E82C5668FD009457AB /* NodeListItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeListItem.swift; sourceTree = "<group>"; };
@@ -591,11 +593,12 @@
 		B2A5F31A2C566B69009457AB /* List */ = {
 			isa = PBXGroup;
 			children = (
-				B27A4B9B2CA6B8CC00F813C3 /* NodeListConnectedItem.swift */,
-				B27A4B992CA6A96500F813C3 /* NodeListSummary.swift */,
-				B2A5F2E32C5668FD009457AB /* NodeIconListView.swift */,
+				084DCFF92CA9BEE00032EF46 /* NodeIconsCompactView.swift */,
+				B2A5F2E32C5668FD009457AB /* NodeIconsView.swift */,
 				B2A5F2E62C5668FD009457AB /* NodeInfoView.swift */,
+				B27A4B9B2CA6B8CC00F813C3 /* NodeListConnectedItem.swift */,
 				B2A5F2E82C5668FD009457AB /* NodeListItem.swift */,
+				B27A4B992CA6A96500F813C3 /* NodeListSummary.swift */,
 			);
 			path = List;
 			sourceTree = "<group>";
@@ -1014,7 +1017,7 @@
 				B2A5F30D2C5668FD009457AB /* MapSettingsForm.swift in Sources */,
 				B2A5F3062C5668FD009457AB /* NodeInfoEntity+Extensions.swift in Sources */,
 				B2A5F31C2C566D98009457AB /* TraceRoute.swift in Sources */,
-				B2A5F3042C5668FD009457AB /* NodeIconListView.swift in Sources */,
+				B2A5F3042C5668FD009457AB /* NodeIconsView.swift in Sources */,
 				DDF924CA26FBB953009FE055 /* ConnectionInfo.swift in Sources */,
 				B284A4332C6F8AE400D5122B /* BluetoothUUID.swift in Sources */,
 				B26C91F22C5970A40029F249 /* LocationHelper.swift in Sources */,
@@ -1095,6 +1098,7 @@
 				DDDB444E29F8AB0E00EE2349 /* Int.swift in Sources */,
 				B266DA902C53CEFB0067D317 /* Constants.swift in Sources */,
 				B2A5F30E2C5668FD009457AB /* NodeMap.swift in Sources */,
+				084DCFFA2CA9BEF40032EF46 /* NodeIconsCompactView.swift in Sources */,
 				B2A5F30A2C5668FD009457AB /* MeshMapContent.swift in Sources */,
 				B266A75B2C59262E00DFC723 /* ScreenCarouselIntervals.swift in Sources */,
 				DD77093F2AA1B146007A8BF0 /* UIColor.swift in Sources */,

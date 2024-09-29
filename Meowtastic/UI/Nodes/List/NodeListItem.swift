@@ -33,7 +33,7 @@ struct NodeListItem: View {
 					if node.isOnline, let device = connectedDevice.device {
 						hardwareInfo
 
-						NodeIconListView(connectedNode: device.num, node: node)
+						NodeIconsView(connectedNode: device.num, node: node)
 							.padding(.vertical, 4)
 							.padding(.horizontal, 12)
 							.overlay(

@@ -2,13 +2,17 @@ import CoreLocation
 import Foundation
 import SwiftUI
 
-struct NodeIconListView: View {
+struct NodeIconsView: View {
 	var connectedNode: Int64
-	var small = false
 
 	@ObservedObject
 	var node: NodeInfoEntity
 
+	private let detailIconSize: CGFloat = 16
+	private let detailIconSpacing: CGFloat = 6
+
+	@Environment(\.colorScheme)
+	private var colorScheme: ColorScheme
 	@EnvironmentObject
 	private var locationManager: LocationManager
 	@State
@@ -41,23 +45,14 @@ struct NodeIconListView: View {
 			}
 		})
 	}
-	private var detailIconSize: CGFloat {
-		small ? 12 : 16
-	}
-	private var detailIconSpacing: CGFloat {
-		6
-	}
-
-	@Environment(\.colorScheme)
-	private var colorScheme: ColorScheme
 
 	@ViewBuilder
 	var body: some View {
-		let detailInfoIconFont = Font.system(size: small ? 12 : 14, weight: .regular, design: .rounded)
-		let detailHopsIconFont = Font.system(size: small ? 8 : 10, weight: .semibold, design: .rounded)
+		let detailInfoIconFont = Font.system(size: 14, weight: .regular, design: .rounded)
+		let detailHopsIconFont = Font.system(size: 10, weight: .semibold, design: .rounded)
 
 		HStack(alignment: .center, spacing: detailIconSpacing) {
-			if !small, let role = DeviceRoles(rawValue: Int(node.user?.role ?? 0))?.systemName {
+			if let role = DeviceRoles(rawValue: Int(node.user?.role ?? 0))?.systemName {
 				Image(systemName: role)
 					.font(detailInfoIconFont)
 					.foregroundColor(.gray)
@@ -110,16 +105,16 @@ struct NodeIconListView: View {
 				}
 			}
 
-			if !small, node.hasTraceRoutes {
+			if node.hasTraceRoutes {
 				divider
 
-				Image(systemName: "signpost.right.and.left")
+				Image(systemName: "signpost.right.and.left.fill")
 					.font(detailInfoIconFont)
 					.foregroundColor(.gray)
 					.frame(width: detailIconSize)
 			}
 
-			if !small, node.isStoreForwardRouter {
+			if node.isStoreForwardRouter {
 				divider
 
 				Image(systemName: "envelope.arrow.triangle.branch")
@@ -128,7 +123,7 @@ struct NodeIconListView: View {
 					.frame(width: detailIconSize)
 			}
 
-			if !small, node.hasDetectionSensorMetrics {
+			if node.hasDetectionSensorMetrics {
 				divider
 
 				Image(systemName: "sensor")
@@ -137,31 +132,20 @@ struct NodeIconListView: View {
 					.frame(width: detailIconSize)
 			}
 
-			if !small {
-				locationInfo
-				environmentInfo
-			}
-			else if !node.isOnline {
-				divider
-
-				Image(systemName: "antenna.radiowaves.left.and.right.slash")
-					.font(detailInfoIconFont)
-					.foregroundColor(.gray)
-					.frame(width: detailIconSize)
-			}
+			locationInfo
+			environmentInfo
 		}
 	}
 
 	@ViewBuilder
 	private var locationInfo: some View {
 		if node.hasPositions {
-			let detailInfoIconFont = Font.system(size: small ? 12 : 14, weight: .regular, design: .rounded)
-			let detailInfoTextFont = Font.system(size: small ? 10 : 12, weight: .semibold, design: .rounded)
+			let detailInfoIconFont = Font.system(size: 14, weight: .regular, design: .rounded)
+			let detailInfoTextFont = Font.system(size: 12, weight: .semibold, design: .rounded)
 
 			divider
 
 			if
-				!small,
 				let currentCoordinate = locationManager.lastKnownLocation?.coordinate,
 				let lastCoordinate = (node.positions?.lastObject as? PositionEntity)?.coordinate
 			{
@@ -183,7 +167,6 @@ struct NodeIconListView: View {
 				Text(distanceFormatted)
 					.font(detailInfoTextFont)
 					.lineLimit(1)
-					.minimumScaleFactor(0.7)
 					.foregroundColor(.gray)
 			}
 			else {
@@ -201,50 +184,41 @@ struct NodeIconListView: View {
 	@ViewBuilder
 	private var environmentInfo: some View {
 		if let nodeEnvironment {
-			let detailInfoIconFont = Font.system(size: small ? 12 : 14, weight: .regular, design: .rounded)
-			let detailInfoTextFont = Font.system(size: small ? 10 : 12, weight: .semibold, design: .rounded)
+			let detailInfoIconFont = Font.system(size: 14, weight: .regular, design: .rounded)
+			let detailInfoTextFont = Font.system(size: 12, weight: .semibold, design: .rounded)
 
 			divider
 
-			if small {
-				Image(systemName: "thermometer.variable")
+			let temp = nodeEnvironment.temperature
+			let tempFormatted = String(format: "%.0f", temp) + "°C"
+
+			if temp < 10 {
+				Image(systemName: "thermometer.low")
 					.font(detailInfoIconFont)
 					.foregroundColor(.gray)
-					.frame(width: detailIconSize)
 			}
-			else {
-				let temp = nodeEnvironment.temperature
-				let tempFormatted = String(format: "%.0f", temp) + "°C"
-
-				if temp < 10 {
-					Image(systemName: "thermometer.low")
-						.font(detailInfoIconFont)
-						.foregroundColor(.gray)
-				}
-				else if temp < 25 {
-					Image(systemName: "thermometer.medium")
-						.font(detailInfoIconFont)
-						.foregroundColor(.gray)
-				}
-				else {
-					Image(systemName: "thermometer.high")
-						.font(detailInfoIconFont)
-						.foregroundColor(.gray)
-				}
-
-				Text(tempFormatted)
-					.font(detailInfoTextFont)
-					.lineLimit(1)
-					.minimumScaleFactor(0.7)
+			else if temp < 25 {
+				Image(systemName: "thermometer.medium")
+					.font(detailInfoIconFont)
 					.foregroundColor(.gray)
 			}
+			else {
+				Image(systemName: "thermometer.high")
+					.font(detailInfoIconFont)
+					.foregroundColor(.gray)
+			}
+
+			Text(tempFormatted)
+				.font(detailInfoTextFont)
+				.lineLimit(1)
+				.foregroundColor(.gray)
 		}
 	}
 
 	@ViewBuilder
 	private var divider: some View {
 		Divider()
-			.frame(height: small ? 10 : 16)
+			.frame(height: 16)
 			.foregroundColor(.gray)
 	}
 }

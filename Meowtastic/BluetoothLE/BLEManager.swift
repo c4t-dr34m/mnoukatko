@@ -525,7 +525,7 @@ final class BLEManager: NSObject, ObservableObject {
 
 				return true
 			}
-			catch let error {
+			catch {
 				self.context.rollback()
 
 				return false
