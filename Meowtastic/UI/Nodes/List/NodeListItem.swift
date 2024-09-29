@@ -7,7 +7,6 @@ struct NodeListItem: View {
 	private let modemPreset: ModemPresets
 	private let node: NodeInfoEntity
 	private let detailInfoFont = Font.system(size: 14, weight: .regular, design: .rounded)
-	private let detailIconSize: CGFloat = 16
 	private let detailIconWidth: CGFloat = 20
 
 	@Environment(\.colorScheme)

@@ -10,6 +10,9 @@ struct NodeIconsView: View {
 
 	private let detailIconSize: CGFloat = 16
 	private let detailIconSpacing: CGFloat = 6
+	private let detailInfoTextFont = Font.system(size: 12, weight: .semibold, design: .rounded)
+	private let detailInfoIconFont = Font.system(size: 14, weight: .regular, design: .rounded)
+	private let detailHopsIconFont = Font.system(size: 10, weight: .semibold, design: .rounded)
 
 	@Environment(\.colorScheme)
 	private var colorScheme: ColorScheme
@@ -48,9 +51,6 @@ struct NodeIconsView: View {
 
 	@ViewBuilder
 	var body: some View {
-		let detailInfoIconFont = Font.system(size: 14, weight: .regular, design: .rounded)
-		let detailHopsIconFont = Font.system(size: 10, weight: .semibold, design: .rounded)
-
 		HStack(alignment: .center, spacing: detailIconSpacing) {
 			if let role = DeviceRoles(rawValue: Int(node.user?.role ?? 0))?.systemName {
 				Image(systemName: role)
@@ -140,9 +140,6 @@ struct NodeIconsView: View {
 	@ViewBuilder
 	private var locationInfo: some View {
 		if node.hasPositions {
-			let detailInfoIconFont = Font.system(size: 14, weight: .regular, design: .rounded)
-			let detailInfoTextFont = Font.system(size: 12, weight: .semibold, design: .rounded)
-
 			divider
 
 			if
