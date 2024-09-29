@@ -274,7 +274,7 @@ struct MessageList: View {
 					AvatarNode(
 						node,
 						ignoreOffline: true,
-						showLastHeard: node.isOnline,
+						showLastHeard: true,
 						size: 64,
 						corners: isCurrentUser ? (true, true, false, true) : nil
 					)

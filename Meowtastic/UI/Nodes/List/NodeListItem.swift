@@ -88,7 +88,7 @@ struct NodeListItem: View {
 		Text(node.user?.longName ?? "Unknown")
 			.fontWeight(.medium)
 			.font(.title2)
-			.lineLimit(1)
+			.lineLimit(2)
 			.minimumScaleFactor(0.5)
 	}
 

@@ -97,15 +97,6 @@ struct NodeIconsCompactView: View {
 					}
 				}
 			}
-
-			if !node.isOnline {
-				divider
-
-				Image(systemName: "antenna.radiowaves.left.and.right.slash")
-					.font(detailInfoIconFont)
-					.foregroundColor(.gray)
-					.frame(width: detailIconSize)
-			}
 		}
 	}
 
@@ -113,7 +104,6 @@ struct NodeIconsCompactView: View {
 	private var locationInfo: some View {
 		if node.hasPositions {
 			let detailInfoIconFont = Font.system(size: 12, weight: .regular, design: .rounded)
-			let detailInfoTextFont = Font.system(size: 10, weight: .semibold, design: .rounded)
 
 			divider
 
@@ -129,9 +119,8 @@ struct NodeIconsCompactView: View {
 
 	@ViewBuilder
 	private var environmentInfo: some View {
-		if let nodeEnvironment {
+		if nodeEnvironment != nil {
 			let detailInfoIconFont = Font.system(size: 12, weight: .regular, design: .rounded)
-			let detailInfoTextFont = Font.system(size: 10, weight: .semibold, design: .rounded)
 
 			divider
 

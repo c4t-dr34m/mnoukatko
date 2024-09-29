@@ -95,45 +95,58 @@ struct AvatarNode: View {
 					.frame(width: size, height: size)
 			}
 
-			if
-				showLastHeard,
-				node.isOnline,
-				let lastHeard = node.lastHeard,
-				lastHeard.timeIntervalSince1970 > 0
-			{
-				HStack(alignment: .center, spacing: 2) {
-					let diff = lastHeard.distance(to: .now) / 60
+			if showLastHeard {
+				if
+					node.isOnline,
+					let lastHeard = node.lastHeard,
+					lastHeard.timeIntervalSince1970 > 0
+				{
+					HStack(alignment: .center, spacing: 2) {
+						let diff = lastHeard.distance(to: .now) / 60
 
-					if diff < 1 {
-						Text("now")
-							.font(.system(size: size / 6, weight: .semibold, design: .rounded))
-							.foregroundColor(
-								background // inverted colors
-									.opacity(0.8)
-							)
-							.lineLimit(1)
-					}
-					else {
-						Text(String(format: "%.0f", diff) + "'")
-							.font(.system(size: size / 6, weight: .bold, design: .rounded))
+						if diff < 1 {
+							Text("now")
+								.font(.system(size: size / 6, weight: .semibold, design: .rounded))
+								.foregroundColor(background.opacity(0.8))
+								.lineLimit(1)
+						}
+						else {
+							Text(String(format: "%.0f", diff) + "'")
+								.font(.system(size: size / 6, weight: .bold, design: .rounded))
+								.foregroundColor(background.opacity(0.8))
+								.lineLimit(1)
+						}
+
+						Image(systemName: "clock")
+							.font(.system(size: size / 8, weight: .semibold, design: .rounded))
 							.foregroundColor(background.opacity(0.8))
-							.lineLimit(1)
 					}
-
-					Image(systemName: "clock")
+					.padding(.leading, size / 10)
+					.padding(.trailing, size / 6)
+					.padding(.vertical, size / 32)
+					.background(foreground.opacity(0.8))
+					.clipShape(
+						UnevenRoundedRectangle(
+							cornerRadii: RectangleCornerRadii(topLeading: 4)
+						)
+					)
+					.frame(width: size, height: size, alignment: .bottomTrailing)
+				}
+				else {
+					Image(systemName: "antenna.radiowaves.left.and.right.slash")
 						.font(.system(size: size / 8, weight: .semibold, design: .rounded))
 						.foregroundColor(background.opacity(0.8))
+						.padding(.leading, size / 10)
+						.padding(.trailing, size / 6)
+						.padding(.vertical, size / 32)
+						.background(foreground.opacity(0.8))
+						.clipShape(
+							UnevenRoundedRectangle(
+								cornerRadii: RectangleCornerRadii(topLeading: 4)
+							)
+						)
+						.frame(width: size, height: size, alignment: .bottomTrailing)
 				}
-				.padding(.leading, size / 10)
-				.padding(.trailing, size / 6)
-				.padding(.vertical, size / 32)
-				.background(foreground.opacity(0.8))
-				.clipShape(
-					UnevenRoundedRectangle(
-						cornerRadii: RectangleCornerRadii(topLeading: 4)
-					)
-				)
-				.frame(width: size, height: size, alignment: .bottomTrailing)
 			}
 			else if
 				showTemperature,
