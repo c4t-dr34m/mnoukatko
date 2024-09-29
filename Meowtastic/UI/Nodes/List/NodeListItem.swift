@@ -23,27 +23,22 @@ struct NodeListItem: View {
 				NodeDetail(node: node)
 			)
 		} label: {
-			HStack(alignment: .top) {
+			HStack(alignment: .center) {
 				avatar
 
 				VStack(alignment: .leading, spacing: 8) {
+					Spacer()
+
 					name
-					lastHeard
 
 					if node.isOnline, let device = connectedDevice.device {
-						hardwareInfo
-
 						NodeIconsView(connectedNode: device.num, node: node)
-							.padding(.vertical, 4)
-							.padding(.horizontal, 12)
-							.overlay(
-								RoundedRectangle(cornerRadius: 16)
-									.stroke(.gray, lineWidth: 1)
-							)
-							.clipShape(
-								RoundedRectangle(cornerRadius: 16)
-							)
 					}
+					else {
+						lastHeard
+					}
+
+					Spacer()
 				}
 
 				Spacer()
@@ -56,6 +51,7 @@ struct NodeListItem: View {
 		ZStack(alignment: .top) {
 			AvatarNode(
 				node,
+				showLastHeard: node.isOnline,
 				size: 64
 			)
 			.padding([.top, .bottom, .trailing], 10)
@@ -126,27 +122,6 @@ struct NodeListItem: View {
 					.font(detailInfoFont)
 					.foregroundColor(.gray)
 			}
-		}
-	}
-
-	@ViewBuilder
-	private var hardwareInfo: some View {
-		if let hwModel = node.user?.hwModel {
-			HStack {
-				Image(systemName: "flipphone")
-					.frame(width: detailIconWidth)
-					.font(detailInfoFont)
-					.foregroundColor(.gray)
-
-				Text(hwModel)
-					.font(detailInfoFont)
-					.lineLimit(1)
-					.minimumScaleFactor(0.5)
-					.foregroundColor(.gray)
-			}
-		}
-		else {
-			EmptyView()
 		}
 	}
 

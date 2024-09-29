@@ -325,6 +325,7 @@ struct Messages: View {
 			if let node = user.userNode {
 				AvatarNode(
 					node,
+					showLastHeard: node.isOnline,
 					size: 64
 				)
 				.padding([.top, .bottom, .trailing], 12)

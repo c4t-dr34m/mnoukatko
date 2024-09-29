@@ -6,6 +6,7 @@ struct TraceRoute: View {
 	@ObservedObject
 	var node: NodeInfoEntity
 
+	private let coreDataTools = CoreDataTools()
 	private let distanceFormatter = MKDistanceFormatter()
 	private let dateFormatter = {
 		let formatter = DateFormatter()
@@ -241,12 +242,14 @@ struct TraceRoute: View {
 
 								ForEach(hops, id: \.num) { hop in
 									HStack(alignment: .center, spacing: 4) {
+										let node = coreDataTools.getNodeInfo(id: hop.num, context: context)
+
 										Image(systemName: "hare")
 											.font(.system(size: 10))
 											.foregroundColor(.gray)
 											.frame(width: 24)
 
-										Text(hop.name ?? "Unknown node")
+										Text(node?.user?.longName ?? "Unknown node")
 											.font(.system(size: 10))
 											.foregroundColor(.gray)
 									}
