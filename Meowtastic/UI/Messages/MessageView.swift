@@ -28,7 +28,7 @@ struct MessageView: View {
 			RectangleCornerRadii(
 				topLeading: 24,
 				bottomLeading: 24,
-				bottomTrailing: 4,
+				bottomTrailing: 2,
 				topTrailing: 24
 			)
 		}
@@ -36,7 +36,7 @@ struct MessageView: View {
 			RectangleCornerRadii(
 				topLeading: 8,
 				bottomLeading: 24,
-				bottomTrailing: 4,
+				bottomTrailing: 2,
 				topTrailing: 24
 			)
 		}
@@ -118,11 +118,13 @@ struct MessageView: View {
 							messageStatus
 								.padding([.leading, .trailing], 8)
 								.padding(.bottom, 4)
+								.id(message.messageId)
 						}
 						else {
 							messageTime
 								.padding([.leading, .trailing], 8)
 								.padding(.bottom, 4)
+								.id(message.messageId)
 						}
 					}
 				}
@@ -170,7 +172,6 @@ struct MessageView: View {
 				}
 			}
 		}
-		.id(message.messageId)
 	}
 
 	@ViewBuilder

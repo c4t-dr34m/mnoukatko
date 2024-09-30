@@ -8,7 +8,6 @@ struct MessageList: View {
 	private let channel: ChannelEntity?
 	private let user: UserEntity?
 	private let myInfo: MyInfoEntity?
-	private let textFieldPlaceholderID = "text_field_placeholder"
 	private let debounce = Debounce<() async -> Void>(duration: .milliseconds(250)) { action in
 		await action()
 	}
@@ -28,13 +27,7 @@ struct MessageList: View {
 	@State
 	private var replyMessageId: Int64 = 0
 
-	@FetchRequest(
-		sortDescriptors: [
-			NSSortDescriptor(key: "favorite", ascending: false),
-			NSSortDescriptor(key: "lastHeard", ascending: false),
-			NSSortDescriptor(key: "user.longName", ascending: true)
-		]
-	)
+	@FetchRequest(sortDescriptors: [])
 	private var nodes: FetchedResults<NodeInfoEntity>
 
 	@FetchRequest(
@@ -65,6 +58,9 @@ struct MessageList: View {
 		filteredMessages.first(where: { message in
 			!message.read
 		})
+	}
+	private var lastMessage: MessageEntity? {
+		filteredMessages.last
 	}
 	private var destination: MessageDestination? {
 		if let channel {
@@ -103,7 +99,7 @@ struct MessageList: View {
 	}
 
 	var body: some View {
-		ZStack(alignment: .bottom) {
+		VStack(spacing: 4) {
 			ScrollViewReader { scrollView in
 				if !filteredMessages.isEmpty {
 					messageList
@@ -113,8 +109,8 @@ struct MessageList: View {
 							if let firstUnreadMessage {
 								scrollView.scrollTo(firstUnreadMessage.messageId)
 							}
-							else {
-								scrollView.scrollTo(textFieldPlaceholderID)
+							else if let lastMessage {
+								scrollView.scrollTo(lastMessage.messageId)
 							}
 						}
 				}
@@ -136,6 +132,8 @@ struct MessageList: View {
 			}
 
 			if let destination {
+				Divider()
+
 				TextMessageField(
 					destination: destination,
 					onSubmit: {
@@ -157,7 +155,6 @@ struct MessageList: View {
 				EmptyView()
 			}
 		}
-		.navigationBarTitleDisplayMode(.inline)
 		.toolbar {
 			ToolbarItem(placement: .principal) {
 				Text(screenTitle)
@@ -195,14 +192,6 @@ struct MessageList: View {
 					.listRowBackground(Color.clear)
 					.scrollContentBackground(.hidden)
 			}
-
-			Rectangle()
-				.id(textFieldPlaceholderID)
-				.foregroundColor(.clear)
-				.frame(height: 48)
-				.listRowSeparator(.hidden)
-				.listRowBackground(Color.clear)
-				.scrollContentBackground(.hidden)
 		}
 		.listStyle(.plain)
 	}
@@ -437,7 +426,7 @@ struct MessageList: View {
 
 				return true
 			}
-			catch let error {
+			catch {
 				context.rollback()
 
 				return false

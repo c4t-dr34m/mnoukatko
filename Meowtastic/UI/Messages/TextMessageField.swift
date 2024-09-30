@@ -24,92 +24,76 @@ struct TextMessageField: View {
 	@State
 	private var totalBytes = 0
 
+	private var remainingCharacters: Int {
+		maxBytes - totalBytes
+	}
 	private var backgroundColor: Color {
-		let opacity: Double
-		if totalBytes == 0 {
-			opacity = 0.85
-		}
-		else {
-			opacity = 1.00
-		}
-
-		if colorScheme == .dark {
-			return Color.black.opacity(opacity)
-		}
-		else {
-			return Color.white.opacity(opacity)
-		}
+		colorScheme == .dark ? .black : .white
 	}
 
 	var body: some View {
-		HStack(alignment: .top, spacing: 8) {
-			TextField("", text: $typingMessage, axis: .vertical)
-				.font(.body)
-				.multilineTextAlignment(.leading)
-				.keyboardType(.default)
-				.keyboardShortcut(.defaultAction)
-				.padding(.leading, 8)
-				.padding(.vertical, 4)
-				.focused($isFocused, equals: true)
-				.onSubmit {
-					if typingMessage.isEmpty || totalBytes > maxBytes {
-						return
+		HStack(alignment: .bottom, spacing: 8) {
+			ZStack(alignment: .bottom) {
+				TextField("", text: $typingMessage, axis: .vertical)
+					.font(.body)
+					.multilineTextAlignment(.leading)
+					.keyboardType(.default)
+					.keyboardShortcut(.defaultAction)
+					.padding(.horizontal, 16)
+					.padding(.vertical, 8)
+					.overlay(
+						RoundedRectangle(cornerRadius: 16)
+							.stroke(.tertiary, lineWidth: 2)
+					)
+					.clipShape(
+						RoundedRectangle(cornerRadius: 16)
+					)
+					.frame(minHeight: 32)
+					.focused($isFocused, equals: true)
+					.onChange(of: typingMessage, initial: true) {
+						totalBytes = typingMessage.trimmingCharacters(in: .whitespacesAndNewlines).count
+					}
+					.onSubmit {
+						if typingMessage.isEmpty || totalBytes > maxBytes {
+							return
+						}
+
+						sendMessage()
 					}
 
-					sendMessage()
-				}
-				.onChange(of: typingMessage, initial: true) {
-					totalBytes = typingMessage.utf8.count
-				}
+				HStack(alignment: .bottom) {
+					Spacer()
 
-			VStack(alignment: .center, spacing: 0) {
-				let remaining = maxBytes - totalBytes
-
-				Button(action: sendMessage) {
-					Image(systemName: "paperplane.circle")
-						.resizable()
-						.scaledToFit()
-						.foregroundColor(.accentColor)
-						.frame(width: 32, height: 32)
+					Text(String(remainingCharacters))
+						.font(.system(size: 8, design: .rounded))
+						.fontWeight(remainingCharacters < 24 ? .bold : .regular)
+						.foregroundColor(remainingCharacters < 24 ? .red : .gray)
+						.frame(alignment: .bottomTrailing)
+						.padding(.trailing, 10)
+						.padding(.bottom, 4)
 				}
-				.disabled(typingMessage.isEmpty || remaining <= 0)
-
-				Text(String(remaining))
-					.font(.system(size: 8, design: .rounded))
-					.fontWeight(remaining < 24 ? .bold : .regular)
-					.foregroundColor(remaining < 24 ? .red : .gray)
-					.padding(.top, 4)
 			}
+
+			Button(action: sendMessage) {
+				Image(systemName: "paperplane.fill")
+					.resizable()
+					.scaledToFit()
+					.foregroundColor(.accentColor)
+					.padding(.all, 4)
+					.frame(width: 32, height: 32)
+			}
+			.disabled(typingMessage.isEmpty || remainingCharacters <= 0)
 		}
 		.padding(.all, 2)
 		.background(backgroundColor)
-		.overlay(
-			overallShape
-				.stroke(.tertiary, lineWidth: 1)
-		)
-		.clipShape(
-			overallShape
-		)
 		.onTapGesture {
 			isFocused = true
 		}
 	}
 
-	@ViewBuilder
-	private var overallShape: UnevenRoundedRectangle {
-		let radii = RectangleCornerRadii(
-			topLeading: 18,
-			bottomLeading: 18,
-			bottomTrailing: 0,
-			topTrailing: 18
-		)
-
-		UnevenRoundedRectangle(cornerRadii: radii, style: .circular)
-	}
-
 	private func sendMessage() {
 		let messageSent = bleActions.sendMessage(
-			message: typingMessage,
+			message: typingMessage.trimmingCharacters(in: .whitespacesAndNewlines),
 			toUserNum: destination.userNum,
 			channel: destination.channelNum,
 			isEmoji: typingMessage.isEmoji(),
@@ -124,7 +108,7 @@ struct TextMessageField: View {
 			onSubmit()
 
 			if sendPositionWithMessage {
-				let positionSent = bleActions.sendPosition(
+				bleActions.sendPosition(
 					channel: destination.channelNum,
 					destNum: destination.positionDestNum,
 					wantResponse: destination.wantPositionResponse
