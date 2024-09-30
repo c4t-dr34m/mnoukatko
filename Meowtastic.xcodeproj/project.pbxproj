@@ -662,7 +662,6 @@
 			isa = PBXGroup;
 			children = (
 				DDB6ABD528AE742000384BA1 /* BluetoothConfig.swift */,
-				DD93800C2BA74CE3008BEC06 /* Channels */,
 				D93068DC2B81CA820066FBC8 /* ConfigHeader.swift */,
 				DD41582528582E9B009B0E59 /* DeviceConfig.swift */,
 				DD8EBF42285058FA00426DCA /* DisplayConfig.swift */,
@@ -674,6 +673,7 @@
 				D93069072B81DF040066FBC8 /* SaveConfigButton.swift */,
 				081C3AEE2C989B8C00F93C46 /* TelemetryConfig.swift */,
 				DDCE4E2B2869F92900BE9F8F /* UserConfig.swift */,
+				DD93800C2BA74CE3008BEC06 /* Channels */,
 			);
 			path = Node;
 			sourceTree = "<group>";

@@ -110,143 +110,145 @@ struct Options: View {
 
 	@ViewBuilder
 	private var nodeConfig: some View {
-		Section(
-			header: Text("Node").fontDesign(.rounded)
-		) {
-			NavigationLink {
-				NavigationLazyView(
-					LoRaConfig(node: nodeSelected)
-				)
-			} label: {
-				Label {
-					Text("LoRa")
-				} icon: {
-					Image(systemName: "wifi.circle")
+		if let nodeSelected {
+			Section(
+				header: Text("Node").fontDesign(.rounded)
+			) {
+				NavigationLink {
+					NavigationLazyView(
+						LoRaConfig(node: nodeSelected)
+					)
+				} label: {
+					Label {
+						Text("LoRa")
+					} icon: {
+						Image(systemName: "wifi.circle")
+					}
+				}
+				
+				NavigationLink {
+					NavigationLazyView(
+						Channels(node: nodeSelected)
+					)
+				} label: {
+					Label {
+						Text("Channels")
+					} icon: {
+						Image(systemName: "bubble.left.and.bubble.right")
+					}
+				}
+				.disabled(nodeIsConnected)
+				
+				NavigationLink {
+					NavigationLazyView(
+						UserConfig(node: nodeSelected)
+					)
+				} label: {
+					Label {
+						Text("User")
+					} icon: {
+						Image(systemName: "person.text.rectangle")
+					}
+				}
+				
+				NavigationLink {
+					NavigationLazyView(
+						DeviceConfig(node: nodeSelected)
+					)
+				} label: {
+					Label {
+						Text("Device")
+					} icon: {
+						Image(systemName: "flipphone")
+					}
+				}
+				
+				NavigationLink {
+					NavigationLazyView(
+						MQTTConfig(node: nodeSelected)
+					)
+				} label: {
+					Label {
+						Text("MQTT")
+					} icon: {
+						Image(systemName: "network")
+					}
+				}
+				
+				NavigationLink {
+					NavigationLazyView(
+						BluetoothConfig(node: nodeSelected)
+					)
+				} label: {
+					Label {
+						Text("Bluetooth")
+					} icon: {
+						Image(systemName: "iphone.gen3")
+					}
+				}
+				
+				NavigationLink {
+					NavigationLazyView(
+						NetworkConfig(node: nodeSelected)
+					)
+				} label: {
+					Label {
+						Text("WiFi")
+					} icon: {
+						Image(systemName: "wifi.router")
+					}
+				}
+				
+				NavigationLink {
+					NavigationLazyView(
+						PositionConfig(node: nodeSelected)
+					)
+				} label: {
+					Label {
+						Text("GPS")
+					} icon: {
+						Image(systemName: "mappin.and.ellipse")
+					}
+				}
+				
+				NavigationLink {
+					NavigationLazyView(
+						TelemetryConfig(node: nodeSelected)
+					)
+				} label: {
+					Label {
+						Text("Telemetry")
+					} icon: {
+						Image(systemName: "thermometer.medium")
+					}
+				}
+				
+				NavigationLink {
+					NavigationLazyView(
+						DisplayConfig(node: nodeSelected)
+					)
+				} label: {
+					Label {
+						Text("Display")
+					} icon: {
+						Image(systemName: "display")
+					}
+				}
+				
+				NavigationLink {
+					NavigationLazyView(
+						PowerConfig(node: nodeSelected)
+					)
+				} label: {
+					Label {
+						Text("Power")
+					} icon: {
+						Image(systemName: "powercord")
+					}
 				}
 			}
-
-			NavigationLink {
-				NavigationLazyView(
-					Channels(node: nodeSelected)
-				)
-			} label: {
-				Label {
-					Text("Channels")
-				} icon: {
-					Image(systemName: "bubble.left.and.bubble.right")
-				}
-			}
-			.disabled(nodeIsConnected)
-
-			NavigationLink {
-				NavigationLazyView(
-					UserConfig(node: nodeSelected)
-				)
-			} label: {
-				Label {
-					Text("User")
-				} icon: {
-					Image(systemName: "person.text.rectangle")
-				}
-			}
-
-			NavigationLink {
-				NavigationLazyView(
-					DeviceConfig(node: nodeSelected)
-				)
-			} label: {
-				Label {
-					Text("Device")
-				} icon: {
-					Image(systemName: "flipphone")
-				}
-			}
-
-			NavigationLink {
-				NavigationLazyView(
-					MQTTConfig(node: nodeSelected)
-				)
-			} label: {
-				Label {
-					Text("MQTT")
-				} icon: {
-					Image(systemName: "network")
-				}
-			}
-
-			NavigationLink {
-				NavigationLazyView(
-					BluetoothConfig(node: nodeSelected)
-				)
-			} label: {
-				Label {
-					Text("Bluetooth")
-				} icon: {
-					Image(systemName: "iphone.gen3")
-				}
-			}
-
-			NavigationLink {
-				NavigationLazyView(
-					NetworkConfig(node: nodeSelected)
-				)
-			} label: {
-				Label {
-					Text("WiFi")
-				} icon: {
-					Image(systemName: "wifi.router")
-				}
-			}
-
-			NavigationLink {
-				NavigationLazyView(
-					PositionConfig(node: nodeSelected)
-				)
-			} label: {
-				Label {
-					Text("GPS")
-				} icon: {
-					Image(systemName: "mappin.and.ellipse")
-				}
-			}
-
-			NavigationLink {
-				NavigationLazyView(
-					TelemetryConfig(node: nodeSelected)
-				)
-			} label: {
-				Label {
-					Text("Telemetry")
-				} icon: {
-					Image(systemName: "thermometer.medium")
-				}
-			}
-
-			NavigationLink {
-				NavigationLazyView(
-					DisplayConfig(node: nodeSelected)
-				)
-			} label: {
-				Label {
-					Text("Display")
-				} icon: {
-					Image(systemName: "display")
-				}
-			}
-
-			NavigationLink {
-				NavigationLazyView(
-					PowerConfig(node: nodeSelected)
-				)
-			} label: {
-				Label {
-					Text("Power")
-				} icon: {
-					Image(systemName: "powercord")
-				}
-			}
+			.headerProminence(.increased)
 		}
-		.headerProminence(.increased)
 	}
 
 	@ViewBuilder

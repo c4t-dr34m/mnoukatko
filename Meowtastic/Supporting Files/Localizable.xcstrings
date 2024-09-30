@@ -960,6 +960,7 @@
 
     },
     "bluetooth.mode.fixedpin" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1136,6 +1137,7 @@
       }
     },
     "bluetooth.pairingmode" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1194,6 +1196,7 @@
       }
     },
     "bluetooth.pin.validation" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2743,7 +2746,7 @@
     "Device GPS" : {
 
     },
-    "Device Logging Enabled" : {
+    "Device Logging" : {
 
     },
     "Device Metrics" : {
@@ -3667,6 +3670,9 @@
       }
     },
     "First Heard" : {
+
+    },
+    "Fixed PIN" : {
 
     },
     "Fixed Position" : {
@@ -10536,6 +10542,9 @@
     "Override automatic OLED screen detection." : {
 
     },
+    "Pairing Mode" : {
+
+    },
     "password" : {
       "localizations" : {
         "de" : {
@@ -10657,6 +10666,9 @@
       }
     },
     "Pin %lld" : {
+
+    },
+    "PIN must be 6 digits long" : {
 
     },
     "Please connect to a radio to configure settings." : {

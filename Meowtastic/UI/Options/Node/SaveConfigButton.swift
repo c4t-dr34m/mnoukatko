@@ -2,9 +2,10 @@ import SwiftUI
 
 struct SaveConfigButton: View {
 	let node: NodeInfoEntity?
+	let onConfirmation: () -> Void
+
 	@Binding
 	var hasChanges: Bool
-	let onConfirmation: () -> Void
 
 	@EnvironmentObject
 	private var connectedDevice: CurrentDevice
@@ -16,7 +17,7 @@ struct SaveConfigButton: View {
 		Button {
 			isPresentingSaveConfirm = true
 		} label: {
-			Label("save", systemImage: "square.and.arrow.down")
+			Label("Save", systemImage: "square.and.arrow.down")
 		}
 		.disabled(connectedDevice.device == nil || !hasChanges)
 		.buttonStyle(.bordered)
@@ -24,17 +25,18 @@ struct SaveConfigButton: View {
 		.controlSize(.large)
 		.padding()
 		.confirmationDialog(
-			"are.you.sure",
+			"Are you sure?",
 			isPresented: $isPresentingSaveConfirm,
 			titleVisibility: .visible
 		) {
-			let nodeName = node?.user?.longName ?? "unknown".localized
-			let buttonText = String.localizedStringWithFormat("save.config %@".localized, nodeName)
+			let nodeName = node?.user?.longName ?? "Unknown"
+			let buttonText = String.localizedStringWithFormat("Save")
+
 			Button(buttonText) {
 				onConfirmation()
 			}
 		} message: {
-			Text("config.save.confirm")
+			Text("After config values save the node will reboot")
 		}
 	}
 }
