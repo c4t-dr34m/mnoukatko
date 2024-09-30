@@ -2,7 +2,7 @@ import MeshtasticProtobufs
 import OSLog
 import SwiftUI
 
-struct MessageView: View {
+struct MessageContentView: View {
 	let message: MessageEntity
 	let originalMessage: MessageEntity?
 	let tapBackDestination: MessageDestination

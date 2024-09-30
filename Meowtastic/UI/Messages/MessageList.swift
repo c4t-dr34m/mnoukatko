@@ -8,6 +8,7 @@ struct MessageList: View {
 	private let channel: ChannelEntity?
 	private let user: UserEntity?
 	private let myInfo: MyInfoEntity?
+	private let destination: MessageDestination?
 	private let debounce = Debounce<() async -> Void>(duration: .milliseconds(250)) { action in
 		await action()
 	}
@@ -23,54 +24,20 @@ struct MessageList: View {
 	@FocusState
 	private var messageFieldFocused: Bool
 	@State
-	private var nodeDetail: NodeInfoEntity?
+	private var messages: [MessageEntity]?
 	@State
 	private var replyMessageId: Int64 = 0
 
 	@FetchRequest(sortDescriptors: [])
 	private var nodes: FetchedResults<NodeInfoEntity>
 
-	@FetchRequest(
-		sortDescriptors: [
-			NSSortDescriptor(key: "messageTimestamp", ascending: true)
-		]
-	)
-	private var messages: FetchedResults<MessageEntity>
-
-	private var filteredMessages: [MessageEntity] {
-		if let channel {
-			return messages.filter { message in
-				message.channel == channel.index && message.toUser == nil
-			} as [MessageEntity]
-		}
-		else if let user {
-			return messages.filter { message in
-				message.toUser != nil && message.fromUser != nil
-				&& (message.toUser?.num == user.num || message.fromUser?.num == user.num)
-				&& !message.admin
-				&& message.portNum != 10
-			} as [MessageEntity]
-		}
-
-		return [MessageEntity]()
-	}
 	private var firstUnreadMessage: MessageEntity? {
-		filteredMessages.first(where: { message in
+		messages?.first(where: { message in
 			!message.read
 		})
 	}
 	private var lastMessage: MessageEntity? {
-		filteredMessages.last
-	}
-	private var destination: MessageDestination? {
-		if let channel {
-			return .channel(channel)
-		}
-		else if let user {
-			return .user(user)
-		}
-
-		return nil
+		messages?.last
 	}
 	private var screenTitle: String {
 		if let channel {
@@ -95,17 +62,17 @@ struct MessageList: View {
 			}
 		}
 
-		return ""
+		return "Messages"
 	}
 
 	var body: some View {
 		VStack(spacing: 4) {
 			ScrollViewReader { scrollView in
-				if !filteredMessages.isEmpty {
+				if let messages, !messages.isEmpty {
 					messageList
 						.scrollDismissesKeyboard(.interactively)
 						.scrollIndicators(.hidden)
-						.onChange(of: filteredMessages, initial: true) {
+						.onChange(of: messages.count, initial: true) {
 							if let firstUnreadMessage {
 								scrollView.scrollTo(firstUnreadMessage.messageId)
 							}
@@ -126,7 +93,7 @@ struct MessageList: View {
 					AnalyticEvents.messageList.id,
 					parameters: [
 						"kind": channel != nil ? "channel" : "user",
-						"messages_in_list": filteredMessages.count
+						"messages_in_list": messages?.count ?? 0
 					]
 				)
 			}
@@ -155,13 +122,10 @@ struct MessageList: View {
 				EmptyView()
 			}
 		}
-		.toolbar {
-			ToolbarItem(placement: .principal) {
-				Text(screenTitle)
-					.font(.headline)
-			}
-
-			ToolbarItem(placement: .navigationBarTrailing) {
+		.navigationTitle(screenTitle)
+		.navigationBarTitleDisplayMode(.large)
+		.navigationBarItems(
+			trailing: ZStack {
 				if let channel {
 					ConnectionInfo(
 						mqttUplinkEnabled: channel.uplinkEnabled,
@@ -172,28 +136,57 @@ struct MessageList: View {
 					ConnectionInfo()
 				}
 			}
-		}
-		.sheet(item: $nodeDetail) { node in
-			NodeDetail(
-				node: node,
-				isInSheet: true
-			)
-				.presentationDragIndicator(.visible)
-				.presentationDetents([.medium])
+		)
+		.onAppear {
+			loadMessages()
 		}
 	}
 
 	@ViewBuilder
 	private var messageList: some View {
-		List {
-			ForEach(filteredMessages, id: \.messageId) { message in
-				messageView(for: message)
+		if let messages {
+			List {
+				ForEach(messages, id: \.messageId) { message in
+					MessageListItem(
+						message: message,
+						originalMessage: getOriginalMessage(for: message),
+						onMessageRead: { message in
+							var didRead = 0
+							for displayedMessage in messages.filter({ msg in
+								msg.messageTimestamp <= message.messageTimestamp
+							}) where !displayedMessage.read {
+								displayedMessage.read.toggle()
+								didRead += 1
+							}
+
+							guard didRead > 0 else {
+								return
+							}
+
+							Logger.app.info("Marking \(didRead) message(s) as read")
+
+							debounce.emit {
+								await self.saveData()
+							}
+
+							if let myInfo {
+								appState.unreadChannelMessages = myInfo.unreadMessages
+								context.refresh(myInfo, mergeChanges: true)
+							}
+						},
+						onReply: {
+							messageFieldFocused = true
+						},
+						destination: destination,
+						replyMessageId: $replyMessageId
+					)
 					.listRowSeparator(.hidden)
 					.listRowBackground(Color.clear)
 					.scrollContentBackground(.hidden)
+				}
 			}
+			.listStyle(.plain)
 		}
-		.listStyle(.plain)
 	}
 
 	init(
@@ -203,6 +196,7 @@ struct MessageList: View {
 		self.channel = channel
 		self.user = nil
 		self.myInfo = myInfo
+		self.destination = .channel(channel)
 	}
 
 	init(
@@ -212,161 +206,38 @@ struct MessageList: View {
 		self.channel = nil
 		self.user = user
 		self.myInfo = myInfo
+		self.destination = .user(user)
 	}
 
-	@ViewBuilder
-	private func messageView(for message: MessageEntity) -> some View {
-		let isCurrentUser = isCurrentUser(message: message, preferredNum: preferredPeripheralNum)
+	private func loadMessages() {
+		if let channel {
+			let request = MessageEntity.fetchRequest()
+			request.sortDescriptors = [
+				NSSortDescriptor(key: "messageTimestamp", ascending: true)
+			]
+			request.predicate = NSPredicate(format: "channel == %lld", channel.index)
 
-		HStack(alignment: isCurrentUser ? .bottom : .top, spacing: 8) {
-			leadingAvatar(for: message)
-			content(for: message)
-			trailingAvatar(for: message)
+			messages = try? context.fetch(request)
 		}
-		.frame(maxWidth: .infinity)
-		.onAppear {
-			var didRead = 0
-			for displayedMessage in filteredMessages.filter({ msg in
-				msg.messageTimestamp <= message.messageTimestamp
-			}) where !displayedMessage.read {
-				displayedMessage.read.toggle()
-				didRead += 1
-			}
+		else if let user {
+			let request = MessageEntity.fetchRequest()
+			request.sortDescriptors = [
+				NSSortDescriptor(key: "messageTimestamp", ascending: true)
+			]
+			request.predicate = NSPredicate(
+				format: "toUser != nil && fromUser != nil && (toUser.num == %lld || fromUser.num == %lld) && admin == false && portNum != 10",
+				Int64(user.num),
+				Int64(user.num)
+			)
 
-			guard didRead > 0 else {
-				return
-			}
-
-			Logger.app.info("Marking \(didRead) message(s) as read")
-
-			debounce.emit {
-				await self.saveData()
-			}
-
-			if let myInfo {
-				appState.unreadChannelMessages = myInfo.unreadMessages
-				context.refresh(myInfo, mergeChanges: true)
-			}
-		}
-	}
-
-	@ViewBuilder
-	private func leadingAvatar(for message: MessageEntity) -> some View {
-		let isCurrentUser = isCurrentUser(message: message, preferredNum: preferredPeripheralNum)
-
-		if isCurrentUser {
-			Spacer()
-		}
-		else {
-			VStack(alignment: .center) {
-				if let node = message.fromUser?.userNode {
-					AvatarNode(
-						node,
-						ignoreOffline: true,
-						showLastHeard: true,
-						size: 64,
-						corners: isCurrentUser ? (true, true, false, true) : nil
-					)
-				}
-				else {
-					AvatarAbstract(
-						color: .gray,
-						size: 64,
-						corners: isCurrentUser ? (true, true, false, true) : nil
-					)
-				}
-			}
-			.frame(width: 64)
-			.onTapGesture {
-				if let sourceNode = message.fromUser?.userNode {
-					nodeDetail = sourceNode
-				}
-			}
-		}
-	}
-
-	@ViewBuilder
-	private func trailingAvatar(for message: MessageEntity) -> some View {
-		let isCurrentUser = isCurrentUser(message: message, preferredNum: preferredPeripheralNum)
-
-		if isCurrentUser {
-			if let node = message.fromUser?.userNode {
-				AvatarNode(
-					node,
-					ignoreOffline: true,
-					size: 64
-				)
-			}
-			else {
-				AvatarAbstract(
-					size: 64
-				)
-			}
-		}
-		else {
-			Spacer()
-		}
-	}
-
-	@ViewBuilder
-	private func content(for message: MessageEntity) -> some View {
-		let isCurrentUser = isCurrentUser(message: message, preferredNum: preferredPeripheralNum)
-
-		VStack(alignment: isCurrentUser ? .trailing : .leading, spacing: 2) {
-			if !isCurrentUser {
-				HStack(spacing: 4) {
-					if message.fromUser != nil {
-						Image(systemName: "person")
-							.font(.caption)
-							.foregroundColor(.gray)
-
-						Text(getSenderName(message: message))
-							.font(.caption)
-							.lineLimit(1)
-							.foregroundColor(.gray)
-
-						if let node = message.fromUser?.userNode, let nodeNum = connectedDevice.device?.num {
-							NodeIconsCompactView(
-								connectedNode: nodeNum,
-								node: node
-							)
-						}
-					}
-					else {
-						Image(systemName: "person.fill.questionmark")
-							.font(.caption)
-							.foregroundColor(.gray)
-					}
-				}
-			}
-			else {
-				EmptyView()
-			}
-
-			if let destination {
-				HStack(spacing: 0) {
-					MessageView(
-						message: message,
-						originalMessage: getOriginalMessage(for: message),
-						tapBackDestination: destination,
-						isCurrentUser: isCurrentUser
-					) {
-						replyMessageId = message.messageId
-						messageFieldFocused = true
-					}
-
-					if isCurrentUser && message.canRetry {
-						RetryButton(message: message, destination: destination)
-					}
-				}
-			}
+			messages = try? context.fetch(request)
 		}
 	}
 
 	private func getOriginalMessage(for message: MessageEntity) -> MessageEntity? {
 		if
 			message.replyID > 0,
-			let messageReply = filteredMessages.first(where: { msg in
+			let messageReply = messages?.first(where: { msg in
 				msg.messageId == message.replyID
 			}),
 			messageReply.messagePayload != nil
@@ -377,10 +248,6 @@ struct MessageList: View {
 		return nil
 	}
 
-	private func isCurrentUser(message: MessageEntity, preferredNum: Int) -> Bool {
-		Int64(preferredNum) == message.fromUser?.num
-	}
-
 	private func getUserColor(for node: NodeInfoEntity?) -> Color {
 		if let node, node.isOnline {
 			return Color(
@@ -389,28 +256,6 @@ struct MessageList: View {
 		}
 		else {
 			return Color.gray.opacity(0.7)
-		}
-	}
-
-	private func getSenderName(message: MessageEntity, short: Bool = false) -> String {
-		let shortName = message.fromUser?.shortName
-		let longName = message.fromUser?.longName
-
-		if short {
-			if let shortName {
-				return shortName
-			}
-			else {
-				return ""
-			}
-		}
-		else {
-			if let longName {
-				return longName
-			}
-			else {
-				return "Unknown Name"
-			}
 		}
 	}
 
