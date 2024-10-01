@@ -1520,9 +1520,6 @@
     "Channel #%d" : {
 
     },
-    "channel details" : {
-
-    },
     "Channel Name" : {
 
     },
@@ -3442,7 +3439,7 @@
     "Double Tap as Button" : {
 
     },
-    "Downlink Enabled" : {
+    "Downlink" : {
 
     },
     "email.address" : {
@@ -9748,6 +9745,7 @@
 
     },
     "mqtt" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -9933,6 +9931,7 @@
 
     },
     "name" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -9989,6 +9988,9 @@
           }
         }
       }
+    },
+    "Name" : {
+
     },
     "Network" : {
 
@@ -10678,6 +10680,7 @@
 
     },
     "position" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -10734,6 +10737,9 @@
           }
         }
       }
+    },
+    "Position" : {
+
     },
     "Position Config" : {
 
@@ -13913,7 +13919,7 @@
         }
       }
     },
-    "Uplink Enabled" : {
+    "Uplink" : {
 
     },
     "Uptime" : {

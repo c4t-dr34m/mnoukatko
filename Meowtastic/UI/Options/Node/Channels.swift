@@ -247,13 +247,14 @@ struct Channels: View {
 							catch {
 								context.rollback()
 							}
-						} else {
+						}
+						else {
 							let objects = selectedChannel?.allPrivateMessages ?? []
 
 							for object in objects {
 								context.delete(object)
 							}
-							
+
 							for node in nodes where node.channel == channel.index {
 								context.delete(node)
 							}
@@ -268,7 +269,7 @@ struct Channels: View {
 							}
 						}
 
-						let adminMessageId =  nodeConfig.saveChannel(
+						let adminMessageId = nodeConfig.saveChannel(
 							channel: channel,
 							fromUser: node.user!,
 							toUser: node.user!

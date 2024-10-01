@@ -32,9 +32,9 @@ struct ChannelForm: View {
 	var body: some View {
 		NavigationStack {
 			Form {
-				Section(header: Text("channel details")) {
+				Section(header: Text("Details")) {
 					HStack {
-						Text("name")
+						Text("Name")
 
 						Spacer()
 
@@ -82,6 +82,7 @@ struct ChannelForm: View {
 						.controlSize(.small)
 
 					}
+
 					HStack(alignment: .center) {
 						Text("Key")
 
@@ -100,20 +101,21 @@ struct ChannelForm: View {
 						.background(
 							RoundedRectangle(cornerRadius: 10.0)
 								.stroke(
-									hasValidKey ?
-									Color.clear :
-										Color.red
-									, lineWidth: 2.0)
-
+									hasValidKey ? Color.clear : Color.red,
+									lineWidth: 2.0
+								)
 						)
 						.onChange(of: channelKey) {
-							let tempKey = Data(base64Encoded: channelKey) ?? Data()
-							if tempKey.count == channelKeySize || channelKeySize == -1 {
+							if
+								let tempKey = Data(base64Encoded: channelKey),
+								tempKey.count == channelKeySize || channelKeySize == -1
+							{
 								hasValidKey = true
 							}
 							else {
 								hasValidKey = false
 							}
+
 							hasChanges = true
 						}
 						.disabled(channelKeySize <= 0)
@@ -140,8 +142,9 @@ struct ChannelForm: View {
 						}
 					}
 				}
+				.headerProminence(.increased)
 
-				Section(header: Text("position")) {
+				Section(header: Text("Position")) {
 					VStack(alignment: .leading) {
 						Toggle(isOn: $positionsEnabled) {
 							Label(
@@ -187,20 +190,22 @@ struct ChannelForm: View {
 						}
 					}
 				}
+				.headerProminence(.increased)
 
-				Section(header: Text("mqtt")) {
+				Section(header: Text("MQTT")) {
 					Toggle(isOn: $uplink) {
-						Label("Uplink Enabled", systemImage: "arrowshape.up")
+						Label("Uplink", systemImage: "arrowshape.up")
 					}
 					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 					.listRowSeparator(.visible)
 
 					Toggle(isOn: $downlink) {
-						Label("Downlink Enabled", systemImage: "arrowshape.down")
+						Label("Downlink", systemImage: "arrowshape.down")
 					}
 					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 					.listRowSeparator(.visible)
 				}
+				.headerProminence(.increased)
 			}
 			.onAppear {
 				let tempKey = Data(base64Encoded: channelKey) ?? Data()
