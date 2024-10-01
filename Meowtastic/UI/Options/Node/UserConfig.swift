@@ -10,7 +10,7 @@ struct UserConfig: View {
 
 	private let coreDataTools = CoreDataTools()
 
-	var node: NodeInfoEntity?
+	var node: NodeInfoEntity
 
 	@Environment(\.managedObjectContext)
 	private var context
@@ -94,7 +94,6 @@ struct UserConfig: View {
 
 					// Only manage ham mode for the locally connected node
 					if
-						let node,
 						let device = connectedDevice.device,
 						node.num > 0,
 						node.num == device.num
@@ -103,8 +102,8 @@ struct UserConfig: View {
 							Label("Licensed Operator", systemImage: "person.text.rectangle")
 						}
 						.toggleStyle(SwitchToggleStyle(tint: .accentColor))
-						if isLicensed {
 
+						if isLicensed {
 							Text("Onboarding for licensed operators requires firmware 2.0.20 or greater. Make sure to refer to your local regulations and contact the local amateur frequency coordinators with questions.")
 								.font(.caption2)
 							Text("What licensed operator mode does:\n* Sets the node name to your call sign \n* Broadcasts node info every 10 minutes \n* Overrides frequency, dutycycle and tx power \n* Disables encryption")
@@ -154,7 +153,7 @@ struct UserConfig: View {
 					isPresented: $isPresentingSaveConfirm,
 					titleVisibility: .visible
 				) {
-					Button("Save User Config to \(node?.user?.longName ?? "Unknown")?") {
+					Button("Save User Config to \(node.user?.longName ?? "Unknown")?") {
 						if longName.isEmpty && isLicensed {
 							return
 						}
@@ -168,23 +167,37 @@ struct UserConfig: View {
 							context: context
 						)
 
-						if node != nil && connectedNode != nil {
+						if let connectedNode {
 							if !isLicensed {
 								var u = User()
 								u.shortName = shortName
 								u.longName = longName
-								let adminMessageId = nodeConfig.saveUser(config: u, fromUser: connectedUser, toUser: node!.user!, adminIndex: connectedNode?.myInfo?.adminIndex ?? 0)
+								let adminMessageId = nodeConfig.saveUser(
+									config: u,
+									fromUser: connectedUser,
+									toUser: node.user!,
+									adminIndex: connectedNode.myInfo?.adminIndex ?? 0
+								)
+
 								if adminMessageId > 0 {
 									hasChanges = false
 									goBack()
 								}
-							} else {
+							}
+							else {
 								var ham = HamParameters()
 								ham.shortName = shortName
 								ham.callSign = longName
 								ham.txPower = Int32(txPower)
 								ham.frequency = overrideFrequency
-								let adminMessageId = nodeConfig.saveLicensedUser(ham: ham, fromUser: connectedUser, toUser: node!.user!, adminIndex: connectedNode?.myInfo?.adminIndex ?? 0)
+
+								let adminMessageId = nodeConfig.saveLicensedUser(
+									ham: ham,
+									fromUser: connectedUser,
+									toUser: node.user!,
+									adminIndex: connectedNode.myInfo?.adminIndex ?? 0
+								)
+
 								if adminMessageId > 0 {
 									hasChanges = false
 									goBack()
@@ -205,39 +218,31 @@ struct UserConfig: View {
 		.onAppear {
 			Analytics.logEvent(AnalyticEvents.optionsUser.id, parameters: nil)
 
-			self.shortName = node?.user?.shortName ?? ""
-			self.longName = node?.user?.longName ?? ""
-			self.isLicensed = node?.user?.isLicensed ?? false
-			self.txPower = Int(node?.loRaConfig?.txPower ?? 0)
-			self.overrideFrequency = node?.loRaConfig?.overrideFrequency ?? 0.00
-			self.hasChanges = false
+			shortName = node.user?.shortName ?? ""
+			longName = node.user?.longName ?? ""
+			isLicensed = node.user?.isLicensed ?? false
+			txPower = Int(node.loRaConfig?.txPower ?? 0)
+			overrideFrequency = node.loRaConfig?.overrideFrequency ?? 0.00
+
+			hasChanges = false
 		}
-		.onChange(of: shortName) { newShort in
-			if node != nil && node!.user != nil {
-				if newShort != node?.user!.shortName { hasChanges = true }
-			}
+		.onChange(of: shortName) {
+			hasChanges = true
 		}
-		.onChange(of: longName) { newLong in
-			if node != nil && node!.user != nil {
-				if newLong != node?.user!.longName { hasChanges = true }
-			}
+		.onChange(of: longName) {
+			hasChanges = true
 		}
-		.onChange(of: isLicensed) { newIsLicensed in
-			if node != nil && node!.user != nil {
-				if newIsLicensed != node?.user!.isLicensed {
-					hasChanges = true
-					if newIsLicensed {
-						if node?.user?.longName?.count ?? 0 > 8 {
-							longName = ""
-						}
-					}
-				}
-			}
-		}
-		.onChange(of: overrideFrequency) { _ in
+		.onChange(of: overrideFrequency) {
 			 hasChanges = true
 		}
-		.onChange(of: txPower) { _ in
+		.onChange(of: txPower) {
+			hasChanges = true
+		}
+		.onChange(of: isLicensed) {
+			if node.user?.longName?.count ?? 0 > 8 {
+				longName = ""
+			}
+
 			hasChanges = true
 		}
 	}

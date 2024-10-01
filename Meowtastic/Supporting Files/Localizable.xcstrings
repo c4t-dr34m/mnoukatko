@@ -204,6 +204,9 @@
     "Advanced Position Flags" : {
 
     },
+    "After config values save the node will reboot" : {
+
+    },
     "ago" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -12261,6 +12264,9 @@
           }
         }
       }
+    },
+    "Save" : {
+
     },
     "Save User Config to %@?" : {
 

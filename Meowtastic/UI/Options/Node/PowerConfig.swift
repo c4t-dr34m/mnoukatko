@@ -14,7 +14,7 @@ struct PowerConfig: View {
 	@Environment(\.dismiss)
 	private var goBack
 
-	let node: NodeInfoEntity?
+	let node: NodeInfoEntity
 
 	@State private var isPowerSaving = false
 
@@ -40,7 +40,7 @@ struct PowerConfig: View {
 				if
 					currentDevice?.architecture == .esp32
 						|| currentDevice?.architecture == .esp32S3
-						|| (currentDevice?.architecture == .nrf52840 && (node?.deviceConfig?.role ?? 0 == 5 || node?.deviceConfig?.role ?? 0 == 6))
+						|| (currentDevice?.architecture == .nrf52840 && (node.deviceConfig?.role ?? 0 == 5 || node.deviceConfig?.role ?? 0 == 6))
 				{
 					Toggle(isOn: $isPowerSaving) {
 						Label("config.power.saving", systemImage: "bolt")
@@ -95,7 +95,7 @@ struct PowerConfig: View {
 				}
 			}
 		}
-		.disabled(connectedDevice.device == nil || node?.powerConfig == nil)
+		.disabled(connectedDevice.device == nil || node.powerConfig == nil)
 		.navigationTitle("Power Config")
 		.navigationBarItems(
 			trailing: ConnectionInfo()
@@ -114,7 +114,7 @@ struct PowerConfig: View {
 
 			Api().loadDeviceHardwareData { hw in
 				for device in hw {
-					let currentHardware = node?.user?.hwModel ?? "UNSET"
+					let currentHardware = node.user?.hwModel ?? "UNSET"
 					let deviceString = device.hwModelSlug.replacingOccurrences(of: "_", with: "")
 
 					if deviceString == currentHardware {
@@ -127,7 +127,6 @@ struct PowerConfig: View {
 			// Need to request a Power config from the remote node before allowing changes
 			if
 				let device = connectedDevice.device,
-				let node,
 				node.powerConfig == nil,
 				let connectedNode = coreDataTools.getNodeInfo(
 					id: device.num ?? 0,
@@ -141,40 +140,28 @@ struct PowerConfig: View {
 			}
 		}
 		.onChange(of: isPowerSaving) {
-			if let val = node?.powerConfig?.isPowerSaving {
-				hasChanges = $0 != val
-			}
+			hasChanges = true
 		}
 		.onChange(of: shutdownOnPowerLoss) {
 			hasChanges = true
 		}
 		.onChange(of: shutdownAfterSecs) {
-			if let val = node?.powerConfig?.onBatteryShutdownAfterSecs {
-				hasChanges = $0 != val
-			}
+			hasChanges = true
 		}
 		.onChange(of: adcOverride) {
 			hasChanges = true
 		}
 		.onChange(of: adcMultiplier) {
-			if let val = node?.powerConfig?.adcMultiplierOverride {
-				hasChanges = $0 != val
-			}
+			hasChanges = true
 		}
 		.onChange(of: waitBluetoothSecs) {
-			if let val = node?.powerConfig?.waitBluetoothSecs {
-				hasChanges = $0 != val
-			}
+			hasChanges = true
 		}
 		.onChange(of: lsSecs) {
-			if let val = node?.powerConfig?.lsSecs {
-				hasChanges = $0 != val
-			}
+			hasChanges = true
 		}
 		.onChange(of: minWakeSecs) {
-			if let val = node?.powerConfig?.minWakeSecs {
-				hasChanges = $0 != val
-			}
+			hasChanges = true
 		}
 
 		SaveConfigButton(node: node, hasChanges: $hasChanges) {
@@ -185,7 +172,7 @@ struct PowerConfig: View {
 					context: context
 				),
 				let fromUser = connectedNode.user,
-				let toUser = node?.user
+				let toUser = node.user
 			else {
 				return
 			}
@@ -214,17 +201,20 @@ struct PowerConfig: View {
 	}
 
 	private func setPowerValues() {
-		isPowerSaving = node?.powerConfig?.isPowerSaving ?? isPowerSaving
-
-		shutdownAfterSecs = Int(node?.powerConfig?.onBatteryShutdownAfterSecs ?? Int32(shutdownAfterSecs))
-		shutdownOnPowerLoss = shutdownAfterSecs != 0
-
-		adcMultiplier = node?.powerConfig?.adcMultiplierOverride ?? adcMultiplier
-		adcOverride = adcMultiplier != 0
-
-		waitBluetoothSecs = Int(node?.powerConfig?.waitBluetoothSecs ?? Int32(waitBluetoothSecs))
-		lsSecs = Int(node?.powerConfig?.lsSecs ?? Int32(lsSecs))
-		minWakeSecs = Int(node?.powerConfig?.minWakeSecs ?? Int32(minWakeSecs))
+		if let config = node.powerConfig {
+			isPowerSaving = config.isPowerSaving
+			adcMultiplier = config.adcMultiplierOverride
+			adcOverride = adcMultiplier != 0
+			shutdownAfterSecs = Int(config.onBatteryShutdownAfterSecs)
+			shutdownOnPowerLoss = shutdownAfterSecs != 0
+			waitBluetoothSecs = Int(config.waitBluetoothSecs)
+			lsSecs = Int(config.lsSecs)
+			minWakeSecs = Int(config.minWakeSecs)
+		}
+		else {
+			adcOverride = adcMultiplier != 0
+			shutdownOnPowerLoss = shutdownAfterSecs != 0
+		}
 	}
 }
 

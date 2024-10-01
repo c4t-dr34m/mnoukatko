@@ -102,14 +102,14 @@ struct BluetoothConfig: View {
 				let myNodeNum = connectedDevice.device?.num,
 				let connectedNode = coreDataTools.getNodeInfo(id: myNodeNum, context: context)
 			{
-				var bc = Config.BluetoothConfig()
-				bc.enabled = enabled
-				bc.mode = BluetoothModes(rawValue: mode)?.protoEnumValue() ?? Config.BluetoothConfig.PairingMode.randomPin
-				bc.fixedPin = UInt32(fixedPin) ?? 123456
-				bc.deviceLoggingEnabled = deviceLoggingEnabled
+				var config = Config.BluetoothConfig()
+				config.enabled = enabled
+				config.mode = BluetoothModes(rawValue: mode)?.protoEnumValue() ?? Config.BluetoothConfig.PairingMode.randomPin
+				config.fixedPin = UInt32(fixedPin) ?? 123456
+				config.deviceLoggingEnabled = deviceLoggingEnabled
 
 				let adminMessageId = nodeConfig.saveBluetoothConfig(
-					config: bc,
+					config: config,
 					fromUser: connectedNode.user!,
 					toUser: node.user!,
 					adminIndex: connectedNode.myInfo?.adminIndex ?? 0

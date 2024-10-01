@@ -21,7 +21,7 @@ struct NetworkConfig: View {
 	@Environment(\.dismiss)
 	private var goBack
 
-	var node: NodeInfoEntity?
+	var node: NodeInfoEntity
 
 	@State var hasChanges: Bool = false
 	@State var wifiEnabled = false
@@ -37,7 +37,7 @@ struct NetworkConfig: View {
 			Form {
 				ConfigHeader(title: "Network", config: \.networkConfig, node: node)
 
-				if node != nil && node?.metadata?.hasWifi ?? false {
+				if node.metadata?.hasWifi ?? false {
 					Section(header: Text("WiFi Options")) {
 
 						Toggle(isOn: $wifiEnabled) {
@@ -82,7 +82,8 @@ struct NetworkConfig: View {
 						.keyboardType(.default)
 					}
 				}
-				if node != nil && node?.metadata?.hasEthernet ?? false {
+
+				if node.metadata?.hasEthernet ?? false {
 					Section(header: Text("Ethernet Options")) {
 						Toggle(isOn: $ethEnabled) {
 							Label("enabled", systemImage: "network")
@@ -93,7 +94,7 @@ struct NetworkConfig: View {
 				}
 			}
 			.scrollDismissesKeyboard(.interactively)
-			.disabled(connectedDevice.device == nil || node?.networkConfig == nil)
+			.disabled(connectedDevice.device == nil || node.networkConfig == nil)
 
 			SaveConfigButton(node: node, hasChanges: $hasChanges) {
 				if
@@ -110,13 +111,11 @@ struct NetworkConfig: View {
 					let adminMessageId = nodeConfig.saveNetworkConfig(
 						config: network,
 						fromUser: connectedNode.user!,
-						toUser: node!.user!,
+						toUser: node.user!,
 						adminIndex: connectedNode.myInfo?.adminIndex ?? 0
 					)
 
 					if adminMessageId > 0 {
-						// Should show a saved successfully alert once I know that to be true
-						// for now just disable the button after a successful save
 						hasChanges = false
 						goBack()
 					}
@@ -133,50 +132,51 @@ struct NetworkConfig: View {
 			setNetworkValues()
 
 			// Need to request a NetworkConfig from the remote node before allowing changes
-			if let device = connectedDevice.device, node?.networkConfig == nil {
+			if let device = connectedDevice.device, node.networkConfig == nil {
 				Logger.mesh.info("empty network config")
 
 				if let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context) {
 					nodeConfig.requestNetworkConfig(
 						fromUser: connectedNode.user!,
-						toUser: node!.user!,
+						toUser: node.user!,
 						adminIndex: connectedNode.myInfo?.adminIndex ?? 0
 					)
 				}
 			}
 		}
-		.onChange(of: wifiEnabled) { newEnabled in
-			if node != nil && node!.networkConfig != nil {
-				if newEnabled != node!.networkConfig!.wifiEnabled { hasChanges = true }
-			}
+		.onChange(of: wifiEnabled) {
+			hasChanges = true
 		}
-		.onChange(of: wifiSsid) { newSSID in
-			if node != nil && node!.networkConfig != nil {
-				if newSSID != node!.networkConfig!.wifiSsid { hasChanges = true }
-			}
+		.onChange(of: wifiSsid) {
+			hasChanges = true
 		}
-		.onChange(of: wifiPsk) { newPsk in
-			if node != nil && node!.networkConfig != nil {
-				if newPsk != node!.networkConfig!.wifiPsk { hasChanges = true }
-			}
+		.onChange(of: wifiPsk) {
+			hasChanges = true
 		}
-		.onChange(of: wifiMode) { newMode in
-			if node != nil && node!.networkConfig != nil {
-				if newMode != node!.networkConfig!.wifiMode { hasChanges = true }
-			}
+		.onChange(of: wifiMode) {
+			hasChanges = true
 		}
-		.onChange(of: ethEnabled) { newEthEnabled in
-			if node != nil && node!.networkConfig != nil {
-				if newEthEnabled != node!.networkConfig!.ethEnabled { hasChanges = true }
-			}
+		.onChange(of: ethEnabled) {
+			hasChanges = true
 		}
 	}
-	func setNetworkValues() {
-		self.wifiEnabled = node?.networkConfig?.wifiEnabled ?? false
-		self.wifiSsid = node?.networkConfig?.wifiSsid ?? ""
-		self.wifiPsk = node?.networkConfig?.wifiPsk ?? ""
-		self.wifiMode = Int(node?.networkConfig?.wifiMode ?? 0)
-		self.ethEnabled = node?.networkConfig?.ethEnabled ?? false
-		self.hasChanges = false
+
+	private func setNetworkValues() {
+		if let config = node.networkConfig {
+			wifiEnabled = config.wifiEnabled
+			wifiSsid = config.wifiSsid ?? ""
+			wifiPsk = config.wifiPsk ?? ""
+			wifiMode = Int(config.wifiMode)
+			ethEnabled = config.ethEnabled
+		}
+		else {
+			wifiEnabled = false
+			wifiSsid = ""
+			wifiPsk = ""
+			wifiMode = 0
+			ethEnabled = false
+		}
+
+		hasChanges = false
 	}
 }

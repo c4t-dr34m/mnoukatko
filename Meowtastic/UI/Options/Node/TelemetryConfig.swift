@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 struct TelemetryConfig: View {
-	var node: NodeInfoEntity?
+	var node: NodeInfoEntity
 
 	private let coreDataTools = CoreDataTools()
 
@@ -117,7 +117,7 @@ struct TelemetryConfig: View {
 				}
 			}
 			.disabled(
-				bleManager.getConnectedDevice() == nil || node?.telemetryConfig == nil
+				bleManager.getConnectedDevice() == nil || node.telemetryConfig == nil
 			)
 
 			SaveConfigButton(node: node, hasChanges: $hasChanges) {
@@ -141,7 +141,7 @@ struct TelemetryConfig: View {
 					let adminMessageId = nodeConfig.saveTelemetryConfig(
 						config: tc,
 						fromUser: connectedNode.user!,
-						toUser: node!.user!,
+						toUser: node.user!,
 						adminIndex: connectedNode.myInfo?.adminIndex ?? 0
 					)
 
@@ -156,7 +156,6 @@ struct TelemetryConfig: View {
 
 				// Need to request a TelemetryModuleConfig from the remote node before allowing changes
 				if
-					let node,
 					let peripheral = bleManager.getConnectedDevice(),
 					let connectedNode = coreDataTools.getNodeInfo(id: peripheral.num, context: context),
 					node.telemetryConfig == nil
@@ -200,7 +199,7 @@ struct TelemetryConfig: View {
 	}
 
 	func setTelemetryValues() {
-		if let config = node?.telemetryConfig {
+		if let config = node.telemetryConfig {
 			deviceUpdateInterval = Int(config.deviceUpdateInterval)
 			environmentUpdateInterval = Int(config.environmentUpdateInterval)
 			powerUpdateInterval = Int(config.powerUpdateInterval)

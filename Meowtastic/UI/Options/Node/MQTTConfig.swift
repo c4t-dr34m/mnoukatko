@@ -5,7 +5,7 @@ import OSLog
 import SwiftUI
 
 struct MQTTConfig: View {
-	var node: NodeInfoEntity?
+	var node: NodeInfoEntity
 
 	private let locale = Locale.current
 	private let coreDataTools = CoreDataTools()
@@ -57,7 +57,7 @@ struct MQTTConfig: View {
 	@ViewBuilder
 	var body: some View {
 		Form {
-			if let loraConfig = node?.loRaConfig {
+			if let loraConfig = node.loRaConfig {
 				let rc = RegionCodes(rawValue: Int(loraConfig.regionCode))
 
 				if rc?.dutyCycle ?? 0 > 0 && rc?.dutyCycle ?? 0 < 100 {
@@ -91,7 +91,7 @@ struct MQTTConfig: View {
 					if proxyToClientEnabled {
 						jsonEnabled = false
 					}
-					if let mqttConfig = node?.mqttConfig {
+					if let mqttConfig = node.mqttConfig {
 						if proxyToClientEnabled != mqttConfig.proxyToClientEnabled {
 							hasChanges = true
 						}
@@ -288,7 +288,7 @@ struct MQTTConfig: View {
 				.font(.callout)
 		}
 		.scrollDismissesKeyboard(.interactively)
-		.disabled(bleManager.getConnectedDevice() == nil || node?.mqttConfig == nil)
+		.disabled(bleManager.getConnectedDevice() == nil || node.mqttConfig == nil)
 		.onAppear {
 			Analytics.logEvent(AnalyticEvents.optionsMQTT.id, parameters: nil)
 		}
@@ -317,14 +317,14 @@ struct MQTTConfig: View {
 				let adminMessageId = nodeConfig.saveMQTTConfig(
 					config: mqtt,
 					fromUser: connectedNode.user!,
-					toUser: node!.user!,
+					toUser: node.user!,
 					adminIndex: connectedNode.myInfo?.adminIndex ?? 0
 				)
 
 				if adminMessageId > 0 {
 					hasChanges = false
 
-					if mqtt.enabled, let config = node?.mqttConfig {
+					if mqtt.enabled, let config = node.mqttConfig {
 						bleManager.connectMQTT(config: config)
 					}
 					else {
@@ -344,7 +344,6 @@ struct MQTTConfig: View {
 
 			// Need to request a TelemetryModuleConfig from the remote node before allowing changes
 			if
-				let node,
 				let peripheral = bleManager.getConnectedDevice(),
 				let connectedNode = coreDataTools.getNodeInfo(id: peripheral.num, context: context),
 				node.mqttConfig == nil
@@ -364,7 +363,7 @@ struct MQTTConfig: View {
 		}
 		preciseLocation = mapPositionPrecision == 32
 
-		if let config = node?.mqttConfig {
+		if let config = node.mqttConfig {
 			enabled = config.enabled
 			proxyToClientEnabled = config.proxyToClientEnabled
 

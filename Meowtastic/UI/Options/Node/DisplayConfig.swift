@@ -15,7 +15,7 @@ struct DisplayConfig: View {
 	@Environment(\.dismiss)
 	private var goBack
 
-	var node: NodeInfoEntity?
+	var node: NodeInfoEntity
 
 	@State var hasChanges = false
 	@State var screenOnSeconds = 0
@@ -129,7 +129,7 @@ struct DisplayConfig: View {
 				.pickerStyle(DefaultPickerStyle())
 			}
 		}
-		.disabled(connectedDevice.device == nil || node?.displayConfig == nil)
+		.disabled(connectedDevice.device == nil || node.displayConfig == nil)
 		.onAppear {
 			Analytics.logEvent(AnalyticEvents.optionsDisplay.id, parameters: nil)
 		}
@@ -153,11 +153,14 @@ struct DisplayConfig: View {
 				dc.displaymode = DisplayModes(rawValue: displayMode)!.protoEnumValue()
 				dc.units = Units(rawValue: units)!.protoEnumValue()
 
-				let adminMessageId =  nodeConfig.saveDisplayConfig(config: dc, fromUser: connectedNode.user!, toUser: node!.user!, adminIndex: connectedNode.myInfo?.adminIndex ?? 0)
-				if adminMessageId > 0 {
+				let adminMessageId = nodeConfig.saveDisplayConfig(
+					config: dc,
+					fromUser: connectedNode.user!,
+					toUser: node.user!,
+					adminIndex: connectedNode.myInfo?.adminIndex ?? 0
+				)
 
-					// Should show a saved successfully alert once I know that to be true
-					// for now just disable the button after a successful save
+				if adminMessageId > 0 {
 					hasChanges = false
 					goBack()
 				}
@@ -173,70 +176,70 @@ struct DisplayConfig: View {
 
 			// Need to request a LoRaConfig from the remote node before allowing changes
 			if
-				let device = connectedDevice.device, node?.displayConfig == nil {
-				let connectedNode = coreDataTools.getNodeInfo(id: device.num ?? 0, context: context)
-
-				if node != nil && connectedNode != nil {
-					nodeConfig.requestDisplayConfig(fromUser: connectedNode!.user!, toUser: node!.user!, adminIndex: connectedNode?.myInfo?.adminIndex ?? 0)
-				}
+				let device = connectedDevice.device,
+				node.displayConfig == nil,
+				let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context)
+			{
+				nodeConfig.requestDisplayConfig(
+					fromUser: connectedNode.user!,
+					toUser: node.user!,
+					adminIndex: connectedNode.myInfo?.adminIndex ?? 0
+				)
 			}
 		}
-		.onChange(of: screenOnSeconds) { newScreenSecs in
-			if node != nil && node!.displayConfig != nil {
-				if newScreenSecs != node!.displayConfig!.screenOnSeconds { hasChanges = true }
-			}
+		.onChange(of: screenOnSeconds) {
+			hasChanges = true
 		}
-		.onChange(of: screenCarouselInterval) { newCarouselSecs in
-			if node != nil && node!.displayConfig != nil {
-				if newCarouselSecs != node!.displayConfig!.screenCarouselInterval { hasChanges = true }
-			}
+		.onChange(of: screenCarouselInterval) {
+			hasChanges = true
 		}
-		.onChange(of: compassNorthTop) { newCompassNorthTop in
-			if node != nil && node!.displayConfig != nil {
-				if newCompassNorthTop != node!.displayConfig!.compassNorthTop { hasChanges = true }
-			}
+		.onChange(of: compassNorthTop) {
+			hasChanges = true
 		}
-		.onChange(of: wakeOnTapOrMotion) { newWakeOnTapOrMotion in
-			if node != nil && node!.displayConfig != nil {
-				if newWakeOnTapOrMotion != node!.displayConfig!.wakeOnTapOrMotion { hasChanges = true }
-			}
+		.onChange(of: wakeOnTapOrMotion) {
+			hasChanges = true
 		}
-		.onChange(of: gpsFormat) { newGpsFormat in
-			if node != nil && node!.displayConfig != nil {
-				if newGpsFormat != node!.displayConfig!.gpsFormat { hasChanges = true }
-			}
+		.onChange(of: gpsFormat) {
+			hasChanges = true
 		}
-		.onChange(of: flipScreen) { newFlipScreen in
-			if node != nil && node!.displayConfig != nil {
-				if newFlipScreen != node!.displayConfig!.flipScreen { hasChanges = true }
-			}
+		.onChange(of: flipScreen) {
+			hasChanges = true
 		}
-		.onChange(of: oledType) { newOledType in
-			if node != nil && node!.displayConfig != nil {
-				if newOledType != node!.displayConfig!.oledType { hasChanges = true }
-			}
+		.onChange(of: oledType) {
+			hasChanges = true
 		}
-		.onChange(of: displayMode) { newDisplayMode in
-			if node != nil && node!.displayConfig != nil {
-				if newDisplayMode != node!.displayConfig!.displayMode { hasChanges = true }
-			}
+		.onChange(of: displayMode) {
+			hasChanges = true
 		}
-		.onChange(of: units) { newUnits in
-			if node != nil && node!.displayConfig != nil {
-				if newUnits != node!.displayConfig!.units { hasChanges = true }
-			}
+		.onChange(of: units) {
+			hasChanges = true
 		}
 	}
-	func setDisplayValues() {
-			self.gpsFormat = Int(node?.displayConfig?.gpsFormat ?? 0)
-			self.screenOnSeconds = Int(node?.displayConfig?.screenOnSeconds ?? 0)
-			self.screenCarouselInterval = Int(node?.displayConfig?.screenCarouselInterval ?? 0)
-			self.compassNorthTop = node?.displayConfig?.compassNorthTop ?? false
-			self.wakeOnTapOrMotion = node?.displayConfig?.wakeOnTapOrMotion ?? false
-			self.flipScreen = node?.displayConfig?.flipScreen ?? false
-			self.oledType = Int(node?.displayConfig?.oledType ?? 0)
-			self.displayMode = Int(node?.displayConfig?.displayMode ?? 0)
-			self.units = Int(node?.displayConfig?.units ?? 0)
-			self.hasChanges = false
+
+	private func setDisplayValues() {
+		if let config = node.displayConfig {
+			gpsFormat = Int(config.gpsFormat)
+			compassNorthTop = config.compassNorthTop
+			wakeOnTapOrMotion = config.wakeOnTapOrMotion
+			flipScreen = config.flipScreen
+			screenOnSeconds = Int(config.screenOnSeconds)
+			screenCarouselInterval = Int(config.screenCarouselInterval)
+			oledType = Int(config.oledType)
+			displayMode = Int(config.displayMode)
+			units = Int(config.units)
+		}
+		else {
+			compassNorthTop = false
+			wakeOnTapOrMotion = false
+			flipScreen = false
+			gpsFormat = 0
+			screenOnSeconds = 0
+			screenCarouselInterval = 0
+			oledType = 0
+			displayMode = 0
+			units = 0
+		}
+
+		self.hasChanges = false
 	}
 }

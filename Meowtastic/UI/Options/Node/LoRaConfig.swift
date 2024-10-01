@@ -18,7 +18,7 @@ struct LoRaConfig: View {
 		return formatter
 	}()
 
-	var node: NodeInfoEntity?
+	var node: NodeInfoEntity
 
 	@Environment(\.managedObjectContext)
 	private var context
@@ -61,11 +61,10 @@ struct LoRaConfig: View {
 				sectionOptions
 				sectionAdvanced
 			}
-			.disabled(connectedDevice.device == nil || node?.loRaConfig == nil)
+			.disabled(connectedDevice.device == nil || node.loRaConfig == nil)
 
 			SaveConfigButton(node: node, hasChanges: $hasChanges) {
 				if
-					let node,
 					let device = connectedDevice.device,
 					let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context)
 				{
@@ -96,8 +95,6 @@ struct LoRaConfig: View {
 					)
 
 					if adminMessageId > 0 {
-						// Should show a saved successfully alert once I know that to be true
-						// for now just disable the button after a successful save
 						hasChanges = false
 						goBack()
 					}
@@ -114,11 +111,10 @@ struct LoRaConfig: View {
 			setLoRaValues()
 
 			// Need to request a LoRaConfig from the remote node before allowing changes
-			if node?.loRaConfig == nil {
+			if node.loRaConfig == nil {
 				Logger.mesh.info("Empty LoRa config")
 			}
 			else if
-				let node,
 				let device = connectedDevice.device,
 				let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context)
 			{
@@ -316,7 +312,7 @@ struct LoRaConfig: View {
 	}
 
 	private func setLoRaValues() {
-		if let config = node?.loRaConfig {
+		if let config = node.loRaConfig {
 			hopLimit = Int(config.hopLimit)
 			region = Int(config.regionCode)
 			usePreset = config.usePreset

@@ -22,7 +22,7 @@ struct DeviceConfig: View {
 	@Environment(\.dismiss)
 	private var goBack
 
-	var node: NodeInfoEntity?
+	var node: NodeInfoEntity
 
 	@State private var isPresentingNodeDBResetConfirm = false
 	@State private var isPresentingFactoryResetConfirm = false
@@ -84,8 +84,8 @@ struct DeviceConfig: View {
 					}
 					.pickerStyle(DefaultPickerStyle())
 				}
-				Section(header: Text("Hardware")) {
 
+				Section(header: Text("Hardware")) {
 					Toggle(isOn: $doubleTapAsButtonPress) {
 						Label("Double Tap as Button", systemImage: "hand.tap")
 						Text("Treat double tap on supported accelerometers as a user button press.")
@@ -98,6 +98,7 @@ struct DeviceConfig: View {
 					}
 					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 				}
+
 				Section(header: Text("Debug")) {
 					Toggle(isOn: $serialEnabled) {
 						Label("Serial Console", systemImage: "terminal")
@@ -153,17 +154,18 @@ struct DeviceConfig: View {
 					.pickerStyle(DefaultPickerStyle())
 				}
 			}
-			.disabled(bleManager.getConnectedDevice() == nil || node?.deviceConfig == nil)
+			.disabled(bleManager.getConnectedDevice() == nil || node.deviceConfig == nil)
 			// Only show these buttons for the BLE connected node
+
 			if
 				let connectedDevice = bleManager.getConnectedDevice(),
-				node?.num ?? -1 == connectedDevice.num
+				node.num ?? -1 == connectedDevice.num
 			{
 				HStack {
 					Button("Reset NodeDB", role: .destructive) {
 						isPresentingNodeDBResetConfirm = true
 					}
-					.disabled(node?.user == nil)
+					.disabled(node.user == nil)
 					.buttonStyle(.bordered)
 					.buttonBorderShape(.capsule)
 					.controlSize(.large)
@@ -174,7 +176,7 @@ struct DeviceConfig: View {
 						titleVisibility: .visible
 					) {
 						Button("Erase all device and app data?", role: .destructive) {
-							if nodeConfig.sendNodeDBReset(fromUser: node!.user!, toUser: node!.user!) {
+							if nodeConfig.sendNodeDBReset(fromUser: node.user!, toUser: node.user!) {
 								DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
 									bleManager.disconnectDevice()
 									coreDataTools.clearCoreDataDatabase(context: context, includeRoutes: false)
@@ -188,7 +190,7 @@ struct DeviceConfig: View {
 					Button("Factory Reset", role: .destructive) {
 						isPresentingFactoryResetConfirm = true
 					}
-					.disabled(node?.user == nil)
+					.disabled(node.user == nil)
 					.buttonStyle(.bordered)
 					.buttonBorderShape(.capsule)
 					.controlSize(.large)
@@ -199,7 +201,7 @@ struct DeviceConfig: View {
 						titleVisibility: .visible
 					) {
 						Button("Factory reset your device and app? ", role: .destructive) {
-							if nodeConfig.sendFactoryReset(fromUser: node!.user!, toUser: node!.user!) {
+							if nodeConfig.sendFactoryReset(fromUser: node.user!, toUser: node.user!) {
 								DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
 									bleManager.disconnectDevice()
 									coreDataTools.clearCoreDataDatabase(context: context, includeRoutes: false)
@@ -237,16 +239,15 @@ struct DeviceConfig: View {
 							serialEnabled = false
 							debugLogEnabled = false
 						}
+
 						let adminMessageId = nodeConfig.saveDeviceConfig(
 							config: dc,
 							fromUser: connectedNode.user!,
-							toUser: node!.user!,
+							toUser: node.user!,
 							adminIndex: connectedNode.myInfo?.adminIndex ?? 0
 						)
 
 						if adminMessageId > 0 {
-							// Should show a saved successfully alert once I know that to be true
-							// for now just disable the button after a successful save
 							hasChanges = false
 							goBack()
 						}
@@ -265,89 +266,93 @@ struct DeviceConfig: View {
 			setDeviceValues()
 
 			// Need to request a LoRaConfig from the remote node before allowing changes
-			if let device = bleManager.getConnectedDevice(), node?.deviceConfig == nil {
+			if let device = bleManager.getConnectedDevice(), node.deviceConfig == nil {
 				Logger.mesh.info("empty device config")
+
 				let connectedNode = coreDataTools.getNodeInfo(
 					id: device.num ?? -1,
 					context: context
 				)
 
-				if node != nil && connectedNode != nil && connectedNode?.user != nil {
-					nodeConfig.requestDeviceConfig(fromUser: connectedNode!.user!, toUser: node!.user!, adminIndex: connectedNode?.myInfo?.adminIndex ?? 0)
+				if let connectedNode, connectedNode.user != nil {
+					nodeConfig.requestDeviceConfig(
+						fromUser: connectedNode.user!,
+						toUser: node.user!,
+						adminIndex: connectedNode.myInfo?.adminIndex ?? 0
+					)
 				}
 			}
 		}
-		.onChange(of: deviceRole) { newRole in
-			if node != nil && node?.deviceConfig != nil {
-				if newRole != node!.deviceConfig!.role { hasChanges = true }
-			}
+		.onChange(of: deviceRole) {
+			hasChanges = true
 		}
-		.onChange(of: serialEnabled) { newSerial in
-			if node != nil && node?.deviceConfig != nil {
-				if newSerial != node!.deviceConfig!.serialEnabled { hasChanges = true }
-			}
+		.onChange(of: serialEnabled) {
+			hasChanges = true
 		}
-		.onChange(of: debugLogEnabled) { newDebugLog in
-			if node != nil && node?.deviceConfig != nil {
-				if newDebugLog != node!.deviceConfig!.debugLogEnabled {	hasChanges = true }
-			}
+		.onChange(of: debugLogEnabled) {
+			hasChanges = true
 		}
-		.onChange(of: buttonGPIO) { newButtonGPIO in
-			if node != nil && node?.deviceConfig != nil {
-				if newButtonGPIO != node!.deviceConfig!.buttonGpio { hasChanges = true }
-			}
+		.onChange(of: buttonGPIO) {
+			hasChanges = true
 		}
-		.onChange(of: buzzerGPIO) { newBuzzerGPIO in
-			if node != nil && node?.deviceConfig != nil {
-				if newBuzzerGPIO != node!.deviceConfig!.buttonGpio { hasChanges = true }
-			}
+		.onChange(of: buzzerGPIO) {
+			hasChanges = true
 		}
-		.onChange(of: rebroadcastMode) { newRebroadcastMode in
-			if node != nil && node?.deviceConfig != nil {
-				if newRebroadcastMode != node!.deviceConfig!.rebroadcastMode { hasChanges = true }
-			}
+		.onChange(of: rebroadcastMode) {
+			hasChanges = true
 		}
-		.onChange(of: nodeInfoBroadcastSecs) { newNodeInfoBroadcastSecs in
-			if node != nil && node?.deviceConfig != nil {
-				if newNodeInfoBroadcastSecs != node!.deviceConfig!.nodeInfoBroadcastSecs { hasChanges = true }
-			}
+		.onChange(of: nodeInfoBroadcastSecs) {
+			hasChanges = true
 		}
-		.onChange(of: doubleTapAsButtonPress) { newDoubleTapAsButtonPress in
-			if node != nil && node?.deviceConfig != nil {
-				if newDoubleTapAsButtonPress != node!.deviceConfig!.doubleTapAsButtonPress { hasChanges = true }
-			}
+		.onChange(of: doubleTapAsButtonPress) {
+			hasChanges = true
 		}
-		.onChange(of: isManaged) { newIsManaged in
-			if node != nil && node?.deviceConfig != nil {
-				if newIsManaged != node!.deviceConfig!.isManaged { hasChanges = true }
-			}
+		.onChange(of: isManaged) {
+			hasChanges = true
 		}
-		.onChange(of: tzdef) { newTzdef in
-			if node != nil && node?.deviceConfig != nil {
-				if newTzdef != node!.deviceConfig!.tzdef { hasChanges = true }
-			}
+		.onChange(of: tzdef) {
+			hasChanges = true
 		}
 	}
+
 	func setDeviceValues() {
-		self.deviceRole = Int(node?.deviceConfig?.role ?? 0)
-		self.serialEnabled = (node?.deviceConfig?.serialEnabled ?? true)
-		self.debugLogEnabled = node?.deviceConfig?.debugLogEnabled ?? false
-		self.buttonGPIO = Int(node?.deviceConfig?.buttonGpio ?? 0)
-		self.buzzerGPIO = Int(node?.deviceConfig?.buzzerGpio ?? 0)
-		self.rebroadcastMode = Int(node?.deviceConfig?.rebroadcastMode ?? 0)
-		self.nodeInfoBroadcastSecs = Int(node?.deviceConfig?.nodeInfoBroadcastSecs ?? 900)
+		if let config = node.deviceConfig {
+			serialEnabled = (config.serialEnabled)
+			debugLogEnabled = config.debugLogEnabled
+			doubleTapAsButtonPress = config.doubleTapAsButtonPress
+			ledHeartbeatEnabled = config.ledHeartbeatEnabled
+			isManaged = config.isManaged
+			tzdef = config.tzdef ?? ""
+			deviceRole = Int(config.role)
+			buttonGPIO = Int(config.buttonGpio)
+			buzzerGPIO = Int(config.buzzerGpio)
+			rebroadcastMode = Int(config.rebroadcastMode)
+			nodeInfoBroadcastSecs = Int(config.nodeInfoBroadcastSecs)
+		}
+		else {
+			serialEnabled = true
+			debugLogEnabled = false
+			doubleTapAsButtonPress = false
+			ledHeartbeatEnabled = true
+			isManaged = false
+			tzdef = ""
+			deviceRole = 0
+			buttonGPIO = 0
+			buzzerGPIO = 0
+			rebroadcastMode = 0
+			nodeInfoBroadcastSecs = 900
+		}
+
 		if nodeInfoBroadcastSecs < 3600 {
 			nodeInfoBroadcastSecs = 3600
 		}
-		self.doubleTapAsButtonPress = node?.deviceConfig?.doubleTapAsButtonPress ?? false
-		self.ledHeartbeatEnabled = node?.deviceConfig?.ledHeartbeatEnabled ?? true
-		self.isManaged = node?.deviceConfig?.isManaged ?? false
-		self.tzdef = node?.deviceConfig?.tzdef ?? ""
-		if self.tzdef.isEmpty {
-			self.tzdef = TimeZone.current.posixDescription
-			self.hasChanges = true
-		} else {
-			self.hasChanges = false
+
+		if tzdef.isEmpty {
+			tzdef = TimeZone.current.posixDescription
+			hasChanges = true
+		}
+		else {
+			hasChanges = false
 		}
 	}
 }

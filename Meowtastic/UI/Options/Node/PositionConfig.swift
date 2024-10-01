@@ -6,7 +6,7 @@ import SwiftUI
 struct PositionConfig: View {
 	private let coreDataTools = CoreDataTools()
 
-	var node: NodeInfoEntity?
+	var node: NodeInfoEntity
 
 	@State var hasChanges = false
 	@State var hasFlagChanges = false
@@ -61,13 +61,13 @@ struct PositionConfig: View {
 					advancedDeviceGPSSection
 				}
 			}
-			.disabled(bleManager.getConnectedDevice() == nil || node?.positionConfig == nil)
+			.disabled(bleManager.getConnectedDevice() == nil || node.positionConfig == nil)
 			.alert(setFixedAlertTitle, isPresented: $showingSetFixedAlert) {
 				Button("Cancel", role: .cancel) {
 					fixedPosition.toggle()
 				}
 
-				if node?.positionConfig?.fixedPosition ?? false {
+				if node.positionConfig?.fixedPosition ?? false {
 					Button("Remove", role: .destructive) {
 						removeFixedPosition()
 					}
@@ -78,7 +78,7 @@ struct PositionConfig: View {
 					}
 				}
 			} message: {
-				Text(node?.positionConfig?.fixedPosition ?? false ? "This will disable fixed position and remove the currently set position." : "This will send a current position from your phone and enable fixed position.")
+				Text(node.positionConfig?.fixedPosition ?? false ? "This will disable fixed position and remove the currently set position." : "This will send a current position from your phone and enable fixed position.")
 			}
 			saveButton
 		}
@@ -96,11 +96,10 @@ struct PositionConfig: View {
 			|| minimumVersion.compare(bleManager.connectedVersion, options: .numeric) == .orderedSame
 
 			// Need to request a PositionConfig from the remote node before allowing changes
-			if let connectedPeripheral = bleManager.getConnectedDevice(), node?.positionConfig == nil {
+			if let connectedPeripheral = bleManager.getConnectedDevice(), node.positionConfig == nil {
 				Logger.mesh.info("empty position config")
 
-				let connectedNode = coreDataTools.getNodeInfo(id: connectedPeripheral.num, context: context)
-				if let node, let connectedNode {
+				if let connectedNode = coreDataTools.getNodeInfo(id: connectedPeripheral.num, context: context) {
 					nodeConfig.requestPositionConfig(
 						fromUser: connectedNode.user!,
 						toUser: node.user!,
@@ -111,7 +110,7 @@ struct PositionConfig: View {
 		}
 		.onChange(of: fixedPosition) {
 			if supportedVersion {
-				if let positionConfig = node?.positionConfig {
+				if let positionConfig = node.positionConfig {
 					if !positionConfig.fixedPosition && fixedPosition {
 						showingSetFixedAlert = true
 					}
@@ -241,11 +240,12 @@ struct PositionConfig: View {
 						.font(.callout)
 				}
 			}
-			if (gpsMode != 1 && node?.num ?? 0 == bleManager.getConnectedDevice()?.num ?? -1) || fixedPosition {
+			if (gpsMode != 1 && node.num == bleManager.getConnectedDevice()?.num ?? -1) || fixedPosition {
 				VStack(alignment: .leading) {
 					Toggle(isOn: $fixedPosition) {
 						Label("Fixed Position", systemImage: "location.square.fill")
-						if !(node?.positionConfig?.fixedPosition ?? false) {
+
+						if !(node.positionConfig?.fixedPosition ?? false) {
 							Text("Your current location will be set as the fixed position and broadcast over the mesh on the position interval.")
 						}
 					}
@@ -289,7 +289,6 @@ struct PositionConfig: View {
 			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 			Toggle(isOn: $includeSpeed) { // 128
-
 				Label("Vehicle speed", systemImage: "speedometer")
 			}
 			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
@@ -356,7 +355,8 @@ struct PositionConfig: View {
 				ForEach(0..<49) {
 					if $0 == 0 {
 						Text("unset")
-					} else {
+					}
+					else {
 						Text("Pin \($0)")
 					}
 				}
@@ -372,7 +372,7 @@ struct PositionConfig: View {
 	var saveButton: some View {
 		SaveConfigButton(node: node, hasChanges: $hasChanges) {
 			if fixedPosition && !supportedVersion {
-				_ = bleManager.sendPosition(channel: 0, destNum: node?.num ?? 0, wantResponse: true)
+				bleManager.sendPosition(channel: 0, destNum: node.num, wantResponse: true)
 			}
 
 			if
@@ -408,7 +408,7 @@ struct PositionConfig: View {
 				let adminMessageId = nodeConfig.savePositionConfig(
 					config: pc,
 					fromUser: connectedNode.user!,
-					toUser: node!.user!,
+					toUser: node.user!,
 					adminIndex: connectedNode.myInfo?.adminIndex ?? 0
 				)
 
@@ -422,7 +422,7 @@ struct PositionConfig: View {
 	}
 
 	var setFixedAlertTitle: String {
-		if node?.positionConfig?.fixedPosition == true {
+		if node.positionConfig?.fixedPosition == true {
 			return "Remove Fixed Position"
 		}
 		else {
@@ -431,7 +431,10 @@ struct PositionConfig: View {
 	}
 
 	func handleChanges() {
-		guard let positionConfig = node?.positionConfig else { return }
+		guard let positionConfig = node.positionConfig else {
+			return
+		}
+
 		let pf = PositionFlags(rawValue: self.positionFlags)
 		hasChanges = positionConfig.deviceGpsEnabled != deviceGpsEnabled ||
 		positionConfig.gpsMode != gpsMode ||
@@ -456,21 +459,22 @@ struct PositionConfig: View {
 	}
 
 	func setPositionValues() {
-		self.smartPositionEnabled = node?.positionConfig?.smartPositionEnabled ?? true
-		self.deviceGpsEnabled = node?.positionConfig?.deviceGpsEnabled ?? false
-		self.gpsMode = Int(node?.positionConfig?.gpsMode ?? 0)
-		if node?.positionConfig?.deviceGpsEnabled ?? false && gpsMode != 1 {
-			self.gpsMode = 1
+		smartPositionEnabled = node.positionConfig?.smartPositionEnabled ?? true
+		deviceGpsEnabled = node.positionConfig?.deviceGpsEnabled ?? false
+		gpsMode = Int(node.positionConfig?.gpsMode ?? 0)
+		if node.positionConfig?.deviceGpsEnabled ?? false && gpsMode != 1 {
+			gpsMode = 1
 		}
-		self.rxGpio = Int(node?.positionConfig?.rxGpio ?? 0)
-		self.txGpio = Int(node?.positionConfig?.txGpio ?? 0)
-		self.gpsEnGpio = Int(node?.positionConfig?.gpsEnGpio ?? 0)
-		self.fixedPosition = node?.positionConfig?.fixedPosition ?? false
-		self.gpsUpdateInterval = Int(node?.positionConfig?.gpsUpdateInterval ?? 30)
-		self.positionBroadcastSeconds = Int(node?.positionConfig?.positionBroadcastSeconds ?? 900)
-		self.broadcastSmartMinimumIntervalSecs = Int(node?.positionConfig?.broadcastSmartMinimumIntervalSecs ?? 30)
-		self.broadcastSmartMinimumDistance = Int(node?.positionConfig?.broadcastSmartMinimumDistance ?? 50)
-		self.positionFlags = Int(node?.positionConfig?.positionFlags ?? 3)
+		rxGpio = Int(node.positionConfig?.rxGpio ?? 0)
+		txGpio = Int(node.positionConfig?.txGpio ?? 0)
+		gpsEnGpio = Int(node.positionConfig?.gpsEnGpio ?? 0)
+		fixedPosition = node.positionConfig?.fixedPosition ?? false
+		gpsUpdateInterval = Int(node.positionConfig?.gpsUpdateInterval ?? 30)
+		positionBroadcastSeconds = Int(node.positionConfig?.positionBroadcastSeconds ?? 900)
+		broadcastSmartMinimumIntervalSecs = Int(node.positionConfig?.broadcastSmartMinimumIntervalSecs ?? 30)
+		broadcastSmartMinimumDistance = Int(node.positionConfig?.broadcastSmartMinimumDistance ?? 50)
+		positionFlags = Int(node.positionConfig?.positionFlags ?? 3)
+
 		let pf = PositionFlags(rawValue: self.positionFlags)
 		self.includeAltitude = pf.contains(.Altitude)
 		self.includeAltitudeMsl = pf.contains(.AltitudeMsl)
@@ -482,43 +486,49 @@ struct PositionConfig: View {
 		self.includeTimestamp = pf.contains(.Timestamp)
 		self.includeSpeed = pf.contains(.Speed)
 		self.includeHeading = pf.contains(.Heading)
+
 		self.hasChanges = false
 	}
 
 	private func setFixedPosition() {
-		guard let nodeNum = bleManager.getConnectedDevice()?.num,
-			  nodeNum > 0 else { return }
-		if !nodeConfig.setFixedPosition(fromUser: node!.user!, adminIndex: 0) {
+		guard let nodeNum = bleManager.getConnectedDevice()?.num, nodeNum > 0 else {
+			return
+		}
+
+		if !nodeConfig.setFixedPosition(fromUser: node.user!, adminIndex: 0) {
 			Logger.mesh.error("Set Position Failed")
 		}
-		node?.positionConfig?.fixedPosition = true
+
+		node.positionConfig?.fixedPosition = true
+
 		do {
 			try context.save()
-			Logger.data.info("💾 Updated Position Config with Fixed Position = true")
-		} catch {
+		}
+		catch {
 			context.rollback()
-			let nsError = error as NSError
-			Logger.data.error("Error Saving Position Config Entity \(nsError)")
 		}
 	}
 
 	private func removeFixedPosition() {
-		guard let nodeNum = bleManager.getConnectedDevice()?.num,
-			  nodeNum > 0 else { return }
-		if !nodeConfig.removeFixedPosition(fromUser: node!.user!, adminIndex: 0) {
+		guard let nodeNum = bleManager.getConnectedDevice()?.num, nodeNum > 0 else {
+			return
+		}
+
+		if !nodeConfig.removeFixedPosition(fromUser: node.user!, adminIndex: 0) {
 			Logger.mesh.error("Remove Fixed Position Failed")
 		}
-		let mutablePositions = node?.positions?.mutableCopy() as? NSMutableOrderedSet
+
+		let mutablePositions = node.positions?.mutableCopy() as? NSMutableOrderedSet
 		mutablePositions?.removeAllObjects()
-		node?.positions = mutablePositions
-		node?.positionConfig?.fixedPosition = false
+
+		node.positions = mutablePositions
+		node.positionConfig?.fixedPosition = false
+
 		do {
 			try context.save()
-			Logger.data.info("💾 Updated Position Config with Fixed Position = false")
-		} catch {
+		}
+		catch {
 			context.rollback()
-			let nsError = error as NSError
-			Logger.data.error("Error Saving Position Config Entity \(nsError)")
 		}
 	}
 }
