@@ -90,6 +90,7 @@
 		B2AF95D22CAAE92D00EAD056 /* MessageListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2AF95D12CAAE92600EAD056 /* MessageListItem.swift */; };
 		B2AF95D72CABE8E000EAD056 /* ConfigHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2AF95D42CABE8E000EAD056 /* ConfigHeader.swift */; };
 		B2AF95D82CABE8E000EAD056 /* SaveConfigButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2AF95D52CABE8E000EAD056 /* SaveConfigButton.swift */; };
+		B2AF95DA2CAC306700EAD056 /* PositionPrecision.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2AF95D92CAC306300EAD056 /* PositionPrecision.swift */; };
 		B2BDCD7A2C6CB6440040D7ED /* AnalyticEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2BDCD792C6CB6440040D7ED /* AnalyticEvents.swift */; };
 		B2CC14B22C66280000588C16 /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2CC14B12C66280000588C16 /* UIColor+Extension.swift */; };
 		B2CC552C2C7374EC003FB487 /* CBPeripheral+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2CC552B2C7374EC003FB487 /* CBPeripheral+Extensions.swift */; };
@@ -266,6 +267,7 @@
 		B2AF95D12CAAE92600EAD056 /* MessageListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageListItem.swift; sourceTree = "<group>"; };
 		B2AF95D42CABE8E000EAD056 /* ConfigHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigHeader.swift; sourceTree = "<group>"; };
 		B2AF95D52CABE8E000EAD056 /* SaveConfigButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveConfigButton.swift; sourceTree = "<group>"; };
+		B2AF95D92CAC306300EAD056 /* PositionPrecision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionPrecision.swift; sourceTree = "<group>"; };
 		B2BDCD792C6CB6440040D7ED /* AnalyticEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticEvents.swift; sourceTree = "<group>"; };
 		B2CC14B12C66280000588C16 /* UIColor+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extension.swift"; sourceTree = "<group>"; };
 		B2CC552B2C7374EC003FB487 /* CBPeripheral+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CBPeripheral+Extensions.swift"; sourceTree = "<group>"; };
@@ -502,6 +504,7 @@
 				B266A7692C59293B00DFC723 /* GPSMode.swift */,
 				B266A76B2C59298900DFC723 /* GPSUpdateIntervals.swift */,
 				B26C91F52C59740F0029F249 /* PositionFlags.swift */,
+				B2AF95D92CAC306300EAD056 /* PositionPrecision.swift */,
 			);
 			path = Location;
 			sourceTree = "<group>";
@@ -618,6 +621,7 @@
 		B2AF95D62CABE8E000EAD056 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				DD93800D2BA74D0C008BEC06 /* ChannelForm.swift */,
 				B2AF95D42CABE8E000EAD056 /* ConfigHeader.swift */,
 				B2AF95D52CABE8E000EAD056 /* SaveConfigButton.swift */,
 			);
@@ -670,8 +674,8 @@
 		DD61937A2863876A00E59241 /* Node */ = {
 			isa = PBXGroup;
 			children = (
-				B2AF95D62CABE8E000EAD056 /* Views */,
 				DDB6ABD528AE742000384BA1 /* BluetoothConfig.swift */,
+				DDA0B6B1294CDC55001356EC /* Channels.swift */,
 				DD41582528582E9B009B0E59 /* DeviceConfig.swift */,
 				DD8EBF42285058FA00426DCA /* DisplayConfig.swift */,
 				DD2553562855B02500E55709 /* LoRaConfig.swift */,
@@ -681,7 +685,7 @@
 				D93068DA2B81C85E0066FBC8 /* PowerConfig.swift */,
 				081C3AEE2C989B8C00F93C46 /* TelemetryConfig.swift */,
 				DDCE4E2B2869F92900BE9F8F /* UserConfig.swift */,
-				DD93800C2BA74CE3008BEC06 /* Channels */,
+				B2AF95D62CABE8E000EAD056 /* Views */,
 			);
 			path = Node;
 			sourceTree = "<group>";
@@ -712,15 +716,6 @@
 				DD41A61E29AE7E8F003C5A37 /* SwiftUI.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		DD93800C2BA74CE3008BEC06 /* Channels */ = {
-			isa = PBXGroup;
-			children = (
-				DDA0B6B1294CDC55001356EC /* Channels.swift */,
-				DD93800D2BA74D0C008BEC06 /* ChannelForm.swift */,
-			);
-			path = Channels;
 			sourceTree = "<group>";
 		};
 		DDC2E14B26CE248E0042C5E4 = {
@@ -1018,6 +1013,7 @@
 				DDA0B6B2294CDC55001356EC /* Channels.swift in Sources */,
 				B399E8A42B6F486400E4488E /* RetryButton.swift in Sources */,
 				DDB8F4102A9EE5B400230ECE /* Messages.swift in Sources */,
+				B2AF95DA2CAC306700EAD056 /* PositionPrecision.swift in Sources */,
 				DD4A911E2708C65400501B7E /* AppSettings.swift in Sources */,
 				B266A75D2C59265000DFC723 /* OLEDTypes.swift in Sources */,
 				DD2160AF28C5552500C17253 /* MQTTConfig.swift in Sources */,
