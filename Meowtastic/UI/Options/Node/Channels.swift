@@ -192,7 +192,8 @@ struct Channels: View {
 				.presentationDragIndicator(.visible)
 				.onAppear {
 					supportedVersion = bleManager.connectedVersion == "0.0.0"
-					|| [.orderedAscending, .orderedSame].contains(minimumVersion.compare(bleManager.connectedVersion, options: .numeric))
+					|| [.orderedAscending, .orderedSame]
+						.contains(minimumVersion.compare(bleManager.connectedVersion, options: .numeric))
 				}
 
 				HStack {
@@ -278,11 +279,11 @@ struct Channels: View {
 						if adminMessageId > 0 {
 							selectedChannel = nil
 							channelName = ""
-							channelRole	= 2
+							channelRole = 2
 							hasChanges = false
 						}
 					} label: {
-						Label("save", systemImage: "square.and.arrow.down")
+						Label("Save", systemImage: "square.and.arrow.down")
 					}
 					.disabled(bleManager.getConnectedDevice() == nil || !hasChanges || !hasValidKey)
 					.buttonStyle(.bordered)
