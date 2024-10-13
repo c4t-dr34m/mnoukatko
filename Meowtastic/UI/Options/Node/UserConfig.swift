@@ -101,7 +101,7 @@ struct UserConfig: View {
 						Toggle(isOn: $isLicensed) {
 							Label("Licensed Operator", systemImage: "person.text.rectangle")
 						}
-						.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+						.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 
 						if isLicensed {
 							Text("Onboarding for licensed operators requires firmware 2.0.20 or greater. Make sure to refer to your local regulations and contact the local amateur frequency coordinators with questions.")
@@ -127,7 +127,7 @@ struct UserConfig: View {
 							}
 							HStack {
 								Image(systemName: "antenna.radiowaves.left.and.right")
-									.foregroundColor(.accentColor)
+									.foregroundColor(.meowOrange)
 								Stepper("\(txPower)db Transmit Power", value: $txPower, in: 1...30, step: 1)
 									.padding(5)
 							}

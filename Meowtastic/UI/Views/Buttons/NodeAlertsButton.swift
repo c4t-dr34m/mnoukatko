@@ -25,7 +25,7 @@ struct NodeAlertsButton: View {
 			} icon: {
 				Image(systemName: user.mute ? "bell.slash" : "bell")
 					.symbolRenderingMode(.monochrome)
-					.foregroundColor(.accentColor)
+					.foregroundColor(.meowOrange)
 			}
 		}
 	}

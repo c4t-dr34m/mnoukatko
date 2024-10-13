@@ -22,7 +22,7 @@ struct ExchangePositionsButton: View {
 			} icon: {
 				Image(systemName: "arrow.triangle.2.circlepath")
 					.symbolRenderingMode(.monochrome)
-					.foregroundColor(.accentColor)
+					.foregroundColor(.meowOrange)
 			}
 		}.alert(
 			"Position Sent",

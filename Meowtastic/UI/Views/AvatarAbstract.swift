@@ -14,7 +14,7 @@ struct AvatarAbstract: View {
 			return color
 		}
 		else {
-			return .accentColor
+			return .meowOrange
 		}
 	}
 	private var foreground: Color {

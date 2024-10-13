@@ -139,7 +139,7 @@ struct MessageContentView: View {
 						Image(systemName: "sensor.fill")
 							.padding()
 							.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-							.foregroundStyle(Color.orange)
+							.foregroundStyle(Color.meowOrange)
 							.symbolRenderingMode(.multicolor)
 							.symbolEffect(
 								.variableColor.reversing.cumulative,
@@ -249,7 +249,7 @@ struct MessageContentView: View {
 			}
 			else {
 				if isCurrentUser {
-					return Color.accentColor
+					return Color.meowOrange
 				}
 				else {
 					if colorScheme == .dark {

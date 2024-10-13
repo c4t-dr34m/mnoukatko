@@ -78,7 +78,7 @@ struct TextMessageField: View {
 				Image(systemName: "paperplane.fill")
 					.resizable()
 					.scaledToFit()
-					.foregroundColor(.accentColor)
+					.foregroundColor(.meowOrange)
 					.padding(.all, 4)
 					.frame(width: 32, height: 32)
 			}

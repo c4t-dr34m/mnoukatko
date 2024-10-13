@@ -44,7 +44,7 @@ struct NetworkConfig: View {
 							Label("enabled", systemImage: "wifi")
 							Text("Enabling WiFi will disable the bluetooth connection to the app.")
 						}
-						.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+						.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 
 						HStack {
 							Label("ssid", systemImage: "network")
@@ -89,7 +89,7 @@ struct NetworkConfig: View {
 							Label("enabled", systemImage: "network")
 							Text("Enabling Ethernet will disable the bluetooth connection to the app.")
 						}
-						.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+						.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 					}
 				}
 			}

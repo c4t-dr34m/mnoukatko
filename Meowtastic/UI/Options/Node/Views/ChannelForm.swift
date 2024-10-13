@@ -152,7 +152,7 @@ struct ChannelForm: View {
 								systemImage: positionsEnabled ? "mappin" : "mappin.slash"
 							)
 						}
-						.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+						.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 						.disabled(!supportedVersion)
 					}
 
@@ -161,7 +161,7 @@ struct ChannelForm: View {
 							Toggle(isOn: $preciseLocation) {
 								Label("Precise Location", systemImage: "scope")
 							}
-							.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+							.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 							.disabled(!supportedVersion)
 							.listRowSeparator(.visible)
 							.onChange(of: preciseLocation) {
@@ -196,13 +196,13 @@ struct ChannelForm: View {
 					Toggle(isOn: $uplink) {
 						Label("Uplink", systemImage: "arrowshape.up")
 					}
-					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+					.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 					.listRowSeparator(.visible)
 
 					Toggle(isOn: $downlink) {
 						Label("Downlink", systemImage: "arrowshape.down")
 					}
-					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+					.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 					.listRowSeparator(.visible)
 				}
 				.headerProminence(.increased)

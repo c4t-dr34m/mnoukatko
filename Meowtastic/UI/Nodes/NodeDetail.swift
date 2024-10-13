@@ -218,7 +218,7 @@ struct NodeDetail: View {
 			} label: {
 				Image(systemName: node.favorite ? "star.slash" : "star")
 					.symbolRenderingMode(.monochrome)
-					.foregroundColor(.accentColor)
+					.foregroundColor(.meowOrange)
 			}
 
 			if let user = node.user, let device = connectedDevice.device, node.num != device.num {
@@ -235,7 +235,7 @@ struct NodeDetail: View {
 				} label: {
 					Image(systemName: user.mute ? "bell.slash" : "bell")
 						.symbolRenderingMode(.monochrome)
-						.foregroundColor(.accentColor)
+						.foregroundColor(.meowOrange)
 				}
 
 				NavigationLink {
@@ -245,7 +245,7 @@ struct NodeDetail: View {
 				} label: {
 					Image(systemName: "bubble.left.and.bubble.right")
 						.symbolRenderingMode(.monochrome)
-						.foregroundColor(.accentColor)
+						.foregroundColor(.meowOrange)
 				}
 			}
 		}
@@ -618,7 +618,7 @@ struct NodeDetail: View {
 				} icon: {
 					Image(systemName: "person")
 						.symbolRenderingMode(.monochrome)
-						.foregroundColor(.accentColor)
+						.foregroundColor(.meowOrange)
 				}
 
 				Spacer()
@@ -635,7 +635,7 @@ struct NodeDetail: View {
 			} icon: {
 				Image(systemName: "number")
 					.symbolRenderingMode(.monochrome)
-					.foregroundColor(.accentColor)
+					.foregroundColor(.meowOrange)
 			}
 
 			Spacer()
@@ -651,7 +651,7 @@ struct NodeDetail: View {
 				} icon: {
 					Image(systemName: deviceRole.systemName)
 						.symbolRenderingMode(.monochrome)
-						.foregroundColor(.accentColor)
+						.foregroundColor(.meowOrange)
 				}
 
 				Spacer()
@@ -671,12 +671,12 @@ struct NodeDetail: View {
 					if node.viaMqtt {
 						Image(systemName: "network")
 							.symbolRenderingMode(.monochrome)
-							.foregroundColor(.accentColor)
+							.foregroundColor(.meowOrange)
 					}
 					else {
 						Image(systemName: "antenna.radiowaves.left.and.right")
 							.symbolRenderingMode(.monochrome)
-							.foregroundColor(.accentColor)
+							.foregroundColor(.meowOrange)
 					}
 				}
 
@@ -715,7 +715,7 @@ struct NodeDetail: View {
 				} icon: {
 					Image(systemName: "arrow.left.arrow.right")
 						.symbolRenderingMode(.monochrome)
-						.foregroundColor(.accentColor)
+						.foregroundColor(.meowOrange)
 				}
 
 				Spacer()
@@ -731,7 +731,7 @@ struct NodeDetail: View {
 				} icon: {
 					Image(systemName: "wave.3.right")
 						.symbolRenderingMode(.monochrome)
-						.foregroundColor(.accentColor)
+						.foregroundColor(.meowOrange)
 				}
 
 				Spacer()
@@ -746,7 +746,7 @@ struct NodeDetail: View {
 			} icon: {
 				Image(systemName: node.hopsAway == 0 ? "eye" : "arrowshape.bounce.forward")
 					.symbolRenderingMode(.monochrome)
-					.foregroundColor(.accentColor)
+					.foregroundColor(.meowOrange)
 			}
 
 			Spacer()
@@ -777,12 +777,12 @@ struct NodeDetail: View {
 						if routes > 0 {
 							Image(systemName: "signpost.right.and.left.fill")
 								.symbolRenderingMode(.monochrome)
-								.foregroundColor(.accentColor)
+								.foregroundColor(.meowOrange)
 						}
 						else {
 							Image(systemName: "signpost.right.and.left")
 								.symbolRenderingMode(.monochrome)
-								.foregroundColor(.accentColor)
+								.foregroundColor(.meowOrange)
 						}
 					}
 				}
@@ -799,7 +799,7 @@ struct NodeDetail: View {
 				} icon: {
 					Image(systemName: "waveform.path.ecg")
 						.symbolRenderingMode(.monochrome)
-						.foregroundColor(.accentColor)
+						.foregroundColor(.meowOrange)
 				}
 
 				Spacer()
@@ -819,7 +819,7 @@ struct NodeDetail: View {
 				} icon: {
 					Image(systemName: "eye")
 						.symbolRenderingMode(.monochrome)
-						.foregroundColor(.accentColor)
+						.foregroundColor(.meowOrange)
 				}
 
 				Spacer()
@@ -836,7 +836,7 @@ struct NodeDetail: View {
 				} icon: {
 					Image(systemName: "flipphone")
 						.symbolRenderingMode(.monochrome)
-						.foregroundColor(.accentColor)
+						.foregroundColor(.meowOrange)
 				}
 
 				Spacer()
@@ -852,7 +852,7 @@ struct NodeDetail: View {
 				} icon: {
 					Image(systemName: "memorychip")
 						.symbolRenderingMode(.monochrome)
-						.foregroundColor(.accentColor)
+						.foregroundColor(.meowOrange)
 				}
 
 				Spacer()
@@ -872,7 +872,7 @@ struct NodeDetail: View {
 				} icon: {
 					Image(systemName: "hourglass")
 						.symbolRenderingMode(.monochrome)
-						.foregroundColor(.accentColor)
+						.foregroundColor(.meowOrange)
 				}
 
 				Spacer()
@@ -934,7 +934,7 @@ struct NodeDetail: View {
 				} icon: {
 					Image(systemName: "arrow.clockwise")
 						.symbolRenderingMode(.monochrome)
-						.foregroundColor(.accentColor)
+						.foregroundColor(.meowOrange)
 				}
 			}
 		}
@@ -947,7 +947,7 @@ struct NodeDetail: View {
 			} icon: {
 				Image(systemName: "arrow.triangle.2.circlepath")
 					.symbolRenderingMode(.monochrome)
-					.foregroundColor(.accentColor)
+					.foregroundColor(.meowOrange)
 			}
 		}.confirmationDialog(
 			"are.you.sure",
@@ -973,7 +973,7 @@ struct NodeDetail: View {
 				} icon: {
 					Image(systemName: "power")
 						.symbolRenderingMode(.monochrome)
-						.foregroundColor(.accentColor)
+						.foregroundColor(.meowOrange)
 				}
 			}.confirmationDialog(
 				"are.you.sure",

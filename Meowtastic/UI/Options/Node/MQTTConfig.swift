@@ -73,7 +73,7 @@ struct MQTTConfig: View {
 				Toggle(isOn: $enabled) {
 					Label("Enabled", systemImage: "dot.radiowaves.up.forward")
 				}
-				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+				.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 				.onChange(of: enabled) {
 					hasChanges = true
 				}
@@ -86,7 +86,7 @@ struct MQTTConfig: View {
 
 					Text("Utilizes the network connection on your phone to connect to MQTT.")
 				}
-				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+				.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 				.onChange(of: proxyToClientEnabled) {
 					if proxyToClientEnabled {
 						jsonEnabled = false
@@ -105,13 +105,13 @@ struct MQTTConfig: View {
 				Toggle(isOn: $encryptionEnabled) {
 					Label("Encryption Enabled", systemImage: "lock.icloud")
 				}
-				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+				.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 
 				Toggle(isOn: $jsonEnabled) {
 					Label("JSON Enabled", systemImage: "ellipsis.curlybraces")
 					Text("JSON mode is a limited, unencrypted MQTT output for locally integrating with home assistant")
 				}
-				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+				.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 				.onChange(of: jsonEnabled) {
 					if jsonEnabled {
 						proxyToClientEnabled = false
@@ -125,7 +125,7 @@ struct MQTTConfig: View {
 				Toggle(isOn: $mapReportingEnabled) {
 					Label("enabled", systemImage: "map")
 				}
-				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+				.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 				.onChange(of: mapReportingEnabled) {
 					hasChanges = true
 				}
@@ -147,7 +147,7 @@ struct MQTTConfig: View {
 						Toggle(isOn: $preciseLocation) {
 							Label("Precise Location", systemImage: "scope")
 						}
-						.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+						.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 						.listRowSeparator(.visible)
 						.onChange(of: preciseLocation) {
 							if preciseLocation == false {
@@ -278,7 +278,7 @@ struct MQTTConfig: View {
 
 					Text("Your MQTT Server must support TLS.")
 				}
-				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+				.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 				.onChange(of: tlsEnabled) {
 					hasChanges = true
 				}

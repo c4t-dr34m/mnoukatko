@@ -59,7 +59,7 @@ struct TraceRoute: View {
 							} icon: {
 								Image(systemName: "arrow.clockwise")
 									.symbolRenderingMode(.monochrome)
-									.foregroundColor(.accentColor)
+									.foregroundColor(.meowOrange)
 							}
 						}
 

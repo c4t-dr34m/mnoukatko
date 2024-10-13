@@ -132,7 +132,7 @@ struct NodeMapContent: MapContent {
 		MapPolyline(coordinates: coordinates)
 			.stroke(Color.white.opacity(0.5), style: strokeOutline)
 		MapPolyline(coordinates: coordinates)
-			.stroke(Color.accentColor, style: strokeMain)
+			.stroke(Color.meowOrange, style: strokeMain)
 	}
 
 	init(node: NodeInfoEntity?) {

@@ -75,24 +75,24 @@ struct TelemetryConfig: View {
 					Toggle(isOn: $environmentMeasurementEnabled) {
 						Label("enabled", systemImage: "chart.xyaxis.line")
 					}
-					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+					.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 
 					Toggle(isOn: $environmentScreenEnabled) {
 						Label("Show on device screen", systemImage: "display")
 					}
-					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+					.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 
 					Toggle(isOn: $environmentDisplayFahrenheit) {
 						Label("Display Fahrenheit", systemImage: "thermometer")
 					}
-					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+					.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 				}
 
 				Section(header: Text("Power Options")) {
 					Toggle(isOn: $powerMeasurementEnabled) {
 						Label("enabled", systemImage: "bolt")
 					}
-					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+					.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 					.listRowSeparator(.visible)
 
 					Picker("Power Metrics", selection: $powerUpdateInterval ) {
@@ -113,7 +113,7 @@ struct TelemetryConfig: View {
 					Toggle(isOn: $powerScreenEnabled) {
 						Label("Power Screen", systemImage: "tv")
 					}
-					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+					.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 				}
 			}
 			.disabled(

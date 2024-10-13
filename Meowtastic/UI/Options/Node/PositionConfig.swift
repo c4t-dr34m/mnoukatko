@@ -172,7 +172,7 @@ struct PositionConfig: View {
 			Toggle(isOn: $smartPositionEnabled) {
 				Label("Smart Position", systemImage: "brain")
 			}
-			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+			.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 
 			if smartPositionEnabled {
 				VStack(alignment: .leading) {
@@ -249,7 +249,7 @@ struct PositionConfig: View {
 							Text("Your current location will be set as the fixed position and broadcast over the mesh on the position interval.")
 						}
 					}
-					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+					.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 				}
 			}
 		}
@@ -266,32 +266,32 @@ struct PositionConfig: View {
 			Toggle(isOn: $includeAltitude) {
 				Label("Altitude", systemImage: "arrow.up")
 			}
-			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+			.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 
 			Toggle(isOn: $includeSatsinview) {
 				Label("Number of satellites", systemImage: "skew")
 			}
-			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+			.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 
 			Toggle(isOn: $includeSeqNo) { // 64
 				Label("Sequence number", systemImage: "number")
 			}
-			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+			.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 
 			Toggle(isOn: $includeTimestamp) { // 128
 				Label("timestamp", systemImage: "clock")
 			}
-			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+			.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 
 			Toggle(isOn: $includeHeading) { // 128
 				Label("Vehicle heading", systemImage: "location.circle")
 			}
-			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+			.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 
 			Toggle(isOn: $includeSpeed) { // 128
 				Label("Vehicle speed", systemImage: "speedometer")
 			}
-			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+			.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 		}
 	}
 
@@ -303,23 +303,23 @@ struct PositionConfig: View {
 				Toggle(isOn: $includeAltitudeMsl) {
 					Label("Altitude is Mean Sea Level", systemImage: "arrow.up.to.line.compact")
 				}
-				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+				.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 				Toggle(isOn: $includeGeoidalSeparation) {
 					Label("Altitude Geoidal Separation", systemImage: "globe.americas")
 				}
-				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+				.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 			}
 
 			Toggle(isOn: $includeDop) {
 				Text("Dilution of precision (DOP) PDOP used by default")
 			}
-			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+			.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 
 			if includeDop {
 				Toggle(isOn: $includeHvdop) {
 					Text("If DOP is set, use HDOP / VDOP values instead of PDOP")
 				}
-				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+				.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
 			}
 		}
 	}
