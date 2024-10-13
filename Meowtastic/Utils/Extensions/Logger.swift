@@ -18,26 +18,4 @@ extension Logger {
 	static let statistics = Logger(subsystem: subsystem, category: "📊 Stats")
 
 	private static var subsystem = Bundle.main.bundleIdentifier!
-
-	static public func fetch(predicateFormat: String) async throws -> [OSLogEntryLog] {
-		let store = try OSLogStore(scope: .currentProcessIdentifier)
-		let position = store.position(timeIntervalSinceLatestBoot: 0)
-		let predicate = NSPredicate(format: predicateFormat)
-		let entries = try store.getEntries(at: position, matching: predicate)
-
-		var logs: [OSLogEntryLog] = []
-		for entry in entries {
-			try Task.checkCancellation()
-
-			if let log = entry as? OSLogEntryLog {
-				logs.append(log)
-			}
-		}
-
-		if logs.isEmpty {
-			logs = []
-		}
-
-		return logs
-	}
 }
