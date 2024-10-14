@@ -100,7 +100,7 @@ struct NodeMap: View {
 							.padding(.vertical, 5)
 					}
 					.tint(Color(UIColor.secondarySystemBackground))
-					.foregroundColor(.meowOrange)
+					.foregroundColor(.accentColor)
 					.buttonStyle(.borderedProminent)
 				}
 				.controlSize(.regular)

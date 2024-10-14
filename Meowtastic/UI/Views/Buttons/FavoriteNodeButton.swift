@@ -48,7 +48,7 @@ struct FavoriteNodeButton: View {
 			} icon: {
 				Image(systemName: node.favorite ? "star.slash" : "star")
 					.symbolRenderingMode(.monochrome)
-					.foregroundColor(.meowOrange)
+					.foregroundColor(.accentColor)
 			}
 		}
 	}

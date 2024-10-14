@@ -73,7 +73,7 @@ struct DeviceConfig: View {
 						Label("Managed Device", systemImage: "gearshape.arrow.triangle.2.circlepath")
 						Text("Enabling Managed mode will restrict access to all radio configurations, such as short/long names, regions, channels, modules, etc. and will only be accessible through the Admin channel. To avoid being locked out, make sure the Admin channel is working properly before enabling it.")
 					}
-					.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
+					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 					Picker("Node Info Broadcast Interval", selection: $nodeInfoBroadcastSecs ) {
 						ForEach(UpdateIntervals.allCases) { ui in
@@ -90,24 +90,24 @@ struct DeviceConfig: View {
 						Label("Double Tap as Button", systemImage: "hand.tap")
 						Text("Treat double tap on supported accelerometers as a user button press.")
 					}
-					.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
+					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 					Toggle(isOn: $ledHeartbeatEnabled) {
 						Label("LED Heartbeat", systemImage: "waveform.path.ecg")
 						Text("Controls the blinking LED on the device.  For most devices this will control one of the up to 4 LEDS, the charger and GPS LEDs are not controllable.")
 					}
-					.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
+					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 				}
 
 				Section(header: Text("Debug")) {
 					Toggle(isOn: $serialEnabled) {
 						Label("Serial Console", systemImage: "terminal")
 					}
-					.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
+					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 					Toggle(isOn: $debugLogEnabled) {
 						Label("Debug Log", systemImage: "ant.fill")
 					}
-					.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
+					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 					VStack(alignment: .leading) {
 						HStack {
 							Label("Time Zone", systemImage: "clock.badge.exclamationmark")

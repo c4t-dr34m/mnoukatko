@@ -13,7 +13,7 @@ struct InvalidVersion: View {
 		VStack {
 			Text("update.firmware")
 				.font(.largeTitle)
-				.foregroundColor(.meowOrange)
+				.foregroundColor(.accentColor)
 
 			Divider()
 
@@ -46,7 +46,7 @@ struct InvalidVersion: View {
 			VStack {
 				Text("🦕 End of life Version 🦖 ☄️")
 					.font(.title3)
-					.foregroundColor(.meowOrange)
+					.foregroundColor(.accentColor)
 					.padding(.bottom)
 
 				Text("Version \(minimumVersion) includes breaking changes to devices and the client apps. Only nodes version \(minimumVersion) and above are supported.")

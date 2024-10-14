@@ -49,19 +49,19 @@ struct DisplayConfig: View {
 					Label("Always point north", systemImage: "location.north.circle")
 					Text("The compass heading on the screen outside of the circle will always point north.")
 				}
-				.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
+				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 				Toggle(isOn: $wakeOnTapOrMotion) {
 					Label("Wake Screen on tap or motion", systemImage: "gyroscope")
 					Text("Requires that there be an accelerometer on your device.")
 				}
-				.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
+				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 				Toggle(isOn: $flipScreen) {
 					Label("Flip Screen", systemImage: "pip.swap")
 					Text("Flip screen vertically")
 				}
-				.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
+				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 				VStack(alignment: .leading) {
 					Picker("OLED Type", selection: $oledType ) {

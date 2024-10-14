@@ -186,7 +186,7 @@ struct LoRaConfig: View {
 			Toggle(isOn: $usePreset) {
 				Label("Use Preset", systemImage: "list.bullet.rectangle")
 			}
-			.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
+			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 			if usePreset {
 				VStack(alignment: .leading) {
@@ -212,12 +212,12 @@ struct LoRaConfig: View {
 			Toggle(isOn: $ignoreMqtt) {
 				Label("Ignore MQTT", systemImage: "server.rack")
 			}
-			.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
+			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 			Toggle(isOn: $txEnabled) {
 				Label("Transmit Enabled", systemImage: "waveform.path")
 			}
-			.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
+			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 			if !usePreset {
 				HStack {
@@ -290,7 +290,7 @@ struct LoRaConfig: View {
 			Toggle(isOn: $rxBoostedGain) {
 				Label("RX Boosted Gain", systemImage: "waveform.badge.plus")
 			}
-			.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
+			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 			HStack {
 				Label("Frequency Override", systemImage: "waveform.path.ecg")
@@ -303,7 +303,7 @@ struct LoRaConfig: View {
 
 			HStack {
 				Image(systemName: "antenna.radiowaves.left.and.right")
-					.foregroundColor(.meowOrange)
+					.foregroundColor(.accentColor)
 
 				Stepper("\(txPower)dBm Transmit Power", value: $txPower, in: 1...30, step: 1)
 					.padding(5)

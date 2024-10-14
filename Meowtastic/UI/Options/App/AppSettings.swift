@@ -22,7 +22,7 @@ struct AppSettings: View {
 				Toggle(isOn: $moreColors) {
 					Label("More Colors", systemImage: "paintpalette")
 				}
-				.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
+				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 				.onChange(of: moreColors) {
 					UserDefaults.moreColors = moreColors
 				}

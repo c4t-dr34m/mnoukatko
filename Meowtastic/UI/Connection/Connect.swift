@@ -240,7 +240,7 @@ struct Connect: View {
 			else if connecting {
 				AvatarAbstract(
 					icon: "hourglass.circle",
-					color: .meowOrange,
+					color: .accentColor,
 					size: 64
 				)
 				.padding([.top, .bottom, .trailing], 10)

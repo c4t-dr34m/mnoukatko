@@ -32,7 +32,7 @@ struct MapSettingsForm: View {
 						Toggle(isOn: $nodeHistory) {
 							Label("Node History", systemImage: "building.columns.fill")
 						}
-						.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
+						.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 						.onTapGesture {
 							nodeHistory.toggle()
 

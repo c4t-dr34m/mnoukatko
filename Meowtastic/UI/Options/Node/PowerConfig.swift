@@ -46,13 +46,13 @@ struct PowerConfig: View {
 						Label("config.power.saving", systemImage: "bolt")
 						Text("config.power.saving.description")
 					}
-					.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
+					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 				}
 
 				Toggle(isOn: $shutdownOnPowerLoss) {
 					Label("config.power.shutdown.on.power.loss", systemImage: "power")
 				}
-				.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
+				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 				if shutdownOnPowerLoss {
 					Picker("config.power.shutdown.after.secs", selection: $shutdownAfterSecs) {
@@ -71,7 +71,7 @@ struct PowerConfig: View {
 					Toggle(isOn: $adcOverride) {
 						Text("config.power.adc.override")
 					}
-					.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
+					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 					if adcOverride {
 						HStack {

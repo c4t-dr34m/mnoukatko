@@ -55,7 +55,7 @@ struct ConnectionInfo: View {
 				deviceIcon("exclamationmark.triangle.fill", color: .red)
 			}
 			else {
-				deviceIcon("antenna.radiowaves.left.and.right.slash", color: .meowOrange)
+				deviceIcon("antenna.radiowaves.left.and.right.slash", color: .accentColor)
 			}
 		}
 		else {

@@ -41,7 +41,7 @@ struct BluetoothConfig: View {
 			Toggle(isOn: $enabled) {
 				Text("Bluetooth")
 			}
-			.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
+			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 			Picker("Pairing Mode", selection: $mode) {
 				ForEach(BluetoothModes.allCases) { bm in
@@ -90,7 +90,7 @@ struct BluetoothConfig: View {
 			Toggle(isOn: $deviceLoggingEnabled) {
 				Text("Device Logging")
 			}
-			.toggleStyle(SwitchToggleStyle(tint: .meowOrange))
+			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 		}
 		.disabled(connectedDevice.device == nil || node.bluetoothConfig == nil)
 		.onAppear {
