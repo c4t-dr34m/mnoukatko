@@ -42,6 +42,33 @@ final class BLEWatcher: DevicesDelegate {
 			"Background task finished in \(Int(runtime))s; tasks done: \(self.tasksDone)"
 		)
 
+		#if DEBUG
+		let request = NodeInfoEntity.fetchRequest()
+		request.predicate = NSPredicate(
+			format: "lastHeard > %@",
+			Calendar.current.date(byAdding: .minute, value: -15, to: .now)! as NSDate
+		)
+
+		let nodeCount: Int
+		if let nodes = try? bleManager.context.fetch(request) {
+			nodeCount = nodes.count
+		}
+		else {
+			nodeCount = 0
+		}
+
+		let manager = LocalNotificationManager()
+		manager.notifications = [
+			Notification(
+				title: "Background Update",
+				subtitle: "\(tasksDone.count) tasks done",
+				content: "Data updated. Currently the node sees \(nodeCount) other nodes.",
+				target: "nodes"
+			)
+		]
+		manager.schedule()
+		#endif
+
 		Analytics.logEvent(
 			AnalyticEvents.backgroundFinished.id,
 			parameters: [

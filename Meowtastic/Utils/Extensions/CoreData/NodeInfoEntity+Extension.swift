@@ -44,7 +44,7 @@ extension NodeInfoEntity {
 	}
 
 	var isOnline: Bool {
-		let fifteenMinutesAgo = Calendar.current.date(byAdding: .minute, value: -15, to: Date())
+		let fifteenMinutesAgo = Calendar.current.date(byAdding: .minute, value: -15, to: .now)
 		if lastHeard?.compare(fifteenMinutesAgo!) == .orderedDescending {
 			 return true
 		}
