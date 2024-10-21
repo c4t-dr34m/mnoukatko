@@ -144,7 +144,7 @@ struct Connect: View {
 				node.num == device.num
 			})
 
-			HStack(alignment: .top) {
+			HStack(alignment: .top, spacing: 8) {
 				connectionAvatar(for: node)
 
 				VStack(alignment: .leading, spacing: 8) {
@@ -228,40 +228,43 @@ struct Connect: View {
 		let connecting = bleManager.isConnecting
 		let connected = bleManager.isConnected
 
-		if on {
-			if connected {
-				AvatarAbstract(
-					icon: "checkmark.circle",
-					color: .green,
-					size: 64
-				)
-				.padding([.top, .bottom, .trailing], 10)
-			}
-			else if connecting {
-				AvatarAbstract(
-					icon: "hourglass.circle",
-					color: .accentColor,
-					size: 64
-				)
-				.padding([.top, .bottom, .trailing], 10)
+		ZStack(alignment: .top) {
+			if on {
+				if connected {
+					AvatarAbstract(
+						icon: "checkmark.circle",
+						color: .green,
+						size: 64
+					)
+					.padding([.top, .bottom, .trailing], 10)
+				}
+				else if connecting {
+					AvatarAbstract(
+						icon: "hourglass.circle",
+						color: .accentColor,
+						size: 64
+					)
+					.padding([.top, .bottom, .trailing], 10)
+				}
+				else {
+					AvatarAbstract(
+						icon: "circle.dotted",
+						color: .red,
+						size: 64
+					)
+					.padding([.top, .bottom, .trailing], 10)
+				}
 			}
 			else {
 				AvatarAbstract(
-					icon: "circle.dotted",
-					color: .red,
+					icon: "nosign",
+					color: .gray,
 					size: 64
 				)
 				.padding([.top, .bottom, .trailing], 10)
 			}
 		}
-		else {
-			AvatarAbstract(
-				icon: "nosign",
-				color: .gray,
-				size: 64
-			)
-			.padding([.top, .bottom, .trailing], 10)
-		}
+		.frame(width: 80, height: 80)
 	}
 
 	@ViewBuilder
@@ -270,7 +273,7 @@ struct Connect: View {
 		let connecting = bleManager.isConnecting
 		let connected = bleManager.isConnected
 
-		VStack(alignment: .leading) {
+		VStack(alignment: .leading, spacing: 8) {
 			Text("Bluetooth")
 				.font(.title2)
 
@@ -278,14 +281,17 @@ struct Connect: View {
 				if connected {
 					Text("Connected")
 						.font(detailInfoFont)
+						.foregroundColor(.gray)
 				}
 				else if connecting {
 					Text("Connecting")
 						.font(detailInfoFont)
+						.foregroundColor(.gray)
 				}
 				else {
 					Text("Not Connected")
 						.font(detailInfoFont)
+						.foregroundColor(.gray)
 
 					if bleManager.timeoutCount > 0 {
 						Text("Attempt: \(bleManager.timeoutCount) of 10")
@@ -303,6 +309,7 @@ struct Connect: View {
 			else {
 				Text("Bluetooth is Disabled")
 					.font(detailInfoFont)
+					.foregroundColor(.gray)
 			}
 		}
 	}

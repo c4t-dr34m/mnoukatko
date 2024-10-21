@@ -32,8 +32,8 @@ extension MyInfoEntity {
 			return false
 		}
 
-		return channels.filter { channel in
+		return channels.contains { channel in
 			(channel as AnyObject).name?.lowercased() == "admin"
-		}.count > 0
+		}
 	}
 }

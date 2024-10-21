@@ -42,19 +42,6 @@ final class BLEWatcher: DevicesDelegate {
 			"Background task finished in \(Int(runtime))s; tasks done: \(self.tasksDone)"
 		)
 
-		#if DEBUG
-		let manager = LocalNotificationManager()
-		manager.notifications = [
-			Notification(
-				title: "Background Update",
-				subtitle: "\(tasksDone.count) tasks done",
-				content: "Data were updated on background. Tasks done: \(tasksDone)",
-				target: "nodes"
-			)
-		]
-		manager.schedule()
-		#endif
-
 		Analytics.logEvent(
 			AnalyticEvents.backgroundFinished.id,
 			parameters: [

@@ -91,7 +91,7 @@ extension CoreDataTools {
 		}
 	}
 
-	func upsertNodeInfoPacket (packet: MeshPacket, context: NSManagedObjectContext) {
+	func upsertNodeInfoPacket(packet: MeshPacket, context: NSManagedObjectContext) {
 		guard packet.from > 0 else {
 			return
 		}
@@ -122,14 +122,13 @@ extension CoreDataTools {
 				}
 
 				if let newUserMessage = try? User(serializedData: packet.decoded.payload) {
-
 					if newUserMessage.id.isEmpty {
 						if packet.from > Constants.minimumNodeNum {
 							let newUser = createUser(num: Int64(packet.from), context: context)
 							newNode.user = newUser
 						}
-					} else {
-
+					}
+					else {
 						let newUser = UserEntity(context: context)
 						newUser.userId = newUserMessage.id
 						newUser.num = Int64(packet.from)

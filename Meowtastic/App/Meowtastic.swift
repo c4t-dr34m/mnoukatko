@@ -8,7 +8,7 @@ import SwiftUI
 @main
 struct Meowtastic: App {
 	private static let bgTaskStartDelay: TimeInterval = 10 * 60
-	private static let bgTaskLifespan: TimeInterval = 2 * 60
+	private static let bgTaskLifespan: TimeInterval = 5 * 60
 
 	@UIApplicationDelegateAdaptor(MeowtasticDelegate.self)
 	var appDelegate

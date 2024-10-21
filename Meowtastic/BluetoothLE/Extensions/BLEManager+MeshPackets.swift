@@ -177,38 +177,37 @@ extension BLEManager {
 		peripheralId: String,
 		context: NSManagedObjectContext
 	) -> MyInfoEntity? {
-		let logString = String.localizedStringWithFormat("mesh.log.myinfo %@".localized, String(myInfo.myNodeNum))
-		MeshLogger.log("ℹ️ \(logString)")
-
 		let fetchMyInfoRequest = MyInfoEntity.fetchRequest()
 		fetchMyInfoRequest.predicate = NSPredicate(format: "myNodeNum == %lld", Int64(myInfo.myNodeNum))
 
-		guard let fetchedMyInfo = try? context.fetch(fetchMyInfoRequest) else {
+		guard
+			let fetchedMyInfo = try? context.fetch(fetchMyInfoRequest)
+		else {
 			return nil
 		}
 
-		if fetchedMyInfo.isEmpty {
-			let myInfoEntity = MyInfoEntity(context: context)
-			myInfoEntity.peripheralId = peripheralId
-			myInfoEntity.myNodeNum = Int64(myInfo.myNodeNum)
-			myInfoEntity.rebootCount = Int32(myInfo.rebootCount)
+		if let myInfo = fetchedMyInfo.first {
+			myInfo.peripheralId = peripheralId
+			myInfo.myNodeNum = Int64(myInfo.myNodeNum)
+			myInfo.rebootCount = Int32(myInfo.rebootCount)
 
 			debounce.emit { [weak self] in
 				await self?.saveData()
 			}
 
-			return myInfoEntity
+			return myInfo
 		}
 		else {
-			fetchedMyInfo[0].peripheralId = peripheralId
-			fetchedMyInfo[0].myNodeNum = Int64(myInfo.myNodeNum)
-			fetchedMyInfo[0].rebootCount = Int32(myInfo.rebootCount)
+			let newMyInfo = MyInfoEntity(context: context)
+			newMyInfo.peripheralId = peripheralId
+			newMyInfo.myNodeNum = Int64(myInfo.myNodeNum)
+			newMyInfo.rebootCount = Int32(myInfo.rebootCount)
 
 			debounce.emit { [weak self] in
 				await self?.saveData()
 			}
 
-			return fetchedMyInfo[0]
+			return newMyInfo
 		}
 	}
 
@@ -217,23 +216,37 @@ extension BLEManager {
 		request.predicate = NSPredicate(format: "myNodeNum == %lld", fromNum)
 
 		guard
-			channel.isInitialized,
-			channel.hasSettings,
-			channel.role != .disabled,
 			let fetchedMyInfo = try? context.fetch(request),
-			!fetchedMyInfo.isEmpty
+			let myInfo = fetchedMyInfo.first,
+			let channels = myInfo.channels?.mutableCopy() as? NSMutableOrderedSet,
+			channel.isInitialized,
+			channel.hasSettings
 		else {
 			return
 		}
 
-		let newChannel = ChannelEntity(context: context)
-		newChannel.id = Int32(channel.index)
+		let newChannel: ChannelEntity
+		if let oldChannel = channels.first(where: {
+			($0 as AnyObject).index == channel.index
+		}) as? ChannelEntity {
+			newChannel = oldChannel
+		}
+		else {
+			newChannel = ChannelEntity(context: context)
+			newChannel.id = Int32(channel.index)
+
+			channels.add(newChannel)
+		}
+
 		newChannel.index = Int32(channel.index)
 		newChannel.uplinkEnabled = channel.settings.uplinkEnabled
 		newChannel.downlinkEnabled = channel.settings.downlinkEnabled
-		newChannel.name = channel.settings.name
 		newChannel.role = Int32(channel.role.rawValue)
 		newChannel.psk = channel.settings.psk
+		newChannel.name = channel.settings.name
+		if channel.settings.name.lowercased() == "admin" {
+			myInfo.adminIndex = newChannel.index
+		}
 
 		if channel.settings.hasModuleSettings {
 			newChannel.positionPrecision = Int32(
@@ -242,26 +255,8 @@ extension BLEManager {
 			newChannel.mute = channel.settings.moduleSettings.isClientMuted
 		}
 
-		guard let mutableChannels = fetchedMyInfo[0].channels?.mutableCopy() as? NSMutableOrderedSet else {
-			return
-		}
-
-		if let oldChannel = mutableChannels.first(where: {
-			($0 as AnyObject).index == newChannel.index
-		}) as? ChannelEntity {
-			let index = mutableChannels.index(of: oldChannel as Any)
-			mutableChannels.replaceObject(at: index, with: newChannel)
-		}
-		else {
-			mutableChannels.add(newChannel)
-		}
-
-		fetchedMyInfo[0].channels = mutableChannels.copy() as? NSOrderedSet
-		if newChannel.name?.lowercased() == "admin" {
-			fetchedMyInfo[0].adminIndex = newChannel.index
-		}
-
 		context.refresh(newChannel, mergeChanges: true)
+		myInfo.channels = channels
 
 		debounce.emit { [weak self] in
 			await self?.saveData()

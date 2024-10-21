@@ -1,5 +1,6 @@
 import CoreData
 import FirebaseAnalytics
+import MeshtasticProtobufs
 import OSLog
 import SwiftUI
 
@@ -88,6 +89,10 @@ struct Messages: View {
 	private var channels: [ChannelEntity] {
 		if let channels = node?.myInfo?.channels?.array as? [ChannelEntity] {
 			return channels.filter { channel in
+				guard channel.role != Channel.Role.disabled.rawValue else {
+					return false
+				}
+
 				if let name = channel.name {
 					return !restrictedChannels.contains(name.lowercased())
 				}
