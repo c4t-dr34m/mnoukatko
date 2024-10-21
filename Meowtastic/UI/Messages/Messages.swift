@@ -21,8 +21,6 @@ struct Messages: View {
 	@Environment(\.colorScheme)
 	private var colorScheme: ColorScheme
 	@State
-	private var node: NodeInfoEntity?
-	@State
 	private var searchText = ""
 	@State
 	private var channelSelection: ChannelEntity? // Nothing selected by default.
@@ -34,8 +32,18 @@ struct Messages: View {
 	private var isPresentingDeleteChannelMessagesConfirm: Bool = false
 	@State
 	private var isPresentingDeleteUserMessagesConfirm = false
+	@FetchRequest(
+		sortDescriptors: [],
+		predicate: NSPredicate(
+			format: "num == %lld", Int64(UserDefaults.preferredPeripheralNum)
+		)
+	)
+	private var nodes: FetchedResults<NodeInfoEntity>
 	@FetchRequest(sortDescriptors: [])
 	private var users: FetchedResults<UserEntity>
+	private var node: NodeInfoEntity? {
+		nodes.first
+	}
 
 	private var usersFiltered: [UserEntity] {
 		var filtered = users.filter { user in
@@ -105,20 +113,6 @@ struct Messages: View {
 				placement: users.count > 10 ? .navigationBarDrawer(displayMode: .always) : .automatic,
 				prompt: "Find a contact"
 			)
-			.onAppear {
-				if UserDefaults.preferredPeripheralId.count > 0 {
-					let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
-					fetchNodeInfoRequest.predicate = NSPredicate(
-						format: "num == %lld",
-						Int64(UserDefaults.preferredPeripheralNum)
-					)
-
-					let fetchedNode = try? context.fetch(fetchNodeInfoRequest)
-					if let fetchedNode, !fetchedNode.isEmpty {
-						node = fetchedNode.first
-					}
-				}
-			}
 			.onChange(of: searchText, initial: true) {
 				Task {
 					await updateFilter()
