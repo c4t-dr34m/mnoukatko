@@ -36,12 +36,6 @@ final class BLEWatcher: DevicesDelegate {
 	}
 
 	func stop(runtime: TimeInterval) {
-		bleManager.disconnectDevice()
-
-		Logger.app.warning(
-			"Background task finished in \(Int(runtime))s; tasks done: \(self.tasksDone)"
-		)
-
 		#if DEBUG
 		let request = NodeInfoEntity.fetchRequest()
 		request.predicate = NSPredicate(
@@ -68,6 +62,12 @@ final class BLEWatcher: DevicesDelegate {
 		]
 		manager.schedule()
 		#endif
+
+		bleManager.disconnectDevice()
+
+		Logger.app.warning(
+			"Background task finished in \(Int(runtime))s; tasks done: \(self.tasksDone)"
+		)
 
 		Analytics.logEvent(
 			AnalyticEvents.backgroundFinished.id,
