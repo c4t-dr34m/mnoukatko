@@ -36,57 +36,7 @@ final class BLEWatcher: DevicesDelegate {
 	}
 
 	func stop(runtime: TimeInterval) {
-		#if DEBUG
-		let request = NodeInfoEntity.fetchRequest()
-		request.predicate = NSPredicate(
-			format: "lastHeard > %@",
-			Calendar.current.date(byAdding: .minute, value: -15, to: .now)! as NSDate
-		)
-
-		let nodeCount: Int
-		let nodeName: String?
-		let nodeInfo: String
-
-		if let nodes = try? bleManager.context.fetch(request) {
-			if
-				let connectedNode = nodes.first(where: { node in
-					node.num == UserDefaults.preferredPeripheralNum
-				})
-			{
-				nodeCount = nodes.count - 1
-				nodeName = connectedNode.user?.longName ?? bleManager.getConnectedDevice()?.longName
-			}
-			else {
-				nodeCount = nodes.count
-				nodeName = bleManager.getConnectedDevice()?.longName
-			}
-
-			if nodeCount == 1 {
-				nodeInfo = "Your node currently sees one other node."
-			}
-			else {
-				nodeInfo = "Your node currently sees \(nodeCount) other nodes."
-			}
-		}
-		else {
-			nodeCount = 0
-			nodeName = bleManager.getConnectedDevice()?.longName
-			nodeInfo = "Your node currently desn't see any node."
-		}
-
-		let manager = LocalNotificationManager()
-		manager.notifications = [
-			Notification(
-				id: "notification.id.bcg_update",
-				title: "Node Update",
-				subtitle: nodeName,
-				body: nodeInfo,
-				target: "nodes",
-				path: "meshtastic:///nodes"
-			)
-		]
-		manager.schedule(removeExisting: true)
-		#endif
+		scheduleSummaryNotification()
 
 		bleManager.disconnectDevice()
 
@@ -154,5 +104,62 @@ final class BLEWatcher: DevicesDelegate {
 
 	func onTraceRouteReceived(for node: NodeInfoEntity?) {
 		// no-op
+	}
+
+	private func scheduleSummaryNotification() {
+		guard UserDefaults.bcgNotification else {
+			return
+		}
+
+		// swiftlint:disable:next force_unwrapping
+		let lastFifteenMinutes = Calendar.current.date(byAdding: .minute, value: -15, to: .now)! as NSDate
+		let request = NodeInfoEntity.fetchRequest()
+		request.predicate = NSPredicate(format: "lastHeard >= %@", lastFifteenMinutes)
+
+		let nodeCount: Int
+		let nodeName: String?
+		let nodeInfo: String
+
+		if let nodes = try? bleManager.context.fetch(request) {
+			if
+				let connectedNode = nodes.first(where: { node in
+					node.num == UserDefaults.preferredPeripheralNum
+				})
+			{
+				nodeCount = nodes.count - 1
+				nodeName = connectedNode.user?.longName ?? bleManager.getConnectedDevice()?.longName
+			}
+			else {
+				nodeCount = nodes.count
+				nodeName = bleManager.getConnectedDevice()?.longName
+			}
+		}
+		else {
+			nodeCount = 0
+			nodeName = bleManager.getConnectedDevice()?.longName
+		}
+
+		if nodeCount == 0 {
+			nodeInfo = "Your node currently doesn't see any node."
+		}
+		else if nodeCount == 1 {
+			nodeInfo = "Your node currently sees one other node."
+		}
+		else {
+			nodeInfo = "Your node currently sees \(nodeCount) other nodes."
+		}
+
+		let manager = LocalNotificationManager()
+		manager.notifications = [
+			Notification(
+				id: "notification.id.bcg_update",
+				title: "Node Update",
+				subtitle: nodeName,
+				body: nodeInfo,
+				target: "nodes",
+				path: "meshtastic:///nodes"
+			)
+		]
+		manager.schedule(silent: true, removeExisting: true)
 	}
 }

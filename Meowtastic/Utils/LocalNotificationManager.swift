@@ -5,14 +5,17 @@ import SwiftUI
 final class LocalNotificationManager {
 	var notifications = [Notification]()
 
-	func schedule(removeExisting: Bool = false) {
+	func schedule(
+		silent: Bool = false,
+		removeExisting: Bool = false
+	) {
 		UNUserNotificationCenter.current().getNotificationSettings { settings in
 			switch settings.authorizationStatus {
 			case .notDetermined:
-				self.requestAuthorization(removeExisting: removeExisting)
+				self.requestAuthorization(silent: silent, removeExisting: removeExisting)
 
 			case .authorized, .provisional:
-				self.scheduleNotifications(removeExisting: removeExisting)
+				self.scheduleNotifications(silent: silent, removeExisting: removeExisting)
 
 			default:
 				break // Do nothing
@@ -20,7 +23,10 @@ final class LocalNotificationManager {
 		}
 	}
 
-	private func requestAuthorization(removeExisting: Bool = false) {
+	private func requestAuthorization(
+		silent: Bool = false,
+		removeExisting: Bool = false
+	) {
 		UNUserNotificationCenter.current().requestAuthorization(
 			options: [.alert, .badge, .sound]
 		) { granted, error in
@@ -28,11 +34,14 @@ final class LocalNotificationManager {
 				return
 			}
 
-			self.scheduleNotifications(removeExisting: removeExisting)
+			self.scheduleNotifications(silent: silent, removeExisting: removeExisting)
 		}
 	}
 
-	private func scheduleNotifications(removeExisting: Bool = false) {
+	private func scheduleNotifications(
+		silent: Bool = false,
+		removeExisting: Bool = false
+	) {
 		for notification in notifications {
 			let content = UNMutableNotificationContent()
 
@@ -43,7 +52,7 @@ final class LocalNotificationManager {
 			if let body = notification.body {
 				content.body = body
 			}
-			content.sound = .default
+			content.sound = silent ? .none : .default
 			content.interruptionLevel = .passive
 
 			if let target = notification.target {

@@ -726,6 +726,9 @@
     "Available modem presets, default is Long Fast." : {
 
     },
+    "Background Update Notification" : {
+
+    },
     "Bandwidth" : {
 
     },
@@ -10217,6 +10220,9 @@
     "Not Connected" : {
 
     },
+    "Notifications" : {
+
+    },
     "now" : {
 
     },
@@ -12904,6 +12910,9 @@
 
     },
     "Show Alerts" : {
+
+    },
+    "Show number of visible nodes when background update finishes. Not very useful, but hey... you can have it." : {
 
     },
     "Show on device screen" : {
