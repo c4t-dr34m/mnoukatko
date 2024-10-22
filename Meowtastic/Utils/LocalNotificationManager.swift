@@ -3,9 +3,33 @@ import OSLog
 import SwiftUI
 
 final class LocalNotificationManager {
-	var notifications = [Notification]()
+	private let semaphore = DispatchSemaphore(value: 1)
+	private let debounce = Debounce<() async -> Void>(duration: .milliseconds(1000)) { action in
+		await action()
+	}
 
-	func schedule(
+	private var notifications = [Notification]()
+
+	func queue(
+		notification: Notification,
+		silent: Bool = false,
+		removeExisting: Bool = false
+	) {
+		semaphore.wait()
+
+		notifications.removeAll(where: { queuedNotification in
+			queuedNotification.id == notification.id
+		})
+		notifications.append(notification)
+
+		semaphore.signal()
+
+		debounce.emit { [weak self] in
+			self?.process(silent: silent, removeExisting: removeExisting)
+		}
+	}
+
+	private func process(
 		silent: Bool = false,
 		removeExisting: Bool = false
 	) {
@@ -42,9 +66,14 @@ final class LocalNotificationManager {
 		silent: Bool = false,
 		removeExisting: Bool = false
 	) {
-		for notification in notifications {
-			let content = UNMutableNotificationContent()
+		while !notifications.isEmpty {
+			semaphore.wait()
 
+			let notification = notifications.removeFirst()
+
+			semaphore.signal()
+
+			let content = UNMutableNotificationContent()
 			content.title = notification.title
 			if let subtitle = notification.subtitle {
 				content.subtitle = subtitle
@@ -53,7 +82,7 @@ final class LocalNotificationManager {
 				content.body = body
 			}
 			content.sound = silent ? .none : .default
-			content.interruptionLevel = .passive
+			content.interruptionLevel = silent ? .passive : .active
 
 			if let target = notification.target {
 				content.userInfo["target"] = target
@@ -63,7 +92,7 @@ final class LocalNotificationManager {
 			}
 
 			let trigger = UNTimeIntervalNotificationTrigger(
-				timeInterval: 1,
+				timeInterval: 5,
 				repeats: false
 			)
 			let request = UNNotificationRequest(

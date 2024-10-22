@@ -17,7 +17,7 @@ final class CoreDataTools {
 
 				return true
 			}
-			catch let error {
+			catch {
 				context.rollback()
 
 				return false

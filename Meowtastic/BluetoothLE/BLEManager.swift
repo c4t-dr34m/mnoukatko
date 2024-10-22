@@ -14,6 +14,7 @@ final class BLEManager: NSObject, ObservableObject {
 	let context: NSManagedObjectContext
 	let centralManager: CBCentralManager
 	let coreDataTools = CoreDataTools()
+	let notificationManager = LocalNotificationManager()
 	let minimumVersion = "2.0.0"
 	let debounce = Debounce<() async -> Void>(duration: .milliseconds(808)) { action in
 		await action()

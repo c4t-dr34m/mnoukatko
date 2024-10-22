@@ -150,16 +150,17 @@ final class BLEWatcher: DevicesDelegate {
 		}
 
 		let manager = LocalNotificationManager()
-		manager.notifications = [
-			Notification(
+		manager.queue(
+			notification: Notification(
 				id: "notification.id.bcg_update",
 				title: "Node Update",
 				subtitle: nodeName,
 				body: nodeInfo,
 				target: "nodes",
 				path: "meshtastic:///nodes"
-			)
-		]
-		manager.schedule(silent: true, removeExisting: true)
+			),
+			silent: true,
+			removeExisting: true
+		)
 	}
 }

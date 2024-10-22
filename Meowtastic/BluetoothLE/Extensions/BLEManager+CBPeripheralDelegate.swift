@@ -410,17 +410,15 @@ extension BLEManager: CBPeripheralDelegate {
 				devicesDelegate?.onTraceRouteReceived(for: traceRoute?.node)
 
 				if let user = traceRoute?.node?.user {
-					let manager = LocalNotificationManager()
-					manager.notifications = [
-						Notification(
+					notificationManager.queue(
+						notification: Notification(
 							title: "Trace Route",
 							subtitle: user.longName,
 							body: "Trace route was received",
 							target: "nodes",
 							path: "meshtastic:///nodes?nodenum=\(user.num)"
 						)
-					]
-					manager.schedule()
+					)
 				}
 
 			case .paxcounterApp:

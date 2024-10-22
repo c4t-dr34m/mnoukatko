@@ -124,8 +124,6 @@ extension BLEManager: CBCentralManagerDelegate {
 		isConnected = false
 		isSubscribed = false
 
-		let manager = LocalNotificationManager()
-
 		if let error {
 			// https://developer.apple.com/documentation/corebluetooth/cberror/code
 			switch (error as NSError).code {
@@ -134,8 +132,8 @@ extension BLEManager: CBCentralManagerDelegate {
 
 			case 7:
 				if UserDefaults.preferredPeripheralId == peripheral.identifier.uuidString {
-					manager.notifications = [
-						Notification(
+					notificationManager.queue(
+						notification: Notification(
 							id: peripheral.identifier.uuidString,
 							title: "Radio Disconnected",
 							subtitle: "\(peripheral.name ?? peripheral.identifier.uuidString)",
@@ -143,8 +141,7 @@ extension BLEManager: CBCentralManagerDelegate {
 							target: "bluetooth",
 							path: "meshtastic:///bluetooth"
 						)
-					]
-					manager.schedule()
+					)
 				}
 
 				lastConnectionError = "Node was disconnected. Check if it's turned on."
@@ -154,8 +151,8 @@ extension BLEManager: CBCentralManagerDelegate {
 
 			default:
 				if UserDefaults.preferredPeripheralId == peripheral.identifier.uuidString {
-					manager.notifications = [
-						Notification(
+					notificationManager.queue(
+						notification: Notification(
 							id: (peripheral.identifier.uuidString),
 							title: "Radio Disconnected",
 							subtitle: "\(peripheral.name ?? peripheral.identifier.uuidString)",
@@ -163,8 +160,7 @@ extension BLEManager: CBCentralManagerDelegate {
 							target: "bluetooth",
 							path: "meshtastic:///bluetooth"
 						)
-					]
-					manager.schedule()
+					)
 				}
 
 				lastConnectionError = error.localizedDescription

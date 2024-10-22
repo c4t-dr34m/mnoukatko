@@ -10007,9 +10007,6 @@
     "New Channel Message" : {
 
     },
-    "New Node" : {
-
-    },
     "No idea" : {
 
     },
@@ -10085,6 +10082,9 @@
       }
     },
     "Node" : {
+
+    },
+    "Node Discovered" : {
 
     },
     "Node History" : {

@@ -1021,9 +1021,8 @@ extension BLEManager {
 					subtitle = nil
 				}
 
-				let manager = LocalNotificationManager()
-				manager.notifications = [
-					Notification(
+				notificationManager.queue(
+					notification: Notification(
 						id: "notification.id.\(newMessage.messageId)",
 						title: "New Direct Message Received",
 						subtitle: subtitle,
@@ -1031,9 +1030,7 @@ extension BLEManager {
 						target: "messages",
 						path: "meshtastic:///messages?userNum=\(newMessage.fromUser?.num ?? 0)&messageId=\(newMessage.messageId)"
 					)
-				]
-
-				manager.schedule()
+				)
 			}
 		}
 		else {
@@ -1065,9 +1062,8 @@ extension BLEManager {
 							subtitle = nil
 						}
 
-						let manager = LocalNotificationManager()
-						manager.notifications = [
-							Notification(
+						notificationManager.queue(
+							notification: Notification(
 								id: "notification.id.\(newMessage.messageId)",
 								title: "New Channel Message Received",
 								subtitle: subtitle,
@@ -1075,9 +1071,7 @@ extension BLEManager {
 								target: "messages",
 								path: "meshtastic:///messages?channelId=\(newMessage.channel)&messageId=\(newMessage.messageId)"
 							)
-						]
-
-						manager.schedule()
+						)
 					}
 				}
 			}
@@ -1119,13 +1113,12 @@ extension BLEManager {
 				await self?.saveData()
 			}
 
-			let manager = LocalNotificationManager()
 			let icon = String(UnicodeScalar(Int(waypoint.icon)) ?? "📍")
 			let latitude = Double(waypoint.latitudeI) / 1e7
 			let longitude = Double(waypoint.longitudeI) / 1e7
 
-			manager.notifications = [
-				Notification(
+			notificationManager.queue(
+				notification: Notification(
 					id: "notification.id.\(waypoint.id)",
 					title: "New Waypoint Received",
 					subtitle: "\(icon) \(waypoint.name ?? "Dropped Pin")",
@@ -1133,9 +1126,7 @@ extension BLEManager {
 					target: "map",
 					path: "meshtastic:///map?waypointid=\(waypoint.id)"
 				)
-			]
-
-			manager.schedule()
+			)
 		}
 		else {
 			fetchedWaypoint[0].id = Int64(packet.id)
@@ -1178,9 +1169,8 @@ extension BLEManager {
 			path = nil
 		}
 
-		let manager = LocalNotificationManager()
-		manager.notifications = [
-			Notification(
+		notificationManager.queue(
+			notification: Notification(
 				id: "notification.id.\(UUID().uuidString)",
 				title: "Node Battery is Low",
 				subtitle: telemetry.nodeTelemetry?.user?.longName,
@@ -1188,9 +1178,7 @@ extension BLEManager {
 				target: "nodes",
 				path: path
 			)
-		]
-
-		manager.schedule()
+		)
 	}
 }
 // swiftlint:enable file_length

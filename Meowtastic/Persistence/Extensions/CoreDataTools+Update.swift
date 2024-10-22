@@ -147,16 +147,15 @@ extension CoreDataTools {
 
 						if UserDefaults.newNodeNotifications {
 							let manager = LocalNotificationManager()
-							manager.notifications = [
-								Notification(
+							manager.queue(
+								notification: Notification(
 									title: "New Node",
 									subtitle: newUser.longName,
 									body: "New node has been discovered",
 									target: "nodes",
 									path: "meshtastic:///nodes?nodenum=\(newUser.num)"
 								)
-							]
-							manager.schedule()
+							)
 						}
 					}
 				} else {
