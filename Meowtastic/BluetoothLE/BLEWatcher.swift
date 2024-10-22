@@ -44,11 +44,34 @@ final class BLEWatcher: DevicesDelegate {
 		)
 
 		let nodeCount: Int
+		let nodeName: String?
+		let nodeInfo: String
+
 		if let nodes = try? bleManager.context.fetch(request) {
-			nodeCount = nodes.count
+			if
+				let connectedNode = nodes.first(where: { node in
+					node.num == UserDefaults.preferredPeripheralNum
+				})
+			{
+				nodeCount = nodes.count - 1
+				nodeName = connectedNode.user?.longName ?? bleManager.getConnectedDevice()?.longName
+			}
+			else {
+				nodeCount = nodes.count
+				nodeName = bleManager.getConnectedDevice()?.longName
+			}
+
+			if nodeCount == 1 {
+				nodeInfo = "Your node currently sees one other node."
+			}
+			else {
+				nodeInfo = "Your node currently sees \(nodeCount) other nodes."
+			}
 		}
 		else {
 			nodeCount = 0
+			nodeName = bleManager.getConnectedDevice()?.longName
+			nodeInfo = "Your node currently desn't see any node."
 		}
 
 		let manager = LocalNotificationManager()
@@ -56,8 +79,8 @@ final class BLEWatcher: DevicesDelegate {
 			Notification(
 				id: "notification.id.bcg_update",
 				title: "Node Update",
-				subtitle: bleManager.getConnectedDevice()?.longName,
-				body: "Your node currently sees \(nodeCount) other nodes.",
+				subtitle: nodeName,
+				body: nodeInfo,
 				target: "nodes",
 				path: "meshtastic:///nodes"
 			)
