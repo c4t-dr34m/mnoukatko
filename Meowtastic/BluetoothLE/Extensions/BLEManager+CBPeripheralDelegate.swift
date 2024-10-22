@@ -414,8 +414,8 @@ extension BLEManager: CBPeripheralDelegate {
 					manager.notifications = [
 						Notification(
 							title: "Trace Route",
-							subtitle: "\(user.longName ?? "Node without a name")",
-							content: "Trace route was received",
+							subtitle: user.longName,
+							body: "Trace route was received",
 							target: "nodes",
 							path: "meshtastic:///nodes?nodenum=\(user.num)"
 						)

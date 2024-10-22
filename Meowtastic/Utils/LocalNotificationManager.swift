@@ -5,14 +5,14 @@ import SwiftUI
 final class LocalNotificationManager {
 	var notifications = [Notification]()
 
-	func schedule() {
+	func schedule(removeExisting: Bool = false) {
 		UNUserNotificationCenter.current().getNotificationSettings { settings in
 			switch settings.authorizationStatus {
 			case .notDetermined:
-				self.requestAuthorization()
+				self.requestAuthorization(removeExisting: removeExisting)
 
 			case .authorized, .provisional:
-				self.scheduleNotifications()
+				self.scheduleNotifications(removeExisting: removeExisting)
 
 			default:
 				break // Do nothing
@@ -20,7 +20,7 @@ final class LocalNotificationManager {
 		}
 	}
 
-	private func requestAuthorization() {
+	private func requestAuthorization(removeExisting: Bool = false) {
 		UNUserNotificationCenter.current().requestAuthorization(
 			options: [.alert, .badge, .sound]
 		) { granted, error in
@@ -28,16 +28,21 @@ final class LocalNotificationManager {
 				return
 			}
 
-			self.scheduleNotifications()
+			self.scheduleNotifications(removeExisting: removeExisting)
 		}
 	}
 
-	private func scheduleNotifications() {
+	private func scheduleNotifications(removeExisting: Bool = false) {
 		for notification in notifications {
 			let content = UNMutableNotificationContent()
+
 			content.title = notification.title
-			content.subtitle = notification.subtitle
-			content.body = notification.content
+			if let subtitle = notification.subtitle {
+				content.subtitle = subtitle
+			}
+			if let body = notification.body {
+				content.body = body
+			}
 			content.sound = .default
 			content.interruptionLevel = .passive
 
@@ -58,7 +63,11 @@ final class LocalNotificationManager {
 				trigger: trigger
 			)
 
-			UNUserNotificationCenter.current().add(request)
+			let center = UNUserNotificationCenter.current()
+			if removeExisting {
+				center.removeDeliveredNotifications(withIdentifiers: [notification.id])
+			}
+			center.add(request)
 		}
 	}
 }

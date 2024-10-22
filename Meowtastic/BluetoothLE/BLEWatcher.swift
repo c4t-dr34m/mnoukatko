@@ -54,13 +54,15 @@ final class BLEWatcher: DevicesDelegate {
 		let manager = LocalNotificationManager()
 		manager.notifications = [
 			Notification(
-				title: "Background Update",
-				subtitle: "\(tasksDone.count) tasks done",
-				content: "Data updated. Currently the node sees \(nodeCount) other nodes.",
-				target: "nodes"
+				id: "notification.id.bcg_update",
+				title: "Node Update",
+				subtitle: bleManager.getConnectedDevice()?.longName,
+				body: "Your node currently sees \(nodeCount) other nodes.",
+				target: "nodes",
+				path: "meshtastic:///nodes"
 			)
 		]
-		manager.schedule()
+		manager.schedule(removeExisting: true)
 		#endif
 
 		bleManager.disconnectDevice()

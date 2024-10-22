@@ -1013,13 +1013,21 @@ extension BLEManager {
 			}
 
 			if !fromUser.mute {
+				let subtitle: String?
+				if let longName = fromUser.longName {
+					subtitle = "From: \(longName)"
+				}
+				else {
+					subtitle = nil
+				}
+
 				let manager = LocalNotificationManager()
 				manager.notifications = [
 					Notification(
 						id: "notification.id.\(newMessage.messageId)",
-						title: "\(fromUser.longName ?? "unknown".localized)",
-						subtitle: "AKA \(fromUser.shortName ?? "?")",
-						content: messageText,
+						title: "New Direct Message Received",
+						subtitle: subtitle,
+						body: messageText,
 						target: "messages",
 						path: "meshtastic:///messages?userNum=\(newMessage.fromUser?.num ?? 0)&messageId=\(newMessage.messageId)"
 					)
@@ -1049,13 +1057,21 @@ extension BLEManager {
 						channel.index == newMessage.channel,
 						!channel.mute
 					{
+						let subtitle: String?
+						if let longName = fromUser.longName {
+							subtitle = "From: \(longName)"
+						}
+						else {
+							subtitle = nil
+						}
+
 						let manager = LocalNotificationManager()
 						manager.notifications = [
 							Notification(
 								id: "notification.id.\(newMessage.messageId)",
-								title: "\(fromUser.longName ?? "unknown".localized)",
-								subtitle: "AKA \(fromUser.shortName ?? "?")",
-								content: messageText,
+								title: "New Channel Message Received",
+								subtitle: subtitle,
+								body: messageText,
 								target: "messages",
 								path: "meshtastic:///messages?channelId=\(newMessage.channel)&messageId=\(newMessage.messageId)"
 							)
@@ -1113,7 +1129,7 @@ extension BLEManager {
 					id: "notification.id.\(waypoint.id)",
 					title: "New Waypoint Received",
 					subtitle: "\(icon) \(waypoint.name ?? "Dropped Pin")",
-					content: "\(waypoint.longDescription ?? "\(latitude), \(longitude)")",
+					body: "\(waypoint.longDescription ?? "\(latitude), \(longitude)")",
 					target: "map",
 					path: "meshtastic:///map?waypointid=\(waypoint.id)"
 				)
@@ -1154,7 +1170,6 @@ extension BLEManager {
 			return
 		}
 
-		let shortName = telemetry.nodeTelemetry?.user?.shortName ?? "unknown name"
 		let path: String?
 		if let num = telemetry.nodeTelemetry?.num {
 			path = "meshtastic:///nodes?nodenum=\(num)"
@@ -1168,8 +1183,8 @@ extension BLEManager {
 			Notification(
 				id: "notification.id.\(UUID().uuidString)",
 				title: "Node Battery is Low",
-				subtitle: "Node: " + shortName,
-				content: "Time to charge your node. There is \(telemetry.batteryLevel)% battery remaining.",
+				subtitle: telemetry.nodeTelemetry?.user?.longName,
+				body: "Time to charge your node. There is \(telemetry.batteryLevel)% battery remaining.",
 				target: "nodes",
 				path: path
 			)
