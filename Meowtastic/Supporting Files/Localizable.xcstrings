@@ -726,7 +726,7 @@
     "Available modem presets, default is Long Fast." : {
 
     },
-    "Background Update Notification" : {
+    "Background Update Summary" : {
 
     },
     "Bandwidth" : {
@@ -7075,6 +7075,9 @@
     "LoRa region is not set" : {
 
     },
+    "Low Battery" : {
+
+    },
     "Managed Device" : {
 
     },
@@ -9999,6 +10002,12 @@
 
     },
     "Network Config" : {
+
+    },
+    "New Channel Message" : {
+
+    },
+    "New Node" : {
 
     },
     "No idea" : {
