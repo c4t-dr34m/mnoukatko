@@ -4,9 +4,6 @@ import SwiftUI
 
 final class LocalNotificationManager {
 	private let semaphore = DispatchSemaphore(value: 1)
-	private let debounce = Debounce<() async -> Void>(duration: .milliseconds(1000)) { action in
-		await action()
-	}
 
 	private var notifications = [Notification]()
 
@@ -21,12 +18,11 @@ final class LocalNotificationManager {
 			queuedNotification.id == notification.id
 		})
 		notifications.append(notification)
+		Logger.notification.debug("New notification qeueued: \(notification.id) | \(notification.title)")
 
 		semaphore.signal()
 
-		debounce.emit { [weak self] in
-			self?.process(silent: silent, removeExisting: removeExisting)
-		}
+		process(silent: silent, removeExisting: removeExisting)
 	}
 
 	private func process(
@@ -106,6 +102,8 @@ final class LocalNotificationManager {
 				center.removeDeliveredNotifications(withIdentifiers: [notification.id])
 			}
 			center.add(request)
+
+			Logger.notification.debug("Notification scheduled: \(notification.id) | \(notification.title)")
 		}
 	}
 }
