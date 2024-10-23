@@ -1,10 +1,16 @@
 import SwiftUI
 
 struct Content: View {
+	private let debounce = Debounce<() async -> Void>(duration: .milliseconds(1000)) { action in
+		await action()
+	}
+
 	@EnvironmentObject
 	private var bleManager: BLEManager
 	@StateObject
 	private var appState = AppState.shared
+	@State
+	private var lastInfo: Date?
 	@State
 	private var connectPresented = true
 	@State
@@ -73,10 +79,23 @@ struct Content: View {
 				}
 				.tag(TabTag.settings)
 		}
+		.onChange(of: bleManager.info, initial: true) {
+			lastInfo = .now
+		}
 		.onChange(of: bleManager.isSubscribed, initial: true) {
 			if bleManager.isSubscribed, bleManager.isConnected {
 				connectWasDismissed = false
-				connectPresented = false
+
+				debounce.emit {
+					if let lastInfo {
+						if lastInfo.isStale(threshold: 1) {
+							connectPresented = false
+						}
+					}
+					else {
+						connectPresented = false
+					}
+				}
 			}
 			else if !connectWasDismissed {
 				connectPresented = true
@@ -85,7 +104,17 @@ struct Content: View {
 		.onChange(of: bleManager.isConnected, initial: true) {
 			if bleManager.isSubscribed, bleManager.isConnected {
 				connectWasDismissed = false
-				connectPresented = false
+
+				debounce.emit {
+					if let lastInfo {
+						if lastInfo.isStale(threshold: 1) {
+							connectPresented = false
+						}
+					}
+					else {
+						connectPresented = false
+					}
+				}
 			}
 			else if !connectWasDismissed {
 				connectPresented = true

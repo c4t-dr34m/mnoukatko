@@ -407,7 +407,7 @@ extension BLEManager: CBPeripheralDelegate {
 					await self?.saveData()
 				}
 
-				devicesDelegate?.onTraceRouteReceived(for: traceRoute?.node)
+				onTraceRouteReceived(for: traceRoute?.node)
 
 				if let user = traceRoute?.node?.user {
 					notificationManager.queue(

@@ -3,7 +3,7 @@ import FirebaseAnalytics
 import MeshtasticProtobufs
 import OSLog
 
-final class BLEWatcher: DevicesDelegate {
+final class BackgroundWatcher: DevicesDelegate {
 	enum Tasks: CaseIterable {
 		case deviceConnected
 		case wantConfig
@@ -17,7 +17,7 @@ final class BLEWatcher: DevicesDelegate {
 		self.bleManager = bleManager
 	}
 
-	func start() {
+	func startBackground() {
 		Logger.app.debug("Background task started")
 
 		tasksDone.removeAll()
@@ -35,7 +35,7 @@ final class BLEWatcher: DevicesDelegate {
 		}
 	}
 
-	func stop(runtime: TimeInterval) {
+	func stopBackground(runtime: TimeInterval) {
 		scheduleSummaryNotification()
 
 		bleManager.disconnectDevice()
@@ -100,10 +100,6 @@ final class BLEWatcher: DevicesDelegate {
 		Analytics.logEvent(AnalyticEvents.backgroundWantConfig.id, parameters: nil)
 
 		tasksDone.append(.wantConfig)
-	}
-
-	func onTraceRouteReceived(for node: NodeInfoEntity?) {
-		// no-op
 	}
 
 	private func scheduleSummaryNotification() {

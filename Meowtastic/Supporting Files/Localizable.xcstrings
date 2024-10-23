@@ -13815,6 +13815,9 @@
     "Unknown ACK error" : {
 
     },
+    "Unknown hardware" : {
+
+    },
     "unset" : {
       "localizations" : {
         "de" : {

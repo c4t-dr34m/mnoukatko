@@ -173,13 +173,13 @@ struct Meowtastic: App {
 
 	private func refreshApp() async {
 		let bgTaskStarted = Date.now
-		let watcher = BLEWatcher(bleManager: bleManager)
+		let watcher = BackgroundWatcher(bleManager: bleManager)
 
 		Timer.scheduledTimer(withTimeInterval: Self.bgTaskLifespan, repeats: false) { _ in
-			watcher.stop(runtime: bgTaskStarted.distance(to: .now))
+			watcher.stopBackground(runtime: bgTaskStarted.distance(to: .now))
 		}
 
 		scheduleAppRefresh()
-		watcher.start()
+		watcher.startBackground()
 	}
 }

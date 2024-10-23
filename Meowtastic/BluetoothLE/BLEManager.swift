@@ -25,6 +25,8 @@ final class BLEManager: NSObject, ObservableObject {
 	@Published
 	var currentDevice: CurrentDevice
 	@Published
+	var info: String?
+	@Published
 	var lastConnectionError: String
 	@Published
 	var isInvalidFwVersion = false
@@ -37,6 +39,7 @@ final class BLEManager: NSObject, ObservableObject {
 	@Published
 	var mqttError = ""
 
+	var nodeNames = [Int64: String]()
 	var devicesDelegate: DevicesDelegate?
 	var mqttManager: MQTTManager?
 	var connectedVersion: String

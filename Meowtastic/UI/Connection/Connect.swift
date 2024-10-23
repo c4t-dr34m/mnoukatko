@@ -185,6 +185,7 @@ struct Connect: View {
 							Image(systemName: "gear.badge.xmark")
 								.font(detailInfoFont)
 								.foregroundColor(.gray)
+								.frame(width: 14)
 
 							Text("LoRa region is not set")
 								.font(detailInfoFont)
@@ -193,14 +194,38 @@ struct Connect: View {
 					}
 
 					HStack(spacing: 8) {
+						Image(systemName: "flipphone")
+							.font(detailInfoFont)
+							.foregroundColor(.gray)
+							.frame(width: 14)
+
 						if let hwModel = node?.user?.hwModel {
 							Text(hwModel)
+								.font(detailInfoFont)
+								.foregroundColor(.gray)
+						}
+						else {
+							Text("Unknown hardware")
 								.font(detailInfoFont)
 								.foregroundColor(.gray)
 						}
 
 						if let version = node?.metadata?.firmwareVersion {
 							Text("v\(version)")
+								.font(detailInfoFont)
+								.foregroundColor(.gray)
+						}
+					}
+
+					if let info = bleManager.info, !info.isEmpty {
+						HStack(spacing: 8) {
+							Image(systemName: "info.circle.fill")
+								.font(detailInfoFont)
+								.foregroundColor(.gray)
+								.frame(width: 14)
+
+							Text(info)
+								.lineLimit(1)
 								.font(detailInfoFont)
 								.foregroundColor(.gray)
 						}

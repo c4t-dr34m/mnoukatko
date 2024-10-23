@@ -317,25 +317,23 @@ extension CoreDataTools {
 							await self?.saveData(with: context)
 						}
 					}
-				} else {
-
+				}
+				else {
 					if (try? NodeInfo(serializedData: packet.decoded.payload)) != nil {
 						upsertNodeInfoPacket(packet: packet, context: context)
-					} else {
+					}
+					else {
 						Logger.data.error("💥 Empty POSITION_APP Packet: \((try? packet.jsonString()) ?? "JSON Decode Failure", privacy: .public)")
 					}
 				}
 			}
-		} catch {
+		}
+		catch {
 			Logger.data.error("💥 Error Deserializing POSITION_APP packet.")
 		}
 	}
 
 	func upsertBluetoothConfigPacket(config: Config.BluetoothConfig, nodeNum: Int64, context: NSManagedObjectContext) {
-
-		let logString = String.localizedStringWithFormat("mesh.log.bluetooth.config %@".localized, String(nodeNum))
-		MeshLogger.log("📶 \(logString)")
-
 		let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
 		fetchNodeInfoRequest.predicate = NSPredicate(format: "num == %lld", Int64(nodeNum))
 
@@ -360,19 +358,18 @@ extension CoreDataTools {
 				debounce.emit { [weak self] in
 					await self?.saveData(with: context)
 				}
-			} else {
+			}
+			else {
 				Logger.data.error("💥 [BluetoothConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save Bluetooth Config")
 			}
-		} catch {
+		}
+		catch {
 			let nsError = error as NSError
 			Logger.data.error("💥 [BluetoothConfigEntity] Fetching node for core data failed: \(nsError, privacy: .public)")
 		}
 	}
 
 	func upsertDeviceConfigPacket(config: Config.DeviceConfig, nodeNum: Int64, context: NSManagedObjectContext) {
-
-		let logString = String.localizedStringWithFormat("mesh.log.device.config %@".localized, String(nodeNum))
-		MeshLogger.log("📟 \(logString)")
 		let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
 		fetchNodeInfoRequest.predicate = NSPredicate(format: "num == %lld", Int64(nodeNum))
 
@@ -394,7 +391,8 @@ extension CoreDataTools {
 					newDeviceConfig.isManaged = config.isManaged
 					newDeviceConfig.tzdef = config.tzdef
 					fetchedNode[0].deviceConfig = newDeviceConfig
-				} else {
+				}
+				else {
 					fetchedNode[0].deviceConfig?.role = Int32(config.role.rawValue)
 					fetchedNode[0].deviceConfig?.serialEnabled = config.serialEnabled
 					fetchedNode[0].deviceConfig?.debugLogEnabled = config.debugLogEnabled
@@ -412,17 +410,14 @@ extension CoreDataTools {
 					await self?.saveData(with: context)
 				}
 			}
-		} catch {
+		}
+		catch {
 			let nsError = error as NSError
 			Logger.data.error("💥 [DeviceConfigEntity] Fetching node for core data failed: \(nsError, privacy: .public)")
 		}
 	}
 
 	func upsertDisplayConfigPacket(config: Config.DisplayConfig, nodeNum: Int64, context: NSManagedObjectContext) {
-
-		let logString = String.localizedStringWithFormat("mesh.log.display.config %@".localized, nodeNum.toHex())
-		MeshLogger.log("🖥️ \(logString)")
-
 		let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
 		fetchNodeInfoRequest.predicate = NSPredicate(format: "num == %lld", Int64(nodeNum))
 
@@ -430,9 +425,7 @@ extension CoreDataTools {
 			let fetchedNode = try context.fetch(fetchNodeInfoRequest)
 			// Found a node, save Device Config
 			if !fetchedNode.isEmpty {
-
 				if fetchedNode[0].displayConfig == nil {
-
 					let newDisplayConfig = DisplayConfigEntity(context: context)
 					newDisplayConfig.gpsFormat = Int32(config.gpsFormat.rawValue)
 					newDisplayConfig.screenOnSeconds = Int32(truncatingIfNeeded: config.screenOnSecs)
@@ -444,9 +437,8 @@ extension CoreDataTools {
 					newDisplayConfig.units = Int32(config.units.rawValue)
 					newDisplayConfig.headingBold = config.headingBold
 					fetchedNode[0].displayConfig = newDisplayConfig
-
-				} else {
-
+				}
+				else {
 					fetchedNode[0].displayConfig?.gpsFormat = Int32(config.gpsFormat.rawValue)
 					fetchedNode[0].displayConfig?.screenOnSeconds = Int32(truncatingIfNeeded: config.screenOnSecs)
 					fetchedNode[0].displayConfig?.screenCarouselInterval = Int32(truncatingIfNeeded: config.autoScreenCarouselSecs)
@@ -461,26 +453,25 @@ extension CoreDataTools {
 				debounce.emit { [weak self] in
 					await self?.saveData(with: context)
 				}
-			} else {
+			}
+			else {
 				Logger.data.error("💥 [DisplayConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex()) unable to save Display Config")
 			}
-		} catch {
+		}
+		catch {
 			let nsError = error as NSError
 			Logger.data.error("💥 [DisplayConfigEntity] Fetching node for core data failed: \(nsError, privacy: .public)")
 		}
 	}
 
 	func upsertLoRaConfigPacket(config: Config.LoRaConfig, nodeNum: Int64, context: NSManagedObjectContext) {
-
-		let logString = String.localizedStringWithFormat("mesh.log.lora.config %@".localized, nodeNum.toHex())
-		MeshLogger.log("📻 \(logString)")
-
 		let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
 		fetchNodeInfoRequest.predicate = NSPredicate(format: "num == %lld", nodeNum)
+
 		do {
 			let fetchedNode = try context.fetch(fetchNodeInfoRequest)
 			// Found a node, save LoRa Config
-			if fetchedNode.count > 0 {
+			if !fetchedNode.isEmpty {
 				if fetchedNode[0].loRaConfig == nil {
 					// No lora config for node, save a new lora config
 					let newLoRaConfig = LoRaConfigEntity(context: context)
@@ -500,7 +491,8 @@ extension CoreDataTools {
 					newLoRaConfig.sx126xRxBoostedGain = config.sx126XRxBoostedGain
 					newLoRaConfig.ignoreMqtt = config.ignoreMqtt
 					fetchedNode[0].loRaConfig = newLoRaConfig
-				} else {
+				}
+				else {
 					fetchedNode[0].loRaConfig?.regionCode = Int32(config.region.rawValue)
 					fetchedNode[0].loRaConfig?.usePreset = config.usePreset
 					fetchedNode[0].loRaConfig?.modemPreset = Int32(config.modemPreset.rawValue)
@@ -522,20 +514,18 @@ extension CoreDataTools {
 				debounce.emit { [weak self] in
 					await self?.saveData(with: context)
 				}
-			} else {
+			}
+			else {
 				Logger.data.error("💥 [LoRaConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save Lora Config")
 			}
-		} catch {
+		}
+		catch {
 			let nsError = error as NSError
 			Logger.data.error("💥 [LoRaConfigEntity] Fetching node for core data failed: \(nsError, privacy: .public)")
 		}
 	}
 
 	func upsertNetworkConfigPacket(config: Config.NetworkConfig, nodeNum: Int64, context: NSManagedObjectContext) {
-
-		let logString = String.localizedStringWithFormat("mesh.log.network.config %@".localized, String(nodeNum))
-		MeshLogger.log("🌐 \(logString)")
-
 		let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
 		fetchNodeInfoRequest.predicate = NSPredicate(format: "num == %lld", Int64(nodeNum))
 
@@ -550,7 +540,8 @@ extension CoreDataTools {
 					newNetworkConfig.wifiPsk = config.wifiPsk
 					newNetworkConfig.ethEnabled = config.ethEnabled
 					fetchedNode[0].networkConfig = newNetworkConfig
-				} else {
+				}
+				else {
 					fetchedNode[0].networkConfig?.ethEnabled = config.ethEnabled
 					fetchedNode[0].networkConfig?.wifiEnabled = config.wifiEnabled
 					fetchedNode[0].networkConfig?.wifiSsid = config.wifiSsid
@@ -560,20 +551,18 @@ extension CoreDataTools {
 				debounce.emit { [weak self] in
 					await self?.saveData(with: context)
 				}
-			} else {
+			}
+			else {
 				Logger.data.error("💥 [NetworkConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save Network Config")
 			}
-		} catch {
+		}
+		catch {
 			let nsError = error as NSError
 			Logger.data.error("💥 [NetworkConfigEntity] Fetching node for core data failed: \(nsError, privacy: .public)")
 		}
 	}
 
 	func upsertPositionConfigPacket(config: Config.PositionConfig, nodeNum: Int64, context: NSManagedObjectContext) {
-
-		let logString = String.localizedStringWithFormat("mesh.log.position.config %@".localized, String(nodeNum))
-		MeshLogger.log("🗺️ \(logString)")
-
 		let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
 		fetchNodeInfoRequest.predicate = NSPredicate(format: "num == %lld", Int64(nodeNum))
 
@@ -597,7 +586,8 @@ extension CoreDataTools {
 					newPositionConfig.gpsAttemptTime = 900
 					newPositionConfig.gpsUpdateInterval = Int32(config.gpsUpdateInterval)
 					fetchedNode[0].positionConfig = newPositionConfig
-				} else {
+				}
+				else {
 					fetchedNode[0].positionConfig?.smartPositionEnabled = config.positionBroadcastSmartEnabled
 					fetchedNode[0].positionConfig?.deviceGpsEnabled = config.gpsEnabled
 					fetchedNode[0].positionConfig?.gpsMode = Int32(config.gpsMode.rawValue)
@@ -616,19 +606,18 @@ extension CoreDataTools {
 				debounce.emit { [weak self] in
 					await self?.saveData(with: context)
 				}
-			} else {
+			}
+			else {
 				Logger.data.error("💥 [PositionConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save Position Config")
 			}
-		} catch {
+		}
+		catch {
 			let nsError = error as NSError
 			Logger.data.error("💥 [PositionConfigEntity] Fetching node for core data failed: \(nsError, privacy: .public)")
 		}
 	}
 
 	func upsertPowerConfigPacket(config: Config.PowerConfig, nodeNum: Int64, context: NSManagedObjectContext) {
-		let logString = String.localizedStringWithFormat("mesh.log.power.config %@".localized, String(nodeNum))
-		MeshLogger.log("🗺️ \(logString)")
-
 		let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
 		fetchNodeInfoRequest.predicate = NSPredicate(format: "num == %lld", Int64(nodeNum))
 
@@ -646,7 +635,8 @@ extension CoreDataTools {
 					newPowerConfig.onBatteryShutdownAfterSecs = Int32(truncatingIfNeeded: config.onBatteryShutdownAfterSecs)
 					newPowerConfig.waitBluetoothSecs = Int32(truncatingIfNeeded: config.waitBluetoothSecs)
 					fetchedNode[0].powerConfig = newPowerConfig
-				} else {
+				}
+				else {
 					fetchedNode[0].powerConfig?.adcMultiplierOverride = config.adcMultiplierOverride
 					fetchedNode[0].powerConfig?.deviceBatteryInaAddress = Int32(config.deviceBatteryInaAddress)
 					fetchedNode[0].powerConfig?.isPowerSaving = config.isPowerSaving
@@ -659,20 +649,18 @@ extension CoreDataTools {
 				debounce.emit { [weak self] in
 					await self?.saveData(with: context)
 				}
-			} else {
+			}
+			else {
 				Logger.data.error("💥 [PowerConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save Power Config")
 			}
-		} catch {
+		}
+		catch {
 			let nsError = error as NSError
 			Logger.data.error("💥 [PowerConfigEntity] Fetching node for core data failed: \(nsError, privacy: .public)")
 		}
 	}
 
 	func upsertAmbientLightingModuleConfigPacket(config: ModuleConfig.AmbientLightingConfig, nodeNum: Int64, context: NSManagedObjectContext) {
-
-		let logString = String.localizedStringWithFormat("mesh.log.ambientlighting.config %@".localized, String(nodeNum))
-		MeshLogger.log("🏮 \(logString)")
-
 		let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
 		fetchNodeInfoRequest.predicate = NSPredicate(format: "num == %lld", Int64(nodeNum))
 
@@ -680,20 +668,16 @@ extension CoreDataTools {
 			let fetchedNode = try context.fetch(fetchNodeInfoRequest)
 			// Found a node, save Ambient Lighting Config
 			if !fetchedNode.isEmpty {
-
 				if fetchedNode[0].cannedMessageConfig == nil {
-
 					let newAmbientLightingConfig = AmbientLightingConfigEntity(context: context)
-
 					newAmbientLightingConfig.ledState = config.ledState
 					newAmbientLightingConfig.current = Int32(config.current)
 					newAmbientLightingConfig.red = Int32(config.red)
 					newAmbientLightingConfig.green = Int32(config.green)
 					newAmbientLightingConfig.blue = Int32(config.blue)
 					fetchedNode[0].ambientLightingConfig = newAmbientLightingConfig
-
-				} else {
-
+				}
+				else {
 					if fetchedNode[0].ambientLightingConfig == nil {
 						fetchedNode[0].ambientLightingConfig = AmbientLightingConfigEntity(context: context)
 					}
@@ -707,20 +691,18 @@ extension CoreDataTools {
 				debounce.emit { [weak self] in
 					await self?.saveData(with: context)
 				}
-			} else {
+			}
+			else {
 				Logger.data.error("💥 [AmbientLightingConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save Ambient Lighting Module Config")
 			}
-		} catch {
+		}
+		catch {
 			let nsError = error as NSError
 			Logger.data.error("💥 [AmbientLightingConfigEntity] Fetching node for core data failed: \(nsError, privacy: .public)")
 		}
 	}
 
 	func upsertCannedMessagesModuleConfigPacket(config: ModuleConfig.CannedMessageConfig, nodeNum: Int64, context: NSManagedObjectContext) {
-
-		let logString = String.localizedStringWithFormat("mesh.log.cannedmessage.config %@".localized, String(nodeNum))
-		MeshLogger.log("🥫 \(logString)")
-
 		let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
 		fetchNodeInfoRequest.predicate = NSPredicate(format: "num == %lld", Int64(nodeNum))
 
@@ -728,11 +710,8 @@ extension CoreDataTools {
 			let fetchedNode = try context.fetch(fetchNodeInfoRequest)
 			// Found a node, save Canned Message Config
 			if !fetchedNode.isEmpty {
-
 				if fetchedNode[0].cannedMessageConfig == nil {
-
 					let newCannedMessageConfig = CannedMessageConfigEntity(context: context)
-
 					newCannedMessageConfig.enabled = config.enabled
 					newCannedMessageConfig.sendBell = config.sendBell
 					newCannedMessageConfig.rotary1Enabled = config.rotary1Enabled
@@ -743,11 +722,9 @@ extension CoreDataTools {
 					newCannedMessageConfig.inputbrokerEventCw = Int32(config.inputbrokerEventCw.rawValue)
 					newCannedMessageConfig.inputbrokerEventCcw = Int32(config.inputbrokerEventCcw.rawValue)
 					newCannedMessageConfig.inputbrokerEventPress = Int32(config.inputbrokerEventPress.rawValue)
-
 					fetchedNode[0].cannedMessageConfig = newCannedMessageConfig
-
-				} else {
-
+				}
+				else {
 					fetchedNode[0].cannedMessageConfig?.enabled = config.enabled
 					fetchedNode[0].cannedMessageConfig?.sendBell = config.sendBell
 					fetchedNode[0].cannedMessageConfig?.rotary1Enabled = config.rotary1Enabled
@@ -763,20 +740,18 @@ extension CoreDataTools {
 				debounce.emit { [weak self] in
 					await self?.saveData(with: context)
 				}
-			} else {
+			}
+			else {
 				Logger.data.error("💥 [CannedMessageConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save Canned Message Module Config")
 			}
-		} catch {
+		}
+		catch {
 			let nsError = error as NSError
 			Logger.data.error("💥 [CannedMessageConfigEntity] Fetching node for core data failed: \(nsError, privacy: .public)")
 		}
 	}
 
 	func upsertDetectionSensorModuleConfigPacket(config: ModuleConfig.DetectionSensorConfig, nodeNum: Int64, context: NSManagedObjectContext) {
-
-		let logString = String.localizedStringWithFormat("mesh.log.detectionsensor.config %@".localized, String(nodeNum))
-		MeshLogger.log("🕵️ \(logString)")
-
 		let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
 		fetchNodeInfoRequest.predicate = NSPredicate(format: "num == %lld", Int64(nodeNum))
 
@@ -784,22 +759,19 @@ extension CoreDataTools {
 			let fetchedNode = try context.fetch(fetchNodeInfoRequest)
 			// Found a node, save Detection Sensor Config
 			if !fetchedNode.isEmpty {
-
 				if fetchedNode[0].detectionSensorConfig == nil {
-
 					let newConfig = DetectionSensorConfigEntity(context: context)
 					newConfig.enabled = config.enabled
 					newConfig.sendBell = config.sendBell
 					newConfig.name = config.name
-
 					newConfig.monitorPin = Int32(config.monitorPin)
 					newConfig.detectionTriggeredHigh = config.detectionTriggeredHigh
 					newConfig.usePullup = config.usePullup
 					newConfig.minimumBroadcastSecs = Int32(truncatingIfNeeded: config.minimumBroadcastSecs)
 					newConfig.stateBroadcastSecs = Int32(truncatingIfNeeded: config.stateBroadcastSecs)
 					fetchedNode[0].detectionSensorConfig = newConfig
-
-				} else {
+				}
+				else {
 					fetchedNode[0].detectionSensorConfig?.enabled = config.enabled
 					fetchedNode[0].detectionSensorConfig?.sendBell = config.sendBell
 					fetchedNode[0].detectionSensorConfig?.name = config.name
@@ -813,21 +785,18 @@ extension CoreDataTools {
 				debounce.emit { [weak self] in
 					await self?.saveData(with: context)
 				}
-			} else {
+			}
+			else {
 				Logger.data.error("💥 [DetectionSensorConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save Detection Sensor Module Config")
 			}
-
-		} catch {
+		}
+		catch {
 			let nsError = error as NSError
 			Logger.data.error("💥 [DetectionSensorConfigEntity] Fetching node for core data failed: \(nsError, privacy: .public)")
 		}
 	}
 
 	func upsertExternalNotificationModuleConfigPacket(config: ModuleConfig.ExternalNotificationConfig, nodeNum: Int64, context: NSManagedObjectContext) {
-
-		let logString = String.localizedStringWithFormat("mesh.log.externalnotification.config %@".localized, String(nodeNum))
-		MeshLogger.log("📣 \(logString)")
-
 		let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
 		fetchNodeInfoRequest.predicate = NSPredicate(format: "num == %lld", Int64(nodeNum))
 
@@ -835,7 +804,6 @@ extension CoreDataTools {
 			let fetchedNode = try context.fetch(fetchNodeInfoRequest)
 			// Found a node, save External Notificaitone Config
 			if !fetchedNode.isEmpty {
-
 				if fetchedNode[0].externalNotificationConfig == nil {
 					let newExternalNotificationConfig = ExternalNotificationConfigEntity(context: context)
 					newExternalNotificationConfig.enabled = config.enabled
@@ -854,8 +822,8 @@ extension CoreDataTools {
 					newExternalNotificationConfig.nagTimeout = Int32(config.nagTimeout)
 					newExternalNotificationConfig.useI2SAsBuzzer = config.useI2SAsBuzzer
 					fetchedNode[0].externalNotificationConfig = newExternalNotificationConfig
-
-				} else {
+				}
+				else {
 					fetchedNode[0].externalNotificationConfig?.enabled = config.enabled
 					fetchedNode[0].externalNotificationConfig?.usePWM = config.usePwm
 					fetchedNode[0].externalNotificationConfig?.alertBell = config.alertBell
@@ -876,20 +844,18 @@ extension CoreDataTools {
 				debounce.emit { [weak self] in
 					await self?.saveData(with: context)
 				}
-			} else {
+			}
+			else {
 				Logger.data.error("💥 [ExternalNotificationConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save External Notification Module Config")
 			}
-		} catch {
+		}
+		catch {
 			let nsError = error as NSError
 			Logger.data.error("💥 [ExternalNotificationConfigEntity] Fetching node for core data failed: \(nsError, privacy: .public)")
 		}
 	}
 
 	func upsertPaxCounterModuleConfigPacket(config: ModuleConfig.PaxcounterConfig, nodeNum: Int64, context: NSManagedObjectContext) {
-
-		let logString = String.localizedStringWithFormat("mesh.log.paxcounter.config %@".localized, String(nodeNum))
-		MeshLogger.log("🧑‍🤝‍🧑 \(logString)")
-
 		let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
 		fetchNodeInfoRequest.predicate = NSPredicate(format: "num == %lld", Int64(nodeNum))
 
@@ -897,15 +863,13 @@ extension CoreDataTools {
 			let fetchedNode = try context.fetch(fetchNodeInfoRequest)
 			// Found a node, save PAX Counter Config
 			if !fetchedNode.isEmpty {
-
 				if fetchedNode[0].paxCounterConfig == nil {
 					let newPaxCounterConfig = PaxCounterConfigEntity(context: context)
 					newPaxCounterConfig.enabled = config.enabled
 					newPaxCounterConfig.updateInterval = Int32(config.paxcounterUpdateInterval)
-
 					fetchedNode[0].paxCounterConfig = newPaxCounterConfig
-
-				} else {
+				}
+				else {
 					fetchedNode[0].paxCounterConfig?.enabled = config.enabled
 					fetchedNode[0].paxCounterConfig?.updateInterval = Int32(config.paxcounterUpdateInterval)
 				}
@@ -913,20 +877,18 @@ extension CoreDataTools {
 				debounce.emit { [weak self] in
 					await self?.saveData(with: context)
 				}
-			} else {
+			}
+			else {
 				Logger.data.error("💥 [PaxCounterConfigEntity] No Nodes found in local database matching node number \(nodeNum.toHex(), privacy: .public) unable to save PAX Counter Module Config")
 			}
-		} catch {
+		}
+		catch {
 			let nsError = error as NSError
 			Logger.data.error("💥 [PaxCounterConfigEntity] Fetching node for core data failed: \(nsError, privacy: .public)")
 		}
 	}
 
 	func upsertRtttlConfigPacket(ringtone: String, nodeNum: Int64, context: NSManagedObjectContext) {
-
-		let logString = String.localizedStringWithFormat("mesh.log.ringtone.config %@".localized, String(nodeNum))
-		MeshLogger.log("⛰️ \(logString)")
-
 		let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
 		fetchNodeInfoRequest.predicate = NSPredicate(format: "num == %lld", Int64(nodeNum))
 
@@ -938,7 +900,8 @@ extension CoreDataTools {
 					let newRtttlConfig = RTTTLConfigEntity(context: context)
 					newRtttlConfig.ringtone = ringtone
 					fetchedNode[0].rtttlConfig = newRtttlConfig
-				} else {
+				}
+				else {
 					fetchedNode[0].rtttlConfig?.ringtone = ringtone
 				}
 
@@ -948,17 +911,14 @@ extension CoreDataTools {
 			} else {
 				Logger.data.error("💥 [RtttlConfigEntity] No nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save RTTTL Ringtone Config")
 			}
-		} catch {
+		}
+		catch {
 			let nsError = error as NSError
 			Logger.data.error("💥 [RtttlConfigEntity] Fetching node for core data failed: \(nsError, privacy: .public)")
 		}
 	}
 
 	func upsertMqttModuleConfigPacket(config: ModuleConfig.MQTTConfig, nodeNum: Int64, context: NSManagedObjectContext) {
-
-		let logString = String.localizedStringWithFormat("mesh.log.mqtt.config %@".localized, String(nodeNum))
-		MeshLogger.log("🌉 \(logString)")
-
 		let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
 		fetchNodeInfoRequest.predicate = NSPredicate(format: "num == %lld", Int64(nodeNum))
 
@@ -966,7 +926,6 @@ extension CoreDataTools {
 			let fetchedNode = try context.fetch(fetchNodeInfoRequest)
 			// Found a node, save MQTT Config
 			if !fetchedNode.isEmpty {
-
 				if fetchedNode[0].mqttConfig == nil {
 					let newMQTTConfig = MQTTConfigEntity(context: context)
 					newMQTTConfig.enabled = config.enabled
@@ -982,7 +941,8 @@ extension CoreDataTools {
 					newMQTTConfig.mapPositionPrecision = Int32(config.mapReportSettings.positionPrecision)
 					newMQTTConfig.mapPublishIntervalSecs = Int32(config.mapReportSettings.publishIntervalSecs)
 					fetchedNode[0].mqttConfig = newMQTTConfig
-				} else {
+				}
+				else {
 					fetchedNode[0].mqttConfig?.enabled = config.enabled
 					fetchedNode[0].mqttConfig?.proxyToClientEnabled = config.proxyToClientEnabled
 					fetchedNode[0].mqttConfig?.address = config.address
@@ -1000,20 +960,18 @@ extension CoreDataTools {
 				debounce.emit { [weak self] in
 					await self?.saveData(with: context)
 				}
-			} else {
+			}
+			else {
 				Logger.data.error("💥 [MQTTConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save MQTT Module Config")
 			}
-		} catch {
+		}
+		catch {
 			let nsError = error as NSError
 			Logger.data.error("💥 [MQTTConfigEntity] Fetching node for core data failed: \(nsError, privacy: .public)")
 		}
 	}
 
 	func upsertRangeTestModuleConfigPacket(config: ModuleConfig.RangeTestConfig, nodeNum: Int64, context: NSManagedObjectContext) {
-
-		let logString = String.localizedStringWithFormat("mesh.log.rangetest.config %@".localized, String(nodeNum))
-		MeshLogger.log("⛰️ \(logString)")
-
 		let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
 		fetchNodeInfoRequest.predicate = NSPredicate(format: "num == %lld", Int64(nodeNum))
 
@@ -1027,7 +985,8 @@ extension CoreDataTools {
 					newRangeTestConfig.enabled = config.enabled
 					newRangeTestConfig.save = config.save
 					fetchedNode[0].rangeTestConfig = newRangeTestConfig
-				} else {
+				}
+				else {
 					fetchedNode[0].rangeTestConfig?.sender = Int32(config.sender)
 					fetchedNode[0].rangeTestConfig?.enabled = config.enabled
 					fetchedNode[0].rangeTestConfig?.save = config.save
@@ -1036,20 +995,18 @@ extension CoreDataTools {
 				debounce.emit { [weak self] in
 					await self?.saveData(with: context)
 				}
-			} else {
+			}
+			else {
 				Logger.data.error("💥 [RangeTestConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save Range Test Module Config")
 			}
-		} catch {
+		}
+		catch {
 			let nsError = error as NSError
 			Logger.data.error("💥 [RangeTestConfigEntity] Fetching node for core data failed: \(nsError, privacy: .public)")
 		}
 	}
 
 	func upsertSerialModuleConfigPacket(config: ModuleConfig.SerialConfig, nodeNum: Int64, context: NSManagedObjectContext) {
-
-		let logString = String.localizedStringWithFormat("mesh.log.serial.config %@".localized, String(nodeNum))
-		MeshLogger.log("🤖 \(logString)")
-
 		let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
 		fetchNodeInfoRequest.predicate = NSPredicate(format: "num == %lld", Int64(nodeNum))
 
@@ -1057,9 +1014,7 @@ extension CoreDataTools {
 			let fetchedNode = try context.fetch(fetchNodeInfoRequest)
 			// Found a node, save Device Config
 			if !fetchedNode.isEmpty {
-
 				if fetchedNode[0].serialConfig == nil {
-
 					let newSerialConfig = SerialConfigEntity(context: context)
 					newSerialConfig.enabled = config.enabled
 					newSerialConfig.echo = config.echo
@@ -1069,8 +1024,8 @@ extension CoreDataTools {
 					newSerialConfig.timeout = Int32(config.timeout)
 					newSerialConfig.mode = Int32(config.mode.rawValue)
 					fetchedNode[0].serialConfig = newSerialConfig
-
-				} else {
+				}
+				else {
 					fetchedNode[0].serialConfig?.enabled = config.enabled
 					fetchedNode[0].serialConfig?.echo = config.echo
 					fetchedNode[0].serialConfig?.rxd = Int32(config.rxd)
@@ -1083,21 +1038,18 @@ extension CoreDataTools {
 				debounce.emit { [weak self] in
 					await self?.saveData(with: context)
 				}
-			} else {
+			}
+			else {
 				Logger.data.error("💥 [SerialConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save Serial Module Config")
 			}
-		} catch {
-
+		}
+		catch {
 			let nsError = error as NSError
 			Logger.data.error("💥 [SerialConfigEntity] Fetching node for core data failed: \(nsError, privacy: .public)")
 		}
 	}
 
 	func upsertStoreForwardModuleConfigPacket(config: ModuleConfig.StoreForwardConfig, nodeNum: Int64, context: NSManagedObjectContext) {
-
-		let logString = String.localizedStringWithFormat("mesh.log.storeforward.config %@".localized, String(nodeNum))
-		MeshLogger.log("📬 \(logString)")
-
 		let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
 		fetchNodeInfoRequest.predicate = NSPredicate(format: "num == %lld", Int64(nodeNum))
 
@@ -1105,9 +1057,7 @@ extension CoreDataTools {
 			let fetchedNode = try context.fetch(fetchNodeInfoRequest)
 			// Found a node, save Store & Forward Sensor Config
 			if !fetchedNode.isEmpty {
-
 				if fetchedNode[0].storeForwardConfig == nil {
-
 					let newConfig = StoreForwardConfigEntity(context: context)
 					newConfig.enabled = config.enabled
 					newConfig.heartbeat = config.heartbeat
@@ -1115,8 +1065,8 @@ extension CoreDataTools {
 					newConfig.historyReturnMax = Int32(config.historyReturnMax)
 					newConfig.historyReturnWindow = Int32(config.historyReturnWindow)
 					fetchedNode[0].storeForwardConfig = newConfig
-
-				} else {
+				}
+				else {
 					fetchedNode[0].storeForwardConfig?.enabled = config.enabled
 					fetchedNode[0].storeForwardConfig?.heartbeat = config.heartbeat
 					fetchedNode[0].storeForwardConfig?.records = Int32(config.records)
@@ -1127,20 +1077,18 @@ extension CoreDataTools {
 				debounce.emit { [weak self] in
 					await self?.saveData(with: context)
 				}
-			} else {
+			}
+			else {
 				Logger.data.error("💥 [StoreForwardConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save Store & Forward Module Config")
 			}
-		} catch {
+		}
+		catch {
 			let nsError = error as NSError
 			Logger.data.error("💥 [StoreForwardConfigEntity] Fetching node for core data failed: \(nsError, privacy: .public)")
 		}
 	}
 
 	func upsertTelemetryModuleConfigPacket(config: ModuleConfig.TelemetryConfig, nodeNum: Int64, context: NSManagedObjectContext) {
-
-		let logString = String.localizedStringWithFormat("mesh.log.telemetry.config %@".localized, String(nodeNum))
-		MeshLogger.log("📈 \(logString)")
-
 		let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
 		fetchNodeInfoRequest.predicate = NSPredicate(format: "num == %lld", Int64(nodeNum))
 
@@ -1148,9 +1096,7 @@ extension CoreDataTools {
 			let fetchedNode = try context.fetch(fetchNodeInfoRequest)
 			// Found a node, save Telemetry Config
 			if !fetchedNode.isEmpty {
-
 				if fetchedNode[0].telemetryConfig == nil {
-
 					let newTelemetryConfig = TelemetryConfigEntity(context: context)
 					newTelemetryConfig.deviceUpdateInterval = Int32(config.deviceUpdateInterval)
 					newTelemetryConfig.environmentUpdateInterval = Int32(config.environmentUpdateInterval)
@@ -1161,8 +1107,8 @@ extension CoreDataTools {
 					newTelemetryConfig.powerUpdateInterval = Int32(config.powerUpdateInterval)
 					newTelemetryConfig.powerScreenEnabled = config.powerScreenEnabled
 					fetchedNode[0].telemetryConfig = newTelemetryConfig
-
-				} else {
+				}
+				else {
 					fetchedNode[0].telemetryConfig?.deviceUpdateInterval = Int32(config.deviceUpdateInterval)
 					fetchedNode[0].telemetryConfig?.environmentUpdateInterval = Int32(config.environmentUpdateInterval)
 					fetchedNode[0].telemetryConfig?.environmentMeasurementEnabled = config.environmentMeasurementEnabled
@@ -1176,11 +1122,12 @@ extension CoreDataTools {
 				debounce.emit { [weak self] in
 					await self?.saveData(with: context)
 				}
-			} else {
+			}
+			else {
 				Logger.data.error("💥 [TelemetryConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save Telemetry Module Config")
 			}
-
-		} catch {
+		}
+		catch {
 			let nsError = error as NSError
 			Logger.data.error("💥 [TelemetryConfigEntity] Fetching node for core data TelemetryConfigEntity failed: \(nsError, privacy: .public)")
 		}
