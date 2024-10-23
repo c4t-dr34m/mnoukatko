@@ -24,7 +24,8 @@ struct MQTTConnectionIcon: View {
 			.scaledToFit()
 			.frame(width: 16, height: 16)
 			.foregroundColor(color)
-			.padding(8)
+			.padding(.vertical, 8)
+			.padding(.horizontal, 16)
 			.background(color.opacity(0.3))
 	}
 }

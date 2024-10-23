@@ -20,15 +20,32 @@ struct ConnectionInfo: View {
 		return UnevenRoundedRectangle(cornerRadii: corners, style: .continuous)
 	}
 	private var leadingClip: UnevenRoundedRectangle {
+		let corners = RectangleCornerRadii(
+			topLeading: 2,
+			bottomLeading: 2,
+			bottomTrailing: 12,
+			topTrailing: 12
+		)
+
+		return UnevenRoundedRectangle(cornerRadii: corners, style: .continuous)
+	}
+	private var centerClip: UnevenRoundedRectangle {
 		if bleManager.getConnectedDevice() == nil {
-			return singleClip
-		}
-		else {
 			let corners = RectangleCornerRadii(
 				topLeading: 2,
 				bottomLeading: 2,
 				bottomTrailing: 12,
 				topTrailing: 12
+			)
+
+			return UnevenRoundedRectangle(cornerRadii: corners, style: .continuous)
+		}
+		else {
+			let corners = RectangleCornerRadii(
+				topLeading: 2,
+				bottomLeading: 2,
+				bottomTrailing: 2,
+				topTrailing: 2
 			)
 
 			return UnevenRoundedRectangle(cornerRadii: corners, style: .continuous)
@@ -56,7 +73,8 @@ struct ConnectionInfo: View {
 							size: 16,
 							color: .green
 						)
-						.padding(8)
+						.padding(.vertical, 8)
+						.padding(.horizontal, 16)
 						.background(.green.opacity(0.3))
 						.clipShape(trailingClip)
 						.onAppear {
@@ -70,6 +88,33 @@ struct ConnectionInfo: View {
 					}
 					else {
 						EmptyView()
+					}
+
+					if let info = bleManager.infoLastChanged {
+						let diff = info.distance(to: .now)
+
+						HStack {
+							Image(systemName: "bolt.horizontal")
+								.resizable()
+								.scaledToFit()
+								.frame(width: 16, height: 16)
+
+							if diff < 60 {
+								Text(String(format: "%.0f", diff) + "\"")
+									.font(.system(size: 12, weight: .bold, design: .rounded))
+									.lineLimit(1)
+							}
+							else {
+								Text(String(format: "%.0f", diff / 60) + "'")
+									.font(.system(size: 12, weight: .bold, design: .rounded))
+									.lineLimit(1)
+							}
+						}
+						.foregroundColor(.gray)
+						.padding(.vertical, 8)
+						.padding(.horizontal, 16)
+						.background(.gray.opacity(0.3))
+						.clipShape(centerClip)
 					}
 
 					if mqttChannelInfo {
@@ -124,7 +169,8 @@ struct ConnectionInfo: View {
 			.scaledToFit()
 			.frame(width: 16, height: 16)
 			.foregroundColor(color)
-			.padding(8)
+			.padding(.vertical, 8)
+			.padding(.horizontal, 16)
 			.background(color.opacity(0.3))
 	}
 }
