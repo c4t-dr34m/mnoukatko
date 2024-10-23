@@ -25,8 +25,6 @@ struct NodeList: View {
 	private var showOffline = false
 	@State
 	private var selectedNode: NodeInfoEntity?
-	@State
-	private var searchText = ""
 
 	@FetchRequest(
 		sortDescriptors: [
@@ -68,11 +66,6 @@ struct NodeList: View {
 				nodeListOffline
 			}
 			.listStyle(.automatic)
-			.searchable(
-				text: $searchText,
-				placement: .automatic,
-				prompt: "Find a node"
-			)
 			.disableAutocorrection(true)
 			.scrollDismissesKeyboard(.interactively)
 			.navigationTitle("Nodes")
@@ -88,32 +81,28 @@ struct NodeList: View {
 				]
 			)
 		}
-		.onChange(of: searchText, initial: true) {
-			Task {
-				await updateFilter()
-			}
-		}
 		.onChange(of: appState.navigationPath, initial: true) {
 			guard let navigationPath = appState.navigationPath else {
 				return
 			}
 
-			if navigationPath.hasPrefix("meshtastic:///nodes") {
-				if let urlComponent = URLComponents(string: navigationPath) {
-					let queryItems = urlComponent.queryItems
-					let nodeNum = queryItems?.first(where: {
-						$0.name == "nodenum"
-					})?.value
+			if
+				navigationPath.hasPrefix("meshtastic:///nodes"),
+				let urlComponent = URLComponents(string: navigationPath)
+			{
+				let queryItems = urlComponent.queryItems
+				let nodeNum = queryItems?.first(where: {
+					$0.name == "nodenum"
+				})?.value
 
-					if nodeNum == nil {
-						Logger.data.debug("nodeNum not found")
-					}
-					else {
-						selectedNode = nodes.first(where: {
-							$0.num == Int64(nodeNum ?? "-1")
-						})
-						AppState.shared.navigationPath = nil
-					}
+				if nodeNum == nil {
+					Logger.data.debug("nodeNum not found")
+				}
+				else {
+					selectedNode = nodes.first(where: {
+						$0.num == Int64(nodeNum ?? "-1")
+					})
+					AppState.shared.navigationPath = nil
 				}
 			}
 		}
@@ -252,25 +241,6 @@ struct NodeList: View {
 				connectedNode: connectedNode,
 				context: context
 			)
-		}
-	}
-
-	private func updateFilter() async {
-		let searchPredicates = [
-			"user.userId",
-			"user.numString",
-			"user.hwModel",
-			"user.longName",
-			"user.shortName"
-		].map { property in
-			NSPredicate(format: "%K CONTAINS[c] %@", property, searchText)
-		}
-
-		if !searchText.isEmpty {
-			nodes.nsPredicate = NSCompoundPredicate(type: .or, subpredicates: searchPredicates)
-		}
-		else {
-			nodes.nsPredicate = nil
 		}
 	}
 }
