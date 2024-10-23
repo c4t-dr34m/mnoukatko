@@ -16,7 +16,7 @@ final class BLEManager: NSObject, ObservableObject {
 	let coreDataTools = CoreDataTools()
 	let notificationManager = LocalNotificationManager()
 	let minimumVersion = "2.0.0"
-	let debounce = Debounce<() async -> Void>(duration: .milliseconds(808)) { action in
+	let dataDebounce = Debounce<() async -> Void>(duration: .milliseconds(500)) { action in
 		await action()
 	}
 
@@ -40,6 +40,7 @@ final class BLEManager: NSObject, ObservableObject {
 	var mqttError = ""
 
 	var nodeNames = [Int64: String]()
+	var infoLastChanged: Date?
 	var devicesDelegate: DevicesDelegate?
 	var mqttManager: MQTTManager?
 	var connectedVersion: String
@@ -330,7 +331,7 @@ final class BLEManager: NSObject, ObservableObject {
 				traceRoute.hasPositions = true
 			}
 
-			debounce.emit { [weak self] in
+			dataDebounce.emit { [weak self] in
 				await self?.saveData()
 			}
 
@@ -430,7 +431,7 @@ final class BLEManager: NSObject, ObservableObject {
 			type: .withResponse
 		)
 
-		debounce.emit { [weak self] in
+		dataDebounce.emit { [weak self] in
 			if let status = await self?.saveData(), status{
 				AnalyticEvents.trackBLEEvent(for: .message, status: .success)
 			}

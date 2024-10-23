@@ -152,7 +152,7 @@ extension BLEManager {
 			myInfo.myNodeNum = Int64(myInfo.myNodeNum)
 			myInfo.rebootCount = Int32(myInfo.rebootCount)
 
-			debounce.emit { [weak self] in
+			dataDebounce.emit { [weak self] in
 				await self?.saveData()
 			}
 
@@ -166,7 +166,7 @@ extension BLEManager {
 			newMyInfo.myNodeNum = Int64(myInfo.myNodeNum)
 			newMyInfo.rebootCount = Int32(myInfo.rebootCount)
 
-			debounce.emit { [weak self] in
+			dataDebounce.emit { [weak self] in
 				await self?.saveData()
 			}
 
@@ -223,7 +223,7 @@ extension BLEManager {
 		context.refresh(newChannel, mergeChanges: true)
 		myInfo.channels = channels
 
-		debounce.emit { [weak self] in
+		dataDebounce.emit { [weak self] in
 			await self?.saveData()
 		}
 
@@ -231,7 +231,7 @@ extension BLEManager {
 			onChannelInfoReceived(index: channel.index, name: channel.settings.name, num: fromNum)
 		}
 	}
-	
+
 	func deviceMetadataPacket(
 		metadata: DeviceMetadata,
 		fromNum: Int64,
@@ -240,14 +240,14 @@ extension BLEManager {
 		guard metadata.isInitialized else {
 			return
 		}
-		
+
 		let fetchedNodeRequest = NodeInfoEntity.fetchRequest()
 		fetchedNodeRequest.predicate = NSPredicate(format: "num == %lld", fromNum)
-		
+
 		guard let fetchedNode = try? context.fetch(fetchedNodeRequest) else {
 			return
 		}
-		
+
 		let newMetadata = DeviceMetadataEntity(context: context)
 		newMetadata.time = Date()
 		newMetadata.deviceStateVersion = Int32(metadata.deviceStateVersion)
@@ -257,7 +257,7 @@ extension BLEManager {
 		newMetadata.hasEthernet = metadata.hasEthernet_p
 		newMetadata.role = Int32(metadata.role.rawValue)
 		newMetadata.positionFlags = Int32(metadata.positionFlags)
-		
+
 		// Swift does strings weird, this does work to get the version without the github hash
 		let lastDotIndex = metadata.firmwareVersion.lastIndex(of: ".")
 		var version = metadata.firmwareVersion[
@@ -265,7 +265,7 @@ extension BLEManager {
 		]
 		version = version.dropLast()
 		newMetadata.firmwareVersion = String(version)
-		
+
 		if !fetchedNode.isEmpty {
 			fetchedNode[0].metadata = newMetadata
 		}
@@ -275,14 +275,14 @@ extension BLEManager {
 				newNode.metadata = newMetadata
 			}
 		}
-		
-		debounce.emit { [weak self] in
+
+		dataDebounce.emit { [weak self] in
 			await self?.saveData()
 		}
 
 		onMetadataReceived(num: fromNum)
 	}
-	
+
 	// swiftlint:disable:next cyclomatic_complexity
 	func nodeInfoPacket(
 		nodeInfo: NodeInfo,
@@ -292,14 +292,14 @@ extension BLEManager {
 		guard nodeInfo.num > 0 else {
 			return nil
 		}
-		
+
 		let infoRequest = NodeInfoEntity.fetchRequest()
 		infoRequest.predicate = NSPredicate(format: "num == %lld", Int64(nodeInfo.num))
-		
+
 		guard let fetchedNode = try? context.fetch(infoRequest) else {
 			return nil
 		}
-		
+
 		if fetchedNode.isEmpty, nodeInfo.num > 0 {
 			let newNode = NodeInfoEntity(context: context)
 			newNode.id = Int64(nodeInfo.num)
@@ -310,20 +310,20 @@ extension BLEManager {
 			newNode.firstHeard = Date(timeIntervalSince1970: TimeInterval(Int64(nodeInfo.lastHeard)))
 			newNode.lastHeard = Date(timeIntervalSince1970: TimeInterval(Int64(nodeInfo.lastHeard)))
 			newNode.snr = nodeInfo.snr
-			
+
 			if nodeInfo.hasDeviceMetrics {
 				let telemetry = TelemetryEntity(context: context)
 				telemetry.batteryLevel = Int32(nodeInfo.deviceMetrics.batteryLevel)
 				telemetry.voltage = nodeInfo.deviceMetrics.voltage
 				telemetry.channelUtilization = nodeInfo.deviceMetrics.channelUtilization
 				telemetry.airUtilTx = nodeInfo.deviceMetrics.airUtilTx
-				
+
 				var newTelemetries = [TelemetryEntity]()
 				newTelemetries.append(telemetry)
-				
+
 				newNode.telemetries? = NSOrderedSet(array: newTelemetries)
 			}
-			
+
 			if nodeInfo.hasUser {
 				let newUser = UserEntity(context: context)
 				newUser.userId = nodeInfo.user.id
@@ -334,7 +334,7 @@ extension BLEManager {
 				newUser.hwModelId = Int32(nodeInfo.user.hwModel.rawValue)
 				newUser.isLicensed = nodeInfo.user.isLicensed
 				newUser.role = Int32(nodeInfo.user.role.rawValue)
-				
+
 				Task {
 					Api().loadDeviceHardwareData { hw in
 						let dh = hw.first(where: {
@@ -343,14 +343,14 @@ extension BLEManager {
 						newUser.hwDisplayName = dh?.displayName
 					}
 				}
-				
+
 				newNode.user = newUser
 			}
 			else if nodeInfo.num > Constants.minimumNodeNum {
 				let newUser = createUser(num: Int64(nodeInfo.num), context: context)
 				newNode.user = newUser
 			}
-			
+
 			if
 				nodeInfo.position.longitudeI != 0,
 				nodeInfo.position.latitudeI != 0,
@@ -383,7 +383,7 @@ extension BLEManager {
 					newNode.myInfo = fetchedMyInfo[0]
 				}
 
-				debounce.emit { [weak self] in
+				dataDebounce.emit { [weak self] in
 					await self?.saveData()
 				}
 
@@ -485,7 +485,7 @@ extension BLEManager {
 					fetchedNode[0].myInfo = fetchedMyInfo[0]
 				}
 
-				debounce.emit { [weak self] in
+				dataDebounce.emit { [weak self] in
 					await self?.saveData()
 				}
 
@@ -506,14 +506,14 @@ extension BLEManager {
 		else {
 			return
 		}
-		
+
 		switch variant {
 		case AdminMessage.OneOf_PayloadVariant.getCannedMessageModuleMessagesResponse(
 			message.getCannedMessageModuleMessagesResponse
 		):
 			let requst = NodeInfoEntity.fetchRequest()
 			requst.predicate = NSPredicate(format: "num == %lld", Int64(packet.from))
-			
+
 			guard
 				let fetchedNode = try? context.fetch(requst),
 				!fetchedNode.isEmpty,
@@ -522,37 +522,37 @@ extension BLEManager {
 			else {
 				break
 			}
-			
+
 			let messages = String(cmmc.textFormatString())
 				.replacingOccurrences(of: "11: ", with: "")
 				.replacingOccurrences(of: "\"", with: "")
 				.trimmingCharacters(in: .whitespacesAndNewlines)
 			fetchedNode[0].cannedMessageConfig?.messages = messages
-			
-			debounce.emit { [weak self] in
+
+			dataDebounce.emit { [weak self] in
 				await self?.saveData()
 			}
-			
+
 		case AdminMessage.OneOf_PayloadVariant.getChannelResponse(message.getChannelResponse):
 			channelPacket(
 				channel: message.getChannelResponse,
 				fromNum: Int64(packet.from),
 				context: context
 			)
-			
+
 		case AdminMessage.OneOf_PayloadVariant.getDeviceMetadataResponse(message.getDeviceMetadataResponse):
 			deviceMetadataPacket(
 				metadata: message.getDeviceMetadataResponse,
 				fromNum: Int64(packet.from),
 				context: context
 			)
-			
+
 		case AdminMessage.OneOf_PayloadVariant.getConfigResponse(message.getConfigResponse):
 			let config = message.getConfigResponse
 			guard let variant = config.payloadVariant else {
 				break
 			}
-			
+
 			switch variant {
 			case Config.OneOf_PayloadVariant.bluetooth(config.bluetooth):
 				coreDataTools.upsertBluetoothConfigPacket(
@@ -560,59 +560,59 @@ extension BLEManager {
 					nodeNum: Int64(packet.from),
 					context: context
 				)
-				
+
 			case Config.OneOf_PayloadVariant.device(config.device):
 				coreDataTools.upsertDeviceConfigPacket(
 					config: config.device,
 					nodeNum: Int64(packet.from),
 					context: context
 				)
-				
+
 			case Config.OneOf_PayloadVariant.display(config.display):
 				coreDataTools.upsertDisplayConfigPacket(
 					config: config.display,
 					nodeNum: Int64(packet.from),
 					context: context
 				)
-				
+
 			case Config.OneOf_PayloadVariant.lora(config.lora):
 				coreDataTools.upsertLoRaConfigPacket(
 					config: config.lora,
 					nodeNum: Int64(packet.from),
 					context: context
 				)
-				
+
 			case Config.OneOf_PayloadVariant.network(config.network):
 				coreDataTools.upsertNetworkConfigPacket(
 					config: config.network,
 					nodeNum: Int64(packet.from),
 					context: context
 				)
-				
+
 			case Config.OneOf_PayloadVariant.position(config.position):
 				coreDataTools.upsertPositionConfigPacket(
 					config: config.position,
 					nodeNum: Int64(packet.from),
 					context: context
 				)
-				
+
 			case Config.OneOf_PayloadVariant.power(config.power):
 				coreDataTools.upsertPowerConfigPacket(
 					config: config.power,
 					nodeNum: Int64(packet.from),
 					context: context
 				)
-				
+
 			default:
 				break
 			}
-			
+
 		case AdminMessage.OneOf_PayloadVariant.getModuleConfigResponse(message.getModuleConfigResponse):
 			let moduleConfig = message.getModuleConfigResponse
 			guard let variant = moduleConfig.payloadVariant else {
 				break
 			}
-			
+
 			switch variant {
 			case ModuleConfig.OneOf_PayloadVariant.ambientLighting(moduleConfig.ambientLighting):
 				coreDataTools.upsertAmbientLightingModuleConfigPacket(
@@ -620,107 +620,107 @@ extension BLEManager {
 					nodeNum: Int64(packet.from),
 					context: context
 				)
-				
+
 			case ModuleConfig.OneOf_PayloadVariant.cannedMessage(moduleConfig.cannedMessage):
 				coreDataTools.upsertCannedMessagesModuleConfigPacket(
 					config: moduleConfig.cannedMessage,
 					nodeNum: Int64(packet.from),
 					context: context
 				)
-				
+
 			case ModuleConfig.OneOf_PayloadVariant.detectionSensor(moduleConfig.detectionSensor):
 				coreDataTools.upsertDetectionSensorModuleConfigPacket(
 					config: moduleConfig.detectionSensor,
 					nodeNum: Int64(packet.from),
 					context: context
 				)
-				
+
 			case ModuleConfig.OneOf_PayloadVariant.externalNotification(moduleConfig.externalNotification):
 				coreDataTools.upsertExternalNotificationModuleConfigPacket(
 					config: moduleConfig.externalNotification,
 					nodeNum: Int64(packet.from),
 					context: context
 				)
-				
+
 			case ModuleConfig.OneOf_PayloadVariant.mqtt(moduleConfig.mqtt):
 				coreDataTools.upsertMqttModuleConfigPacket(
 					config: moduleConfig.mqtt,
 					nodeNum: Int64(packet.from),
 					context: context
 				)
-				
+
 			case ModuleConfig.OneOf_PayloadVariant.rangeTest(moduleConfig.rangeTest):
 				coreDataTools.upsertRangeTestModuleConfigPacket(
 					config: moduleConfig.rangeTest,
 					nodeNum: Int64(packet.from),
 					context: context
 				)
-				
+
 			case ModuleConfig.OneOf_PayloadVariant.serial(moduleConfig.serial):
 				coreDataTools.upsertSerialModuleConfigPacket(
 					config: moduleConfig.serial,
 					nodeNum: Int64(packet.from),
 					context: context
 				)
-				
+
 			case ModuleConfig.OneOf_PayloadVariant.storeForward(moduleConfig.storeForward):
 				coreDataTools.upsertStoreForwardModuleConfigPacket(
 					config: moduleConfig.storeForward,
 					nodeNum: Int64(packet.from),
 					context: context
 				)
-				
+
 			case ModuleConfig.OneOf_PayloadVariant.telemetry(moduleConfig.telemetry):
 				coreDataTools.upsertTelemetryModuleConfigPacket(
 					config: moduleConfig.telemetry,
 					nodeNum: Int64(packet.from),
 					context: context
 				)
-				
+
 			default:
 				break
 			}
-			
+
 		case AdminMessage.OneOf_PayloadVariant.getRingtoneResponse(message.getRingtoneResponse):
 			let ringtone = message.getRingtoneResponse
 			coreDataTools.upsertRtttlConfigPacket(ringtone: ringtone, nodeNum: Int64(packet.from), context: context)
-			
+
 		default:
 			MeshLogger.log(
 				"🕸️ MESH PACKET received Admin App UNHANDLED \((try? packet.decoded.jsonString()) ?? "JSON Decode Failure")"
 			)
 		}
-		
+
 		adminResponseAck(packet: packet, context: context)
 	}
-	
+
 	func adminResponseAck(packet: MeshPacket, context: NSManagedObjectContext) {
 		let request = MessageEntity.fetchRequest()
 		request.predicate = NSPredicate(format: "messageId == %lld", packet.decoded.requestID)
-		
+
 		guard
 			let fetchedMessage = try? context.fetch(request),
 			!fetchedMessage.isEmpty
 		else {
 			return
 		}
-		
+
 		fetchedMessage[0].ackTimestamp = Int32(Date().timeIntervalSince1970)
 		fetchedMessage[0].ackError = Int32(RoutingError.none.rawValue)
 		fetchedMessage[0].receivedACK = true
 		fetchedMessage[0].realACK = true
 		fetchedMessage[0].ackSNR = packet.rxSnr
 		fetchedMessage[0].fromUser?.objectWillChange.send()
-		
-		debounce.emit { [weak self] in
+
+		dataDebounce.emit { [weak self] in
 			await self?.saveData()
 		}
 	}
-	
+
 	func paxCounterPacket(packet: MeshPacket, context: NSManagedObjectContext) {
 		let requst = NodeInfoEntity.fetchRequest()
 		requst.predicate = NSPredicate(format: "num == %lld", Int64(packet.from))
-		
+
 		guard
 			let fetchedNode = try? context.fetch(requst),
 			!fetchedNode.isEmpty,
@@ -729,25 +729,25 @@ extension BLEManager {
 		else {
 			return
 		}
-		
+
 		let newPax = PaxCounterEntity(context: context)
 		newPax.ble = Int32(truncatingIfNeeded: paxMessage.ble)
 		newPax.wifi = Int32(truncatingIfNeeded: paxMessage.wifi)
 		newPax.uptime = Int32(truncatingIfNeeded: paxMessage.uptime)
 		newPax.time = Date()
-		
+
 		mutablePax.add(newPax)
 		fetchedNode[0].pax = mutablePax
-		
-		debounce.emit { [weak self] in
+
+		dataDebounce.emit { [weak self] in
 			await self?.saveData()
 		}
 	}
-	
+
 	func routingPacket(packet: MeshPacket, connectedNodeNum: Int64, context: NSManagedObjectContext) {
 		let request = MessageEntity.fetchRequest()
 		request.predicate = NSPredicate(format: "messageId == %lld", Int64(packet.decoded.requestID))
-		
+
 		guard
 			let fetchedMessage = try? context.fetch(request),
 			!fetchedMessage.isEmpty,
@@ -755,22 +755,22 @@ extension BLEManager {
 		else {
 			return
 		}
-		
+
 		fetchedMessage[0].ackTimestamp = Int32(truncatingIfNeeded: packet.rxTime)
 		fetchedMessage[0].ackSNR = packet.rxSnr
 		fetchedMessage[0].ackError = Int32(routingMessage.errorReason.rawValue)
-		
+
 		if fetchedMessage[0].toUser != nil {
 			if packet.to != packet.from {
 				fetchedMessage[0].realACK = true
 			}
-			
+
 			fetchedMessage[0].toUser?.objectWillChange.send()
 		}
 		else {
 			let myInfoRequest = MyInfoEntity.fetchRequest()
 			myInfoRequest.predicate = NSPredicate(format: "myNodeNum == %lld", connectedNodeNum)
-			
+
 			if
 				let fetchedMyInfo = try? context.fetch(myInfoRequest),
 				!fetchedMyInfo.isEmpty,
@@ -781,20 +781,20 @@ extension BLEManager {
 				}
 			}
 		}
-		
+
 		if routingMessage.errorReason == Routing.Error.none {
 			fetchedMessage[0].receivedACK = true
 		}
-		
-		debounce.emit { [weak self] in
+
+		dataDebounce.emit { [weak self] in
 			await self?.saveData()
 		}
 	}
-	
+
 	func telemetryPacket(packet: MeshPacket, connectedNode: Int64, context: NSManagedObjectContext) {
 		let request = NodeInfoEntity.fetchRequest()
 		request.predicate = NSPredicate(format: "num == %lld", Int64(packet.from))
-		
+
 		guard
 			let fetchedNode = try? context.fetch(request),
 			!fetchedNode.isEmpty,
@@ -802,31 +802,31 @@ extension BLEManager {
 		else {
 			return
 		}
-		
+
 		let telemetry = TelemetryEntity(context: context)
 		telemetry.time = Date(
 			timeIntervalSince1970: TimeInterval(Int64(truncatingIfNeeded: telemetryMessage.time))
 		)
 		telemetry.snr = packet.rxSnr
 		telemetry.rssi = packet.rxRssi
-		
+
 		if telemetryMessage.variant == .deviceMetrics(telemetryMessage.deviceMetrics) {
 			let metrics = telemetryMessage.deviceMetrics
-			
+
 			telemetry.metricsType = 0
 			telemetry.airUtilTx = metrics.airUtilTx
 			telemetry.channelUtilization = metrics.channelUtilization
 			telemetry.batteryLevel = Int32(metrics.batteryLevel)
 			telemetry.voltage = metrics.voltage
 			telemetry.uptimeSeconds = Int32(metrics.uptimeSeconds)
-			
+
 			if Int64(packet.from) == connectedNode {
 				scheduleLowBatteryNotification(telemetry: telemetry)
 			}
 		}
 		else if telemetryMessage.variant == .environmentMetrics(telemetryMessage.environmentMetrics) {
 			let metrics = telemetryMessage.environmentMetrics
-			
+
 			telemetry.metricsType = 1
 			telemetry.barometricPressure = metrics.barometricPressure
 			telemetry.current = metrics.current
@@ -845,22 +845,22 @@ extension BLEManager {
 		else {
 			return
 		}
-		
+
 		guard let mutableTelemetries = fetchedNode[0].telemetries?.mutableCopy() as? NSMutableOrderedSet else {
 			return
 		}
 		mutableTelemetries.add(telemetry)
-		
+
 		fetchedNode[0].lastHeard = Date(
 			timeIntervalSince1970: TimeInterval(Int64(truncatingIfNeeded: packet.rxTime))
 		)
 		fetchedNode[0].telemetries = mutableTelemetries.copy() as? NSOrderedSet
-		
-		debounce.emit { [weak self] in
+
+		dataDebounce.emit { [weak self] in
 			await self?.saveData()
 		}
 	}
-	
+
 	// swiftlint:disable:next cyclomatic_complexity
 	func textMessageAppPacket(
 		packet: MeshPacket,
@@ -879,9 +879,9 @@ extension BLEManager {
 				Int(match)
 			}
 		}
-		
+
 		var messageText = String(bytes: packet.decoded.payload, encoding: .utf8)
-		
+
 		if
 			!wantRangeTestPackets,
 			let messageText,
@@ -890,7 +890,7 @@ extension BLEManager {
 		{
 			return
 		}
-		
+
 		var storeForwardBroadcast = false
 		if
 			storeForward,
@@ -901,10 +901,10 @@ extension BLEManager {
 				storeForwardBroadcast = true
 			}
 		}
-		
+
 		let request = UserEntity.fetchRequest()
 		request.predicate = NSPredicate(format: "num IN %@", [packet.to, packet.from])
-		
+
 		guard
 			let messageText,
 			!messageText.isEmpty,
@@ -912,7 +912,7 @@ extension BLEManager {
 		else {
 			return
 		}
-		
+
 		let newMessage = MessageEntity(context: context)
 		newMessage.messageId = Int64(packet.id)
 		if packet.rxTime == 0 {
@@ -927,18 +927,18 @@ extension BLEManager {
 		newMessage.isEmoji = packet.decoded.emoji == 1
 		newMessage.channel = Int32(packet.channel)
 		newMessage.portNum = Int32(packet.decoded.portnum.rawValue)
-		
+
 		if
 			!UserDefaults.enableDetectionNotifications,
 			packet.decoded.portnum == PortNum.detectionSensorApp
 		{
 			newMessage.read = true
 		}
-		
+
 		if packet.decoded.replyID > 0 {
 			newMessage.replyID = Int64(packet.decoded.replyID)
 		}
-		
+
 		if
 			!storeForwardBroadcast,
 			let firstUserTo = fetchedUsers.first(where: {
@@ -948,7 +948,7 @@ extension BLEManager {
 		{
 			newMessage.toUser = firstUserTo
 		}
-		
+
 		if let firstUserFrom = fetchedUsers.first(where: {
 			$0.num == packet.from
 		}) {
@@ -961,18 +961,18 @@ extension BLEManager {
 		}
 		newMessage.messagePayload = messageText
 		newMessage.messagePayloadMarkdown = generateMessageMarkdown(message: messageText)
-		
+
 		if
 			packet.to != Constants.maximumNodeNum,
 			newMessage.fromUser != nil
 		{
 			newMessage.fromUser?.lastMessage = Date.now
 		}
-		
-		debounce.emit { [weak self] in
+
+		dataDebounce.emit { [weak self] in
 			await self?.saveData()
 		}
-		
+
 		guard
 			UserDefaults.enableDetectionNotifications,
 			packet.decoded.portnum != .detectionSensorApp,
@@ -980,13 +980,13 @@ extension BLEManager {
 		else {
 			return
 		}
-		
+
 		if let toUser = newMessage.toUser {
 			// Set Unread Message Indicators
 			if packet.to == connectedNode {
 				appState.unreadDirectMessages = toUser.unreadMessages
 			}
-			
+
 			if !fromUser.mute {
 				let subtitle: String?
 				if let longName = fromUser.longName {
@@ -995,7 +995,7 @@ extension BLEManager {
 				else {
 					subtitle = nil
 				}
-				
+
 				notificationManager.queue(
 					notification: Notification(
 						id: "notification.id.\(newMessage.messageId)",
@@ -1011,19 +1011,19 @@ extension BLEManager {
 		else {
 			let fetchMyInfoRequest = MyInfoEntity.fetchRequest()
 			fetchMyInfoRequest.predicate = NSPredicate(format: "myNodeNum == %lld", Int64(connectedNode))
-			
+
 			if
 				let fetchedMyInfo = try? context.fetch(fetchMyInfoRequest),
 				!fetchedMyInfo.isEmpty,
 				let channels = fetchedMyInfo[0].channels?.array as? [ChannelEntity]
 			{
 				appState.unreadChannelMessages = fetchedMyInfo[0].unreadMessages
-				
+
 				for channel in channels {
 					if channel.index == newMessage.channel {
 						context.refresh(channel, mergeChanges: true)
 					}
-					
+
 					if
 						UserDefaults.channelMessageNotifications,
 						channel.index == newMessage.channel,
@@ -1036,7 +1036,7 @@ extension BLEManager {
 						else {
 							subtitle = nil
 						}
-						
+
 						notificationManager.queue(
 							notification: Notification(
 								id: "notification.id.\(newMessage.messageId)",
@@ -1052,21 +1052,21 @@ extension BLEManager {
 			}
 		}
 	}
-	
-	func waypointPacket (packet: MeshPacket, context: NSManagedObjectContext) {
+
+	func waypointPacket(packet: MeshPacket, context: NSManagedObjectContext) {
 		let request = WaypointEntity.fetchRequest()
 		request.predicate = NSPredicate(format: "id == %lld", Int64(packet.id))
-		
+
 		guard
 			let waypointMessage = try? Waypoint(serializedData: packet.decoded.payload),
 			let fetchedWaypoint = try? context.fetch(request)
 		else {
 			return
 		}
-		
+
 		if fetchedWaypoint.isEmpty {
 			let waypoint = WaypointEntity(context: context)
-			
+
 			waypoint.id = Int64(packet.id)
 			waypoint.name = waypointMessage.name
 			waypoint.longDescription = waypointMessage.description_p
@@ -1083,15 +1083,15 @@ extension BLEManager {
 			else {
 				waypoint.expire = nil
 			}
-			
-			debounce.emit { [weak self] in
+
+			dataDebounce.emit { [weak self] in
 				await self?.saveData()
 			}
-			
+
 			let icon = String(UnicodeScalar(Int(waypoint.icon)) ?? "📍")
 			let latitude = Double(waypoint.latitudeI) / 1e7
 			let longitude = Double(waypoint.longitudeI) / 1e7
-			
+
 			notificationManager.queue(
 				notification: Notification(
 					id: "notification.id.\(waypoint.id)",
@@ -1120,39 +1120,39 @@ extension BLEManager {
 			else {
 				fetchedWaypoint[0].expire = nil
 			}
-			
-			debounce.emit { [weak self] in
+
+			dataDebounce.emit { [weak self] in
 				await self?.saveData()
 			}
 		}
 	}
-	
+
 	func generateMessageMarkdown(message: String) -> String {
 		guard !message.isEmoji() else {
 			return message
 		}
-		
+
 		let types: NSTextCheckingResult.CheckingType = [.address, .link, .phoneNumber]
 		guard let detector = try? NSDataDetector(types: types.rawValue) else {
 			return message
 		}
-		
+
 		let matches = detector.matches(
 			in: message,
 			options: [],
 			range: NSRange(location: 0, length: message.utf16.count)
 		)
 		var messageWithMarkdown = message
-		
+
 		for match in matches {
 			guard let range = Range(match.range, in: message) else {
 				continue
 			}
-			
+
 			if match.resultType == .address {
 				let address = message[range]
 				let urlEncodedAddress = address.addingPercentEncoding(withAllowedCharacters: .alphanumerics)
-				
+
 				messageWithMarkdown = messageWithMarkdown.replacingOccurrences(
 					of: address,
 					with: "[\(address)](http://maps.apple.com/?address=\(urlEncodedAddress ?? ""))"
@@ -1160,7 +1160,7 @@ extension BLEManager {
 			}
 			else if match.resultType == .phoneNumber {
 				let phone = messageWithMarkdown[range]
-				
+
 				messageWithMarkdown = messageWithMarkdown.replacingOccurrences(
 					of: phone,
 					with: "[\(phone)](tel:\(phone))"
@@ -1172,17 +1172,17 @@ extension BLEManager {
 				let url = message[start ..< stop]
 				let absoluteUrl = match.url?.absoluteString ?? ""
 				let markdownUrl = "[\(url)](\(absoluteUrl))"
-				
+
 				messageWithMarkdown = messageWithMarkdown.replacingOccurrences(
 					of: url,
 					with: markdownUrl
 				)
 			}
 		}
-		
+
 		return messageWithMarkdown
 	}
-	
+
 	private func scheduleLowBatteryNotification(telemetry: TelemetryEntity) {
 		guard
 			UserDefaults.lowBatteryNotifications,
@@ -1191,7 +1191,7 @@ extension BLEManager {
 		else {
 			return
 		}
-		
+
 		let path: String?
 		if let num = telemetry.nodeTelemetry?.num {
 			path = "meshtastic:///nodes?nodenum=\(num)"
@@ -1199,7 +1199,7 @@ extension BLEManager {
 		else {
 			path = nil
 		}
-		
+
 		notificationManager.queue(
 			notification: Notification(
 				id: "notification.id.\(UUID().uuidString)",

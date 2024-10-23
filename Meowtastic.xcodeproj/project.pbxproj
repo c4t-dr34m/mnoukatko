@@ -95,8 +95,8 @@
 		B2CC14B22C66280000588C16 /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2CC14B12C66280000588C16 /* UIColor+Extension.swift */; };
 		B2CC552C2C7374EC003FB487 /* CBPeripheral+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2CC552B2C7374EC003FB487 /* CBPeripheral+Extensions.swift */; };
 		B2E8CE4A2CC94BF400407417 /* ConfigType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E8CE492CC94BF000407417 /* ConfigType.swift */; };
-		B2E8CE4C2CC94C0600407417 /* BLEDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E8CE4B2CC94C0200407417 /* BLEDelegate.swift */; };
-		B2E8CE4E2CC94C3300407417 /* BLEManager+BLEDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E8CE4D2CC94C2B00407417 /* BLEManager+BLEDelegate.swift */; };
+		B2E8CE4C2CC94C0600407417 /* CommDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E8CE4B2CC94C0200407417 /* CommDelegate.swift */; };
+		B2E8CE4E2CC94C3300407417 /* BLEManager+CommDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E8CE4D2CC94C2B00407417 /* BLEManager+CommDelegate.swift */; };
 		B399E8A42B6F486400E4488E /* RetryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B399E8A32B6F486400E4488E /* RetryButton.swift */; };
 		B3E905B12B71F7F300654D07 /* TextMessageField.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E905B02B71F7F300654D07 /* TextMessageField.swift */; };
 		C9697FA527933B8C00250207 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = C9697FA427933B8C00250207 /* SQLite */; };
@@ -275,8 +275,8 @@
 		B2CC14B12C66280000588C16 /* UIColor+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extension.swift"; sourceTree = "<group>"; };
 		B2CC552B2C7374EC003FB487 /* CBPeripheral+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CBPeripheral+Extensions.swift"; sourceTree = "<group>"; };
 		B2E8CE492CC94BF000407417 /* ConfigType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigType.swift; sourceTree = "<group>"; };
-		B2E8CE4B2CC94C0200407417 /* BLEDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEDelegate.swift; sourceTree = "<group>"; };
-		B2E8CE4D2CC94C2B00407417 /* BLEManager+BLEDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BLEManager+BLEDelegate.swift"; sourceTree = "<group>"; };
+		B2E8CE4B2CC94C0200407417 /* CommDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommDelegate.swift; sourceTree = "<group>"; };
+		B2E8CE4D2CC94C2B00407417 /* BLEManager+CommDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BLEManager+CommDelegate.swift"; sourceTree = "<group>"; };
 		B399E8A32B6F486400E4488E /* RetryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetryButton.swift; sourceTree = "<group>"; };
 		B3E905B02B71F7F300654D07 /* TextMessageField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMessageField.swift; sourceTree = "<group>"; };
 		D93068D22B8129510066FBC8 /* MessageContextMenuItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageContextMenuItems.swift; sourceTree = "<group>"; };
@@ -536,7 +536,7 @@
 		B284A42B2C6F877D00D5122B /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				B2E8CE4D2CC94C2B00407417 /* BLEManager+BLEDelegate.swift */,
+				B2E8CE4D2CC94C2B00407417 /* BLEManager+CommDelegate.swift */,
 				B284A42C2C6F87B200D5122B /* BLEManager+CBCentralManager.swift */,
 				B284A42E2C6F889000D5122B /* BLEManager+CBPeripheralDelegate.swift */,
 				DDA6B2E828419CF2003E8C16 /* BLEManager+MeshPackets.swift */,
@@ -645,8 +645,8 @@
 		B2E8CE482CC94BC800407417 /* Watchers */ = {
 			isa = PBXGroup;
 			children = (
-				B2E8CE4B2CC94C0200407417 /* BLEDelegate.swift */,
 				081C3AEA2C971E1600F93C46 /* BackgroundWatcher.swift */,
+				B2E8CE4B2CC94C0200407417 /* CommDelegate.swift */,
 				B2E8CE492CC94BF000407417 /* ConfigType.swift */,
 				B29C39172C92E6660082A3FC /* DevicesDelegate.swift */,
 			);
@@ -1026,7 +1026,7 @@
 				08DD7E552C41D63800548159 /* AppConstants.swift in Sources */,
 				B2A5F3002C5668FD009457AB /* NodeAlertsButton.swift in Sources */,
 				B2A064CE2C64D16E00B7E9F2 /* NavigationLazyView.swift in Sources */,
-				B2E8CE4C2CC94C0600407417 /* BLEDelegate.swift in Sources */,
+				B2E8CE4C2CC94C0600407417 /* CommDelegate.swift in Sources */,
 				B284A42D2C6F87B200D5122B /* BLEManager+CBCentralManager.swift in Sources */,
 				DDA0B6B2294CDC55001356EC /* Channels.swift in Sources */,
 				B399E8A42B6F486400E4488E /* RetryButton.swift in Sources */,
@@ -1138,7 +1138,7 @@
 				B3E905B12B71F7F300654D07 /* TextMessageField.swift in Sources */,
 				D93068D72B8146690066FBC8 /* MessageContentView.swift in Sources */,
 				084A3D422C7651EC0026433E /* StateMachine.swift in Sources */,
-				B2E8CE4E2CC94C3300407417 /* BLEManager+BLEDelegate.swift in Sources */,
+				B2E8CE4E2CC94C3300407417 /* BLEManager+CommDelegate.swift in Sources */,
 				DDC2E15826CE248E0042C5E4 /* Meowtastic.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

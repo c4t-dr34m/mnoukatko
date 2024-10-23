@@ -276,6 +276,7 @@ extension BLEManager: CBPeripheralDelegate {
 				}
 
 				coreDataTools.upsertNodeInfoPacket(packet: info.packet, context: context)
+				onInfoReceived(num: Int64(info.packet.from))
 
 			case .routingApp:
 				guard !isInvalidFwVersion else {
@@ -403,7 +404,7 @@ extension BLEManager: CBPeripheralDelegate {
 				traceRoute?.routeText = routeString
 				traceRoute?.hops = NSOrderedSet(array: hopNodes)
 
-				debounce.emit { [weak self] in
+				dataDebounce.emit { [weak self] in
 					await self?.saveData()
 				}
 
@@ -540,7 +541,7 @@ extension BLEManager: CBPeripheralDelegate {
 					router.storeForwardConfig = newConfig
 				}
 
-				debounce.emit { [weak self] in
+				dataDebounce.emit { [weak self] in
 					await self?.saveData()
 				}
 
@@ -560,7 +561,7 @@ extension BLEManager: CBPeripheralDelegate {
 					routerNode.storeForwardConfig = newConfig
 				}
 
-				debounce.emit { [weak self] in
+				dataDebounce.emit { [weak self] in
 					await self?.saveData()
 				}
 

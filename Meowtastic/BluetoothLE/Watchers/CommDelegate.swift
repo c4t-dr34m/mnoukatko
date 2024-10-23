@@ -1,6 +1,6 @@
 import Foundation
 
-protocol BLEDelegate: AnyObject {
+protocol CommDelegate: AnyObject {
 	func onTraceRouteReceived(for node: NodeInfoEntity?)
 	func onNodeConfigReceived(_ type: ConfigType, num: Int64)
 	func onNodeModuleConfigReceived(_ type: ConfigType, num: Int64)

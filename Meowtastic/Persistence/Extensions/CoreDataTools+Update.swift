@@ -243,7 +243,7 @@ extension CoreDataTools {
 		}
 	}
 
-	func upsertPositionPacket (packet: MeshPacket, context: NSManagedObjectContext) {
+	func upsertPositionPacket(packet: MeshPacket, context: NSManagedObjectContext) {
 		let fetchNodePositionRequest = NodeInfoEntity.fetchRequest()
 		fetchNodePositionRequest.predicate = NSPredicate(format: "num == %lld", Int64(packet.from))
 
@@ -702,7 +702,11 @@ extension CoreDataTools {
 		}
 	}
 
-	func upsertCannedMessagesModuleConfigPacket(config: ModuleConfig.CannedMessageConfig, nodeNum: Int64, context: NSManagedObjectContext) {
+	func upsertCannedMessagesModuleConfigPacket(
+		config: ModuleConfig.CannedMessageConfig,
+		nodeNum: Int64,
+		context: NSManagedObjectContext
+	) {
 		let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
 		fetchNodeInfoRequest.predicate = NSPredicate(format: "num == %lld", Int64(nodeNum))
 
@@ -971,7 +975,11 @@ extension CoreDataTools {
 		}
 	}
 
-	func upsertRangeTestModuleConfigPacket(config: ModuleConfig.RangeTestConfig, nodeNum: Int64, context: NSManagedObjectContext) {
+	func upsertRangeTestModuleConfigPacket(
+		config: ModuleConfig.RangeTestConfig,
+		nodeNum: Int64,
+		context: NSManagedObjectContext
+	) {
 		let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
 		fetchNodeInfoRequest.predicate = NSPredicate(format: "num == %lld", Int64(nodeNum))
 
@@ -1006,7 +1014,11 @@ extension CoreDataTools {
 		}
 	}
 
-	func upsertSerialModuleConfigPacket(config: ModuleConfig.SerialConfig, nodeNum: Int64, context: NSManagedObjectContext) {
+	func upsertSerialModuleConfigPacket(
+		config: ModuleConfig.SerialConfig,
+		nodeNum: Int64,
+		context: NSManagedObjectContext
+	) {
 		let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
 		fetchNodeInfoRequest.predicate = NSPredicate(format: "num == %lld", Int64(nodeNum))
 
@@ -1049,7 +1061,11 @@ extension CoreDataTools {
 		}
 	}
 
-	func upsertStoreForwardModuleConfigPacket(config: ModuleConfig.StoreForwardConfig, nodeNum: Int64, context: NSManagedObjectContext) {
+	func upsertStoreForwardModuleConfigPacket(
+		config: ModuleConfig.StoreForwardConfig,
+		nodeNum: Int64,
+		context: NSManagedObjectContext
+	) {
 		let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
 		fetchNodeInfoRequest.predicate = NSPredicate(format: "num == %lld", Int64(nodeNum))
 
@@ -1088,7 +1104,11 @@ extension CoreDataTools {
 		}
 	}
 
-	func upsertTelemetryModuleConfigPacket(config: ModuleConfig.TelemetryConfig, nodeNum: Int64, context: NSManagedObjectContext) {
+	func upsertTelemetryModuleConfigPacket(
+		config: ModuleConfig.TelemetryConfig,
+		nodeNum: Int64,
+		context: NSManagedObjectContext
+	) {
 		let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
 		fetchNodeInfoRequest.predicate = NSPredicate(format: "num == %lld", Int64(nodeNum))
 

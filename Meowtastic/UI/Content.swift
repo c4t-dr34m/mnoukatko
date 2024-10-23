@@ -10,8 +10,6 @@ struct Content: View {
 	@StateObject
 	private var appState = AppState.shared
 	@State
-	private var lastInfo: Date?
-	@State
 	private var connectPresented = true
 	@State
 	private var connectWasDismissed = false
@@ -80,45 +78,13 @@ struct Content: View {
 				.tag(TabTag.settings)
 		}
 		.onChange(of: bleManager.info, initial: true) {
-			lastInfo = .now
+			processBleManagerState()
 		}
 		.onChange(of: bleManager.isSubscribed, initial: true) {
-			if bleManager.isSubscribed, bleManager.isConnected {
-				connectWasDismissed = false
-
-				debounce.emit {
-					if let lastInfo {
-						if lastInfo.isStale(threshold: 1) {
-							connectPresented = false
-						}
-					}
-					else {
-						connectPresented = false
-					}
-				}
-			}
-			else if !connectWasDismissed {
-				connectPresented = true
-			}
+			processBleManagerState()
 		}
 		.onChange(of: bleManager.isConnected, initial: true) {
-			if bleManager.isSubscribed, bleManager.isConnected {
-				connectWasDismissed = false
-
-				debounce.emit {
-					if let lastInfo {
-						if lastInfo.isStale(threshold: 1) {
-							connectPresented = false
-						}
-					}
-					else {
-						connectPresented = false
-					}
-				}
-			}
-			else if !connectWasDismissed {
-				connectPresented = true
-			}
+			processBleManagerState()
 		}
 		.onChange(of: bleManager.lastConnectionError, initial: true) {
 			if !bleManager.lastConnectionError.isEmpty, !connectWasDismissed {
@@ -132,6 +98,21 @@ struct Content: View {
 			Connect(isInSheet: true)
 				.presentationDetents([.large])
 				.presentationDragIndicator(.visible)
+		}
+	}
+
+	private func processBleManagerState() {
+		if bleManager.isSubscribed, bleManager.isConnected {
+			connectWasDismissed = false
+
+			debounce.emit {
+				if bleManager.infoLastChanged?.isStale(threshold: 1) ?? true {
+					connectPresented = false
+				}
+			}
+		}
+		else if !connectWasDismissed {
+			connectPresented = true
 		}
 	}
 }

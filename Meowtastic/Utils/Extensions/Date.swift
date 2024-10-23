@@ -9,6 +9,7 @@ extension Date {
 		let dateformat = DateFormatter()
 		dateformat.dateFormat = format
 
+		// swiftlint:disable:next force_unwrapping
 		if self > Calendar.current.date(byAdding: .year, value: -5, to: Date())! {
 			return dateformat.string(from: self)
 		}

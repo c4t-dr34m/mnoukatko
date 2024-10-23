@@ -1,7 +1,7 @@
 import CoreData
 import OSLog
 
-extension BLEManager: BLEDelegate {
+extension BLEManager: CommDelegate {
 	func onTraceRouteReceived(for node: NodeInfoEntity?) {
 		// no-op
 	}
@@ -45,6 +45,7 @@ extension BLEManager: BLEDelegate {
 
 	private func updateInfo(with newInfo: String) {
 		info = newInfo
+		infoLastChanged = .now
 
 		if let info {
 			Logger.app.debug("\(info)")
@@ -79,6 +80,6 @@ extension BLEManager: BLEDelegate {
 
 private extension String {
 	func uppercaseFirstLetter() -> String {
-		return prefix(1).uppercased() + self.lowercased().dropFirst()
+		prefix(1).uppercased() + self.lowercased().dropFirst()
 	}
 }

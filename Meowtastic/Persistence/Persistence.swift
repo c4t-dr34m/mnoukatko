@@ -58,7 +58,6 @@ final class Persistence {
 				options: nil
 			)
 
-
 			do {
 				try coordinator.addPersistentStore(
 					ofType: NSSQLiteStoreType,
