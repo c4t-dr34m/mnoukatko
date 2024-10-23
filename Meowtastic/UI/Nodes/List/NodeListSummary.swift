@@ -62,6 +62,13 @@ struct NodeListSummary: View {
 					Spacer()
 						.frame(width: 4)
 
+					Image(systemName: "arrow.right")
+						.font(.system(size: 14, weight: .light))
+						.foregroundColor(.gray)
+
+					Spacer()
+						.frame(width: 4)
+
 					Image(systemName: "eye.circle")
 						.font(.system(size: 14, weight: .light))
 						.foregroundColor(.gray)
@@ -73,7 +80,7 @@ struct NodeListSummary: View {
 					Spacer()
 						.frame(width: 4)
 
-					Image(systemName: "plus.circle")
+					Image(systemName: "arrowshape.bounce.forward")
 						.font(.system(size: 14, weight: .light))
 						.foregroundColor(.gray)
 
