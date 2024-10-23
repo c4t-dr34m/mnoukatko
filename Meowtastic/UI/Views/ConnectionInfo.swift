@@ -9,6 +9,26 @@ struct ConnectionInfo: View {
 	private var bleManager: BLEManager
 	@State
 	private var rssiTimer: Timer?
+	private var infoColor: Color {
+		if let info = bleManager.infoLastChanged {
+			let diff = info.distance(to: .now)
+			if diff <= 60 {
+				return .green
+			}
+			else if diff <= 90 {
+				return .orange
+			}
+			else {
+				return .red
+			}
+		}
+		else {
+			return .gray
+		}
+	}
+	private var infoColorBackground: Color {
+		infoColor.opacity(0.3)
+	}
 	private var singleClip: UnevenRoundedRectangle {
 		let corners = RectangleCornerRadii(
 			topLeading: 12,
@@ -94,26 +114,28 @@ struct ConnectionInfo: View {
 						let diff = info.distance(to: .now)
 
 						HStack {
-							Image(systemName: "bolt.horizontal")
+							Image(systemName: "bčřolt.horizontal.fill")
 								.resizable()
 								.scaledToFit()
 								.frame(width: 16, height: 16)
+								.foregroundColor(infoColor)
 
 							if diff < 60 {
 								Text(String(format: "%.0f", diff) + "\"")
 									.font(.system(size: 12, weight: .bold, design: .rounded))
 									.lineLimit(1)
+									.foregroundColor(infoColor)
 							}
 							else {
 								Text(String(format: "%.0f", diff / 60) + "'")
 									.font(.system(size: 12, weight: .bold, design: .rounded))
 									.lineLimit(1)
+									.foregroundColor(infoColor)
 							}
 						}
-						.foregroundColor(.gray)
 						.padding(.vertical, 8)
 						.padding(.horizontal, 16)
-						.background(.gray.opacity(0.3))
+						.background(infoColorBackground)
 						.clipShape(centerClip)
 					}
 
