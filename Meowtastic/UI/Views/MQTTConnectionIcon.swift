@@ -26,6 +26,5 @@ struct MQTTConnectionIcon: View {
 			.foregroundColor(color)
 			.padding(8)
 			.background(color.opacity(0.3))
-			.clipShape(Circle())
 	}
 }

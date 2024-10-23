@@ -9,34 +9,56 @@ struct ConnectionInfo: View {
 	private var bleManager: BLEManager
 	@State
 	private var rssiTimer: Timer?
+	private var singleClip: UnevenRoundedRectangle {
+		let corners = RectangleCornerRadii(
+			topLeading: 12,
+			bottomLeading: 12,
+			bottomTrailing: 12,
+			topTrailing: 12
+		)
+
+		return UnevenRoundedRectangle(cornerRadii: corners, style: .continuous)
+	}
+	private var leadingClip: UnevenRoundedRectangle {
+		if bleManager.getConnectedDevice() == nil {
+			return singleClip
+		}
+		else {
+			let corners = RectangleCornerRadii(
+				topLeading: 2,
+				bottomLeading: 2,
+				bottomTrailing: 12,
+				topTrailing: 12
+			)
+
+			return UnevenRoundedRectangle(cornerRadii: corners, style: .continuous)
+		}
+	}
+	private var trailingClip: UnevenRoundedRectangle {
+		let corners = RectangleCornerRadii(
+			topLeading: 12,
+			bottomLeading: 12,
+			bottomTrailing: 2,
+			topTrailing: 2
+		)
+
+		return UnevenRoundedRectangle(cornerRadii: corners, style: .continuous)
+	}
 
 	@ViewBuilder
 	var body: some View {
 		if bleManager.isSwitchedOn {
 			if bleManager.isConnected {
-				HStack(spacing: 4) {
-					if mqttChannelInfo {
-						MQTTChannelIcon(
-							connected: bleManager.mqttConnected,
-							uplink: mqttUplinkEnabled,
-							downlink: mqttDownlinkEnabled
-						)
-					}
-					else {
-						MQTTConnectionIcon(
-							connected: bleManager.mqttConnected
-						)
-					}
-
+				HStack(spacing: 2) {
 					if let connectedDevice = bleManager.getConnectedDevice() {
 						SignalStrengthIndicator(
 							signalStrength: connectedDevice.getSignalStrength(),
-							size: 14,
+							size: 16,
 							color: .green
 						)
 						.padding(8)
 						.background(.green.opacity(0.3))
-						.clipShape(Circle())
+						.clipShape(trailingClip)
 						.onAppear {
 							rssiTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
 								connectedDevice.peripheral.readRSSI()
@@ -49,17 +71,35 @@ struct ConnectionInfo: View {
 					else {
 						EmptyView()
 					}
+
+					if mqttChannelInfo {
+						MQTTChannelIcon(
+							connected: bleManager.mqttConnected,
+							uplink: mqttUplinkEnabled,
+							downlink: mqttDownlinkEnabled
+						)
+						.clipShape(leadingClip)
+					}
+					else {
+						MQTTConnectionIcon(
+							connected: bleManager.mqttConnected
+						)
+						.clipShape(leadingClip)
+					}
 				}
 			}
 			else if bleManager.lastConnectionError.count > 0 {
 				deviceIcon("exclamationmark.triangle.fill", color: .red)
+					.clipShape(singleClip)
 			}
 			else {
 				deviceIcon("antenna.radiowaves.left.and.right.slash", color: .accentColor)
+					.clipShape(singleClip)
 			}
 		}
 		else {
 			deviceIcon("power", color: .red)
+				.clipShape(singleClip)
 		}
 	}
 
@@ -86,6 +126,5 @@ struct ConnectionInfo: View {
 			.foregroundColor(color)
 			.padding(8)
 			.background(color.opacity(0.3))
-			.clipShape(Circle())
 	}
 }
