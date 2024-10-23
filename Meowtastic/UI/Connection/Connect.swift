@@ -403,6 +403,8 @@ struct Connect: View {
 	@ViewBuilder
 	private func connectionAvatar(for node: NodeInfoEntity?) -> some View {
 		ZStack(alignment: .top) {
+			let nodeColor = node?.color ?? (colorScheme == .dark ? .white : .gray)
+
 			if let node {
 				AvatarNode(
 					node,
@@ -424,10 +426,10 @@ struct Connect: View {
 					Spacer()
 					Image(systemName: "magnifyingglass.circle.fill")
 						.font(.system(size: 24))
-						.foregroundColor(colorScheme == .dark ? .white : .gray)
+						.foregroundColor(nodeColor)
 						.background(
 							Circle()
-								.foregroundColor(.listBackground(for: colorScheme))
+								.foregroundColor(nodeColor.isLight() ? .black : .white)
 						)
 				}
 			}
@@ -436,7 +438,7 @@ struct Connect: View {
 					Spacer()
 					Image(systemName: "arrow.trianglehead.2.clockwise.rotate.90.circle.fill")
 						.font(.system(size: 24))
-						.foregroundColor(colorScheme == .dark ? .white : .gray)
+						.foregroundColor(nodeColor)
 						.rotationEffect(.degrees(degreesRotating))
 						.background(
 							Circle()
@@ -458,7 +460,7 @@ struct Connect: View {
 					Spacer()
 					Image(systemName: "checkmark.circle.fill")
 						.font(.system(size: 24))
-						.foregroundColor(colorScheme == .dark ? .white : .gray)
+						.foregroundColor(nodeColor)
 						.background(
 							Circle()
 								.foregroundColor(.listBackground(for: colorScheme))

@@ -176,7 +176,7 @@ struct NodeListConnectedItem: View {
 
 					Image(systemName: "antenna.radiowaves.left.and.right.circle.fill")
 						.font(.system(size: 24))
-						.foregroundColor(colorScheme == .dark ? .white : .gray)
+						.foregroundColor(connectedNode.color)
 						.background(
 							Circle()
 								.foregroundColor(.listBackground(for: colorScheme))
