@@ -12,14 +12,15 @@ struct ConnectionInfo: View {
 	private var infoColor: Color {
 		if let info = bleManager.infoLastChanged {
 			let diff = info.distance(to: .now)
-			if diff <= 60 {
+
+			if diff <= 90 {
 				return .green
 			}
-			else if diff <= 90 {
+			else if diff <= 300 {
 				return .orange
 			}
 			else {
-				return .red
+				return .gray
 			}
 		}
 		else {
@@ -94,7 +95,8 @@ struct ConnectionInfo: View {
 							color: .green
 						)
 						.padding(.vertical, 8)
-						.padding(.horizontal, 16)
+						.padding(.leading, 12)
+						.padding(.trailing, 8)
 						.background(.green.opacity(0.3))
 						.clipShape(trailingClip)
 						.onAppear {
@@ -124,7 +126,7 @@ struct ConnectionInfo: View {
 								Text(String(format: "%.0f", diff) + "\"")
 									.font(
 										.system(size: 12, weight: .bold, design: .rounded)
-										.monospacedDigit()
+										.monospaced()
 									)
 									.lineLimit(1)
 									.foregroundColor(infoColor)
@@ -135,7 +137,7 @@ struct ConnectionInfo: View {
 								Text(String(format: "%.0f", diff / 60) + "'")
 									.font(
 										.system(size: 12, weight: .bold, design: .rounded)
-										.monospacedDigit()
+										.monospaced()
 									)
 									.lineLimit(1)
 									.foregroundColor(infoColor)
@@ -144,7 +146,7 @@ struct ConnectionInfo: View {
 							}
 						}
 						.padding(.vertical, 8)
-						.padding(.horizontal, 16)
+						.padding(.horizontal, 8)
 						.background(infoColorBackground)
 						.clipShape(centerClip)
 					}
