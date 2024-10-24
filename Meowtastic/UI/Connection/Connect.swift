@@ -357,9 +357,16 @@ struct Connect: View {
 							color: .gray
 						)
 
-						Text(device.name)
-							.font(deviceFont)
-							.foregroundColor(.gray)
+						if let name = device.peripheral.name {
+							Text(name)
+								.font(deviceFont)
+								.foregroundColor(.gray)
+						}
+						else {
+							Text(device.name)
+								.font(deviceFont)
+								.foregroundColor(.gray)
+						}
 					}
 
 					if UserDefaults.preferredPeripheralId == device.peripheral.identifier.uuidString {
