@@ -121,6 +121,8 @@ struct Meowtastic: App {
 				scheduleAppRefresh()
 			}
 			else {
+				cancelAppRefresh()
+
 				bleManager.automaticallyReconnect = true
 				bleManager.startScanning()
 			}
@@ -169,6 +171,10 @@ struct Meowtastic: App {
 		catch let error {
 			Logger.app.warning("Failed to schedule background task: \(error.localizedDescription)")
 		}
+	}
+
+	private func cancelAppRefresh() {
+		BGTaskScheduler.shared.cancelAllTaskRequests()
 	}
 
 	private func refreshApp() async {
