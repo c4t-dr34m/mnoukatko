@@ -128,6 +128,8 @@ struct ConnectionInfo: View {
 									)
 									.lineLimit(1)
 									.foregroundColor(infoColor)
+									.transition(.slide)
+									.id("info_seconds")
 							}
 							else {
 								Text(String(format: "%.0f", diff / 60) + "'")
@@ -137,6 +139,8 @@ struct ConnectionInfo: View {
 									)
 									.lineLimit(1)
 									.foregroundColor(infoColor)
+									.transition(.slide)
+									.id("info_minutes")
 							}
 						}
 						.padding(.vertical, 8)
