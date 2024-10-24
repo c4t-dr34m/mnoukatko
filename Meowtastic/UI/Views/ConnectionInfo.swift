@@ -114,7 +114,7 @@ struct ConnectionInfo: View {
 						let diff = info.distance(to: .now)
 
 						HStack {
-							Image(systemName: "bčřolt.horizontal.fill")
+							Image(systemName: "bolt.horizontal.fill")
 								.resizable()
 								.scaledToFit()
 								.frame(width: 16, height: 16)
@@ -122,13 +122,19 @@ struct ConnectionInfo: View {
 
 							if diff < 60 {
 								Text(String(format: "%.0f", diff) + "\"")
-									.font(.system(size: 12, weight: .bold, design: .rounded))
+									.font(
+										.system(size: 12, weight: .bold, design: .rounded)
+										.monospacedDigit()
+									)
 									.lineLimit(1)
 									.foregroundColor(infoColor)
 							}
 							else {
 								Text(String(format: "%.0f", diff / 60) + "'")
-									.font(.system(size: 12, weight: .bold, design: .rounded))
+									.font(
+										.system(size: 12, weight: .bold, design: .rounded)
+										.monospacedDigit()
+									)
 									.lineLimit(1)
 									.foregroundColor(infoColor)
 							}
