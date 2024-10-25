@@ -77,9 +77,6 @@ struct Content: View {
 				}
 				.tag(TabTag.settings)
 		}
-		.onAppear {
-			connectPresented = true
-		}
 		.onChange(of: bleManager.info, initial: true) {
 			processBleManagerState()
 		}
@@ -87,6 +84,9 @@ struct Content: View {
 			processBleManagerState()
 		}
 		.onChange(of: bleManager.isConnected, initial: true) {
+			processBleManagerState()
+		}
+		.onChange(of: bleManager.isConnecting, initial: true) {
 			processBleManagerState()
 		}
 		.onChange(of: bleManager.lastConnectionError, initial: true) {
@@ -109,7 +109,7 @@ struct Content: View {
 			connectWasDismissed = false
 
 			debounce.emit {
-				if bleManager.infoLastChanged?.isStale(threshold: 1) ?? true {
+				if bleManager.infoLastChanged?.isStale(threshold: 1.5) ?? true {
 					connectPresented = false
 				}
 			}

@@ -66,7 +66,6 @@ struct Connect: View {
 			)
 		}
 		.onAppear {
-			bleManager.automaticallyReconnect = true
 			bleManager.startScanning()
 
 			Analytics.logEvent(
