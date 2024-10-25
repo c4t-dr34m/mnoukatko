@@ -116,7 +116,7 @@ struct Meowtastic: App {
 				try? Persistence.shared.container.viewContext.save()
 
 				bleManager.stopScanning()
-				bleManager.disconnectDevice(reconnect: false)
+				bleManager.automaticallyReconnect = false
 
 				scheduleAppRefresh()
 			}
