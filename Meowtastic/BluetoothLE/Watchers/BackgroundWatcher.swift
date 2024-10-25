@@ -38,8 +38,6 @@ final class BackgroundWatcher: DevicesDelegate {
 	func stopBackground(runtime: TimeInterval) {
 		scheduleSummaryNotification()
 
-		bleManager.disconnectDevice()
-
 		Logger.app.warning(
 			"Background task finished in \(Int(runtime))s; tasks done: \(self.tasksDone)"
 		)
