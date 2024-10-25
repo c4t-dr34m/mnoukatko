@@ -111,7 +111,7 @@ struct Meowtastic: App {
 					}
 				}
 		}
-		.onChange(of: scenePhase, initial: false) {
+		.onChange(of: scenePhase, initial: true) {
 			if scenePhase == .background {
 				try? Persistence.shared.container.viewContext.save()
 

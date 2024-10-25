@@ -66,6 +66,7 @@ struct Connect: View {
 			)
 		}
 		.onAppear {
+			bleManager.automaticallyReconnect = true
 			bleManager.startScanning()
 
 			Analytics.logEvent(
@@ -225,7 +226,7 @@ struct Connect: View {
 					if
 						let info = bleManager.info,
 						!info.isEmpty,
-						!(bleManager.infoLastChanged?.isStale(threshold: 2) ?? true)
+						!(bleManager.infoLastChanged?.isStale(threshold: 5) ?? true)
 					{
 						HStack(spacing: 8) {
 							Image(systemName: "info.circle.fill")

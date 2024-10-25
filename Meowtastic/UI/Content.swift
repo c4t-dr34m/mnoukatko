@@ -77,6 +77,9 @@ struct Content: View {
 				}
 				.tag(TabTag.settings)
 		}
+		.onAppear {
+			connectPresented = true
+		}
 		.onChange(of: bleManager.info, initial: true) {
 			processBleManagerState()
 		}

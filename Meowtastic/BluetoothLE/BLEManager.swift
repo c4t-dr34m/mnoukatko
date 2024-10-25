@@ -248,6 +248,8 @@ final class BLEManager: NSObject, ObservableObject {
 		characteristicFromRadio = nil
 		connectedVersion = "0.0.0"
 		automaticallyReconnect = reconnect
+		info = nil
+		infoLastChanged = nil
 
 		Analytics.logEvent(AnalyticEvents.bleDisconnect.id, parameters: nil)
 	}
