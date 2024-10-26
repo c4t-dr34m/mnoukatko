@@ -236,7 +236,7 @@ struct Connect: View {
 							if infoLastChanged.isStale(threshold: 30) {
 								let diff = infoLastChanged.distance(to: .now)
 
-								Text("Nothing for last \(diff)s")
+								Text("Nothing for last \(String(format: "%.0f", diff))s")
 									.lineLimit(1)
 									.font(detailInfoFont)
 									.foregroundColor(.gray)

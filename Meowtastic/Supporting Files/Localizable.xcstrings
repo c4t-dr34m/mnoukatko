@@ -10226,7 +10226,7 @@
     "Not Connected" : {
 
     },
-    "Nothing for last %lfs" : {
+    "Nothing for last %@s" : {
 
     },
     "Notifications" : {

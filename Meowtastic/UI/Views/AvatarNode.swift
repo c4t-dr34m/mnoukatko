@@ -97,7 +97,7 @@ struct AvatarNode: View {
 
 			if showLastHeard {
 				if
-					node.isOnline,
+					node.isOnline || ignoreOffline,
 					let lastHeard = node.lastHeard,
 					lastHeard.timeIntervalSince1970 > 0
 				{
@@ -109,21 +109,30 @@ struct AvatarNode: View {
 								.font(.system(size: size / 6, weight: .semibold, design: .rounded))
 								.foregroundColor(background.opacity(0.8))
 								.lineLimit(1)
+								.minimumScaleFactor(0.2)
 						}
-						else {
-							Text(String(format: "%.0f", diff) + "'")
+						else if diff < 60 {
+							Text(String(format: "%.0f", diff) + "\"")
 								.font(.system(size: size / 6, weight: .bold, design: .rounded))
 								.foregroundColor(background.opacity(0.8))
 								.lineLimit(1)
+								.minimumScaleFactor(0.2)
+						}
+						else {
+							Text(String(format: "%.0f", diff / 60) + "'")
+								.font(.system(size: size / 6, weight: .bold, design: .rounded))
+								.foregroundColor(background.opacity(0.8))
+								.lineLimit(1)
+								.minimumScaleFactor(0.2)
 						}
 
 						Image(systemName: "clock")
 							.font(.system(size: size / 8, weight: .semibold, design: .rounded))
 							.foregroundColor(background.opacity(0.8))
 					}
-					.padding(.leading, size / 10)
-					.padding(.trailing, size / 6)
-					.padding(.vertical, size / 32)
+					.padding(.leading, size / 16)
+					.padding(.trailing, size / 8)
+					.padding(.vertical, size / 36)
 					.background(foreground.opacity(0.8))
 					.clipShape(
 						UnevenRoundedRectangle(
@@ -136,9 +145,9 @@ struct AvatarNode: View {
 					Image(systemName: "antenna.radiowaves.left.and.right.slash")
 						.font(.system(size: size / 8, weight: .semibold, design: .rounded))
 						.foregroundColor(background.opacity(0.8))
-						.padding(.leading, size / 10)
-						.padding(.trailing, size / 6)
-						.padding(.vertical, size / 32)
+						.padding(.leading, size / 16)
+						.padding(.trailing, size / 8)
+						.padding(.vertical, size / 36)
 						.background(foreground.opacity(0.8))
 						.clipShape(
 							UnevenRoundedRectangle(
@@ -165,9 +174,9 @@ struct AvatarNode: View {
 						.font(.system(size: size / 8, weight: .semibold, design: .rounded))
 						.foregroundColor(background.opacity(0.8))
 				}
-				.padding(.leading, size / 10)
-				.padding(.trailing, size / 6)
-				.padding(.vertical, size / 32)
+				.padding(.leading, size / 16)
+				.padding(.trailing, size / 8)
+				.padding(.vertical, size / 36)
 				.background(foreground.opacity(0.8))
 				.clipShape(
 					UnevenRoundedRectangle(
