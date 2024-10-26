@@ -18,9 +18,15 @@ final class BackgroundWatcher: DevicesDelegate {
 	}
 
 	func startBackground() {
-		Logger.app.debug("Background task started")
-
 		tasksDone.removeAll()
+
+		if bleManager.isConnected, bleManager.isSubscribed {
+			Logger.app.debug("Background task started but node is still connected. No need to do anything")
+			return
+		}
+		else {
+			Logger.app.debug("Background task started")
+		}
 
 		bleManager.devicesDelegate = self
 		bleManager.startScanning()
