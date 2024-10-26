@@ -924,19 +924,21 @@ extension BLEManager {
 		newMessage.receivedACK = false
 		newMessage.snr = packet.rxSnr
 		newMessage.rssi = packet.rxRssi
-		newMessage.isEmoji = packet.decoded.emoji == 1
 		newMessage.channel = Int32(packet.channel)
 		newMessage.portNum = Int32(packet.decoded.portnum.rawValue)
+		newMessage.messagePayload = messageText
+		newMessage.messagePayloadMarkdown = generateMessageMarkdown(message: messageText)
+		newMessage.isEmoji = packet.decoded.emoji == 1
+
+		if packet.decoded.replyID > 0 {
+			newMessage.replyID = Int64(packet.decoded.replyID)
+		}
 
 		if
 			!UserDefaults.enableDetectionNotifications,
 			packet.decoded.portnum == PortNum.detectionSensorApp
 		{
 			newMessage.read = true
-		}
-
-		if packet.decoded.replyID > 0 {
-			newMessage.replyID = Int64(packet.decoded.replyID)
 		}
 
 		if
@@ -953,14 +955,13 @@ extension BLEManager {
 			$0.num == packet.from
 		}) {
 			newMessage.fromUser = firstUserFrom
+
 			if packet.rxTime > 0 {
 				newMessage.fromUser?.userNode?.lastHeard = Date(
 					timeIntervalSince1970: TimeInterval(Int64(packet.rxTime))
 				)
 			}
 		}
-		newMessage.messagePayload = messageText
-		newMessage.messagePayloadMarkdown = generateMessageMarkdown(message: messageText)
 
 		if
 			packet.to != Constants.maximumNodeNum,
@@ -973,11 +974,14 @@ extension BLEManager {
 			await self?.saveData()
 		}
 
-		guard
-			UserDefaults.enableDetectionNotifications,
-			packet.decoded.portnum != .detectionSensorApp,
-			let fromUser = newMessage.fromUser
-		else {
+		if
+			!UserDefaults.enableDetectionNotifications,
+			packet.decoded.portnum == .detectionSensorApp
+		{
+			return
+		}
+
+		guard let fromUser = newMessage.fromUser else {
 			return
 		}
 
