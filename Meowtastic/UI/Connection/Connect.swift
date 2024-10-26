@@ -224,6 +224,7 @@ struct Connect: View {
 
 					if
 						let info = bleManager.info,
+						let infoLastChanged = bleManager.infoLastChanged,
 						!info.isEmpty
 					{
 						HStack(spacing: 8) {
@@ -232,10 +233,20 @@ struct Connect: View {
 								.foregroundColor(.gray)
 								.frame(width: 14)
 
-							Text(info)
-								.lineLimit(1)
-								.font(detailInfoFont)
-								.foregroundColor(.gray)
+							if infoLastChanged.isStale(threshold: 30) {
+								let diff = infoLastChanged.distance(to: .now)
+
+								Text("Nothing for last \(diff)s")
+									.lineLimit(1)
+									.font(detailInfoFont)
+									.foregroundColor(.gray)
+							}
+							else {
+								Text(info)
+									.lineLimit(1)
+									.font(detailInfoFont)
+									.foregroundColor(.gray)
+							}
 						}
 					}
 				}

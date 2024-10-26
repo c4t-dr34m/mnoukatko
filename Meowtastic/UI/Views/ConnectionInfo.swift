@@ -112,8 +112,8 @@ struct ConnectionInfo: View {
 						EmptyView()
 					}
 
-					if let info = bleManager.infoLastChanged {
-						let diff = info.distance(to: .now)
+					if let infoLastChanged = bleManager.infoLastChanged {
+						let diff = infoLastChanged.distance(to: .now)
 
 						HStack {
 							Image(systemName: "bolt.horizontal.fill")
