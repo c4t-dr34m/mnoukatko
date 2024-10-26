@@ -224,8 +224,7 @@ struct Connect: View {
 
 					if
 						let info = bleManager.info,
-						!info.isEmpty,
-						!(bleManager.infoLastChanged?.isStale(threshold: 5) ?? true)
+						!info.isEmpty
 					{
 						HStack(spacing: 8) {
 							Image(systemName: "info.circle.fill")
