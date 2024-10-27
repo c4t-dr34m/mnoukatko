@@ -106,7 +106,6 @@ struct BluetoothConfig: View {
 				config.enabled = enabled
 				config.mode = BluetoothModes(rawValue: mode)?.protoEnumValue() ?? Config.BluetoothConfig.PairingMode.randomPin
 				config.fixedPin = UInt32(fixedPin) ?? 123456
-				config.deviceLoggingEnabled = deviceLoggingEnabled
 
 				let adminMessageId = nodeConfig.saveBluetoothConfig(
 					config: config,
@@ -161,14 +160,11 @@ struct BluetoothConfig: View {
 			enabled = config.enabled
 			mode = Int(config.mode)
 			fixedPin = String(config.fixedPin)
-			deviceLoggingEnabled = config.deviceLoggingEnabled
 		}
 		else {
 			enabled = true
 			mode = 0
 			fixedPin = "123456"
-			deviceLoggingEnabled = false
-
 		}
 
 		hasChanges = false

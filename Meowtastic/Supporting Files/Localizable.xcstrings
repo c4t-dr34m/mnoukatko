@@ -2602,9 +2602,6 @@
     "Debug" : {
 
     },
-    "Debug Log" : {
-
-    },
     "default" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -12538,9 +12535,6 @@
 
     },
     "Sequence number" : {
-
-    },
-    "Serial Console" : {
 
     },
     "serial.mode.default" : {

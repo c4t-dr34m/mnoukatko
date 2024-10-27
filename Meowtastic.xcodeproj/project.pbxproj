@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		080092A42CCECFEA00A1309D /* Meowtastic.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 080092A12CCECFEA00A1309D /* Meowtastic.xcdatamodeld */; };
 		081C3AEB2C971E1900F93C46 /* BackgroundWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 081C3AEA2C971E1600F93C46 /* BackgroundWatcher.swift */; };
 		081C3AED2C97494000F93C46 /* CBManagerState+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 081C3AEC2C97493900F93C46 /* CBManagerState+Extension.swift */; };
 		081C3AEF2C989B8F00F93C46 /* TelemetryConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 081C3AEE2C989B8C00F93C46 /* TelemetryConfig.swift */; };
@@ -14,7 +15,6 @@
 		084A3D442C76520A0026433E /* SafeStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084A3D432C7652080026433E /* SafeStorage.swift */; };
 		084A3D462C76522A0026433E /* Debounce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084A3D452C7652280026433E /* Debounce.swift */; };
 		084DCFFA2CA9BEF40032EF46 /* NodeIconsCompactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084DCFF92CA9BEE00032EF46 /* NodeIconsCompactView.swift */; };
-		085721B62C76220B000CE2B7 /* Meowtastic.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0857218B2C76220B000CE2B7 /* Meowtastic.xcdatamodeld */; };
 		0891A0CB2CCEA6600030B392 /* Navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0891A0CA2CCEA6570030B392 /* Navigation.swift */; };
 		0891A0CD2CCEA6A40030B392 /* URL+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0891A0CC2CCEA69F0030B392 /* URL+Extensions.swift */; };
 		08933D342C81BE80006D57EA /* MQTTManager+CocoaMQTTDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08933D332C81BE7C006D57EA /* MQTTManager+CocoaMQTTDelegate.swift */; };
@@ -197,6 +197,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		080092A22CCECFEA00A1309D /* MeshtasticDataModel_v42.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MeshtasticDataModel_v42.xcdatamodel; sourceTree = "<group>"; };
+		080092A32CCECFEA00A1309D /* MeshtasticDataModel_v43.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MeshtasticDataModel_v43.xcdatamodel; sourceTree = "<group>"; };
 		081C3AEA2C971E1600F93C46 /* BackgroundWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundWatcher.swift; sourceTree = "<group>"; };
 		081C3AEC2C97493900F93C46 /* CBManagerState+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CBManagerState+Extension.swift"; sourceTree = "<group>"; };
 		081C3AEE2C989B8C00F93C46 /* TelemetryConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryConfig.swift; sourceTree = "<group>"; };
@@ -204,7 +206,6 @@
 		084A3D432C7652080026433E /* SafeStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeStorage.swift; sourceTree = "<group>"; };
 		084A3D452C7652280026433E /* Debounce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debounce.swift; sourceTree = "<group>"; };
 		084DCFF92CA9BEE00032EF46 /* NodeIconsCompactView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeIconsCompactView.swift; sourceTree = "<group>"; };
-		0857219E2C76220B000CE2B7 /* MeshtasticDataModelV 42.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MeshtasticDataModelV 42.xcdatamodel"; sourceTree = "<group>"; };
 		0891A0CA2CCEA6570030B392 /* Navigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigation.swift; sourceTree = "<group>"; };
 		0891A0CC2CCEA69F0030B392 /* URL+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Extensions.swift"; sourceTree = "<group>"; };
 		08933D332C81BE7C006D57EA /* MQTTManager+CocoaMQTTDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MQTTManager+CocoaMQTTDelegate.swift"; sourceTree = "<group>"; };
@@ -425,8 +426,8 @@
 				DDC2E16526CE248F0042C5E4 /* Info.plist */,
 				08DD7E522C41CBBD00548159 /* Localizable.xcstrings */,
 				DD90860A26F645B700DC5189 /* Meowtastic.entitlements */,
-				0857218B2C76220B000CE2B7 /* Meowtastic.xcdatamodeld */,
 				DDDBC87A2BC62E4E001E8DF7 /* Settings.bundle */,
+				080092A12CCECFEA00A1309D /* Meowtastic.xcdatamodeld */,
 			);
 			path = "Supporting Files";
 			sourceTree = "<group>";
@@ -1059,6 +1060,7 @@
 				DDDB444A29F8AA3A00EE2349 /* CLLocationCoordinate2D.swift in Sources */,
 				DD41582628582E9B009B0E59 /* DeviceConfig.swift in Sources */,
 				B266A7552C5921BB00DFC723 /* Releases.swift in Sources */,
+				080092A42CCECFEA00A1309D /* Meowtastic.xcdatamodeld in Sources */,
 				DDF45C372BC46A5A005ED5F2 /* TimeZone.swift in Sources */,
 				08933D342C81BE80006D57EA /* MQTTManager+CocoaMQTTDelegate.swift in Sources */,
 				B2A5F2FD2C5668FD009457AB /* DeleteNodeButton.swift in Sources */,
@@ -1096,7 +1098,6 @@
 				DDD9E4E4284B208E003777C5 /* UserEntity+Extension.swift in Sources */,
 				DD2553592855B52700E55709 /* PositionConfig.swift in Sources */,
 				DD97E96828EFE9A00056DDA4 /* About.swift in Sources */,
-				085721B62C76220B000CE2B7 /* Meowtastic.xcdatamodeld in Sources */,
 				084A3D442C76520A0026433E /* SafeStorage.swift in Sources */,
 				DDDB444029F79AB000EE2349 /* UserDefaults.swift in Sources */,
 				DDB6ABE028B13AC700384BA1 /* DeviceRoles.swift in Sources */,
@@ -1444,12 +1445,13 @@
 /* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
-		0857218B2C76220B000CE2B7 /* Meowtastic.xcdatamodeld */ = {
+		080092A12CCECFEA00A1309D /* Meowtastic.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				0857219E2C76220B000CE2B7 /* MeshtasticDataModelV 42.xcdatamodel */,
+				080092A22CCECFEA00A1309D /* MeshtasticDataModel_v42.xcdatamodel */,
+				080092A32CCECFEA00A1309D /* MeshtasticDataModel_v43.xcdatamodel */,
 			);
-			currentVersion = 0857219E2C76220B000CE2B7 /* MeshtasticDataModelV 42.xcdatamodel */;
+			currentVersion = 080092A32CCECFEA00A1309D /* MeshtasticDataModel_v43.xcdatamodel */;
 			path = Meowtastic.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

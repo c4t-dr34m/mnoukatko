@@ -1,8 +1,8 @@
 excluded:
   - Meowtastic/Circles Of Hell
   - MeshtasticProtobufs
-  - protobufs
-  - scripts
+  - Protobufs
+  - Scripts
 
 disabled_rules:
   - empty_count # temporarily

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22758" systemVersion="23G5061b" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23231" systemVersion="24A348" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AmbientLightingConfigEntity" representedClassName="AmbientLightingConfigEntity" syncable="YES" codeGenerationType="class">
         <attribute name="blue" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="current" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
@@ -9,7 +9,6 @@
         <relationship name="ambientLightingConfigNode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="NodeInfoEntity" inverseName="ambientLightingConfig" inverseEntity="NodeInfoEntity"/>
     </entity>
     <entity name="BluetoothConfigEntity" representedClassName="BluetoothConfigEntity" syncable="YES" codeGenerationType="class">
-        <attribute name="deviceLoggingEnabled" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="enabled" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="fixedPin" optional="YES" attributeType="Integer 32" defaultValueString="123456" usesScalarValueType="YES"/>
         <attribute name="mode" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
@@ -40,9 +39,6 @@
         <attribute name="role" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="uplinkEnabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <relationship name="myInfoChannel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MyInfoEntity" inverseName="channels" inverseEntity="MyInfoEntity"/>
-        <fetchedProperty name="allPrivateMessages" optional="YES">
-            <fetchRequest name="fetchedPropertyFetchRequest" entity="MessageEntity" predicateString="channel == $FETCH_SOURCE.index AND  toUser == nil AND isEmoji == false"/>
-        </fetchedProperty>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="index"/>
@@ -50,7 +46,7 @@
         </uniquenessConstraints>
     </entity>
     <entity name="DetectionSensorConfigEntity" representedClassName="DetectionSensorConfigEntity" syncable="YES" codeGenerationType="class">
-        <attribute name="detectionTriggeredHigh" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="detectionTriggerType" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="enabled" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="minimumBroadcastSecs" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="monitorPin" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
@@ -63,7 +59,6 @@
     <entity name="DeviceConfigEntity" representedClassName="DeviceConfigEntity" syncable="YES" codeGenerationType="class">
         <attribute name="buttonGpio" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="buzzerGpio" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="debugLogEnabled" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="disableTripleClick" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="doubleTapAsButtonPress" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="isManaged" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
@@ -71,7 +66,6 @@
         <attribute name="nodeInfoBroadcastSecs" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="rebroadcastMode" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="role" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="serialEnabled" optional="YES" attributeType="Boolean" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="tzdef" optional="YES" attributeType="String"/>
         <relationship name="deviceConfigNode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="NodeInfoEntity" inverseName="deviceConfig" inverseEntity="NodeInfoEntity"/>
     </entity>
@@ -162,15 +156,11 @@
         <attribute name="read" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="realACK" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="receivedACK" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="receivedTimestamp" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="replyID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="rssi" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="snr" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
         <relationship name="fromUser" optional="YES" maxCount="1" deletionRule="Nullify" ordered="YES" destinationEntity="UserEntity" inverseName="sentMessages" inverseEntity="UserEntity"/>
         <relationship name="toUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserEntity" inverseName="receivedMessages" inverseEntity="UserEntity"/>
-        <fetchedProperty name="tapbacks" optional="YES">
-            <fetchRequest name="fetchedPropertyFetchRequest" entity="MessageEntity" predicateString="replyID == $FETCH_SOURCE.messageId AND isEmoji == true"/>
-        </fetchedProperty>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="messageId"/>
@@ -201,9 +191,6 @@
         <attribute name="rebootCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="channels" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="ChannelEntity" inverseName="myInfoChannel" inverseEntity="ChannelEntity"/>
         <relationship name="myInfoNode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="NodeInfoEntity" inverseName="myInfo" inverseEntity="NodeInfoEntity"/>
-        <fetchedProperty name="allMessages" optional="YES">
-            <fetchRequest name="fetchedPropertyFetchRequest" entity="MessageEntity" predicateString="toUser == nil"/>
-        </fetchedProperty>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="myNodeNum"/>
@@ -424,7 +411,9 @@
         <relationship name="traceRoute" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TraceRouteEntity" inverseName="hops" inverseEntity="TraceRouteEntity"/>
     </entity>
     <entity name="UserEntity" representedClassName="UserEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="hwDisplayName" optional="YES" attributeType="String"/>
         <attribute name="hwModel" attributeType="String"/>
+        <attribute name="hwModelId" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="isLicensed" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="lastMessage" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="longName" attributeType="String"/>
@@ -437,12 +426,6 @@
         <relationship name="receivedMessages" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="MessageEntity" inverseName="toUser" inverseEntity="MessageEntity"/>
         <relationship name="sentMessages" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="MessageEntity" inverseName="fromUser" inverseEntity="MessageEntity"/>
         <relationship name="userNode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="NodeInfoEntity" inverseName="user" inverseEntity="NodeInfoEntity"/>
-        <fetchedProperty name="allMessages" optional="YES">
-            <fetchRequest name="fetchedPropertyFetchRequest" entity="MessageEntity" predicateString="((toUser.num == $FETCH_SOURCE.num) OR (fromUser.num == $FETCH_SOURCE.num)) AND toUser != nil AND fromUser != nil AND isEmoji == false AND admin = false AND portNum != 10 "/>
-        </fetchedProperty>
-        <fetchedProperty name="detectionSensorMessages" optional="YES">
-            <fetchRequest name="fetchedPropertyFetchRequest" entity="MessageEntity" predicateString="(fromUser.num == $FETCH_SOURCE.num) AND portNum = 10"/>
-        </fetchedProperty>
     </entity>
     <entity name="WaypointEntity" representedClassName="WaypointEntity" syncable="YES" codeGenerationType="class">
         <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>

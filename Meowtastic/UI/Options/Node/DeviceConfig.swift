@@ -24,20 +24,30 @@ struct DeviceConfig: View {
 
 	var node: NodeInfoEntity
 
-	@State private var isPresentingNodeDBResetConfirm = false
-	@State private var isPresentingFactoryResetConfirm = false
-	@State var hasChanges = false
-	@State var deviceRole = 0
-	@State var buzzerGPIO = 0
-	@State var buttonGPIO = 0
-	@State var serialEnabled = true
-	@State var debugLogEnabled = false
-	@State var rebroadcastMode = 0
-	@State var nodeInfoBroadcastSecs = 10800
-	@State var doubleTapAsButtonPress = false
-	@State var ledHeartbeatEnabled = true
-	@State var isManaged = false
-	@State var tzdef = ""
+	@State
+	var hasChanges = false
+	@State
+	var deviceRole = 0
+	@State
+	var buzzerGPIO = 0
+	@State
+	var buttonGPIO = 0
+	@State
+	var rebroadcastMode = 0
+	@State
+	var nodeInfoBroadcastSecs = 10800
+	@State
+	var doubleTapAsButtonPress = false
+	@State
+	var ledHeartbeatEnabled = true
+	@State
+	var isManaged = false
+	@State
+	var tzdef = ""
+	@State
+	private var isPresentingNodeDBResetConfirm = false
+	@State
+	private var isPresentingFactoryResetConfirm = false
 
 	var body: some View {
 		VStack {
@@ -100,17 +110,10 @@ struct DeviceConfig: View {
 				}
 
 				Section(header: Text("Debug")) {
-					Toggle(isOn: $serialEnabled) {
-						Label("Serial Console", systemImage: "terminal")
-					}
-					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
-					Toggle(isOn: $debugLogEnabled) {
-						Label("Debug Log", systemImage: "ant.fill")
-					}
-					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 					VStack(alignment: .leading) {
 						HStack {
 							Label("Time Zone", systemImage: "clock.badge.exclamationmark")
+
 							TextField("Time Zone", text: $tzdef, axis: .vertical)
 								.foregroundColor(.gray)
 								.onChange(of: tzdef, perform: { _ in
@@ -225,8 +228,6 @@ struct DeviceConfig: View {
 					{
 						var dc = Config.DeviceConfig()
 						dc.role = DeviceRoles(rawValue: deviceRole)!.protoEnumValue()
-						dc.serialEnabled = serialEnabled
-						dc.debugLogEnabled = debugLogEnabled
 						dc.buttonGpio = UInt32(buttonGPIO)
 						dc.buzzerGpio = UInt32(buzzerGPIO)
 						dc.rebroadcastMode = RebroadcastModes(rawValue: rebroadcastMode)?.protoEnumValue() ?? RebroadcastModes.all.protoEnumValue()
@@ -235,10 +236,6 @@ struct DeviceConfig: View {
 						dc.isManaged = isManaged
 						dc.tzdef = tzdef
 						dc.ledHeartbeatDisabled = !ledHeartbeatEnabled
-						if isManaged {
-							serialEnabled = false
-							debugLogEnabled = false
-						}
 
 						let adminMessageId = nodeConfig.saveDeviceConfig(
 							config: dc,
@@ -270,7 +267,7 @@ struct DeviceConfig: View {
 				Logger.mesh.info("empty device config")
 
 				let connectedNode = coreDataTools.getNodeInfo(
-					id: device.num ?? -1,
+					id: device.num,
 					context: context
 				)
 
@@ -284,12 +281,6 @@ struct DeviceConfig: View {
 			}
 		}
 		.onChange(of: deviceRole) {
-			hasChanges = true
-		}
-		.onChange(of: serialEnabled) {
-			hasChanges = true
-		}
-		.onChange(of: debugLogEnabled) {
 			hasChanges = true
 		}
 		.onChange(of: buttonGPIO) {
@@ -317,8 +308,6 @@ struct DeviceConfig: View {
 
 	func setDeviceValues() {
 		if let config = node.deviceConfig {
-			serialEnabled = (config.serialEnabled)
-			debugLogEnabled = config.debugLogEnabled
 			doubleTapAsButtonPress = config.doubleTapAsButtonPress
 			ledHeartbeatEnabled = config.ledHeartbeatEnabled
 			isManaged = config.isManaged
@@ -330,8 +319,6 @@ struct DeviceConfig: View {
 			nodeInfoBroadcastSecs = Int(config.nodeInfoBroadcastSecs)
 		}
 		else {
-			serialEnabled = true
-			debugLogEnabled = false
 			doubleTapAsButtonPress = false
 			ledHeartbeatEnabled = true
 			isManaged = false

@@ -345,13 +345,11 @@ extension CoreDataTools {
 					newBluetoothConfig.enabled = config.enabled
 					newBluetoothConfig.mode = Int32(config.mode.rawValue)
 					newBluetoothConfig.fixedPin = Int32(config.fixedPin)
-					newBluetoothConfig.deviceLoggingEnabled = config.deviceLoggingEnabled
 					fetchedNode[0].bluetoothConfig = newBluetoothConfig
 				} else {
 					fetchedNode[0].bluetoothConfig?.enabled = config.enabled
 					fetchedNode[0].bluetoothConfig?.mode = Int32(config.mode.rawValue)
 					fetchedNode[0].bluetoothConfig?.fixedPin = Int32(config.fixedPin)
-					fetchedNode[0].bluetoothConfig?.deviceLoggingEnabled = config.deviceLoggingEnabled
 				}
 
 				debounce.emit { [weak self] in
@@ -379,8 +377,6 @@ extension CoreDataTools {
 				if fetchedNode[0].deviceConfig == nil {
 					let newDeviceConfig = DeviceConfigEntity(context: context)
 					newDeviceConfig.role = Int32(config.role.rawValue)
-					newDeviceConfig.serialEnabled = config.serialEnabled
-					newDeviceConfig.debugLogEnabled = config.debugLogEnabled
 					newDeviceConfig.buttonGpio = Int32(config.buttonGpio)
 					newDeviceConfig.buzzerGpio =  Int32(config.buzzerGpio)
 					newDeviceConfig.rebroadcastMode = Int32(config.rebroadcastMode.rawValue)
@@ -393,8 +389,6 @@ extension CoreDataTools {
 				}
 				else {
 					fetchedNode[0].deviceConfig?.role = Int32(config.role.rawValue)
-					fetchedNode[0].deviceConfig?.serialEnabled = config.serialEnabled
-					fetchedNode[0].deviceConfig?.debugLogEnabled = config.debugLogEnabled
 					fetchedNode[0].deviceConfig?.buttonGpio = Int32(config.buttonGpio)
 					fetchedNode[0].deviceConfig?.buzzerGpio = Int32(config.buzzerGpio)
 					fetchedNode[0].deviceConfig?.rebroadcastMode = Int32(config.rebroadcastMode.rawValue)
@@ -768,7 +762,7 @@ extension CoreDataTools {
 					newConfig.sendBell = config.sendBell
 					newConfig.name = config.name
 					newConfig.monitorPin = Int32(config.monitorPin)
-					newConfig.detectionTriggeredHigh = config.detectionTriggeredHigh
+					newConfig.detectionTriggerType = Int32(config.detectionTriggerType.rawValue)
 					newConfig.usePullup = config.usePullup
 					newConfig.minimumBroadcastSecs = Int32(truncatingIfNeeded: config.minimumBroadcastSecs)
 					newConfig.stateBroadcastSecs = Int32(truncatingIfNeeded: config.stateBroadcastSecs)
@@ -780,9 +774,13 @@ extension CoreDataTools {
 					fetchedNode[0].detectionSensorConfig?.name = config.name
 					fetchedNode[0].detectionSensorConfig?.monitorPin = Int32(config.monitorPin)
 					fetchedNode[0].detectionSensorConfig?.usePullup = config.usePullup
-					fetchedNode[0].detectionSensorConfig?.detectionTriggeredHigh = config.detectionTriggeredHigh
+					fetchedNode[0].detectionSensorConfig?.detectionTriggerType = Int32(
+						config.detectionTriggerType.rawValue
+					)
 					fetchedNode[0].detectionSensorConfig?.minimumBroadcastSecs = Int32(truncatingIfNeeded: config.minimumBroadcastSecs)
-					fetchedNode[0].detectionSensorConfig?.stateBroadcastSecs = Int32(truncatingIfNeeded: config.stateBroadcastSecs)
+					fetchedNode[0].detectionSensorConfig?.stateBroadcastSecs = Int32(
+						truncatingIfNeeded: config.stateBroadcastSecs
+					)
 				}
 
 				debounce.emit { [weak self] in
