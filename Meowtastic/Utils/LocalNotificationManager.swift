@@ -9,6 +9,7 @@ final class LocalNotificationManager {
 
 	func queue(
 		notification: Notification,
+		delay: TimeInterval = 5,
 		silent: Bool = false,
 		removeExisting: Bool = false
 	) {
@@ -22,20 +23,21 @@ final class LocalNotificationManager {
 
 		semaphore.signal()
 
-		process(silent: silent, removeExisting: removeExisting)
+		process(delay: delay, silent: silent, removeExisting: removeExisting)
 	}
 
 	private func process(
+		delay: TimeInterval = 5,
 		silent: Bool = false,
 		removeExisting: Bool = false
 	) {
 		UNUserNotificationCenter.current().getNotificationSettings { settings in
 			switch settings.authorizationStatus {
 			case .notDetermined:
-				self.requestAuthorization(silent: silent, removeExisting: removeExisting)
+				self.requestAuthorization(delay: delay, silent: silent, removeExisting: removeExisting)
 
 			case .authorized, .provisional:
-				self.scheduleNotifications(silent: silent, removeExisting: removeExisting)
+				self.scheduleNotifications(delay: delay, silent: silent, removeExisting: removeExisting)
 
 			default:
 				break // Do nothing
@@ -44,6 +46,7 @@ final class LocalNotificationManager {
 	}
 
 	private func requestAuthorization(
+		delay: TimeInterval = 5,
 		silent: Bool = false,
 		removeExisting: Bool = false
 	) {
@@ -54,11 +57,12 @@ final class LocalNotificationManager {
 				return
 			}
 
-			self.scheduleNotifications(silent: silent, removeExisting: removeExisting)
+			self.scheduleNotifications(delay: delay, silent: silent, removeExisting: removeExisting)
 		}
 	}
 
 	private func scheduleNotifications(
+		delay: TimeInterval = 5,
 		silent: Bool = false,
 		removeExisting: Bool = false
 	) {
@@ -85,7 +89,7 @@ final class LocalNotificationManager {
 			}
 
 			let trigger = UNTimeIntervalNotificationTrigger(
-				timeInterval: 5,
+				timeInterval: delay,
 				repeats: false
 			)
 			let request = UNNotificationRequest(

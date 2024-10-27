@@ -21,12 +21,14 @@ struct Messages: View {
 	private var nodeConfig: NodeConfig
 	@Environment(\.colorScheme)
 	private var colorScheme: ColorScheme
+	@StateObject
+	private var appState = AppState.shared
 	@State
-	private var searchText = ""
+	private var selectedChannel: ChannelEntity? // Nothing selected by default.
 	@State
-	private var channelSelection: ChannelEntity? // Nothing selected by default.
+	private var selectedUser: UserEntity? // Nothing selected by default.
 	@State
-	private var userSelection: UserEntity? // Nothing selected by default.
+	private var selectedConversationPresented = false
 	@State
 	private var isPresentingTraceRouteSentAlert = false
 	@State
@@ -113,23 +115,51 @@ struct Messages: View {
 			.listStyle(.automatic)
 			.disableAutocorrection(true)
 			.scrollDismissesKeyboard(.immediately)
-			.searchable(
-				text: $searchText,
-				placement: users.count > 10 ? .navigationBarDrawer(displayMode: .always) : .automatic,
-				prompt: "Find a contact"
-			)
-			.onChange(of: searchText, initial: true) {
-				Task {
-					await updateFilter()
-				}
-			}
 			.navigationTitle("Messages")
 			.navigationBarItems(
 				trailing: ConnectionInfo()
 			)
+			.navigationDestination(
+				isPresented: $selectedConversationPresented,
+				destination: {
+					if let selectedUser {
+						NavigationLazyView(
+							MessageList(user: selectedUser, myInfo: node?.myInfo)
+						)
+					}
+					else if let selectedChannel {
+						NavigationLazyView(
+							MessageList(channel: selectedChannel, myInfo: node?.myInfo)
+						)
+					}
+				}
+			)
 		}
 		.onAppear {
 			Analytics.logEvent(AnalyticEvents.messages.id, parameters: nil)
+		}
+		.onChange(of: appState.navigation, initial: true) {
+			guard case let .messages(channel, user, _) = appState.navigation else {
+				return
+			}
+
+			if let user {
+				selectedUser = users.first(where: { usr in
+					usr.num == user
+				})
+				selectedConversationPresented = true
+			}
+			else if let channel {
+				selectedChannel = channels.first(where: { ch in
+					ch.index == channel
+				})
+				selectedConversationPresented = true
+			}
+		}
+		.onChange(of: selectedConversationPresented) {
+			if !selectedConversationPresented {
+				AppState.shared.navigation = nil
+			}
 		}
 	}
 
@@ -178,16 +208,16 @@ struct Messages: View {
 							titleVisibility: .visible
 						) {
 							Button(role: .destructive) {
-								guard let channelSelection else {
+								guard let selectedChannel else {
 									return
 								}
 
-								coreDataTools.deleteChannelMessages(channel: channelSelection, context: context)
+								coreDataTools.deleteChannelMessages(channel: selectedChannel, context: context)
 								if let myInfo = node?.myInfo {
 									context.refresh(myInfo, mergeChanges: true)
 								}
 
-								self.channelSelection = nil
+								self.selectedChannel = nil
 							} label: {
 								Text("Delete")
 							}
@@ -450,7 +480,7 @@ struct Messages: View {
 		if hasMessages {
 			Button(role: .destructive) {
 				isPresentingDeleteUserMessagesConfirm = true
-				userSelection = user
+				selectedUser = user
 			} label: {
 				Label("Delete Messages", systemImage: "trash")
 			}
@@ -468,25 +498,6 @@ struct Messages: View {
 		}
 
 		return Color.gray.opacity(0.7)
-	}
-
-	private func updateFilter() async {
-		let searchPredicates = [
-			"userId",
-			"numString",
-			"hwModel",
-			"longName",
-			"shortName"
-		].map { property in
-			NSPredicate(format: "%K CONTAINS[c] %@", property, searchText)
-		}
-
-		if !searchText.isEmpty {
-			users.nsPredicate = NSCompoundPredicate(type: .or, subpredicates: searchPredicates)
-		}
-		else {
-			users.nsPredicate = nil
-		}
 	}
 
 	private func getLastMessage(for user: UserEntity) -> MessageEntity? {

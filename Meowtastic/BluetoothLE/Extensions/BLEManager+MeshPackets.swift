@@ -991,7 +991,7 @@ extension BLEManager {
 				appState.unreadDirectMessages = toUser.unreadMessages
 			}
 
-			if !fromUser.mute {
+			if !fromUser.mute, let num = newMessage.fromUser?.num {
 				let subtitle: String?
 				if let longName = fromUser.longName {
 					subtitle = "From: \(longName)"
@@ -1000,17 +1000,19 @@ extension BLEManager {
 					subtitle = nil
 				}
 
-				notificationManager.queue(
-					notification: Notification(
-						id: "notification.id.\(newMessage.messageId)",
-						title: "New Direct Message Received",
-						subtitle: subtitle,
-						body: messageText,
-						path: URL(
-							string:
-								"\(AppConstants.meowtasticScheme):///messages?user=\(newMessage.fromUser?.num ?? 0)&id=\(newMessage.messageId)"
-						)
+				let notification = Notification(
+					id: "notification.id.user_\(num)",
+					title: "New Direct Message Received",
+					subtitle: subtitle,
+					body: messageText,
+					path: URL(
+						string:
+							"\(AppConstants.meowtasticScheme):///messages?user=\(num)&id=\(newMessage.messageId)"
 					)
+				)
+
+				notificationManager.queue(
+					notification: notification
 				)
 			}
 		}
@@ -1043,16 +1045,20 @@ extension BLEManager {
 							subtitle = nil
 						}
 
-						notificationManager.queue(
-							notification: Notification(
-								id: "notification.id.\(newMessage.messageId)",
-								title: "New Channel Message Received",
-								subtitle: subtitle,
-								body: messageText,
-								path: URL(
-									string: "\(AppConstants.meowtasticScheme):///messages?channel=\(newMessage.channel)&id=\(newMessage.messageId)"
-								)
+						let notification = Notification(
+							id: "notification.id.channel_\(newMessage.channel)",
+							title: "New Channel Message Received",
+							subtitle: subtitle,
+							body: messageText,
+							path: URL(
+								string: "\(AppConstants.meowtasticScheme):///messages?channel=\(newMessage.channel)&id=\(newMessage.messageId)"
 							)
+						)
+
+						notificationManager.queue(
+							notification: notification,
+							delay: 3 * 60,
+							removeExisting: true
 						)
 					}
 				}

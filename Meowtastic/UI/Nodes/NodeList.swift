@@ -20,13 +20,12 @@ struct NodeList: View {
 	private var nodeConfig: NodeConfig
 	@StateObject
 	private var appState = AppState.shared
-
 	@State
 	private var showOffline = false
 	@State
 	private var selectedNode: NodeInfoEntity?
 	@State
-	private var selectedNodePresented: Bool = false
+	private var selectedNodePresented = false
 
 	@FetchRequest(
 		sortDescriptors: [
