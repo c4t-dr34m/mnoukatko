@@ -46,7 +46,7 @@
 			<string>org.meshtastic</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>meshtastic</string>
+				<string>meow</string>
 			</array>
 		</dict>
 	</array>

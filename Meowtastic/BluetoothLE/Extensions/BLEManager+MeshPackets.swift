@@ -1006,8 +1006,10 @@ extension BLEManager {
 						title: "New Direct Message Received",
 						subtitle: subtitle,
 						body: messageText,
-						target: "messages",
-						path: "meshtastic:///messages?userNum=\(newMessage.fromUser?.num ?? 0)&messageId=\(newMessage.messageId)"
+						path: URL(
+							string:
+								"\(AppConstants.meowtasticScheme):///messages?user=\(newMessage.fromUser?.num ?? 0)&id=\(newMessage.messageId)"
+						)
 					)
 				)
 			}
@@ -1047,8 +1049,9 @@ extension BLEManager {
 								title: "New Channel Message Received",
 								subtitle: subtitle,
 								body: messageText,
-								target: "messages",
-								path: "meshtastic:///messages?channelId=\(newMessage.channel)&messageId=\(newMessage.messageId)"
+								path: URL(
+									string: "\(AppConstants.meowtasticScheme):///messages?channel=\(newMessage.channel)&id=\(newMessage.messageId)"
+								)
 							)
 						)
 					}
@@ -1102,8 +1105,9 @@ extension BLEManager {
 					title: "New Waypoint Received",
 					subtitle: "\(icon) \(waypoint.name ?? "Dropped Pin")",
 					body: "\(waypoint.longDescription ?? "\(latitude), \(longitude)")",
-					target: "map",
-					path: "meshtastic:///map?waypointid=\(waypoint.id)"
+					path: URL(
+						string: "\(AppConstants.meowtasticScheme):///map?waypointid=\(waypoint.id)"
+					)
 				)
 			)
 		}
@@ -1196,9 +1200,9 @@ extension BLEManager {
 			return
 		}
 
-		let path: String?
+		let path: URL?
 		if let num = telemetry.nodeTelemetry?.num {
-			path = "meshtastic:///nodes?nodenum=\(num)"
+			path = URL(string: "\(AppConstants.meowtasticScheme):///nodes?num=\(num)")
 		}
 		else {
 			path = nil
@@ -1210,7 +1214,6 @@ extension BLEManager {
 				title: "Node Battery is Low",
 				subtitle: telemetry.nodeTelemetry?.user?.longName,
 				body: "Time to charge your node. There is \(telemetry.batteryLevel)% battery remaining.",
-				target: "nodes",
 				path: path
 			)
 		)

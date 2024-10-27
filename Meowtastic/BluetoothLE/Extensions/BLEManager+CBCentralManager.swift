@@ -138,8 +138,7 @@ extension BLEManager: CBCentralManagerDelegate {
 							title: "Radio Disconnected",
 							subtitle: "\(peripheral.name ?? peripheral.identifier.uuidString)",
 							body: error.localizedDescription,
-							target: "bluetooth",
-							path: "meshtastic:///bluetooth"
+							path: URL(string: "\(AppConstants.meowtasticScheme):///connection")
 						)
 					)
 				}
@@ -157,8 +156,7 @@ extension BLEManager: CBCentralManagerDelegate {
 							title: "Radio Disconnected",
 							subtitle: "\(peripheral.name ?? peripheral.identifier.uuidString)",
 							body: error.localizedDescription,
-							target: "bluetooth",
-							path: "meshtastic:///bluetooth"
+							path: URL(string: "\(AppConstants.meowtasticScheme):///connection")
 						)
 					)
 				}

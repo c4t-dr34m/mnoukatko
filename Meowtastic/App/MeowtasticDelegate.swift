@@ -21,6 +21,20 @@ final class MeowtasticDelegate: UIResponder, UIApplicationDelegate, UNUserNotifi
 		return true
 	}
 
+	func application(
+		_ app: UIApplication,
+		open url: URL,
+		options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+	) -> Bool {
+		if url.scheme == AppConstants.meowtasticScheme {
+			AppState.shared.tabSelection = TabTag(from: url)
+
+			return true
+		}
+
+		return false
+	}
+
 	func userNotificationCenter(
 		_ center: UNUserNotificationCenter,
 		willPresent notification: UNNotification,
@@ -35,19 +49,8 @@ final class MeowtasticDelegate: UIResponder, UIApplicationDelegate, UNUserNotifi
 		withCompletionHandler completionHandler: @escaping () -> Void
 	) {
 		let userInfo = response.notification.request.content.userInfo
-		let targetValue = userInfo["target"] as? String
-		let deepLink = userInfo["path"] as? String
-
-		AppState.shared.navigationPath = deepLink
-
-		if targetValue == "map" {
-			AppState.shared.tabSelection = TabTag.map
-		}
-		else if targetValue == "messages" {
-			AppState.shared.tabSelection = TabTag.messages
-		}
-		else if targetValue == "nodes" {
-			AppState.shared.tabSelection = TabTag.nodes
+		if let url = userInfo["path"] as? URL {
+			AppState.shared.tabSelection = TabTag(from: url)
 		}
 
 		completionHandler()

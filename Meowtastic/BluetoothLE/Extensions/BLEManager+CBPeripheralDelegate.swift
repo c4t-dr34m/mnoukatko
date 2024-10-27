@@ -416,8 +416,7 @@ extension BLEManager: CBPeripheralDelegate {
 							title: "Trace Route",
 							subtitle: user.longName,
 							body: "Trace route was received",
-							target: "nodes",
-							path: "meshtastic:///nodes?nodenum=\(user.num)"
+							path: URL(string: "\(AppConstants.meowtasticScheme):///nodes?nodenum=\(user.num)")
 						)
 					)
 				}

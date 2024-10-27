@@ -80,9 +80,6 @@ final class LocalNotificationManager {
 			content.sound = silent ? .none : .default
 			content.interruptionLevel = silent ? .passive : .active
 
-			if let target = notification.target {
-				content.userInfo["target"] = target
-			}
 			if let path = notification.path {
 				content.userInfo["path"] = path
 			}

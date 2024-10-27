@@ -55,14 +55,14 @@ struct Content: View {
 				.tabItem {
 					Label("Messages", systemImage: "message")
 				}
-				.tag(TabTag.messages)
+				.tag(TabTag.messages())
 				.badge(unreadMessagesCount)
 
 			NodeList()
 				.tabItem {
 					Label("Nodes", systemImage: "flipphone")
 				}
-				.tag(TabTag.nodes)
+				.tag(TabTag.nodes())
 				.badge(nodeOnlineCount)
 
 			MeshMap()
@@ -75,7 +75,7 @@ struct Content: View {
 				.tabItem {
 					Label("Options", systemImage: "gearshape")
 				}
-				.tag(TabTag.settings)
+				.tag(TabTag.options)
 		}
 		.onChange(of: bleManager.info, initial: true) {
 			processBleManagerState()

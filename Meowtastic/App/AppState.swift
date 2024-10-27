@@ -5,15 +5,13 @@ final class AppState: ObservableObject {
 	static let shared = AppState()
 
 	@Published
-	var tabSelection: TabTag = .nodes
+	var tabSelection: TabTag = .nodes()
 	@Published
 	var unreadDirectMessages = 0
 	@Published
 	var unreadChannelMessages = 0
 	@Published
 	var firmwareVersion = "0.0.0"
-	@Published
-	var navigationPath: String?
 
 	private var cancellables: Set<AnyCancellable> = []
 

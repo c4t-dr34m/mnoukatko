@@ -5,22 +5,19 @@ struct Notification {
 	var title: String
 	var subtitle: String?
 	var body: String?
-	var target: String?
-	var path: String?
+	var path: URL?
 
 	init(
 		id: String = UUID().uuidString,
 		title: String,
 		subtitle: String? = nil,
 		body: String? = nil,
-		target: String? = nil,
-		path: String? = nil
+		path: URL? = nil
 	) {
 		self.id = id
 		self.title = title
 		self.subtitle = subtitle
 		self.body = body
-		self.target = target
 		self.path = path
 	}
 }

@@ -81,13 +81,14 @@ struct NodeList: View {
 				]
 			)
 		}
-		.onChange(of: appState.navigationPath, initial: true) {
+		.onChange(of: appState.tabSelection, initial: true) {
+			/*
 			guard let navigationPath = appState.navigationPath else {
 				return
 			}
 
 			if
-				navigationPath.hasPrefix("meshtastic:///nodes"),
+				navigationPath.hasPrefix("\(AppConstants.meowtasticScheme):///nodes"),
 				let urlComponent = URLComponents(string: navigationPath)
 			{
 				let queryItems = urlComponent.queryItems
@@ -105,6 +106,7 @@ struct NodeList: View {
 					AppState.shared.navigationPath = nil
 				}
 			}
+			 */
 		}
 	}
 

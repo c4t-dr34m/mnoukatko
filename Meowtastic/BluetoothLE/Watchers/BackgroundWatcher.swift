@@ -156,8 +156,7 @@ final class BackgroundWatcher: DevicesDelegate {
 				title: "Node Update",
 				subtitle: nodeName,
 				body: nodeInfo,
-				target: "nodes",
-				path: "meshtastic:///nodes"
+				path: URL(string: "meow://nodes")
 			),
 			silent: true,
 			removeExisting: true

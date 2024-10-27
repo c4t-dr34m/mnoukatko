@@ -152,8 +152,7 @@ extension CoreDataTools {
 									title: "New Node",
 									subtitle: newUser.longName,
 									body: "New node has been discovered",
-									target: "nodes",
-									path: "meshtastic:///nodes?nodenum=\(newUser.num)"
+									path: URL(string: "\(AppConstants.meowtasticScheme):///nodes?num=\(newUser.num)")
 								)
 							)
 						}
