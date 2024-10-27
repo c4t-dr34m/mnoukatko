@@ -27,7 +27,7 @@ final class MeowtasticDelegate: UIResponder, UIApplicationDelegate, UNUserNotifi
 		options: [UIApplication.OpenURLOptionsKey: Any] = [:]
 	) -> Bool {
 		if url.scheme == AppConstants.meowtasticScheme {
-			AppState.shared.tabSelection = TabTag(from: url)
+			AppState.shared.navigation = Navigation(from: url)
 
 			return true
 		}
@@ -50,7 +50,7 @@ final class MeowtasticDelegate: UIResponder, UIApplicationDelegate, UNUserNotifi
 	) {
 		let userInfo = response.notification.request.content.userInfo
 		if let url = userInfo["path"] as? URL {
-			AppState.shared.tabSelection = TabTag(from: url)
+			AppState.shared.navigation = Navigation(from: url)
 		}
 
 		completionHandler()

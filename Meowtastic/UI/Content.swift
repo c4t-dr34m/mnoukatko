@@ -1,3 +1,4 @@
+import OSLog
 import SwiftUI
 
 struct Content: View {
@@ -55,27 +56,27 @@ struct Content: View {
 				.tabItem {
 					Label("Messages", systemImage: "message")
 				}
-				.tag(TabTag.messages())
+				.tag(ContentTab.messages)
 				.badge(unreadMessagesCount)
 
 			NodeList()
 				.tabItem {
 					Label("Nodes", systemImage: "flipphone")
 				}
-				.tag(TabTag.nodes())
+				.tag(ContentTab.nodes)
 				.badge(nodeOnlineCount)
 
 			MeshMap()
 				.tabItem {
 					Label("Mesh", systemImage: "map")
 				}
-				.tag(TabTag.map)
+				.tag(ContentTab.map)
 
 			Options()
 				.tabItem {
 					Label("Options", systemImage: "gearshape")
 				}
-				.tag(TabTag.options)
+				.tag(ContentTab.options)
 		}
 		.onChange(of: bleManager.info, initial: true) {
 			processBleManagerState()
@@ -93,6 +94,9 @@ struct Content: View {
 			if !bleManager.lastConnectionError.isEmpty, !connectWasDismissed {
 				connectPresented = true
 			}
+		}
+		.onOpenURL { url in
+			AppState.shared.navigation = Navigation(from: url)
 		}
 		.sheet(isPresented: $connectPresented) {
 			connectPresented = false

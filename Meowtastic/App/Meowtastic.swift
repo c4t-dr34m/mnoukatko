@@ -38,7 +38,7 @@ struct Meowtastic: App {
 				.environmentObject(locationManager)
 				.onOpenURL { url in
 					if url.scheme == AppConstants.meowtasticScheme {
-						AppState.shared.tabSelection = TabTag(from: url)
+						AppState.shared.navigation = Navigation(from: url)
 					}
 				}
 		}

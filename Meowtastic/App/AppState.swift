@@ -1,11 +1,22 @@
 import Combine
+import OSLog
 import SwiftUI
 
 final class AppState: ObservableObject {
 	static let shared = AppState()
 
 	@Published
-	var tabSelection: TabTag = .nodes()
+	var navigation: Navigation? {
+		didSet {
+			guard let navigation else {
+				return
+			}
+
+			tabSelection = ContentTab(from: navigation)
+		}
+	}
+	@Published
+	var tabSelection: ContentTab = .nodes
 	@Published
 	var unreadDirectMessages = 0
 	@Published

@@ -39,11 +39,11 @@
 	<array>
 		<dict>
 			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
+			<string>Viewer</string>
 			<key>CFBundleURLIconFile</key>
-			<string>alpha</string>
+			<string>AppIcon</string>
 			<key>CFBundleURLName</key>
-			<string>org.meshtastic</string>
+			<string>c4t.dr34m.mobi.meowtastic</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>meow</string>

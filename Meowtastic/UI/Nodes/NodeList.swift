@@ -25,6 +25,8 @@ struct NodeList: View {
 	private var showOffline = false
 	@State
 	private var selectedNode: NodeInfoEntity?
+	@State
+	private var selectedNodePresented: Bool = false
 
 	@FetchRequest(
 		sortDescriptors: [
@@ -72,6 +74,16 @@ struct NodeList: View {
 			.navigationBarItems(
 				trailing: ConnectionInfo()
 			)
+			.navigationDestination(
+				isPresented: $selectedNodePresented,
+				destination: {
+					if let selectedNode {
+						NavigationLazyView(
+							NodeDetail(node: selectedNode)
+						)
+					}
+				}
+			)
 		}
 		.onAppear {
 			Analytics.logEvent(
@@ -81,32 +93,20 @@ struct NodeList: View {
 				]
 			)
 		}
-		.onChange(of: appState.tabSelection, initial: true) {
-			/*
-			guard let navigationPath = appState.navigationPath else {
+		.onChange(of: appState.navigation, initial: true) {
+			guard case let .nodes(num) = appState.navigation, let num else {
 				return
 			}
 
-			if
-				navigationPath.hasPrefix("\(AppConstants.meowtasticScheme):///nodes"),
-				let urlComponent = URLComponents(string: navigationPath)
-			{
-				let queryItems = urlComponent.queryItems
-				let nodeNum = queryItems?.first(where: {
-					$0.name == "nodenum"
-				})?.value
-
-				if nodeNum == nil {
-					Logger.data.debug("nodeNum not found")
-				}
-				else {
-					selectedNode = nodes.first(where: {
-						$0.num == Int64(nodeNum ?? "-1")
-					})
-					AppState.shared.navigationPath = nil
-				}
+			selectedNode = nodes.first(where: { node in
+				node.num == num
+			})
+			selectedNodePresented = true
+		}
+		.onChange(of: selectedNodePresented) {
+			if !selectedNodePresented {
+				AppState.shared.navigation = nil
 			}
-			 */
 		}
 	}
 

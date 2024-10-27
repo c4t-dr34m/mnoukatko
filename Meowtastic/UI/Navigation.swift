@@ -1,11 +1,11 @@
 import Foundation
 
-enum TabTag: Hashable {
-	case connection // Options → Connection
+enum Navigation: Hashable {
 	case messages(channel: Int32? = nil, user: Int64? = nil, id: Int64? = nil)
 	case nodes(num: Int64? = nil)
 	case map
 	case options
+	case connection // Options → Connection
 
 	// swiftlint:disable:next cyclomatic_complexity
 	init(from url: URL) {
@@ -18,9 +18,6 @@ enum TabTag: Hashable {
 		let params = url.queryParameters
 
 		switch path {
-		case "/connection":
-			self = .connection
-
 		case "/messages":
 			if let params {
 				let channel: Int32?
@@ -68,25 +65,11 @@ enum TabTag: Hashable {
 		case "/options":
 			self = .options
 
+		case "/connection":
+			self = .connection
+
 		default:
 			self = .nodes()
-		}
-
-		self = .nodes()
-	}
-}
-
-extension URL {
-	public var queryParameters: [String: String]? {
-		guard
-			let components = URLComponents(url: self, resolvingAgainstBaseURL: true),
-			let queryItems = components.queryItems
-		else {
-			return nil
-		}
-
-		return queryItems.reduce(into: [String: String]()) { result, item in
-			result[item.name] = item.value
 		}
 	}
 }
