@@ -27,6 +27,8 @@ final class BLEManager: NSObject, ObservableObject {
 	@Published
 	var info: String?
 	@Published
+	var infoChangeCount = 0
+	@Published
 	var lastConnectionError: String
 	@Published
 	var isInvalidFwVersion = false
@@ -249,6 +251,7 @@ final class BLEManager: NSObject, ObservableObject {
 		connectedVersion = "0.0.0"
 		automaticallyReconnect = reconnect
 		info = nil
+		infoChangeCount = 0
 		infoLastChanged = nil
 
 		Analytics.logEvent(AnalyticEvents.bleDisconnect.id, parameters: nil)

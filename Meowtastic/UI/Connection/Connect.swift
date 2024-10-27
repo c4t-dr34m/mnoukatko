@@ -12,6 +12,7 @@ struct Connect: View {
 	private let debounce = Debounce<() async -> Void>(duration: .milliseconds(500)) { action in
 		await action()
 	}
+	private let nonNodeEvents = 20
 
 	@Environment(\.managedObjectContext)
 	private var context
@@ -27,6 +28,8 @@ struct Connect: View {
 	private var invalidFirmwareVersion = false
 	@State
 	private var degreesRotating = 0.0
+	@State
+	private var showProgress = true
 
 	@FetchRequest(
 		sortDescriptors: [
@@ -66,6 +69,7 @@ struct Connect: View {
 			)
 		}
 		.onAppear {
+			showProgress = true
 			bleManager.startScanning()
 
 			Analytics.logEvent(
@@ -86,12 +90,16 @@ struct Connect: View {
 			}
 		}
 		.onChange(of: bleManager.isConnected, initial: true) {
+			handleConnectionState()
+
 			debounce.emit {
 				await loadPeripherals()
 				await fetchNodeInfo()
 			}
 		}
 		.onChange(of: bleManager.isSubscribed) {
+			handleConnectionState()
+
 			debounce.emit {
 				await loadPeripherals()
 				await fetchNodeInfo()
@@ -227,25 +235,42 @@ struct Connect: View {
 						let infoLastChanged = bleManager.infoLastChanged,
 						!info.isEmpty
 					{
-						HStack(spacing: 8) {
+						HStack(alignment: .center, spacing: 8) {
 							Image(systemName: "info.circle.fill")
 								.font(detailInfoFont)
 								.foregroundColor(.gray)
 								.frame(width: 14)
 
-							if infoLastChanged.isStale(threshold: 30) {
-								let diff = infoLastChanged.distance(to: .now)
+							VStack(alignment: .leading, spacing: 2) {
+								if infoLastChanged.isStale(threshold: 30) {
+									let diff = infoLastChanged.distance(to: .now)
 
-								Text("Nothing for last \(String(format: "%.0f", diff))s")
-									.lineLimit(1)
-									.font(detailInfoFont)
-									.foregroundColor(.gray)
-							}
-							else {
-								Text(info)
-									.lineLimit(1)
-									.font(detailInfoFont)
-									.foregroundColor(.gray)
+									Text("Nothing for last \(String(format: "%.0f", diff))s")
+										.lineLimit(1)
+										.font(detailInfoFont)
+										.foregroundColor(.gray)
+								}
+								else {
+									Text(info)
+										.lineLimit(1)
+										.font(detailInfoFont)
+										.foregroundColor(.gray)
+								}
+
+								if showProgress {
+									let expectedNodeCount = min(nonNodeEvents + nodes.count, 100)
+									let value = min(
+										Float(bleManager.infoChangeCount) / Float(expectedNodeCount),
+										0.98
+									)
+									Gauge(
+										value: value,
+										in: 0.0...1.0
+									) { }
+										.gaugeStyle(.accessoryLinearCapacity)
+										.tint(.gray)
+										.id("connection_progress")
+								}
 							}
 						}
 					}
@@ -517,5 +542,11 @@ struct Connect: View {
 
 	private func didDismissSheet() {
 		bleManager.disconnectDevice(reconnect: false)
+	}
+
+	private func handleConnectionState() {
+		if bleManager.isSubscribed, bleManager.isConnected {
+			showProgress = false
+		}
 	}
 }

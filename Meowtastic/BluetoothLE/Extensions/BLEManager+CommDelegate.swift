@@ -45,6 +45,7 @@ extension BLEManager: CommDelegate {
 
 	private func updateInfo(with newInfo: String) {
 		info = newInfo
+		infoChangeCount += 1
 		infoLastChanged = .now
 
 		if let info {
