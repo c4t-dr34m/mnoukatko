@@ -113,13 +113,26 @@ struct Content: View {
 			connectWasDismissed = false
 
 			debounce.emit {
-				if bleManager.infoLastChanged?.isStale(threshold: 1.5) ?? true {
-					connectPresented = false
+				if !checkLastChange() {
+					debounce.emit { // check again later
+						checkLastChange()
+					}
 				}
 			}
 		}
 		else if !connectWasDismissed {
 			connectPresented = true
 		}
+	}
+
+	@discardableResult
+	private func checkLastChange() -> Bool {
+		if bleManager.infoLastChanged?.isStale(threshold: 1.5) ?? true {
+			connectPresented = false
+
+			return true
+		}
+
+		return false
 	}
 }

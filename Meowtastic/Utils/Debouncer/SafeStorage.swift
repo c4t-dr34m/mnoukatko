@@ -10,19 +10,28 @@ final class SafeStorage<T>: @unchecked Sendable {
 
 	func get() -> T {
 		self.lock.lock()
-		defer { self.lock.unlock() }
+		defer {
+			self.lock.unlock()
+		}
+
 		return self.stored
 	}
 
 	func set(stored: T) {
 		self.lock.lock()
-		defer { self.lock.unlock() }
+		defer {
+			self.lock.unlock()
+		}
+
 		self.stored = stored
 	}
 
 	func apply<R>(block: (inout T) -> R) -> R {
 		self.lock.lock()
-		defer { self.lock.unlock() }
+		defer {
+			self.lock.unlock()
+		}
+
 		return block(&self.stored)
 	}
 }

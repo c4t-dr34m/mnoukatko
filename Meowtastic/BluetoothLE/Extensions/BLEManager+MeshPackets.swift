@@ -1016,7 +1016,7 @@ extension BLEManager {
 				)
 			}
 		}
-		else {
+		else if UserDefaults.channelMessageNotifications {
 			let fetchMyInfoRequest = MyInfoEntity.fetchRequest()
 			fetchMyInfoRequest.predicate = NSPredicate(format: "myNodeNum == %lld", Int64(connectedNode))
 
@@ -1027,40 +1027,36 @@ extension BLEManager {
 			{
 				appState.unreadChannelMessages = myInfo.unreadMessages
 
-				for channel in channels {
-					if channel.index == newMessage.channel {
-						context.refresh(channel, mergeChanges: true)
+				for channel in channels.filter({ channel in
+					channel.role != Channel.Role.disabled.rawValue && !channel.mute
+				}) {
+					guard channel.index == newMessage.channel else {
+						continue
 					}
 
-					if
-						UserDefaults.channelMessageNotifications,
-						channel.index == newMessage.channel,
-						!channel.mute
-					{
-						let subtitle: String?
-						if let longName = fromUser.longName {
-							subtitle = "From: \(longName)"
-						}
-						else {
-							subtitle = nil
-						}
-
-						let notification = Notification(
-							id: "notification.id.channel_\(newMessage.channel)",
-							title: "New Channel Message Received",
-							subtitle: subtitle,
-							body: messageText,
-							path: URL(
-								string: "\(AppConstants.meowtasticScheme):///messages?channel=\(newMessage.channel)&id=\(newMessage.messageId)"
-							)
-						)
-
-						notificationManager.queue(
-							notification: notification,
-							delay: 3 * 60,
-							removeExisting: true
-						)
+					let subtitle: String?
+					if let longName = fromUser.longName {
+						subtitle = "From: \(longName)"
 					}
+					else {
+						subtitle = nil
+					}
+
+					let notification = Notification(
+						id: "notification.id.channel_\(newMessage.channel)",
+						title: "New Channel Message Received",
+						subtitle: subtitle,
+						body: messageText,
+						path: URL(
+							string: "\(AppConstants.meowtasticScheme):///messages?channel=\(newMessage.channel)&id=\(newMessage.messageId)"
+						)
+					)
+
+					notificationManager.queue(
+						notification: notification,
+						delay: 3 * 60,
+						removeExisting: true
+					)
 				}
 			}
 		}

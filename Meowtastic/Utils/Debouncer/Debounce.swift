@@ -16,10 +16,11 @@ public final class Debounce<T>: Sendable {
 		let (shouldStartATask, dueTime) = self.stateMachine.apply { machine in
 			machine.newValue(value)
 		}
-		
+
 		if shouldStartATask {
 			self.task.set(stored: Task { [output, stateMachine] in
 				var localDueTime = dueTime
+
 				loop: while true {
 					try? await Task.sleep(until: localDueTime, clock: .continuous)
 
@@ -31,6 +32,7 @@ public final class Debounce<T>: Sendable {
 					case .finishDebouncing(let value):
 						await output(value)
 						break loop
+
 					case .continueDebouncing(let newDueTime):
 						localDueTime = newDueTime
 						continue loop
@@ -41,6 +43,6 @@ public final class Debounce<T>: Sendable {
 	}
 
 	deinit {
-		self.task.get()?.cancel()
+		task.get()?.cancel()
 	}
 }
