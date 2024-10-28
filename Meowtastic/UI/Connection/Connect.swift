@@ -81,6 +81,9 @@ struct Connect: View {
 			)
 		}
 		.onDisappear {
+			UserDefaults.lastConnectionEventCount = bleManager.infoChangeCount
+			Logger.app.debug("Connection event count stored: \(UserDefaults.lastConnectionEventCount)")
+
 			bleManager.stopScanning()
 		}
 		.onChange(of: bleManager.devices, initial: true) {
@@ -258,11 +261,8 @@ struct Connect: View {
 								}
 
 								if showProgress {
-									let expectedNodeCount = min(nonNodeEvents + nodes.count, 100)
-									let value = min(
-										Float(bleManager.infoChangeCount) / Float(expectedNodeCount),
-										0.98
-									)
+									let value = getConnectionProgress(nodeCount: nodes.count)
+
 									Gauge(
 										value: value,
 										in: 0.0...1.0
@@ -548,5 +548,23 @@ struct Connect: View {
 		if bleManager.isSubscribed, bleManager.isConnected {
 			showProgress = false
 		}
+	}
+
+	private func getConnectionProgress(nodeCount: Int) -> Float {
+		let previousEventCount = UserDefaults.lastConnectionEventCount
+		let expectedEventCount = nonNodeEvents + min(nodeCount, 100)
+		let maxCount: Int
+
+		if Float(abs(previousEventCount - expectedEventCount)) < (Float(expectedEventCount) * 0.8) {
+			maxCount = previousEventCount
+		}
+		else {
+			maxCount = expectedEventCount
+		}
+
+		return min(
+			Float(bleManager.infoChangeCount) / Float(maxCount),
+			1.0
+		)
 	}
 }

@@ -55,6 +55,7 @@ extension UserDefaults {
 		case ignoreMQTT
 		case bcgNotification
 		case moreColors
+		case lastConnectionEventCount
 	}
 
 	@UserDefault(.preferredPeripheralId, defaultValue: "")
@@ -104,6 +105,9 @@ extension UserDefaults {
 
 	@UserDefault(.moreColors, defaultValue: true)
 	static var moreColors: Bool
+
+	@UserDefault(.lastConnectionEventCount, defaultValue: 0)
+	static var lastConnectionEventCount: Int
 
 	func reset() {
 		Keys.allCases.forEach { key in
