@@ -18,24 +18,21 @@ final class AppState: ObservableObject {
 	@Published
 	var tabSelection: ContentTab = .nodes
 	@Published
-	var unreadDirectMessages = 0
+	var unreadDirectMessages = 0 {
+		didSet {
+			setNotificationBadge()
+		}
+	}
 	@Published
-	var unreadChannelMessages = 0
+	var unreadChannelMessages = 0 {
+		didSet {
+			setNotificationBadge()
+		}
+	}
 	@Published
 	var firmwareVersion = "0.0.0"
 
-	private var cancellables: Set<AnyCancellable> = []
-
-	init() {
-		unreadChannelMessages = 0
-		unreadDirectMessages = 0
-
-		// Keep app icon badge count in sync with messages read status
-		$unreadChannelMessages.combineLatest($unreadDirectMessages)
-			.sink(receiveValue: { badgeCounts in
-				UNUserNotificationCenter.current()
-					.setBadgeCount(badgeCounts.0 + badgeCounts.1)
-			})
-			.store(in: &cancellables)
+	private func setNotificationBadge() {
+		UNUserNotificationCenter.current().setBadgeCount(unreadDirectMessages + unreadChannelMessages)
 	}
 }

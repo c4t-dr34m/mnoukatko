@@ -16,7 +16,7 @@ func generateChannelKey(size: Int) -> String {
 
 struct Channels: View {
 	var node: NodeInfoEntity
-	
+
 	@State
 	var hasChanges = false
 	@State
@@ -49,7 +49,7 @@ struct Channels: View {
 	var selectedChannel: ChannelEntity?
 	@State
 	var minimumVersion = "2.2.24"
-	
+
 	@Environment(\.managedObjectContext)
 	private var context
 	@EnvironmentObject
@@ -60,7 +60,7 @@ struct Channels: View {
 	private var goBack
 	@Environment(\.sizeCategory)
 	private var sizeCategory
-	
+
 	@FetchRequest(
 		sortDescriptors: [
 			NSSortDescriptor(key: "favorite", ascending: false),
@@ -70,101 +70,103 @@ struct Channels: View {
 		animation: .default
 	)
 	private var nodes: FetchedResults<NodeInfoEntity>
-	private var nodeChannels: [ChannelEntity]? {
-		guard let channels = node.myInfo?.channels else {
-			return nil
+	private var nodeChannels: [ChannelEntity] {
+		guard
+			let channels = node.myInfo?.channels?.array as? [ChannelEntity]
+		else {
+			return []
 		}
 
-		return channels.array as? [ChannelEntity]
+		return channels.filter { channel in
+			channel.role != Channel.Role.disabled.rawValue
+		}
 	}
 
 	@ViewBuilder
 	var body: some View {
 		VStack {
 			List {
-				if let nodeChannels {
-					ForEach(nodeChannels, id: \.index) { channel in
-						Button(action: {
-							channelIndex = channel.index
-							channelRole = Int(channel.role)
-							channelKey = channel.psk?.base64EncodedString() ?? ""
+				ForEach(nodeChannels, id: \.index) { channel in
+					Button(action: {
+						channelIndex = channel.index
+						channelRole = Int(channel.role)
+						channelKey = channel.psk?.base64EncodedString() ?? ""
 
-							if channelKey.count == 0 {
-								channelKeySize = 0
-							}
-							else if channelKey == "AQ==" {
-								channelKeySize = -1
-							}
-							else if channelKey.count == 4 {
-								channelKeySize = 1
-							}
-							else if channelKey.count == 24 {
-								channelKeySize = 16
-							}
-							else if channelKey.count == 32 {
-								channelKeySize = 24
-							}
-							else if channelKey.count == 44 {
-								channelKeySize = 32
-							}
+						if channelKey.count == 0 {
+							channelKeySize = 0
+						}
+						else if channelKey == "AQ==" {
+							channelKeySize = -1
+						}
+						else if channelKey.count == 4 {
+							channelKeySize = 1
+						}
+						else if channelKey.count == 24 {
+							channelKeySize = 16
+						}
+						else if channelKey.count == 32 {
+							channelKeySize = 24
+						}
+						else if channelKey.count == 44 {
+							channelKeySize = 32
+						}
 
-							channelName = channel.name ?? ""
-							uplink = channel.uplinkEnabled
-							downlink = channel.downlinkEnabled
-							positionPrecision = Double(channel.positionPrecision)
+						channelName = channel.name ?? ""
+						uplink = channel.uplinkEnabled
+						downlink = channel.downlinkEnabled
+						positionPrecision = Double(channel.positionPrecision)
 
-							if !supportedVersion && channelRole == 1 {
-								positionPrecision = 32
+						if !supportedVersion && channelRole == 1 {
+							positionPrecision = 32
+							preciseLocation = true
+							positionsEnabled = true
+						}
+						else if !supportedVersion && channelRole == 2 {
+							positionPrecision = 0
+							preciseLocation = false
+							positionsEnabled = false
+						}
+						else {
+							if positionPrecision == 32 {
 								preciseLocation = true
 								positionsEnabled = true
 							}
-							else if !supportedVersion && channelRole == 2 {
-								positionPrecision = 0
+							else {
 								preciseLocation = false
+							}
+
+							if positionPrecision == 0 {
 								positionsEnabled = false
 							}
 							else {
-								if positionPrecision == 32 {
-									preciseLocation = true
-									positionsEnabled = true
-								}
-								else {
-									preciseLocation = false
-								}
-
-								if positionPrecision == 0 {
-									positionsEnabled = false
-								}
-								else {
-									positionsEnabled = true
-								}
+								positionsEnabled = true
 							}
-							hasChanges = false
-							selectedChannel = channel
-						}) {
-							VStack(alignment: .leading) {
-								HStack {
-									AvatarAbstract(
-										String(channel.index),
-										size: 45
-									)
-									.padding(.trailing, 5)
+						}
+						hasChanges = false
+						selectedChannel = channel
+					}) {
+						VStack(alignment: .leading) {
+							HStack {
+								AvatarAbstract(
+									String(channel.index),
+									size: 45
+								)
+								.padding(.trailing, 5)
 
-									HStack {
-										if channel.name?.isEmpty ?? false {
-											if channel.role == 1 {
-												Text(String("PrimaryChannel").camelCaseToWords())
-													.font(.headline)
-											}
-											else {
-												Text(String("Channel \(channel.index)").camelCaseToWords())
-													.font(.headline)
-											}
-										}
-										else {
-											Text(String(channel.name ?? "Channel \(channel.index)").camelCaseToWords())
+								HStack {
+									if channel.name?.isEmpty ?? false {
+										if channel.role == 1 {
+											Text(String("PrimaryChannel").camelCaseToWords())
 												.font(.headline)
 										}
+										else {
+											Text(String("Channel \(channel.index)").camelCaseToWords())
+												.font(.headline)
+										}
+									}
+									else {
+										Text(String(channel.name ?? "Channel \(channel.index)").camelCaseToWords())
+											.font(.headline)
 									}
 								}
 							}
@@ -293,7 +295,7 @@ struct Channels: View {
 				}
 			}
 
-			if let nodeChannels, nodeChannels.count < 8 {
+			if nodeChannels.count < 8 {
 				Button {
 					let channelIndexes = nodeChannels.compactMap { channel -> Int in
 						(channel as AnyObject).index

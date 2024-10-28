@@ -1022,10 +1022,10 @@ extension BLEManager {
 
 			if
 				let fetchedMyInfo = try? context.fetch(fetchMyInfoRequest),
-				!fetchedMyInfo.isEmpty,
-				let channels = fetchedMyInfo[0].channels?.array as? [ChannelEntity]
+				let myInfo = fetchedMyInfo.first,
+				let channels = myInfo.channels?.array as? [ChannelEntity]
 			{
-				appState.unreadChannelMessages = fetchedMyInfo[0].unreadMessages
+				appState.unreadChannelMessages = myInfo.unreadMessages
 
 				for channel in channels {
 					if channel.index == newMessage.channel {
