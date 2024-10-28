@@ -116,13 +116,13 @@ struct ConnectionInfo: View {
 						let diff = infoLastChanged.distance(to: .now)
 
 						HStack {
-							Image(systemName: "bolt.horizontal.fill")
-								.resizable()
-								.scaledToFit()
-								.frame(width: 16, height: 16)
-								.foregroundColor(infoColor)
-
 							if diff < 60 {
+								Image(systemName: "bolt.horizontal.fill")
+									.resizable()
+									.scaledToFit()
+									.frame(width: 16, height: 16)
+									.foregroundColor(infoColor)
+
 								Text(String(format: "%.0f", diff) + "\"")
 									.font(
 										.system(size: 12, weight: .bold, design: .rounded)
@@ -134,6 +134,12 @@ struct ConnectionInfo: View {
 									.id("info_seconds")
 							}
 							else {
+								Image(systemName: "bolt.horizontal")
+									.resizable()
+									.scaledToFit()
+									.frame(width: 16, height: 16)
+									.foregroundColor(infoColor)
+
 								Text(String(format: "%.0f", diff / 60) + "'")
 									.font(
 										.system(size: 12, weight: .bold, design: .rounded)
