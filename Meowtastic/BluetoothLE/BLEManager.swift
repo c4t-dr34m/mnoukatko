@@ -47,7 +47,15 @@ final class BLEManager: NSObject, ObservableObject {
 	var mqttManager: MQTTManager?
 	var connectedVersion: String
 	var isConnecting = false
-	var isConnected = false
+	var isConnected = false {
+		didSet {
+			if !isConnected {
+				info = nil
+				infoLastChanged = nil
+				infoChangeCount = 0
+			}
+		}
+	}
 	var isSubscribed = false
 	var timeoutTimer: Timer?
 	var timeoutCount = 0
@@ -250,9 +258,6 @@ final class BLEManager: NSObject, ObservableObject {
 		characteristicFromRadio = nil
 		connectedVersion = "0.0.0"
 		automaticallyReconnect = reconnect
-		info = nil
-		infoChangeCount = 0
-		infoLastChanged = nil
 
 		Analytics.logEvent(AnalyticEvents.bleDisconnect.id, parameters: nil)
 	}
