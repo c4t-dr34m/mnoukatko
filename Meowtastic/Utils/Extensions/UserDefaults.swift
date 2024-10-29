@@ -45,7 +45,6 @@ extension UserDefaults {
 		case provideLocationInterval
 		case mapLayer
 		case meshMapDistance
-		case meshMapShowNodeHistory
 		case enableMapNodeHistoryPins
 		case enableDetectionNotifications
 		case newNodeNotifications

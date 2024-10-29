@@ -16,8 +16,6 @@ struct NodeMap: View {
 	@State
 	private var position = MapCameraPosition.automatic
 	@State
-	private var isEditingSettings = false
-	@State
 	private var isMeshMap = false
 	@State
 	private var mapRegion = MKCoordinateRegion()
@@ -89,29 +87,6 @@ struct NodeMap: View {
 					.mapControlVisibility(.visible)
 			}
 			.controlSize(.regular)
-			.safeAreaInset(edge: .bottom, alignment: .trailing) {
-				VStack(alignment: .trailing, spacing: 4) {
-					Button(action: {
-						withAnimation {
-							isEditingSettings.toggle()
-						}
-					}) {
-						Image(systemName: isEditingSettings ? "info.circle.fill" : "info.circle")
-							.padding(.vertical, 5)
-					}
-					.tint(Color(UIColor.secondarySystemBackground))
-					.foregroundColor(.accentColor)
-					.buttonStyle(.borderedProminent)
-				}
-				.controlSize(.regular)
-				.padding(8)
-			}
-			.sheet(isPresented: $isEditingSettings) {
-				MapSettingsForm(
-					mapLayer: $selectedMapLayer,
-					meshMap: $isMeshMap
-				)
-			}
 			.onChange(of: node, initial: true) {
 				mostRecent = node.positions?.lastObject as? PositionEntity
 

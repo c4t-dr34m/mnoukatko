@@ -17,12 +17,11 @@ struct NodeMapContent: MapContent {
 	var isMeshMap = false
 
 	private let node: NodeInfoEntity?
+	private let showHistory: Bool
 	private let mapHistoryLimit = 60
 
 	@Environment(\.colorScheme)
 	private var colorScheme: ColorScheme
-	@AppStorage("meshMapShowNodeHistory")
-	private var showNodeHistory = false
 	@AppStorage("mapLayer")
 	private var selectedMapLayer: MapLayer = .standard
 	@State
@@ -63,7 +62,7 @@ struct NodeMapContent: MapContent {
 
 	@MapContentBuilder
 	var nodeMap: some MapContent {
-		if showNodeHistory {
+		if showHistory {
 			history
 		}
 
@@ -141,8 +140,9 @@ struct NodeMapContent: MapContent {
 			.stroke(Color.accentColor, style: strokeMain)
 	}
 
-	init(node: NodeInfoEntity?) {
+	init(node: NodeInfoEntity?, showHistory: Bool = true) {
 		self.node = node
+		self.showHistory = showHistory
 	}
 
 	private func getFlags(for position: PositionEntity) -> PositionFlags {

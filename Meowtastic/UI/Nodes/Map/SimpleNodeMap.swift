@@ -44,7 +44,7 @@ struct SimpleNodeMap: View {
 				scope: mapScope
 			) {
 				UserAnnotation()
-				NodeMapContent(node: node)
+				NodeMapContent(node: node, showHistory: false)
 			}
 			.mapScope(mapScope)
 			.mapStyle(mapStyle)
