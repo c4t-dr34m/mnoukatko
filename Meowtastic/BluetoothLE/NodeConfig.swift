@@ -1,12 +1,11 @@
 import CoreBluetooth
 import CoreData
 import MeshtasticProtobufs
+import OSLog
 import SwiftProtobuf
 
 // swiftlint:disable file_length
 final class NodeConfig: ObservableObject {
-	private static var configNonce: UInt32 = 1
-
 	private let bleManager: BLEManager
 	private let context: NSManagedObjectContext
 	private let coreDataTools = CoreDataTools()
@@ -564,9 +563,7 @@ final class NodeConfig: ObservableObject {
 			return UInt32.min
 		}
 
-		Self.configNonce += 1
-		let nonce = Self.configNonce
-
+		let nonce = UserDefaults.getWantConfigNonce()
 		var toRadio = ToRadio()
 		toRadio.wantConfigID = nonce
 
@@ -583,6 +580,8 @@ final class NodeConfig: ObservableObject {
 			for: bleManager.characteristicToRadio,
 			type: .withResponse
 		)
+
+		Logger.radio.debug("Sent want config; nonce=\(nonce)")
 
 		connectedDevice.peripheral.readValue(
 			for: bleManager.characteristicFromRadio

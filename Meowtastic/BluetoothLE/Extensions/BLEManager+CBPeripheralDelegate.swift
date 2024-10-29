@@ -33,9 +33,11 @@ extension BLEManager: CBPeripheralDelegate {
 		didDiscoverCharacteristicsFor service: CBService,
 		error: Error?
 	) {
+		let deviceName = peripheral.name ?? peripheral.identifier.uuidString
+
 		if let error {
 			Logger.services.error(
-				"🚫 [BLE] Discover Characteristics error for \(peripheral.name ?? peripheral.identifier.uuidString, privacy: .public) \(error.localizedDescription, privacy: .public) disconnecting device"
+				"🚫 [BLE] Discover Characteristics error for \(deviceName): \(error.localizedDescription); disconnecting device"
 			)
 
 			disconnectDevice()
@@ -48,6 +50,8 @@ extension BLEManager: CBPeripheralDelegate {
 		}
 
 		for characteristic in characteristics {
+			Logger.services.debug("\(deviceName) characteristic discovered: \(characteristic.uuid.uuidString)")
+
 			switch characteristic.uuid {
 			case BluetoothUUID.toRadio:
 				characteristicToRadio = characteristic
@@ -73,14 +77,12 @@ extension BLEManager: CBPeripheralDelegate {
 			}
 		}
 
-		if ![characteristicFromNum, characteristicToRadio].contains(nil) {
-			if mqttConnected {
-				mqttManager?.client?.disconnect()
-			}
-
-			let nodeConfig = NodeConfig(bleManager: self, context: context)
-			lastConfigNonce = nodeConfig.sendWantConfig()
+		if mqttConnected {
+			mqttManager?.client?.disconnect()
 		}
+
+		let nodeConfig = NodeConfig(bleManager: self, context: context)
+		lastConfigNonce = nodeConfig.sendWantConfig()
 	}
 
 	// swiftlint:disable:next cyclomatic_complexity

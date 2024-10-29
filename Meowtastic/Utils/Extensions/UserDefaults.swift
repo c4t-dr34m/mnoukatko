@@ -38,6 +38,7 @@ struct UserDefault<T: Decodable> {
 
 extension UserDefaults {
 	enum Keys: String, CaseIterable {
+		case wantConfigNonce
 		case preferredPeripheralId
 		case preferredPeripheralNum
 		case provideLocation
@@ -57,6 +58,9 @@ extension UserDefaults {
 		case moreColors
 		case lastConnectionEventCount
 	}
+
+	@UserDefault(.wantConfigNonce, defaultValue: 0)
+	static var wantConfigNonce: Int
 
 	@UserDefault(.preferredPeripheralId, defaultValue: "")
 	static var preferredPeripheralId: String
@@ -108,6 +112,21 @@ extension UserDefaults {
 
 	@UserDefault(.lastConnectionEventCount, defaultValue: 0)
 	static var lastConnectionEventCount: Int
+
+	static func getWantConfigNonce() -> UInt32 {
+		let current = UserDefaults.wantConfigNonce
+		let new: Int
+
+		if current >= UInt32.max || current < 0 {
+			new = 0
+		}
+		else {
+			new = current + 1
+		}
+
+		UserDefaults.wantConfigNonce = new
+		return UInt32(new)
+	}
 
 	func reset() {
 		Keys.allCases.forEach { key in
