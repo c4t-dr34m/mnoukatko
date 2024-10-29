@@ -1049,7 +1049,7 @@ extension BLEManager {
 
 				let body: String
 				if let longName = fromUser.longName {
-					body = "Last message; From \(longName): \(messageText)"
+					body = "Last message is from \(longName)"
 				}
 				else {
 					body = "Last message: \(messageText)"
