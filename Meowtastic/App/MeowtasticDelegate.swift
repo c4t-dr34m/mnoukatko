@@ -49,7 +49,10 @@ final class MeowtasticDelegate: UIResponder, UIApplicationDelegate, UNUserNotifi
 		withCompletionHandler completionHandler: @escaping () -> Void
 	) {
 		let userInfo = response.notification.request.content.userInfo
-		if let url = userInfo["path"] as? URL {
+		if
+			let path = userInfo["path"] as? String,
+			let url = URL(string: path)
+		{
 			AppState.shared.navigation = Navigation(from: url)
 		}
 

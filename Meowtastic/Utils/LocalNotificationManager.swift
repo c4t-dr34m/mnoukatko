@@ -85,7 +85,7 @@ final class LocalNotificationManager {
 			content.interruptionLevel = silent ? .passive : .active
 
 			if let path = notification.path {
-				content.userInfo["path"] = path
+				content.userInfo["path"] = path.absoluteString
 			}
 
 			let trigger = UNTimeIntervalNotificationTrigger(
@@ -104,7 +104,7 @@ final class LocalNotificationManager {
 			}
 			center.add(request)
 
-			Logger.notification.debug("Notification scheduled: \(notification.id) | \(notification.title)")
+			Logger.notification.debug("Notification may be scheduled: \(notification.id) | \(notification.title)")
 		}
 	}
 }

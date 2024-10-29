@@ -81,9 +81,6 @@ struct Connect: View {
 			)
 		}
 		.onDisappear {
-			UserDefaults.lastConnectionEventCount = bleManager.infoChangeCount
-			Logger.app.debug("Connection event count stored: \(UserDefaults.lastConnectionEventCount)")
-
 			bleManager.stopScanning()
 		}
 		.onChange(of: bleManager.devices, initial: true) {
@@ -546,7 +543,14 @@ struct Connect: View {
 
 	private func handleConnectionState() {
 		if bleManager.isSubscribed, bleManager.isConnected {
+			guard showProgress else {
+				return
+			}
+
 			showProgress = false
+
+			UserDefaults.lastConnectionEventCount = bleManager.infoChangeCount
+			Logger.app.debug("Connection event count stored: \(UserDefaults.lastConnectionEventCount)")
 		}
 	}
 

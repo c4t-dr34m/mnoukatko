@@ -149,6 +149,7 @@ extension CoreDataTools {
 							let manager = LocalNotificationManager()
 							manager.queue(
 								notification: Notification(
+									id: "notification.id.new_node_\(newUser.num)",
 									title: "New Node",
 									subtitle: newUser.longName,
 									body: "New node has been discovered",

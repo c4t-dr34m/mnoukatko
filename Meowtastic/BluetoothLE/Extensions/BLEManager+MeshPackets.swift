@@ -1025,39 +1025,51 @@ extension BLEManager {
 				let myInfo = fetchedMyInfo.first,
 				let channels = myInfo.channels?.array as? [ChannelEntity]
 			{
-				appState.unreadChannelMessages = myInfo.unreadMessages
+				let unread = myInfo.unreadMessages
+				appState.unreadChannelMessages = unread
 
-				for channel in channels.filter({ channel in
-					channel.role != Channel.Role.disabled.rawValue && !channel.mute
-				}) {
-					guard channel.index == newMessage.channel else {
-						continue
-					}
-
-					let subtitle: String?
-					if let longName = fromUser.longName {
-						subtitle = "From: \(longName)"
-					}
-					else {
-						subtitle = nil
-					}
-
-					let notification = Notification(
-						id: "notification.id.channel_\(newMessage.channel)",
-						title: "New Channel Message Received",
-						subtitle: subtitle,
-						body: messageText,
-						path: URL(
-							string: "\(AppConstants.meowtasticScheme):///messages?channel=\(newMessage.channel)&id=\(newMessage.messageId)"
-						)
-					)
-
-					notificationManager.queue(
-						notification: notification,
-						delay: 3 * 60,
-						removeExisting: true
-					)
+				guard
+					unread > 0,
+					let channel = channels.first(where: { channel in
+						channel.index == newMessage.channel
+						&& channel.role != Channel.Role.disabled.rawValue
+						&& !channel.mute
+					})
+				else {
+					return
 				}
+
+				let subtitle: String
+				if unread == 1 {
+					subtitle = "One unread channel message"
+				}
+				else {
+					subtitle = "\(myInfo.unreadMessages) unread channel messages"
+				}
+
+				let body: String
+				if let longName = fromUser.longName {
+					body = "Last message; From \(longName): \(messageText)"
+				}
+				else {
+					body = "Last message: \(messageText)"
+				}
+
+				let notification = Notification(
+					id: "notification.id.channel_\(channel.index)",
+					title: "New Channel Message Received",
+					subtitle: subtitle,
+					body: body,
+					path: URL(
+						string: "\(AppConstants.meowtasticScheme):///messages?channel=\(channel.index)&id=\(newMessage.messageId)"
+					)
+				)
+
+				notificationManager.queue(
+					notification: notification,
+					delay: 3 * 60,
+					removeExisting: true
+				)
 			}
 		}
 	}
