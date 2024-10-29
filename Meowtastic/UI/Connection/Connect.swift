@@ -236,10 +236,18 @@ struct Connect: View {
 						!info.isEmpty
 					{
 						HStack(alignment: .center, spacing: 8) {
-							Image(systemName: "info.circle.fill")
-								.font(detailInfoFont)
-								.foregroundColor(.gray)
-								.frame(width: 14)
+							if showProgress {
+								Image(systemName: "info.circle.fill")
+									.font(detailInfoFont)
+									.foregroundColor(.gray)
+									.frame(width: 14)
+							}
+							else {
+								Image(systemName: "hourglass.circle")
+									.font(detailInfoFont)
+									.foregroundColor(.gray)
+									.frame(width: 14)
+							}
 
 							VStack(alignment: .leading, spacing: 2) {
 								if infoLastChanged.isStale(threshold: 30) {
