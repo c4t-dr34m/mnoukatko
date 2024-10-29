@@ -127,7 +127,7 @@ struct Content: View {
 
 	@discardableResult
 	private func checkLastChange() -> Bool {
-		if bleManager.infoLastChanged?.isStale(threshold: 1.5) ?? true {
+		if bleManager.infoLastChanged?.isStale(threshold: 1) ?? true {
 			connectPresented = false
 
 			return true
