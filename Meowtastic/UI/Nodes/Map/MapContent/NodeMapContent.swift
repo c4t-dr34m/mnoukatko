@@ -17,6 +17,7 @@ struct NodeMapContent: MapContent {
 	var isMeshMap = false
 
 	private let node: NodeInfoEntity?
+	private let mapHistoryLimit = 60
 
 	@Environment(\.colorScheme)
 	private var colorScheme: ColorScheme
@@ -27,7 +28,7 @@ struct NodeMapContent: MapContent {
 	@State
 	private var mapHistory = Calendar.current.startOfDay(
 		// swiftlint:disable:next force_unwrapping
-		for: Calendar.current.date(byAdding: .day, value: -5, to: .now)!
+		for: Calendar.current.date(byAdding: .day, value: -7, to: .now)!
 	)
 
 	private var nodeColor: Color {
@@ -41,10 +42,15 @@ struct NodeMapContent: MapContent {
 
 	private var positions: [PositionEntity] {
 		if let positionArray = node?.positions?.array as? [PositionEntity] {
-			positionArray
+			if positionArray.count <= mapHistoryLimit {
+				return positionArray
+			}
+			else {
+				return Array(positionArray[..<mapHistoryLimit])
+			}
 		}
 		else {
-			[]
+			return []
 		}
 	}
 
