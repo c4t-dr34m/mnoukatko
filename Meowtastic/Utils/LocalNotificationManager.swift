@@ -14,16 +14,25 @@ final class LocalNotificationManager {
 		removeExisting: Bool = false
 	) {
 		semaphore.wait()
-
 		notifications.removeAll(where: { queuedNotification in
 			queuedNotification.id == notification.id
 		})
 		notifications.append(notification)
 		Logger.notification.debug("New notification qeueued: \(notification.id) | \(notification.title)")
-
 		semaphore.signal()
 
 		process(delay: delay, silent: silent, removeExisting: removeExisting)
+	}
+
+	func remove(with id: String) {
+		semaphore.wait()
+		notifications.removeAll(where: { queuedNotification in
+			queuedNotification.id == id
+		})
+		semaphore.signal()
+
+		let center = UNUserNotificationCenter.current()
+		center.removeDeliveredNotifications(withIdentifiers: [id])
 	}
 
 	private func process(
@@ -68,9 +77,7 @@ final class LocalNotificationManager {
 	) {
 		while !notifications.isEmpty {
 			semaphore.wait()
-
 			let notification = notifications.removeFirst()
-
 			semaphore.signal()
 
 			let content = UNMutableNotificationContent()

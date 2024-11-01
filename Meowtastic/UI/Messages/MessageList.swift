@@ -12,6 +12,7 @@ struct MessageList: View {
 	private let debounce = Debounce<() async -> Void>(duration: .milliseconds(250)) { action in
 		await action()
 	}
+	private let notificationManager = LocalNotificationManager()
 
 	@Environment(\.managedObjectContext)
 	private var context
@@ -72,6 +73,12 @@ struct MessageList: View {
 					messageList
 						.scrollDismissesKeyboard(.interactively)
 						.scrollIndicators(.hidden)
+						.onAppear {
+							if let channel {
+								let id = "notification.id.channel_\(channel.index)"
+								notificationManager.remove(with: id)
+							}
+						}
 						.onChange(of: messages.count, initial: true) {
 							if let firstUnreadMessage {
 								scrollView.scrollTo(firstUnreadMessage.messageId)
