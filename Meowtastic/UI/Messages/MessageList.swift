@@ -25,20 +25,20 @@ struct MessageList: View {
 	@FocusState
 	private var messageFieldFocused: Bool
 	@State
-	private var messages: [MessageEntity]?
-	@State
 	private var replyMessageId: Int64 = 0
 
+	@FetchRequest
+	private var messages: FetchedResults<MessageEntity>
 	@FetchRequest(sortDescriptors: [])
 	private var nodes: FetchedResults<NodeInfoEntity>
 
 	private var firstUnreadMessage: MessageEntity? {
-		messages?.first(where: { message in
+		messages.first(where: { message in
 			!message.read
 		})
 	}
 	private var lastMessage: MessageEntity? {
-		messages?.last
+		messages.last
 	}
 	private var screenTitle: String {
 		if let channel {
@@ -69,7 +69,7 @@ struct MessageList: View {
 	var body: some View {
 		VStack(spacing: 4) {
 			ScrollViewReader { scrollView in
-				if let messages, !messages.isEmpty {
+				if !messages.isEmpty {
 					messageList
 						.scrollDismissesKeyboard(.interactively)
 						.scrollIndicators(.hidden)
@@ -100,7 +100,7 @@ struct MessageList: View {
 					AnalyticEvents.messageList.id,
 					parameters: [
 						"kind": channel != nil ? "channel" : "user",
-						"messages_in_list": messages?.count ?? 0
+						"messages_in_list": messages.count
 					]
 				)
 			}
@@ -144,53 +144,48 @@ struct MessageList: View {
 				}
 			}
 		)
-		.onAppear {
-			loadMessages()
-		}
 	}
 
 	@ViewBuilder
 	private var messageList: some View {
-		if let messages {
-			List {
-				ForEach(messages, id: \.messageId) { message in
-					MessageListItem(
-						message: message,
-						originalMessage: getOriginalMessage(for: message),
-						onMessageRead: { message in
-							var didRead = 0
-							for displayedMessage in messages.filter({ msg in
-								msg.messageTimestamp <= message.messageTimestamp
-							}) where !displayedMessage.read {
-								displayedMessage.read.toggle()
-								didRead += 1
-							}
+		List {
+			ForEach(messages, id: \.messageId) { message in
+				MessageListItem(
+					message: message,
+					originalMessage: getOriginalMessage(for: message),
+					onMessageRead: { message in
+						var didRead = 0
+						for displayedMessage in messages.filter({ msg in
+							msg.messageTimestamp <= message.messageTimestamp
+						}) where !displayedMessage.read {
+							displayedMessage.read.toggle()
+							didRead += 1
+						}
 
-							guard didRead > 0 else {
-								return
-							}
+						guard didRead > 0 else {
+							return
+						}
 
-							Logger.app.info("Marking \(didRead) message(s) as read")
+						Logger.app.info("Marking \(didRead) message(s) as read")
 
-							debounce.emit {
-								await self.saveData()
-							}
+						debounce.emit {
+							await self.saveData()
+						}
 
-							if let myInfo {
-								appState.unreadChannelMessages = myInfo.unreadMessages
-								context.refresh(myInfo, mergeChanges: true)
-							}
-						},
-						onReply: {
-							messageFieldFocused = true
-						},
-						destination: destination,
-						replyMessageId: $replyMessageId
-					)
-					.listRowSeparator(.hidden)
-					.listRowBackground(Color.clear)
-					.scrollContentBackground(.hidden)
-				}
+						if let myInfo {
+							appState.unreadChannelMessages = myInfo.unreadMessages
+							context.refresh(myInfo, mergeChanges: true)
+						}
+					},
+					onReply: {
+						messageFieldFocused = true
+					},
+					destination: destination,
+					replyMessageId: $replyMessageId
+				)
+				.listRowSeparator(.hidden)
+				.listRowBackground(Color.clear)
+				.scrollContentBackground(.hidden)
 			}
 			.listStyle(.plain)
 		}
@@ -204,6 +199,14 @@ struct MessageList: View {
 		self.user = nil
 		self.myInfo = myInfo
 		self.destination = .channel(channel)
+
+		let request = MessageEntity.fetchRequest()
+		request.sortDescriptors = [
+			NSSortDescriptor(key: "messageTimestamp", ascending: true)
+		]
+		request.predicate = NSPredicate(format: "channel == %lld", channel.index)
+
+		self._messages = .init(fetchRequest: request)
 	}
 
 	init(
@@ -214,37 +217,24 @@ struct MessageList: View {
 		self.user = user
 		self.myInfo = myInfo
 		self.destination = .user(user)
-	}
 
-	private func loadMessages() {
-		if let channel {
-			let request = MessageEntity.fetchRequest()
-			request.sortDescriptors = [
-				NSSortDescriptor(key: "messageTimestamp", ascending: true)
-			]
-			request.predicate = NSPredicate(format: "channel == %lld", channel.index)
+		let request = MessageEntity.fetchRequest()
+		request.sortDescriptors = [
+			NSSortDescriptor(key: "messageTimestamp", ascending: true)
+		]
+		request.predicate = NSPredicate(
+			format: "toUser != nil && fromUser != nil && (toUser.num == %lld || fromUser.num == %lld) && admin == false && portNum != 10",
+			Int64(user.num),
+			Int64(user.num)
+		)
 
-			messages = try? context.fetch(request)
-		}
-		else if let user {
-			let request = MessageEntity.fetchRequest()
-			request.sortDescriptors = [
-				NSSortDescriptor(key: "messageTimestamp", ascending: true)
-			]
-			request.predicate = NSPredicate(
-				format: "toUser != nil && fromUser != nil && (toUser.num == %lld || fromUser.num == %lld) && admin == false && portNum != 10",
-				Int64(user.num),
-				Int64(user.num)
-			)
-
-			messages = try? context.fetch(request)
-		}
+		self._messages = .init(fetchRequest: request)
 	}
 
 	private func getOriginalMessage(for message: MessageEntity) -> MessageEntity? {
 		if
 			message.replyID > 0,
-			let messageReply = messages?.first(where: { msg in
+			let messageReply = messages.first(where: { msg in
 				msg.messageId == message.replyID
 			}),
 			messageReply.messagePayload != nil
