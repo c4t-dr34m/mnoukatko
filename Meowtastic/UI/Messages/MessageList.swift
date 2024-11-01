@@ -9,7 +9,7 @@ struct MessageList: View {
 	private let user: UserEntity?
 	private let myInfo: MyInfoEntity?
 	private let destination: MessageDestination?
-	private let debounce = Debounce<() async -> Void>(duration: .milliseconds(250)) { action in
+	private let debounce = Debounce<() async -> Void>(duration: .milliseconds(500)) { action in
 		await action()
 	}
 	private let notificationManager = LocalNotificationManager()
