@@ -88,24 +88,6 @@ final class BLEManager: NSObject, ObservableObject {
 		centralManager.delegate = self
 	}
 
-	func connectMQTT(config: MQTTConfigEntity) {
-		guard config.enabled else {
-			return
-		}
-
-		let manager = MQTTManager()
-		manager.delegate = self
-		manager.connect(config: config)
-
-		mqttManager = manager
-	}
-
-	func disconnectMQTT() {
-		mqttManager?.disconnect()
-		mqttManager?.delegate = nil
-		mqttManager = nil
-	}
-
 	func getConnectedDevice() -> Device? {
 		currentDevice.getConnectedDevice()
 	}
@@ -150,9 +132,8 @@ final class BLEManager: NSObject, ObservableObject {
 		if
 			automaticallyReconnect,
 			getConnectedDevice() == nil,
-			let preferred = UserDefaults.standard.object(forKey: "preferredPeripheralId") as? String,
 			let preferredDevice = devices.first(where: { device in
-				device.peripheral.identifier.uuidString == preferred
+				device.peripheral.identifier.uuidString == UserDefaults.preferredPeripheralId
 			})
 		{
 			connectTo(peripheral: preferredDevice.peripheral)
@@ -260,6 +241,41 @@ final class BLEManager: NSObject, ObservableObject {
 		automaticallyReconnect = reconnect
 
 		Analytics.logEvent(AnalyticEvents.bleDisconnect.id, parameters: nil)
+	}
+
+	func connectMQTT(config: MQTTConfigEntity? = nil) {
+		if let config, config.enabled {
+			let manager = MQTTManager()
+			manager.delegate = self
+			manager.connect(config: config)
+
+			mqttManager = manager
+		}
+		else if canHaveDemo() {
+			let manager = MQTTManager()
+			manager.delegate = self
+			manager.connectDefaults()
+
+			mqttManager = manager
+		}
+	}
+
+	func disconnectMQTT() {
+		mqttManager?.disconnect()
+		mqttManager?.delegate = nil
+		mqttManager = nil
+	}
+
+	func canHaveDemo() -> Bool {
+		guard UserDefaults.preferredPeripheralId.isEmpty else {
+			return false
+		}
+
+		guard !isConnecting, !isConnected else {
+			return false
+		}
+
+		return true
 	}
 
 	func setIsInvalidFwVersion() {

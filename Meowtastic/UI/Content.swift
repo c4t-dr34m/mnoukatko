@@ -107,6 +107,8 @@ struct Content: View {
 		.sheet(isPresented: $connectPresented) {
 			connectPresented = false
 			connectWasDismissed = true
+
+			// bleManager.connectMQTT() // TODO: connect to mqtt for demo
 		} content: {
 			Connect(isInSheet: true)
 				.presentationDetents([.large])

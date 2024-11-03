@@ -107,7 +107,7 @@ struct MessageList: View {
 				)
 			}
 
-			if let destination {
+			if let destination, connectedDevice.getConnectedDevice() != nil {
 				TextMessageField(
 					destination: destination,
 					onSubmit: {

@@ -7,9 +7,10 @@ import OSLog
 extension BLEManager: MQTTManagerDelegate {
 	func onMqttConnected() {
 		guard
-			let client = mqttManager?.client,
-			client.connState == .connected,
-			let topic = mqttManager?.topic
+			let manager = mqttManager,
+			let topic = manager.topic,
+			let client = manager.client,
+			client.connState == .connected
 		else {
 			return
 		}

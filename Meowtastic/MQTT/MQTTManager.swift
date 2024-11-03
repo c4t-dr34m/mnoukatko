@@ -3,11 +3,17 @@ import Foundation
 import OSLog
 
 final class MQTTManager {
-	var topic: String?
 	var client: CocoaMQTT?
 	var delegate: MQTTManagerDelegate?
+	var topic: String?
+
+	private var isDefaultConfig = false
 
 	func connect(config: MQTTConfigEntity) {
+		if isDefaultConfig {
+			disconnect()
+		}
+
 		guard config.enabled else {
 			Logger.mqtt.info("MQTT proxy is disabled, not connecting to MQTT broker")
 			return
@@ -41,7 +47,6 @@ final class MQTTManager {
 		else {
 			rootTopic = "msh"
 		}
-		topic = rootTopic + (isSupportedVersion ? "/2/e" : "/2/c") + "/#"
 
 		connect(
 			host: host,
@@ -49,7 +54,25 @@ final class MQTTManager {
 			useSsl: useSsl,
 			username: config.username,
 			password: config.password,
-			topic: topic
+			topic: rootTopic + (isSupportedVersion ? "/2/e" : "/2/c") + "/#"
+		)
+	}
+
+	func connectDefaults() {
+		if (client?.connState ?? .disconnected) != .disconnected {
+			return
+		}
+
+		let region = Locale.current.region?.identifier ?? "DE"
+
+		connect(
+			host: "mqtt.meshtastic.org",
+			port: 1883,
+			useSsl: false,
+			username: "meshdev",
+			password: "large4cats",
+			topic: "msh/\(region)/2/e/#",
+			isDefaults: true
 		)
 	}
 
@@ -60,7 +83,8 @@ final class MQTTManager {
 		useSsl: Bool,
 		username: String?,
 		password: String?,
-		topic: String?
+		topic: String?,
+		isDefaults: Bool = false
 	) {
 		guard !host.isEmpty else {
 			delegate?.onMqttDisconnected()
@@ -79,7 +103,7 @@ final class MQTTManager {
 		client.password = password
 		client.enableSSL = useSsl
 		client.allowUntrustCACertificate = true
-		client.autoReconnect = true
+		client.autoReconnect = !isDefaults
 		client.cleanSession = false // allow delivering old messages
 		client.willMessage = CocoaMQTTMessage(topic: "/will", string: "dieout")
 		client.logLevel = .warning
@@ -88,7 +112,9 @@ final class MQTTManager {
 			delegate?.onMqttError(message: "Mqtt connect error")
 		}
 
+		self.topic = topic
 		self.client = client
+		self.isDefaultConfig = isDefaults
 	}
 
 	func subscribe(topic: String, qos: CocoaMQTTQoS) {
