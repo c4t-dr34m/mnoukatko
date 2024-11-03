@@ -20,6 +20,8 @@ struct MessageList: View {
 	private var preferredPeripheralNum = -1
 	@EnvironmentObject
 	private var connectedDevice: CurrentDevice
+	@Environment(\.colorScheme)
+	private var colorScheme: ColorScheme
 	@StateObject
 	private var appState = AppState.shared
 	@FocusState
@@ -188,6 +190,7 @@ struct MessageList: View {
 				.scrollContentBackground(.hidden)
 			}
 			.listStyle(.plain)
+			.background(colorScheme == .dark ? .black : .white)
 		}
 	}
 

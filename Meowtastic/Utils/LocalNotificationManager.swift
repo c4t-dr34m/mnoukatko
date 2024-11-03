@@ -33,6 +33,8 @@ final class LocalNotificationManager {
 
 		let center = UNUserNotificationCenter.current()
 		center.removeDeliveredNotifications(withIdentifiers: [id])
+
+		Logger.notification.debug("Notifications cancelled: \(id)")
 	}
 
 	private func process(
