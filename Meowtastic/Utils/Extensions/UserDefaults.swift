@@ -53,7 +53,6 @@ extension UserDefaults {
 		case channelMessageNotifications
 		case modemPreset
 		case firmwareVersion
-		case ignoreMQTT
 		case powerSavingMode
 		case bcgNotification
 		case moreColors
@@ -104,9 +103,6 @@ extension UserDefaults {
 
 	@UserDefault(.firmwareVersion, defaultValue: "0.0.0")
 	static var firmwareVersion: String
-
-	@UserDefault(.ignoreMQTT, defaultValue: false)
-	static var ignoreMQTT: Bool
 
 	@UserDefault(.powerSavingMode, defaultValue: false)
 	static var powerSavingMode: Bool
