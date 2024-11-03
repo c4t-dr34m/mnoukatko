@@ -46,7 +46,6 @@ extension UserDefaults {
 		case provideLocationInterval
 		case mapLayer
 		case meshMapDistance
-		case enableMapNodeHistoryPins
 		case enableDetectionNotifications
 		case newNodeNotifications
 		case lowBatteryNotifications
@@ -84,16 +83,13 @@ extension UserDefaults {
 	@UserDefault(.meshMapDistance, defaultValue: 800000)
 	static var meshMapDistance: Double
 
-	@UserDefault(.enableMapNodeHistoryPins, defaultValue: false)
-	static var enableMapNodeHistoryPins: Bool
-
 	@UserDefault(.enableDetectionNotifications, defaultValue: false)
 	static var enableDetectionNotifications: Bool
 
 	@UserDefault(.channelMessageNotifications, defaultValue: true)
 	static var channelMessageNotifications: Bool
 
-	@UserDefault(.newNodeNotifications, defaultValue: true)
+	@UserDefault(.newNodeNotifications, defaultValue: false)
 	static var newNodeNotifications: Bool
 
 	@UserDefault(.lowBatteryNotifications, defaultValue: true)
