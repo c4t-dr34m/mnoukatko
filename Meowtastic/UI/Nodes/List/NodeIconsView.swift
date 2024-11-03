@@ -143,7 +143,7 @@ struct NodeIconsView: View {
 			divider
 
 			if
-				let currentCoordinate = locationManager.lastKnownLocation?.coordinate,
+				let currentCoordinate = locationManager.getLocation()?.coordinate,
 				let lastCoordinate = (node.positions?.lastObject as? PositionEntity)?.coordinate
 			{
 				let myLocation = CLLocation(

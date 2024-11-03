@@ -256,7 +256,7 @@ struct NodeDetail: View {
 		if let position = nodePosition {
 			HStack(alignment: .center, spacing: 8) {
 				if
-					let currentCoordinate = locationManager.lastKnownLocation?.coordinate,
+					let currentCoordinate = locationManager.getLocation()?.coordinate,
 					let lastCoordinate = (node.positions?.lastObject as? PositionEntity)?.coordinate
 				{
 					let myLocation = CLLocation(

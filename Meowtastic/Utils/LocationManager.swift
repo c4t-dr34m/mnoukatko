@@ -10,12 +10,17 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
 		longitude: -122.0090
 	)
 
+	@Published
+	var lastKnownLocation: CLLocation?
+	var authorizationStatus: CLAuthorizationStatus? {
+		locationManager.authorizationStatus
+	}
+
 	private let locationManager: CLLocationManager
 
-	private(set) var lastKnownLocation: CLLocation?
-
-	@Published
-	private var authorizationStatus: CLAuthorizationStatus?
+	private var hasPermission: Bool {
+		[.authorizedWhenInUse, .authorizedAlways].contains(authorizationStatus)
+	}
 
 	override init() {
 		locationManager = CLLocationManager()
@@ -26,32 +31,19 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
 
 		super.init()
 
-		locationManager.delegate = self
-		locationManager.requestLocation()
+		startLocationManager()
+	}
+
+	func getLocation() -> CLLocation? {
+		if !hasPermission {
+			locationManager.requestAlwaysAuthorization()
+		}
+
+		return lastKnownLocation
 	}
 
 	func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-		switch manager.authorizationStatus {
-		case .authorizedAlways:
-			authorizationStatus = .authorizedAlways
-
-		case .authorizedWhenInUse:
-			authorizationStatus = .authorizedWhenInUse
-			locationManager.requestLocation()
-
-		case .restricted:
-			authorizationStatus = .restricted
-
-		case .denied:
-			authorizationStatus = .denied
-
-		case .notDetermined:
-			authorizationStatus = .notDetermined
-			locationManager.requestAlwaysAuthorization()
-
-		default:
-			break
-		}
+		startLocationManager()
 	}
 
 	func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -66,11 +58,12 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
 		// no-op
 	}
 
-	func getSafeLastKnownLocation() -> CLLocation {
-		if let lastKnownLocation {
-			return lastKnownLocation
+	private func startLocationManager() {
+		guard hasPermission else {
+			return
 		}
 
-		return Self.defaultLocation
+		locationManager.delegate = self
+		locationManager.requestLocation()
 	}
 }

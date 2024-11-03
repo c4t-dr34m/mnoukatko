@@ -59,7 +59,7 @@ extension PositionEntity {
 			format: "nodePosition != nil && (nodePosition.user.shortName != nil || nodePosition.user.shortName != '') && latest == true"
 		)
 
-		if let lastKnownLocation = LocationManager.shared.lastKnownLocation {
+		if let lastKnownLocation = LocationManager.shared.getLocation() {
 			let d: Double = UserDefaults.meshMapDistance * 1.1
 			let r: Double = 6371009
 

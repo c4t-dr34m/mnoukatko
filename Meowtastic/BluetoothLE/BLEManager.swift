@@ -501,7 +501,7 @@ final class BLEManager: NSObject, ObservableObject {
 	}
 
 	func getPhonePosition() -> Position? {
-		guard let lastLocation = LocationsHandler.shared.locationsArray.last else {
+		guard let lastLocation = LocationManager.shared.getLocation() else {
 			return nil
 		}
 
