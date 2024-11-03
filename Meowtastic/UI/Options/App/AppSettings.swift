@@ -14,6 +14,8 @@ struct AppSettings: View {
 	@State
 	private var isPresentingDeleteMapTilesConfirm = false
 	@State
+	private var powerSavingMode = UserDefaults.powerSavingMode
+	@State
 	private var lowBatteryNotifications = UserDefaults.lowBatteryNotifications
 	@State
 	private var channelMessageNotifications = UserDefaults.channelMessageNotifications
@@ -26,6 +28,32 @@ struct AppSettings: View {
 
 	var body: some View {
 		Form {
+			Section(header: Text("Power")) {
+				VStack(alignment: .leading, spacing: 8) {
+					let processInfo = ProcessInfo.processInfo
+
+					Toggle(isOn: $powerSavingMode) {
+						Text("Power Saving Mode")
+					}
+					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+					.disabled(processInfo.isLowPowerModeEnabled)
+					.onChange(of: powerSavingMode) {
+						UserDefaults.powerSavingMode = powerSavingMode
+					}
+
+					if powerSavingMode {
+						Text("Node will disconnect when app is in background.")
+							.font(.callout)
+							.foregroundColor(.gray)
+					}
+					else {
+						Text("Node will stay connected as long as iOS allows.")
+							.font(.callout)
+							.foregroundColor(.gray)
+					}
+				}
+			}
+
 			Section(header: Text("Notifications")) {
 				Toggle(isOn: $lowBatteryNotifications) {
 					Text("Low Battery")

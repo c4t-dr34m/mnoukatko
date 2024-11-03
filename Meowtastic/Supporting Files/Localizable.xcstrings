@@ -10081,6 +10081,12 @@
     "Node Number" : {
 
     },
+    "Node will disconnect when app is in background." : {
+
+    },
+    "Node will stay connected as long as iOS allows." : {
+
+    },
     "Node Without a Name" : {
 
     },
@@ -10795,6 +10801,9 @@
 
     },
     "Power Options" : {
+
+    },
+    "Power Saving Mode" : {
 
     },
     "Power Screen" : {

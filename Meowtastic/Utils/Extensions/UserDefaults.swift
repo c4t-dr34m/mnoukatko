@@ -53,6 +53,7 @@ extension UserDefaults {
 		case modemPreset
 		case firmwareVersion
 		case ignoreMQTT
+		case powerSavingMode
 		case bcgNotification
 		case moreColors
 		case lastConnectionEventCount
@@ -102,6 +103,9 @@ extension UserDefaults {
 
 	@UserDefault(.ignoreMQTT, defaultValue: false)
 	static var ignoreMQTT: Bool
+
+	@UserDefault(.powerSavingMode, defaultValue: false)
+	static var powerSavingMode: Bool
 
 	@UserDefault(.bcgNotification, defaultValue: false)
 	static var bcgNotification: Bool

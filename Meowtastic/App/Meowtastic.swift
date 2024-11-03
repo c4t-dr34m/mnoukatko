@@ -11,13 +11,13 @@ struct Meowtastic: App {
 	private static let bgTaskLifespan: TimeInterval = 90
 
 	@UIApplicationDelegateAdaptor(MeowtasticDelegate.self)
-	var appDelegate
+	private var appDelegate
 	@Environment(\.scenePhase)
-	var scenePhase
+	private var scenePhase
 	@State
-	var channelSettings: String?
+	private var channelSettings: String?
 	@State
-	var addChannels = false
+	private var addChannels = false
 
 	private let appState: AppState
 	private let bleManager: BLEManager
@@ -48,6 +48,11 @@ struct Meowtastic: App {
 
 				bleManager.stopScanning()
 				bleManager.automaticallyReconnect = false
+
+				let processInfo = ProcessInfo.processInfo
+				if UserDefaults.powerSavingMode || processInfo.isLowPowerModeEnabled {
+					bleManager.disconnectDevice()
+				}
 
 				scheduleAppRefresh()
 			}

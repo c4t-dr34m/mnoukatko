@@ -42,6 +42,11 @@ final class BackgroundWatcher: DevicesDelegate {
 	}
 
 	func stopBackground(runtime: TimeInterval) {
+		let processInfo = ProcessInfo.processInfo
+		if UserDefaults.powerSavingMode || processInfo.isLowPowerModeEnabled {
+			bleManager.disconnectDevice()
+		}
+
 		scheduleSummaryNotification()
 
 		Logger.app.warning(

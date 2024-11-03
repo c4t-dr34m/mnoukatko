@@ -8,6 +8,8 @@ struct Content: View {
 
 	@EnvironmentObject
 	private var bleManager: BLEManager
+	@Environment(\.scenePhase)
+	private var scenePhase
 	@StateObject
 	private var appState = AppState.shared
 	@State
@@ -91,6 +93,10 @@ struct Content: View {
 			processBleManagerState()
 		}
 		.onChange(of: bleManager.lastConnectionError, initial: true) {
+			guard scenePhase != .background else {
+				return
+			}
+
 			if !bleManager.lastConnectionError.isEmpty, !connectWasDismissed {
 				connectPresented = true
 			}
@@ -120,7 +126,7 @@ struct Content: View {
 				}
 			}
 		}
-		else if !connectWasDismissed {
+		else if !connectWasDismissed, scenePhase != .background {
 			connectPresented = true
 		}
 	}
