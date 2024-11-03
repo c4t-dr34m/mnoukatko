@@ -120,6 +120,14 @@ extension UserDefaults {
 	@UserDefault(.lastConnectionEventCount, defaultValue: 0)
 	static var lastConnectionEventCount: Int
 
+	static func disableAllNotifications() {
+		Self.directMessageNotifications = false
+		Self.channelMessageNotifications = false
+		Self.lowBatteryNotifications = false
+		Self.newNodeNotifications = false
+		Self.bcgNotification = false
+	}
+
 	static func getWantConfigNonce() -> UInt32 {
 		let current = UserDefaults.wantConfigNonce
 		let new: Int

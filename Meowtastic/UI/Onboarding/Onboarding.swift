@@ -168,11 +168,7 @@ struct Onboarding: View {
 
 	private func finish() {
 		if !hasNotifications {
-			UserDefaults.directMessageNotifications = false
-			UserDefaults.channelMessageNotifications = false
-			UserDefaults.lowBatteryNotifications = false
-			UserDefaults.newNodeNotifications = false
-			UserDefaults.bcgNotification = false
+			UserDefaults.disableAllNotifications()
 		}
 
 		UserDefaults.onboardingDone = true
