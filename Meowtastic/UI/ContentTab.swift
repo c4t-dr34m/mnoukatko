@@ -6,7 +6,6 @@ enum ContentTab: Hashable {
 	case map
 	case options
 
-	// swiftlint:disable:next cyclomatic_complexity
 	init(from navigation: Navigation) {
 		switch navigation {
 		case .messages:

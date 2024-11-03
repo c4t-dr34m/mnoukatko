@@ -52,6 +52,7 @@ struct Content: View {
 		return channelUnreadMessages + usersUnreadMessages
 	}
 
+	@ViewBuilder
 	var body: some View {
 		TabView(selection: $appState.tabSelection) {
 			Messages()

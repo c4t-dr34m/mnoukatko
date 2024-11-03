@@ -12,7 +12,6 @@ import SwiftUI
 final class BLEManager: NSObject, ObservableObject {
 	let appState: AppState
 	let context: NSManagedObjectContext
-	let centralManager: CBCentralManager
 	let coreDataTools = CoreDataTools()
 	let notificationManager = LocalNotificationManager()
 	let minimumVersion = "2.0.0"
@@ -41,6 +40,7 @@ final class BLEManager: NSObject, ObservableObject {
 	@Published
 	var mqttError = ""
 
+	var centralManager: CBCentralManager?
 	var nodeNames = [Int64: String]()
 	var infoLastChanged: Date?
 	var devicesDelegate: DevicesDelegate?
@@ -75,7 +75,6 @@ final class BLEManager: NSObject, ObservableObject {
 	) {
 		self.appState = appState
 		self.context = context
-		self.centralManager = CBCentralManager()
 		self.mqttManager = MQTTManager()
 		self.currentDevice = CurrentDevice(context: context)
 
@@ -84,8 +83,29 @@ final class BLEManager: NSObject, ObservableObject {
 
 		super.init()
 
-		isSwitchedOn = centralManager.state == .poweredOn
-		centralManager.delegate = self
+		NotificationCenter.default.addObserver(
+			forName: .onboardingDone,
+			object: nil,
+			queue: nil,
+			using: { [weak self] _ in
+				self?.initCentral()
+			}
+		)
+		initCentral()
+	}
+
+	func initCentral() {
+		guard UserDefaults.onboardingDone else {
+			return
+		}
+
+		Logger.app.debug("Initializing central...")
+
+		let central = CBCentralManager()
+		central.delegate = self
+		isSwitchedOn = central.state == .poweredOn
+
+		centralManager = central
 	}
 
 	func getConnectedDevice() -> Device? {
@@ -93,13 +113,13 @@ final class BLEManager: NSObject, ObservableObject {
 	}
 
 	func startScanning() {
-		guard !centralManager.isScanning else {
+		guard let centralManager, !centralManager.isScanning else {
 			return
 		}
 
 		guard centralManager.state == .poweredOn else {
 			Logger.services.info(
-				"Peripheral scanning denied. Central state: \(self.centralManager.state.name)"
+				"Peripheral scanning denied. Central state: \(centralManager.state.name)"
 			)
 			return
 		}
@@ -117,7 +137,7 @@ final class BLEManager: NSObject, ObservableObject {
 	}
 
 	func stopScanning() {
-		guard centralManager.isScanning else {
+		guard let centralManager, centralManager.isScanning else {
 			return
 		}
 
@@ -141,6 +161,10 @@ final class BLEManager: NSObject, ObservableObject {
 	}
 
 	func connectTo(peripheral: CBPeripheral) {
+		guard let centralManager else {
+			return
+		}
+
 		if peripheral.state == .connecting {
 			return
 		}
@@ -163,7 +187,7 @@ final class BLEManager: NSObject, ObservableObject {
 		}
 
 		Logger.services.debug(
-			"Attempting to connect to \(peripheral.name ?? peripheral.identifier.uuidString) [central:\(self.centralManager.state.name)]"
+			"Attempting to connect to \(peripheral.name ?? peripheral.identifier.uuidString) [central:\(centralManager.state.name)]"
 		)
 
 		isConnecting = true
@@ -230,7 +254,7 @@ final class BLEManager: NSObject, ObservableObject {
 			mqttClientProxy.disconnect()
 		}
 
-		centralManager.cancelPeripheralConnection(device.peripheral)
+		centralManager?.cancelPeripheralConnection(device.peripheral)
 		currentDevice.clear()
 
 		isConnected = false
@@ -573,7 +597,7 @@ final class BLEManager: NSObject, ObservableObject {
 
 		if timeoutCount >= 10 {
 			if let device = currentDevice.device {
-				centralManager.cancelPeripheralConnection(device.peripheral)
+				centralManager?.cancelPeripheralConnection(device.peripheral)
 			}
 
 			currentDevice.clear()

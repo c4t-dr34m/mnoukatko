@@ -125,7 +125,7 @@ struct Options: View {
 						Image(systemName: "wifi.circle")
 					}
 				}
-				
+
 				NavigationLink {
 					NavigationLazyView(
 						Channels(node: nodeSelected)
@@ -138,7 +138,7 @@ struct Options: View {
 					}
 				}
 				.disabled(nodeIsConnected)
-				
+
 				NavigationLink {
 					NavigationLazyView(
 						UserConfig(node: nodeSelected)
@@ -150,7 +150,7 @@ struct Options: View {
 						Image(systemName: "person.text.rectangle")
 					}
 				}
-				
+
 				NavigationLink {
 					NavigationLazyView(
 						DeviceConfig(node: nodeSelected)
@@ -162,7 +162,7 @@ struct Options: View {
 						Image(systemName: "flipphone")
 					}
 				}
-				
+
 				NavigationLink {
 					NavigationLazyView(
 						MQTTConfig(node: nodeSelected)
@@ -174,7 +174,7 @@ struct Options: View {
 						Image(systemName: "network")
 					}
 				}
-				
+
 				NavigationLink {
 					NavigationLazyView(
 						BluetoothConfig(node: nodeSelected)
@@ -186,7 +186,7 @@ struct Options: View {
 						Image(systemName: "iphone.gen3")
 					}
 				}
-				
+
 				NavigationLink {
 					NavigationLazyView(
 						NetworkConfig(node: nodeSelected)
@@ -198,7 +198,7 @@ struct Options: View {
 						Image(systemName: "wifi.router")
 					}
 				}
-				
+
 				NavigationLink {
 					NavigationLazyView(
 						PositionConfig(node: nodeSelected)
@@ -210,7 +210,7 @@ struct Options: View {
 						Image(systemName: "mappin.and.ellipse")
 					}
 				}
-				
+
 				NavigationLink {
 					NavigationLazyView(
 						TelemetryConfig(node: nodeSelected)
@@ -222,7 +222,7 @@ struct Options: View {
 						Image(systemName: "thermometer.medium")
 					}
 				}
-				
+
 				NavigationLink {
 					NavigationLazyView(
 						DisplayConfig(node: nodeSelected)
@@ -234,7 +234,7 @@ struct Options: View {
 						Image(systemName: "display")
 					}
 				}
-				
+
 				NavigationLink {
 					NavigationLazyView(
 						PowerConfig(node: nodeSelected)

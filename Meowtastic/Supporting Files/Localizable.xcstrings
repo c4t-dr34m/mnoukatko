@@ -272,6 +272,12 @@
     "All device and app data will be deleted. You will also need to forget your devices under Settings > Bluetooth." : {
 
     },
+    "Allow Location" : {
+
+    },
+    "Allow Notifications" : {
+
+    },
     "Allow Position Requests" : {
 
     },
@@ -730,6 +736,9 @@
 
     },
     "Bandwidth" : {
+
+    },
+    "Before We Start" : {
 
     },
     "ble.connection.timeout %d %@" : {
@@ -2587,6 +2596,9 @@
         }
       }
     },
+    "Continue" : {
+
+    },
     "Controls the blinking LED on the device.  For most devices this will control one of the up to 4 LEDS, the charger and GPS LEDs are not controllable." : {
 
     },
@@ -3435,6 +3447,9 @@
           }
         }
       }
+    },
+    "Done" : {
+
     },
     "Double Tap as Button" : {
 
@@ -7549,6 +7564,12 @@
           }
         }
       }
+    },
+    "Meowtastic also would like to deliver you notifications in case it discovers new Meshtastic® node, or when you got a new message. You can customize which notifications you would like later in Options." : {
+
+    },
+    "Meowtastic would like to use your current location to determine where you are on the map, how far are other Meshtastic® nodes, and, optionally, feed your node with location updates." : {
+
     },
     "Mesh" : {
 

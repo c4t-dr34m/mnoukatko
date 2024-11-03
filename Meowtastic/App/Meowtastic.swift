@@ -15,6 +15,8 @@ struct Meowtastic: App {
 	@Environment(\.scenePhase)
 	private var scenePhase
 	@State
+	private var onboardingDone: Bool = UserDefaults.onboardingDone
+	@State
 	private var channelSettings: String?
 	@State
 	private var addChannels = false
@@ -29,20 +31,29 @@ struct Meowtastic: App {
 	@ViewBuilder
 	var body: some Scene {
 		WindowGroup {
-			Content()
-				.environment(\.managedObjectContext, persistence.viewContext)
-				.environmentObject(bleManager)
-				.environmentObject(bleManager.currentDevice)
-				.environmentObject(bleActions)
-				.environmentObject(nodeConfig)
-				.environmentObject(locationManager)
-				.onOpenURL { url in
-					if url.scheme == AppConstants.meowtasticScheme {
-						AppState.shared.navigation = Navigation(from: url)
+			if !onboardingDone {
+				Onboarding(done: $onboardingDone)
+			}
+			else {
+				Content()
+					.environment(\.managedObjectContext, persistence.viewContext)
+					.environmentObject(bleManager)
+					.environmentObject(bleManager.currentDevice)
+					.environmentObject(bleActions)
+					.environmentObject(nodeConfig)
+					.environmentObject(locationManager)
+					.onOpenURL { url in
+						if url.scheme == AppConstants.meowtasticScheme {
+							AppState.shared.navigation = Navigation(from: url)
+						}
 					}
-				}
+			}
 		}
 		.onChange(of: scenePhase, initial: true) {
+			guard onboardingDone else {
+				return
+			}
+
 			if scenePhase == .background {
 				try? Persistence.shared.container.viewContext.save()
 

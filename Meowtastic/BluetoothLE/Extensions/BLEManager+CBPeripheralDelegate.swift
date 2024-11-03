@@ -27,7 +27,6 @@ extension BLEManager: CBPeripheralDelegate {
 		}
 	}
 
-	// swiftlint:disable:next cyclomatic_complexity
 	func peripheral(
 		_ peripheral: CBPeripheral,
 		didDiscoverCharacteristicsFor service: CBService,

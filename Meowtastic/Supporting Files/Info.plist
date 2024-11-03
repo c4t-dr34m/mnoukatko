@@ -69,19 +69,17 @@
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>We use bluetooth to connect to nearby Meshtastic Devices</string>
+	<string>Bluetooth (Low Energy) is used to connect your iPhone or iPad to a Meshtastic® node. This allows to fully enjoy the Meshtastic® network.</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>Bluetooth is used to connect an iPhone to a user&apos;s meshtastic device to allow text messaging and location data for the mesh network.</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>We use your location to display it on the mesh map as well as to have GPS coordinatess to send to the connected device. Route Recording uses location in the background.</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>We use your location to display it on the mesh map as well as to have GPS coordinatess to send to the connected device.</string>
+	<string>Bluetooth (Low Energy) is used to connect your iPhone or iPad to a Meshtastic® node. This allows to fully enjoy the Meshtastic® network.</string>
 	<key>NSLocationUsageDescription</key>
-	<string>We use your location to display it on the mesh map as well as to have GPS coordinatess to send to the connected device.</string>
+	<string>Location of you iPhone or iPad is used to show your location relative to other Meshtastic® nodes (map &amp; distances). It also can be used, if you choose so, to send the location to Meshtastic® network.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>We use your location to display it on the mesh map as well as to have GPS coordinatess to send to the connected device.</string>
-	<key>Privacy – Bluetooth Always Usage Description</key>
-	<string>We use bluetooth to connect to nearby Meshtastic Devices</string>
+	<string>Location of you iPhone or iPad is used to show your location relative to other Meshtastic® nodes (map &amp; distances). It also can be used, if you choose so, to send the location to Meshtastic® network.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Location of you iPhone or iPad is used to show your location relative to other Meshtastic® nodes (map &amp; distances). It also can be used, if you choose so, to send the location to Meshtastic® network.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Location of you iPhone or iPad is used to show your location relative to other Meshtastic® nodes (map &amp; distances). It also can be used, if you choose so, to send the location to Meshtastic® network.</string>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
 	<key>UIApplicationSceneManifest</key>
