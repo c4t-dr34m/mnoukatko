@@ -108,8 +108,6 @@ struct MessageList: View {
 			}
 
 			if let destination {
-				Divider()
-
 				TextMessageField(
 					destination: destination,
 					onSubmit: {
@@ -185,12 +183,12 @@ struct MessageList: View {
 					destination: destination,
 					replyMessageId: $replyMessageId
 				)
+				.listRowInsets(.init(top: 4, leading: 0, bottom: 4, trailing: 0))
 				.listRowSeparator(.hidden)
 				.listRowBackground(Color.clear)
 				.scrollContentBackground(.hidden)
 			}
 			.listStyle(.plain)
-			.background(colorScheme == .dark ? .black : .white)
 		}
 	}
 
