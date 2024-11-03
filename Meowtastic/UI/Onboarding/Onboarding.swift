@@ -121,13 +121,7 @@ struct Onboarding: View {
 				Spacer()
 
 				Button(action: {
-					UserDefaults.onboardingDone = true
-					NotificationCenter.default.post(
-						name: .onboardingDone,
-						object: nil
-					)
-
-					done = true
+					finish()
 				}) {
 					Text(hasPermissions ? "Continue" : "Skip")
 				}
@@ -170,6 +164,24 @@ struct Onboarding: View {
 
 			checkAuthorizations()
 		}
+	}
+
+	private func finish() {
+		if !hasNotifications {
+			UserDefaults.directMessageNotifications = false
+			UserDefaults.channelMessageNotifications = false
+			UserDefaults.lowBatteryNotifications = false
+			UserDefaults.newNodeNotifications = false
+			UserDefaults.bcgNotification = false
+		}
+
+		UserDefaults.onboardingDone = true
+		NotificationCenter.default.post(
+			name: .onboardingDone,
+			object: nil
+		)
+
+		done = true
 	}
 }
 

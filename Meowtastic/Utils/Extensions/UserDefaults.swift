@@ -49,6 +49,7 @@ extension UserDefaults {
 		case enableDetectionNotifications
 		case newNodeNotifications
 		case lowBatteryNotifications
+		case directMessageNotifications
 		case channelMessageNotifications
 		case modemPreset
 		case firmwareVersion
@@ -85,6 +86,9 @@ extension UserDefaults {
 
 	@UserDefault(.enableDetectionNotifications, defaultValue: false)
 	static var enableDetectionNotifications: Bool
+
+	@UserDefault(.directMessageNotifications, defaultValue: true)
+	static var directMessageNotifications: Bool
 
 	@UserDefault(.channelMessageNotifications, defaultValue: true)
 	static var channelMessageNotifications: Bool

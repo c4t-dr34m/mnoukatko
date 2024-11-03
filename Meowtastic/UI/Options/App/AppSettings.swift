@@ -18,6 +18,8 @@ struct AppSettings: View {
 	@State
 	private var lowBatteryNotifications = UserDefaults.lowBatteryNotifications
 	@State
+	private var directMessageNotifications = UserDefaults.directMessageNotifications
+	@State
 	private var channelMessageNotifications = UserDefaults.channelMessageNotifications
 	@State
 	private var newNodeNotifications = UserDefaults.newNodeNotifications
@@ -61,6 +63,14 @@ struct AppSettings: View {
 				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 				.onChange(of: lowBatteryNotifications) {
 					UserDefaults.lowBatteryNotifications = lowBatteryNotifications
+				}
+
+				Toggle(isOn: $directMessageNotifications) {
+					Text("New Direct Message")
+				}
+				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+				.onChange(of: directMessageNotifications) {
+					UserDefaults.directMessageNotifications = directMessageNotifications
 				}
 
 				Toggle(isOn: $channelMessageNotifications) {

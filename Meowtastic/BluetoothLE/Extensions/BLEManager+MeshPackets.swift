@@ -986,12 +986,15 @@ extension BLEManager {
 		}
 
 		if let toUser = newMessage.toUser {
-			// Set Unread Message Indicators
 			if packet.to == connectedNode {
 				appState.unreadDirectMessages = toUser.unreadMessages
 			}
 
-			if !fromUser.mute, let num = newMessage.fromUser?.num {
+			if
+				UserDefaults.directMessageNotifications,
+				!fromUser.mute,
+				let num = newMessage.fromUser?.num
+			{
 				let subtitle: String?
 				if let longName = fromUser.longName {
 					subtitle = "From: \(longName)"
@@ -1016,7 +1019,7 @@ extension BLEManager {
 				)
 			}
 		}
-		else if UserDefaults.channelMessageNotifications {
+		else {
 			let fetchMyInfoRequest = MyInfoEntity.fetchRequest()
 			fetchMyInfoRequest.predicate = NSPredicate(format: "myNodeNum == %lld", Int64(connectedNode))
 
@@ -1029,6 +1032,7 @@ extension BLEManager {
 				appState.unreadChannelMessages = unread
 
 				guard
+					UserDefaults.channelMessageNotifications,
 					unread > 0,
 					let channel = channels.first(where: { channel in
 						channel.index == newMessage.channel
