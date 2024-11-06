@@ -205,15 +205,15 @@ struct NodeDetail: View {
 				}
 
 				if success {
-					node.favorite.toggle()
 					context.refresh(node, mergeChanges: true)
-
 					do {
 						try context.save()
 					}
 					catch {
 						context.rollback()
 					}
+
+					node.favorite.toggle()
 				}
 			} label: {
 				Image(systemName: node.favorite ? "star.slash" : "star")
