@@ -35,11 +35,7 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
 	}
 
 	func getLocation() -> CLLocation? {
-		if !hasPermission {
-			locationManager.requestAlwaysAuthorization()
-		}
-
-		return lastKnownLocation
+		lastKnownLocation
 	}
 
 	func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {

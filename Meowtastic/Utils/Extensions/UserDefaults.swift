@@ -39,6 +39,7 @@ struct UserDefault<T: Decodable> {
 extension UserDefaults {
 	enum Keys: String, CaseIterable {
 		case onboardingDone
+		case locationAuthSkipped
 		case wantConfigNonce
 		case preferredPeripheralId
 		case preferredPeripheralNum
@@ -61,6 +62,9 @@ extension UserDefaults {
 
 	@UserDefault(.onboardingDone, defaultValue: false)
 	static var onboardingDone: Bool
+
+	@UserDefault(.locationAuthSkipped, defaultValue: false)
+	static var locationAuthSkipped: Bool
 
 	@UserDefault(.wantConfigNonce, defaultValue: 0)
 	static var wantConfigNonce: Int

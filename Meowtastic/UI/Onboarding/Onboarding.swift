@@ -172,6 +172,7 @@ struct Onboarding: View {
 		}
 
 		UserDefaults.onboardingDone = true
+		UserDefaults.locationAuthSkipped = !hasLocation
 		NotificationCenter.default.post(
 			name: .onboardingDone,
 			object: nil

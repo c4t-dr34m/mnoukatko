@@ -1,3 +1,4 @@
+import CoreLocation
 import FirebaseAnalytics
 import MeshtasticProtobufs
 import OSLog
@@ -5,6 +6,7 @@ import SwiftUI
 
 struct PositionConfig: View {
 	private let coreDataTools = CoreDataTools()
+	private let locationManager = CLLocationManager()
 
 	var node: NodeInfoEntity
 
@@ -92,7 +94,7 @@ struct PositionConfig: View {
 			setPositionValues()
 
 			supportedVersion = bleManager.connectedVersion == "0.0.0"
-			||  self.minimumVersion.compare(bleManager.connectedVersion, options: .numeric) == .orderedAscending
+			|| self.minimumVersion.compare(bleManager.connectedVersion, options: .numeric) == .orderedAscending
 			|| minimumVersion.compare(bleManager.connectedVersion, options: .numeric) == .orderedSame
 
 			// Need to request a PositionConfig from the remote node before allowing changes
@@ -229,6 +231,7 @@ struct PositionConfig: View {
 				Text("Positions will be provided by your device GPS, if you select disabled or not present you can set a fixed position.")
 					.foregroundColor(.gray)
 					.font(.callout)
+
 				VStack(alignment: .leading) {
 					Picker("Update Interval", selection: $gpsUpdateInterval) {
 						ForEach(GPSUpdateIntervals.allCases) { ui in
@@ -433,6 +436,11 @@ struct PositionConfig: View {
 	func handleChanges() {
 		guard let positionConfig = node.positionConfig else {
 			return
+		}
+
+		let hasLocation = [.authorizedWhenInUse, .authorizedAlways].contains(locationManager.authorizationStatus)
+		if !hasLocation, gpsMode == GPSMode.enabled.rawValue || fixedPosition == true {
+			locationManager.requestAlwaysAuthorization()
 		}
 
 		let pf = PositionFlags(rawValue: self.positionFlags)
