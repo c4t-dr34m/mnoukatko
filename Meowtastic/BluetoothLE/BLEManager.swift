@@ -34,7 +34,15 @@ final class BLEManager: NSObject, ObservableObject {
 	@Published
 	var isSwitchedOn = false
 	@Published
-	var automaticallyReconnect = true
+	var automaticallyReconnect = true {
+		didSet {
+			guard oldValue != self.automaticallyReconnect else {
+				return
+			}
+
+			Logger.app.debug("BLE manager auto-reconnect changed: \(self.automaticallyReconnect)")
+		}
+	}
 	@Published
 	var mqttConnected = false
 	@Published
