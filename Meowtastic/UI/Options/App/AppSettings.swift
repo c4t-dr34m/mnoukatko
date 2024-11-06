@@ -7,8 +7,12 @@ import SwiftProtobuf
 import SwiftUI
 
 struct AppSettings: View {
+	private let notificationManager = UNUserNotificationCenter.current()
+
 	@Environment(\.managedObjectContext)
 	private var context
+	@State
+	private var hasNotifications = false
 	@State
 	private var isPresentingCoreDataResetConfirm = false
 	@State
@@ -62,6 +66,10 @@ struct AppSettings: View {
 				}
 				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 				.onChange(of: lowBatteryNotifications) {
+					if !hasNotifications, lowBatteryNotifications {
+						authorizeNotifications()
+					}
+
 					UserDefaults.lowBatteryNotifications = lowBatteryNotifications
 				}
 
@@ -70,6 +78,10 @@ struct AppSettings: View {
 				}
 				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 				.onChange(of: directMessageNotifications) {
+					if !hasNotifications, directMessageNotifications {
+						authorizeNotifications()
+					}
+
 					UserDefaults.directMessageNotifications = directMessageNotifications
 				}
 
@@ -78,6 +90,10 @@ struct AppSettings: View {
 				}
 				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 				.onChange(of: channelMessageNotifications) {
+					if !hasNotifications, channelMessageNotifications {
+						authorizeNotifications()
+					}
+
 					UserDefaults.channelMessageNotifications = channelMessageNotifications
 				}
 
@@ -86,6 +102,10 @@ struct AppSettings: View {
 				}
 				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 				.onChange(of: newNodeNotifications) {
+					if !hasNotifications, newNodeNotifications {
+						authorizeNotifications()
+					}
+
 					UserDefaults.newNodeNotifications = newNodeNotifications
 				}
 
@@ -95,6 +115,10 @@ struct AppSettings: View {
 					}
 					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 					.onChange(of: bcgNotification) {
+						if !hasNotifications, bcgNotification {
+							authorizeNotifications()
+						}
+
 						UserDefaults.bcgNotification = bcgNotification
 					}
 
@@ -102,6 +126,9 @@ struct AppSettings: View {
 						.font(.callout)
 						.foregroundColor(.gray)
 				}
+			}
+			.onAppear {
+				checkAuthorizations()
 			}
 
 			Section(header: Text("Look & Feel")) {
@@ -128,6 +155,24 @@ struct AppSettings: View {
 		)
 		.onAppear {
 			Analytics.logEvent(AnalyticEvents.optionsAppSettings.id, parameters: nil)
+		}
+	}
+
+	private func checkAuthorizations() {
+		notificationManager.getNotificationSettings { settings in
+			self.hasNotifications = settings.authorizationStatus == .authorized
+		}
+	}
+
+	private func authorizeNotifications() {
+		UNUserNotificationCenter.current().requestAuthorization(
+			options: [.alert, .badge, .sound]
+		) { granted, error in
+			guard granted, error == nil else {
+				return
+			}
+
+			checkAuthorizations()
 		}
 	}
 }

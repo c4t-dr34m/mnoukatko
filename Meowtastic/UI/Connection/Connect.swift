@@ -433,23 +433,6 @@ struct Connect: View {
 		self.node = node
 		self.isInSheet = isInSheet
 		self.visibleDevices = []
-
-		UNUserNotificationCenter.current().getNotificationSettings(
-			completionHandler: { settings in
-				if settings.authorizationStatus == .notDetermined {
-					UNUserNotificationCenter.current().requestAuthorization(
-						options: [.alert, .badge, .sound]
-					) { success, error in
-						if success {
-							Logger.services.info("Notifications are all set!")
-						}
-						else if let error = error {
-							Logger.services.error("\(error.localizedDescription)")
-						}
-					}
-				}
-			}
-		)
 	}
 
 	@ViewBuilder
