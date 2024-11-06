@@ -45,6 +45,7 @@ final class BackgroundWatcher: DevicesDelegate {
 		let processInfo = ProcessInfo.processInfo
 		if UserDefaults.powerSavingMode || processInfo.isLowPowerModeEnabled {
 			bleManager.disconnectDevice()
+			bleManager.automaticallyReconnect = false
 		}
 
 		scheduleSummaryNotification()

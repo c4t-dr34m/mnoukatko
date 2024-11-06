@@ -57,12 +57,14 @@ struct Meowtastic: App {
 			if scenePhase == .background {
 				try? Persistence.shared.container.viewContext.save()
 
-				bleManager.stopScanning()
-				bleManager.automaticallyReconnect = false
-
 				let processInfo = ProcessInfo.processInfo
+				bleManager.stopScanning()
 				if UserDefaults.powerSavingMode || processInfo.isLowPowerModeEnabled {
 					bleManager.disconnectDevice()
+					bleManager.automaticallyReconnect = false
+				}
+				else {
+					bleManager.automaticallyReconnect = true
 				}
 
 				scheduleAppRefresh()
