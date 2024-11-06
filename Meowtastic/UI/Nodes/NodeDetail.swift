@@ -954,11 +954,11 @@ struct NodeDetail: View {
 			isPresented: $showingRebootConfirm
 		) {
 			Button("reboot.node", role: .destructive) {
-				if !nodeConfig.sendReboot(
-					fromUser: node.user!,
-					toUser: node.user!,
-					adminIndex: node.myInfo!.adminIndex
-				) {
+				if
+					let user = node.user,
+					let myInfo = node.myInfo,
+					!nodeConfig.sendReboot(fromUser: user, toUser: user, adminIndex: myInfo.adminIndex)
+				{
 					Logger.mesh.warning("Reboot Failed")
 				}
 			}
@@ -980,11 +980,11 @@ struct NodeDetail: View {
 				isPresented: $showingShutdownConfirm
 			) {
 				Button("Shut Down Node?", role: .destructive) {
-					if !nodeConfig.sendShutdown(
-						fromUser: node.user!,
-						toUser: node.user!,
-						adminIndex: node.myInfo!.adminIndex
-					) {
+					if
+						let user = node.user,
+						let myInfo = node.myInfo,
+						!nodeConfig.sendShutdown(fromUser: user, toUser: user, adminIndex: myInfo.adminIndex)
+					{
 						Logger.mesh.warning("Shutdown Failed")
 					}
 				}
