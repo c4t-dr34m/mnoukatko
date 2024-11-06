@@ -25,7 +25,7 @@ struct About: View {
 				)
 				.font(.body)
 
-				Text("Version: \(Bundle.main.appVersionLong); build \(Bundle.main.appBuild)")
+				Text("Version: \(Bundle.main.appVersionLong)b\(Bundle.main.appBuild)")
 			}
 
 			Section(header: Text("Credits")) {

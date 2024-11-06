@@ -3,9 +3,6 @@ import MapKit
 import SwiftUI
 
 struct TraceRoute: View {
-	@ObservedObject
-	var node: NodeInfoEntity
-
 	private let coreDataTools = CoreDataTools()
 	private let distanceFormatter = MKDistanceFormatter()
 	private let dateFormatter = {
@@ -20,6 +17,10 @@ struct TraceRoute: View {
 	private var context
 	@EnvironmentObject
 	private var bleActions: BLEActions
+	@ObservedObject
+	private var node: NodeInfoEntity
+	@Namespace
+	private var mapScope
 	@State
 	private var isPresentingClearLogConfirm: Bool = false
 	@State
@@ -31,9 +32,10 @@ struct TraceRoute: View {
 	)
 	@State
 	private var position = MapCameraPosition.automatic
-	@Namespace
-	private var mapScope
 
+	private var nodeNum: Int64? {
+		node.user?.num
+	}
 	private var routes: [TraceRouteEntity]? {
 		guard let routes = node.traceRoutes else {
 			return nil
@@ -47,162 +49,15 @@ struct TraceRoute: View {
 		HStack(alignment: .top) {
 			VStack {
 				if let routes {
-					List {
-						Button {
-							bleActions.sendTraceRouteRequest(
-								destNum: node.user?.num ?? 0,
-								wantResponse: true
-							)
-						} label: {
-							Label {
-								Text("Request new")
-							} icon: {
-								Image(systemName: "arrow.clockwise")
-									.symbolRenderingMode(.monochrome)
-									.foregroundColor(.accentColor)
-							}
-						}
-
-						ForEach(routes, id: \.num) { (route: TraceRouteEntity) in
-							ZStack {
-								traceRoute(for: route)
-							}
-							.onTapGesture {
-								selectedRoute = route
-							}
-						}
-					}
-					.listStyle(.automatic)
-					.onAppear {
-						selectedRoute = routes.first
-					}
+					routeList(for: routes)
 				}
 
 				if let selectedRoute {
-					VStack {
-						if selectedRoute.response && selectedRoute.hops?.count ?? 0 > 0 {
-							Label {
-								Text("Route: \(selectedRoute.routeText ?? "N/A")")
-							} icon: {
-								Image(systemName: "signpost.right.and.left")
-									.symbolRenderingMode(.hierarchical)
-							}
-							.font(.title2)
-						}
-						else if selectedRoute.response {
-							Label {
-								Text("Trace route received directly by \(selectedRoute.node?.user?.longName ?? "N/A")")
-							} icon: {
-								Image(systemName: "signpost.right.and.left")
-									.symbolRenderingMode(.hierarchical)
-							}
-							.font(.title2)
-						}
-
-						if selectedRoute.response {
-							if selectedRoute.hasPositions {
-								Map(
-									position: $position,
-									bounds: MapCameraBounds(minimumDistance: 1, maximumDistance: .infinity),
-									scope: mapScope
-								) {
-									Annotation(
-										"You",
-										coordinate: selectedRoute.coordinate ?? LocationManager.defaultLocation.coordinate
-									) {
-										ZStack {
-											Circle()
-												.fill(Color(.green))
-												.strokeBorder(.white, lineWidth: 3)
-												.frame(width: 15, height: 15)
-										}
-									}
-									.annotationTitles(.automatic)
-
-									// Direct Trace Route
-									if selectedRoute.response && selectedRoute.hops?.count ?? 0 == 0 {
-										if
-											selectedRoute.node?.positions?.count ?? 0 > 0,
-											let mostRecent = selectedRoute.node?.positions?.lastObject as? PositionEntity
-										{
-											let traceRouteCoords: [CLLocationCoordinate2D] = [
-												selectedRoute.coordinate ?? LocationManager.defaultLocation.coordinate,
-												mostRecent.coordinate
-											]
-											Annotation(
-												selectedRoute.node?.user?.shortName ?? "???",
-												coordinate: mostRecent.nodeCoordinate ?? LocationManager.defaultLocation.coordinate
-											) {
-												ZStack {
-													Circle()
-														.fill(Color(.black))
-														.strokeBorder(.white, lineWidth: 3)
-														.frame(width: 15, height: 15)
-												}
-											}
-
-											let dashed = StrokeStyle(
-												lineWidth: 2,
-												lineCap: .round,
-												lineJoin: .round,
-												dash: [7, 10]
-											)
-											MapPolyline(coordinates: traceRouteCoords)
-												.stroke(.blue, style: dashed)
-										}
-									}
-								}
-								.frame(maxWidth: .infinity, maxHeight: .infinity)
-							}
-
-							VStack {
-								/// Distance
-								if selectedRoute.node?.positions?.count ?? 0 > 0,
-								   selectedRoute.coordinate != nil,
-								   let mostRecent = selectedRoute.node?.positions?.lastObject as? PositionEntity {
-
-									let startPoint = CLLocation(
-										latitude: selectedRoute.coordinate?.latitude ?? LocationManager.defaultLocation.coordinate.latitude,
-										longitude: selectedRoute.coordinate?.longitude ?? LocationManager.defaultLocation.coordinate.longitude
-									)
-
-									if startPoint.distance(
-										from: CLLocation(
-											latitude: LocationManager.defaultLocation.coordinate.latitude,
-											longitude: LocationManager.defaultLocation.coordinate.longitude)
-									)
-										> 0.0 {
-										let metersAway = selectedRoute.coordinate?.distance(
-											from: CLLocationCoordinate2D(
-												latitude: mostRecent.latitude ?? LocationManager.defaultLocation.coordinate.latitude,
-												longitude: mostRecent.longitude ?? LocationManager.defaultLocation.coordinate.longitude
-											)
-										)
-
-										Label {
-											Text("distance".localized + ": \(distanceFormatter.string(fromDistance: Double(metersAway ?? 0)))")
-												.foregroundColor(.primary)
-										} icon: {
-											Image(systemName: "lines.measurement.horizontal")
-												.symbolRenderingMode(.hierarchical)
-										}
-									}
-								}
-							}
-						}
-						else {
-							VStack {
-								Label {
-									Text("Trace route sent to \(selectedRoute.node?.user?.longName ?? "unknown".localized)")
-								} icon: {
-									Image(systemName: "signpost.right.and.left")
-										.symbolRenderingMode(.hierarchical)
-								}
-								.font(.title3)
-
-								Spacer()
-							}
-						}
+					if selectedRoute.response {
+						routeDetail(for: selectedRoute)
+					}
+					else {
+						routeAwaiting(for: selectedRoute)
 					}
 				}
 				else {
@@ -219,6 +74,10 @@ struct TraceRoute: View {
 		}
 	}
 
+	init(node: NodeInfoEntity) {
+		self.node = node
+	}
+
 	@ViewBuilder
 	private func traceRoute(for route: TraceRouteEntity) -> some View {
 		let hops = route.hops?.array as? [TraceRouteHopEntity]
@@ -227,7 +86,7 @@ struct TraceRoute: View {
 		Label {
 			VStack(alignment: .leading, spacing: 4) {
 				if route.response {
-					if let hopCount {
+					if let hops, let hopCount {
 						if hopCount == 0 {
 							Text("Direct")
 								.font(.body)
@@ -236,36 +95,34 @@ struct TraceRoute: View {
 							Text("\(hopCount) hop(s)")
 								.font(.body)
 
-							if let hops {
-								Spacer()
-									.frame(height: 4)
+							Spacer()
+								.frame(height: 4)
 
-								ForEach(hops, id: \.num) { hop in
-									HStack(alignment: .center, spacing: 4) {
-										let node = coreDataTools.getNodeInfo(id: hop.num, context: context)
+							ForEach(hops, id: \.num) { hop in
+								HStack(alignment: .center, spacing: 4) {
+									let node = coreDataTools.getNodeInfo(id: hop.num, context: context)
 
-										Image(systemName: "hare")
-											.font(.system(size: 10))
-											.foregroundColor(.gray)
-											.frame(width: 24)
+									Image(systemName: "hare")
+										.font(.system(size: 10))
+										.foregroundColor(.gray)
+										.frame(width: 24)
 
-										Text(node?.user?.longName ?? "Unknown node")
-											.font(.system(size: 10))
-											.foregroundColor(.gray)
-									}
+									Text(node?.user?.longName ?? "Unknown node")
+										.font(.system(size: 10))
+										.foregroundColor(.gray)
 								}
+							}
 
-								if let destination = node.user?.longName {
-									HStack(alignment: .center, spacing: 4) {
-										Image(systemName: "target")
-											.font(.system(size: 10))
-											.foregroundColor(.gray)
-											.frame(width: 24)
+							if let destination = node.user?.longName {
+								HStack(alignment: .center, spacing: 4) {
+									Image(systemName: "target")
+										.font(.system(size: 10))
+										.foregroundColor(.gray)
+										.frame(width: 24)
 
-										Text(destination)
-											.font(.system(size: 10))
-											.foregroundColor(.gray)
-									}
+									Text(destination)
+										.font(.system(size: 10))
+										.foregroundColor(.gray)
 								}
 							}
 						}
@@ -306,6 +163,182 @@ struct TraceRoute: View {
 			}
 			else {
 				routeIcon(name: "person.slash.fill")
+			}
+		}
+	}
+
+	@ViewBuilder
+	private func routeList(for routes: [TraceRouteEntity]) -> some View {
+		List {
+			if let nodeNum {
+				Button {
+					bleActions.sendTraceRouteRequest(
+						destNum: nodeNum,
+						wantResponse: true
+					)
+				} label: {
+					Label {
+						Text("Request new")
+					} icon: {
+						Image(systemName: "arrow.clockwise")
+							.symbolRenderingMode(.monochrome)
+							.foregroundColor(.accentColor)
+					}
+				}
+			}
+
+			ForEach(routes, id: \.num) { route in
+				ZStack {
+					traceRoute(for: route)
+				}
+				.onTapGesture {
+					selectedRoute = route
+				}
+			}
+		}
+		.listStyle(.automatic)
+		.onAppear {
+			selectedRoute = routes.first
+		}
+	}
+
+	@ViewBuilder
+	private func routeAwaiting(for route: TraceRouteEntity) -> some View {
+		VStack(alignment: .leading) {
+			Spacer()
+
+			HStack(alignment: .center, spacing: 8) {
+				Image(systemName: "hourglass.circle")
+					.font(.system(size: 32))
+
+				if let longName = route.node?.user?.longName {
+					VStack(alignment: .leading, spacing: 8) {
+						Text("Request sent to")
+							.font(.body)
+						Text(longName)
+							.font(.body)
+					}
+				}
+				else {
+					Text("Request sent")
+						.font(.body)
+				}
+			}
+
+			Spacer()
+		}
+	}
+
+	@ViewBuilder
+	private func routeDetail(for route: TraceRouteEntity) -> some View {
+		let hops = route.hops?.count
+
+		if let hops, hops > 0 {
+			HStack(alignment: .center, spacing: 8) {
+				Image(systemName: "signpost.right.and.left")
+					.font(.system(size: 32))
+
+				if let routeText = route.routeText {
+					Text("Route: \(routeText)")
+						.font(.body)
+				}
+				else {
+					Text("Unknown route")
+						.font(.body)
+				}
+			}
+		}
+		else {
+			HStack(alignment: .center, spacing: 8) {
+				Image(systemName: "signpost.right.and.left")
+					.font(.system(size: 32))
+
+				if let longName = route.node?.user?.longName {
+					Text("Trace route from \(longName) received directly")
+						.font(.body)
+				}
+				else {
+					Text("Trace route received directly")
+						.font(.body)
+				}
+			}
+		}
+
+		if route.hasPositions {
+			Map(
+				position: $position,
+				bounds: MapCameraBounds(minimumDistance: 1, maximumDistance: .infinity),
+				scope: mapScope
+			) {
+				Annotation(
+					"You",
+					coordinate: route.coordinate ?? LocationManager.defaultLocation.coordinate
+				) {
+					ZStack {
+						Circle()
+							.fill(Color(.green))
+							.strokeBorder(.white, lineWidth: 3)
+							.frame(width: 15, height: 15)
+					}
+				}
+				.annotationTitles(.automatic)
+
+				// Direct Trace Route
+				if
+					let hops,
+					let positions = route.node?.positions,
+					let mostRecent = positions.lastObject as? PositionEntity,
+					hops == 0
+				{
+					let traceRouteCoords: [CLLocationCoordinate2D] = [
+						route.coordinate ?? LocationManager.defaultLocation.coordinate,
+						mostRecent.coordinate
+					]
+					let dashed = StrokeStyle(
+						lineWidth: 2,
+						lineCap: .round,
+						lineJoin: .round,
+						dash: [7, 10]
+					)
+
+					Annotation(
+						route.node?.user?.shortName ?? "???",
+						coordinate: mostRecent.nodeCoordinate ?? LocationManager.defaultLocation.coordinate
+					) {
+						Circle()
+							.fill(Color(.black))
+							.strokeBorder(.white, lineWidth: 3)
+							.frame(width: 15, height: 15)
+					}
+
+					MapPolyline(coordinates: traceRouteCoords)
+						.stroke(.blue, style: dashed)
+				}
+			}
+			.frame(maxWidth: .infinity, maxHeight: .infinity)
+		}
+
+		if
+			let positions = route.node?.positions,
+			let lastPosition = positions.lastObject as? PositionEntity,
+			let currentCoordinate = route.coordinate,
+			let lastCoordinateLatitude = lastPosition.latitude,
+			let lastCoordinateLongitude = lastPosition.longitude
+		{
+			let distance = currentCoordinate.distance(
+				from: CLLocationCoordinate2D(
+					latitude: lastCoordinateLatitude,
+					longitude: lastCoordinateLongitude
+				)
+			)
+			let distanceFormatted = distanceFormatter.string(fromDistance: Double(distance))
+
+			Label {
+				Text("Distance: \(distanceFormatted)")
+					.foregroundColor(.primary)
+			} icon: {
+				Image(systemName: "lines.measurement.horizontal")
+					.symbolRenderingMode(.hierarchical)
 			}
 		}
 	}

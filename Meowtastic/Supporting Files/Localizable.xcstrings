@@ -3448,6 +3448,9 @@
         }
       }
     },
+    "Distance: %@" : {
+
+    },
     "Done" : {
 
     },
@@ -11139,6 +11142,12 @@
     "Request new" : {
 
     },
+    "Request sent" : {
+
+    },
+    "Request sent to" : {
+
+    },
     "Requires that there be an accelerometer on your device." : {
 
     },
@@ -13753,10 +13762,10 @@
     "Trace Route" : {
 
     },
-    "Trace route received directly by %@" : {
+    "Trace route from %@ received directly" : {
 
     },
-    "Trace route sent to %@" : {
+    "Trace route received directly" : {
 
     },
     "Transmit Enabled" : {
@@ -13837,6 +13846,9 @@
 
     },
     "Unknown hardware" : {
+
+    },
+    "Unknown route" : {
 
     },
     "unset" : {
@@ -14069,12 +14081,12 @@
     "Version 1.2 End of life (EOL) Info" : {
 
     },
-    "Version: %@; build %@" : {
+    "Version: %@b%@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Version: %1$@; build %2$@"
+            "value" : "Version: %1$@b%2$@"
           }
         }
       }
