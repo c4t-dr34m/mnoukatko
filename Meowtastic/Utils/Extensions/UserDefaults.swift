@@ -46,7 +46,6 @@ extension UserDefaults {
 		case provideLocation
 		case provideLocationInterval
 		case mapLayer
-		case meshMapDistance
 		case enableDetectionNotifications
 		case newNodeNotifications
 		case lowBatteryNotifications
@@ -83,9 +82,6 @@ extension UserDefaults {
 
 	@UserDefault(.mapLayer, defaultValue: .standard)
 	static var mapLayer: MapLayer
-
-	@UserDefault(.meshMapDistance, defaultValue: 800000)
-	static var meshMapDistance: Double
 
 	@UserDefault(.enableDetectionNotifications, defaultValue: false)
 	static var enableDetectionNotifications: Bool
