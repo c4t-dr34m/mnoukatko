@@ -46,23 +46,21 @@ struct TraceRoute: View {
 
 	@ViewBuilder
 	var body: some View {
-		HStack(alignment: .top) {
-			VStack {
-				if let routes {
-					routeList(for: routes)
-				}
+		VStack(alignment: .center) {
+			if let routes {
+				routeList(for: routes)
+			}
 
-				if let selectedRoute {
-					if selectedRoute.response {
-						routeDetail(for: selectedRoute)
-					}
-					else {
-						routeAwaiting(for: selectedRoute)
-					}
+			if let selectedRoute {
+				if selectedRoute.response {
+					routeDetail(for: selectedRoute)
 				}
 				else {
-					ContentUnavailableView("No Trace Route Selected", systemImage: "signpost.right.and.left")
+					routeAwaiting(for: selectedRoute)
 				}
+			}
+			else {
+				ContentUnavailableView("No Trace Route Selected", systemImage: "signpost.right.and.left")
 			}
 		}
 		.navigationTitle("Trace Route")
@@ -92,8 +90,14 @@ struct TraceRoute: View {
 								.font(.body)
 						}
 						else {
-							Text("\(hopCount) hop(s)")
-								.font(.body)
+							if hopCount == 1 {
+								Text("\(hopCount) hop")
+									.font(.body)
+							}
+							else {
+								Text("\(hopCount) hops")
+									.font(.body)
+							}
 
 							Spacer()
 								.frame(height: 4)
@@ -204,12 +208,10 @@ struct TraceRoute: View {
 			}
 
 			ForEach(routes, id: \.num) { route in
-				ZStack {
-					traceRoute(for: route)
-				}
-				.onTapGesture {
-					selectedRoute = route
-				}
+				traceRoute(for: route)
+					.onTapGesture {
+						selectedRoute = route
+					}
 			}
 		}
 		.listStyle(.automatic)
@@ -231,6 +233,7 @@ struct TraceRoute: View {
 					VStack(alignment: .leading, spacing: 8) {
 						Text("Request sent to")
 							.font(.body)
+
 						Text(longName)
 							.font(.body)
 					}
@@ -250,30 +253,30 @@ struct TraceRoute: View {
 		if route.hasPositions {
 			Map(
 				position: $position,
-				bounds: MapCameraBounds(minimumDistance: 1, maximumDistance: .infinity),
+				bounds: MapCameraBounds(
+					minimumDistance: 100,
+					maximumDistance: .infinity
+				),
 				scope: mapScope
 			) {
 				Annotation(
 					"You",
 					coordinate: route.coordinate ?? LocationManager.defaultLocation.coordinate
 				) {
-					ZStack {
-						Circle()
-							.fill(Color(.green))
-							.strokeBorder(.white, lineWidth: 3)
-							.frame(width: 15, height: 15)
-					}
+					Circle()
+						.fill(Color(.green))
+						.strokeBorder(.white, lineWidth: 3)
+						.frame(width: 15, height: 15)
 				}
 				.annotationTitles(.automatic)
 
 				// Direct Trace Route
 				if
+					let mostRecent = route.node?.positions?.lastObject as? PositionEntity,
 					let hops = route.hops?.count,
-					let positions = route.node?.positions,
-					let mostRecent = positions.lastObject as? PositionEntity,
 					hops == 0
 				{
-					let traceRouteCoords: [CLLocationCoordinate2D] = [
+					let traceRouteCoords = [
 						route.coordinate ?? LocationManager.defaultLocation.coordinate,
 						mostRecent.coordinate
 					]
