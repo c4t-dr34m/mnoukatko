@@ -42,7 +42,7 @@ struct NodeListConnectedItem: View {
 
 				VStack(alignment: .leading, spacing: 4) {
 					if let connectedNode {
-						Text(connectedNode.user?.longName ?? "Unknown")
+						Text(connectedNode.user?.longName ?? "Unknown node")
 							.lineLimit(2)
 							.fontWeight(.medium)
 							.font(.title2)

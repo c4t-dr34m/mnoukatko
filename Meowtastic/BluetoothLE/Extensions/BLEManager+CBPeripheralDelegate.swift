@@ -165,8 +165,8 @@ extension BLEManager: CBPeripheralDelegate {
 						UserDefaults.preferredPeripheralNum = Int(myInfo.myNodeNum)
 
 						device.num = myInfo.myNodeNum
-						device.name = myInfo.bleName ?? "unknown".localized
-						device.longName = myInfo.bleName ?? "unknown".localized
+						device.name = myInfo.bleName ?? "Unknown node"
+						device.longName = myInfo.bleName ?? "Unknown node"
 
 						currentDevice.update(with: device)
 					}
@@ -184,7 +184,7 @@ extension BLEManager: CBPeripheralDelegate {
 						device.num == nodeInfo.num
 					{
 						device.shortName = user.shortName ?? "?"
-						device.longName = user.longName ?? "unknown".localized
+						device.longName = user.longName ?? "Unknown node"
 
 						currentDevice.update(with: device)
 					}

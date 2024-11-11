@@ -24,12 +24,12 @@ struct ConfigHeader<T>: View {
 						.foregroundColor(.accentColor)
 				}
 				else {
-					Text("Remote administration for: \(node.user?.longName ?? "Unknown")")
+					Text("Remote administration for: \(node.user?.longName ?? "Unknown node")")
 						.font(.title3)
 				}
 			}
 			else if node.num == connectedDevice.device?.num ?? -1 {
-				Text("Configuration for: \(node.user?.longName ?? "Unknown")")
+				Text("Configuration for: \(node.user?.longName ?? "Unknown node")")
 			}
 			else {
 				Text("Please connect to a radio to configure settings.")

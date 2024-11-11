@@ -72,7 +72,7 @@ extension PositionEntity: MKAnnotation {
 	}
 
 	public var title: String? {
-		nodePosition?.user?.shortName ?? "unknown".localized
+		nodePosition?.user?.shortName ?? "Unknown node"
 	}
 
 	public var subtitle: String? {

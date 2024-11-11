@@ -37,9 +37,9 @@ extension BLEManager: CBCentralManagerDelegate {
 			peripheral: peripheral,
 			id: peripheral.identifier.uuidString,
 			num: 0,
-			name: name ?? "Unknown",
+			name: name ?? "Unknown node",
 			shortName: "?",
-			longName: name ?? "Unknown",
+			longName: name ?? "Unknown node",
 			firmwareVersion: "Unknown",
 			rssi: RSSI.intValue,
 			lastUpdate: Date.now

@@ -85,7 +85,7 @@ struct NodeListItem: View {
 
 	@ViewBuilder
 	private var name: some View {
-		Text(node.user?.longName ?? "Unknown")
+		Text(node.user?.longName ?? "Unknown node")
 			.fontWeight(.medium)
 			.font(.title2)
 			.lineLimit(2)

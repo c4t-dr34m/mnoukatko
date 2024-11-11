@@ -153,7 +153,7 @@ struct UserConfig: View {
 					isPresented: $isPresentingSaveConfirm,
 					titleVisibility: .visible
 				) {
-					Button("Save User Config to \(node.user?.longName ?? "Unknown")?") {
+					Button("Save User Config to \(node.user?.longName ?? "Unknown node")?") {
 						if longName.isEmpty && isLicensed {
 							return
 						}
