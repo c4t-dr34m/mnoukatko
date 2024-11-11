@@ -339,7 +339,7 @@ extension BLEManager: CBPeripheralDelegate {
 
 			case .tracerouteApp:
 				guard
-					let routingMessage = try? RouteDiscovery(serializedBytes: info.packet.decoded.payload),
+					let routingMessage = try? RouteDiscovery(serializedData: info.packet.decoded.payload),
 					!routingMessage.route.isEmpty
 				else {
 					break
@@ -367,37 +367,33 @@ extension BLEManager: CBPeripheralDelegate {
 					let traceRouteHop = TraceRouteHopEntity(context: context)
 					traceRouteHop.time = Date.now
 
-					if let hopNode, hopNode.hasPositions {
-						if
-							let mostRecent = hopNode.positions?.lastObject as? PositionEntity,
-							let time = mostRecent.time,
-							// swiftlint:disable:next force_unwrapping
-							time >= Calendar.current.date(byAdding: .day, value: -1, to: Date.now)!
-						{
-							traceRouteHop.name = hopNode.user?.longName ?? "Unknown node"
-							traceRouteHop.latitudeI = mostRecent.latitudeI
-							traceRouteHop.longitudeI = mostRecent.longitudeI
-							traceRouteHop.altitude = mostRecent.altitude
+					if
+						let hopNode,
+						let mostRecent = hopNode.positions?.lastObject as? PositionEntity,
+						let time = mostRecent.time,
+						// swiftlint:disable:next force_unwrapping
+						time >= Calendar.current.date(byAdding: .day, value: -1, to: Date.now)!
+					{
+						traceRouteHop.latitudeI = mostRecent.latitudeI
+						traceRouteHop.longitudeI = mostRecent.longitudeI
+						traceRouteHop.altitude = mostRecent.altitude
 
-							traceRoute.hasPositions = true
-						}
-						else {
-							traceRoute.hasPositions = false
-						}
+						traceRoute.hasPositions = true
 					}
 					else {
 						traceRoute.hasPositions = false
 					}
 
-					traceRouteHop.num = hopNode?.num ?? 0
-
 					if let hopNode {
+						traceRouteHop.num = hopNode.num
+						traceRouteHop.name = hopNode.user?.longName ?? "Unknown node"
+
 						if info.packet.rxTime > 0 {
 							hopNode.lastHeard = Date(
 								timeIntervalSince1970: TimeInterval(Int64(info.packet.rxTime))
 							)
 						}
-						
+
 						hopNodes.append(traceRouteHop)
 					}
 				}

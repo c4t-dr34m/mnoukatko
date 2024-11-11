@@ -16,6 +16,8 @@ struct TraceRoute: View {
 	@Environment(\.managedObjectContext)
 	private var context
 	@EnvironmentObject
+	private var connectedDevice: CurrentDevice
+	@EnvironmentObject
 	private var bleActions: BLEActions
 	@ObservedObject
 	private var node: NodeInfoEntity
@@ -53,7 +55,8 @@ struct TraceRoute: View {
 
 			if let selectedRoute {
 				if selectedRoute.response {
-					routeDetail(for: selectedRoute)
+					// TODO: show map if it makes any sense
+					// routeDetail(for: selectedRoute)
 				}
 				else {
 					routeAwaiting(for: selectedRoute)
@@ -70,6 +73,41 @@ struct TraceRoute: View {
 		.onAppear {
 			Analytics.logEvent(AnalyticEvents.traceRoute.id, parameters: nil)
 		}
+	}
+
+	@ViewBuilder
+	private var routeStart: some View {
+		if let myName = connectedDevice.device?.longName {
+			HStack(alignment: .center, spacing: 4) {
+				Image(systemName: "flipphone")
+					.font(.system(size: 14))
+					.foregroundColor(.primary)
+					.frame(width: 24)
+
+				Text(myName)
+					.font(.system(size: 14))
+					.foregroundColor(.primary)
+			}
+		}
+	}
+
+	@ViewBuilder
+	private var routeFinish: some View {
+		if let destination = node.user?.longName {
+			Divider()
+
+			HStack(alignment: .center, spacing: 4) {
+				Image(systemName: "flag.pattern.checkered.2.crossed")
+					.font(.system(size: 14))
+					.foregroundColor(.primary)
+					.frame(width: 24)
+
+				Text(destination)
+					.font(.system(size: 14))
+					.foregroundColor(.primary)
+			}
+		}
+
 	}
 
 	init(node: NodeInfoEntity) {
@@ -102,49 +140,9 @@ struct TraceRoute: View {
 							Spacer()
 								.frame(height: 4)
 
-							ForEach(hops, id: \.num) { hop in
-								HStack(alignment: .center, spacing: 4) {
-									let node = coreDataTools.getNodeInfo(id: hop.num, context: context)
-
-									if let node, node.viaMqtt {
-										Image(systemName: "network")
-											.font(.system(size: 10))
-											.foregroundColor(.gray)
-											.frame(width: 24)
-									}
-									else {
-										Image(systemName: "hare")
-											.font(.system(size: 10))
-											.foregroundColor(.gray)
-											.frame(width: 24)
-									}
-
-									HStack(alignment: .center, spacing: 4) {
-										Text(node?.user?.longName ?? "Unknown node")
-											.font(.system(size: 10))
-											.foregroundColor(.gray)
-
-										if let hopTime = hop.time {
-											Text(hopTime.relative())
-												.font(.system(size: 10))
-												.foregroundColor(.gray)
-										}
-									}
-								}
-							}
-
-							if let destination = node.user?.longName {
-								HStack(alignment: .center, spacing: 4) {
-									Image(systemName: "target")
-										.font(.system(size: 10))
-										.foregroundColor(.gray)
-										.frame(width: 24)
-
-									Text(destination)
-										.font(.system(size: 10))
-										.foregroundColor(.gray)
-								}
-							}
+							routeStart
+							hopList(for: hops)
+							routeFinish
 						}
 					}
 					else {
@@ -168,22 +166,7 @@ struct TraceRoute: View {
 				}
 			}
 		} icon: {
-			if route.response {
-				if let hopCount {
-					if hopCount == 0 {
-						routeIcon(name: "person.line.dotted.person.fill")
-					}
-					else {
-						routeIcon(name: "person.2.wave.2.fill")
-					}
-				}
-				else {
-					routeIcon(name: "person.fill.questionmark")
-				}
-			}
-			else {
-				routeIcon(name: "person.slash.fill")
-			}
+			routeIcon(hasResponse: route.response, hopCount: hopCount)
 		}
 	}
 
@@ -199,6 +182,7 @@ struct TraceRoute: View {
 				} label: {
 					Label {
 						Text("Request new")
+							.foregroundColor(.primary)
 					} icon: {
 						Image(systemName: "arrow.clockwise")
 							.symbolRenderingMode(.monochrome)
@@ -233,14 +217,17 @@ struct TraceRoute: View {
 					VStack(alignment: .leading, spacing: 8) {
 						Text("Request sent to")
 							.font(.body)
+							.foregroundColor(.primary)
 
 						Text(longName)
 							.font(.body)
+							.foregroundColor(.primary)
 					}
 				}
 				else {
 					Text("Request sent")
 						.font(.body)
+						.foregroundColor(.primary)
 				}
 			}
 
@@ -249,82 +236,68 @@ struct TraceRoute: View {
 	}
 
 	@ViewBuilder
-	private func routeDetail(for route: TraceRouteEntity) -> some View {
-		if route.hasPositions {
-			Map(
-				position: $position,
-				bounds: MapCameraBounds(
-					minimumDistance: 100,
-					maximumDistance: .infinity
-				),
-				scope: mapScope
-			) {
-				Annotation(
-					"You",
-					coordinate: route.coordinate ?? LocationManager.defaultLocation.coordinate
-				) {
-					Circle()
-						.fill(Color(.green))
-						.strokeBorder(.white, lineWidth: 3)
-						.frame(width: 15, height: 15)
-				}
-				.annotationTitles(.automatic)
+	private func hopList(for hops: [TraceRouteHopEntity]) -> some View {
+		ForEach(hops, id: \.num) { hop in
+			VStack(alignment: .leading, spacing: 4) {
+				Divider()
 
-				// Direct Trace Route
-				if
-					let mostRecent = route.node?.positions?.lastObject as? PositionEntity,
-					let hops = route.hops?.count,
-					hops == 0
-				{
-					let traceRouteCoords = [
-						route.coordinate ?? LocationManager.defaultLocation.coordinate,
-						mostRecent.coordinate
-					]
-					let dashed = StrokeStyle(
-						lineWidth: 2,
-						lineCap: .round,
-						lineJoin: .round,
-						dash: [7, 10]
-					)
+				HStack(alignment: .center, spacing: 4) {
+					let node = coreDataTools.getNodeInfo(id: hop.num, context: context)
 
-					Annotation(
-						route.node?.user?.shortName ?? "???",
-						coordinate: mostRecent.nodeCoordinate ?? LocationManager.defaultLocation.coordinate
-					) {
-						Circle()
-							.fill(Color(.black))
-							.strokeBorder(.white, lineWidth: 3)
-							.frame(width: 15, height: 15)
+					if let node, node.viaMqtt {
+						Image(systemName: "network")
+							.font(.system(size: 14))
+							.foregroundColor(.primary)
+							.frame(width: 24)
+					}
+					else {
+						Image(systemName: "hare")
+							.font(.system(size: 14))
+							.foregroundColor(.primary)
+							.frame(width: 24)
 					}
 
-					MapPolyline(coordinates: traceRouteCoords)
-						.stroke(.blue, style: dashed)
+					VStack(alignment: .leading, spacing: 4) {
+						Text(node?.user?.longName ?? "Unknown node")
+							.font(.system(size: 14))
+							.foregroundColor(.primary)
+
+						if let hopTime = hop.time {
+							HStack(spacing: 4) {
+								Text(hopTime.relative())
+									.font(.system(size: 10))
+									.foregroundColor(.gray)
+
+								if hop.latitudeI != 0, hop.longitudeI != 0 {
+									Image(systemName: "globe.europe.africa.fill")
+										.font(.system(size: 10))
+										.foregroundColor(.gray)
+								}
+							}
+						}
+					}
 				}
 			}
-			.frame(maxWidth: .infinity, maxHeight: .infinity)
 		}
+	}
 
-		if
-			let lastPosition = route.node?.positions?.lastObject as? PositionEntity,
-			let currentCoordinate = route.coordinate,
-			let lastCoordinateLatitude = lastPosition.latitude,
-			let lastCoordinateLongitude = lastPosition.longitude
-		{
-			let distance = currentCoordinate.distance(
-				from: CLLocationCoordinate2D(
-					latitude: lastCoordinateLatitude,
-					longitude: lastCoordinateLongitude
-				)
-			)
-			let distanceFormatted = distanceFormatter.string(fromDistance: Double(distance))
-
-			Label {
-				Text("Distance: \(distanceFormatted)")
-					.foregroundColor(.primary)
-			} icon: {
-				Image(systemName: "lines.measurement.horizontal")
-					.symbolRenderingMode(.hierarchical)
+	@ViewBuilder
+	private func routeIcon(hasResponse: Bool, hopCount: Int?) -> some View {
+		if hasResponse {
+			if let hopCount {
+				if hopCount == 0 {
+					routeIcon(name: "person.line.dotted.person.fill")
+				}
+				else {
+					routeIcon(name: "person.2.wave.2.fill")
+				}
 			}
+			else {
+				routeIcon(name: "person.fill.questionmark")
+			}
+		}
+		else {
+			routeIcon(name: "person.slash.fill")
 		}
 	}
 
@@ -334,5 +307,6 @@ struct TraceRoute: View {
 			.resizable()
 			.scaledToFit()
 			.frame(width: 32, height: 32)
+			.foregroundStyle(Color.accentColor)
 	}
 }
