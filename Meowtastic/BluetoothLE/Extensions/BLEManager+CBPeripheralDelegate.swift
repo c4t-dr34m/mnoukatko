@@ -339,51 +339,54 @@ extension BLEManager: CBPeripheralDelegate {
 
 			case .tracerouteApp:
 				guard
-					let routingMessage = try? RouteDiscovery(serializedData: info.packet.decoded.payload),
+					let routingMessage = try? RouteDiscovery(serializedBytes: info.packet.decoded.payload),
 					!routingMessage.route.isEmpty
 				else {
 					break
 				}
 
-				var routeString = "You --> "
+				guard
+					let traceRoute = coreDataTools.getTraceRoute(
+						id: Int64(info.packet.decoded.requestID),
+						context: context
+					)
+				else {
+					break
+				}
+
+				traceRoute.response = true
+				traceRoute.route = routingMessage.route
+
 				var hopNodes: [TraceRouteHopEntity] = []
-
-				let traceRoute = coreDataTools.getTraceRoute(
-					id: Int64(info.packet.decoded.requestID),
-					context: context
-				)
-				traceRoute?.response = true
-				traceRoute?.route = routingMessage.route
-
 				for node in routingMessage.route {
 					var hopNode = coreDataTools.getNodeInfo(id: Int64(node), context: context)
-
-					if hopNode == nil && hopNode?.num ?? 0 > 0 && node != 4294967295 {
+					if hopNode == nil, node != 4294967295 {
 						hopNode = createNodeInfo(num: Int64(node), context: context)
 					}
 
 					let traceRouteHop = TraceRouteHopEntity(context: context)
 					traceRouteHop.time = Date.now
 
-					if hopNode?.hasPositions ?? false {
+					if let hopNode, hopNode.hasPositions {
 						if
-							let mostRecent = hopNode?.positions?.lastObject as? PositionEntity,
+							let mostRecent = hopNode.positions?.lastObject as? PositionEntity,
 							let time = mostRecent.time,
-							time >= Calendar.current.date(byAdding: .minute, value: -60, to: Date.now)!
+							// swiftlint:disable:next force_unwrapping
+							time >= Calendar.current.date(byAdding: .day, value: -1, to: Date.now)!
 						{
-							traceRouteHop.altitude = mostRecent.altitude
+							traceRouteHop.name = hopNode.user?.longName ?? "Unknown node"
 							traceRouteHop.latitudeI = mostRecent.latitudeI
 							traceRouteHop.longitudeI = mostRecent.longitudeI
-							traceRouteHop.name = hopNode?.user?.longName ?? "unknown".localized
+							traceRouteHop.altitude = mostRecent.altitude
 
-							traceRoute?.hasPositions = true
+							traceRoute.hasPositions = true
 						}
 						else {
-							traceRoute?.hasPositions = false
+							traceRoute.hasPositions = false
 						}
 					}
 					else {
-						traceRoute?.hasPositions = false
+						traceRoute.hasPositions = false
 					}
 
 					traceRouteHop.num = hopNode?.num ?? 0
@@ -394,24 +397,20 @@ extension BLEManager: CBPeripheralDelegate {
 								timeIntervalSince1970: TimeInterval(Int64(info.packet.rxTime))
 							)
 						}
-
+						
 						hopNodes.append(traceRouteHop)
 					}
-
-					routeString += "\(hopNode?.user?.longName ?? (node == 4294967295 ? "Repeater" : String(hopNode?.num.toHex() ?? "unknown".localized))) \(hopNode?.viaMqtt ?? false ? "MQTT" : "") --> "
 				}
-				routeString += traceRoute?.node?.user?.longName ?? "unknown".localized
 
-				traceRoute?.routeText = routeString
-				traceRoute?.hops = NSOrderedSet(array: hopNodes)
+				traceRoute.hops = NSOrderedSet(array: hopNodes)
 
 				dataDebounce.emit { [weak self] in
 					await self?.saveData()
 				}
 
-				onTraceRouteReceived(for: traceRoute?.node)
+				onTraceRouteReceived(for: traceRoute.node)
 
-				if let user = traceRoute?.node?.user {
+				if let user = traceRoute.node?.user {
 					notificationManager.queue(
 						notification: Notification(
 							title: "Trace Route",

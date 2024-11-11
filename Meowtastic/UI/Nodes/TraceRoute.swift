@@ -102,14 +102,30 @@ struct TraceRoute: View {
 								HStack(alignment: .center, spacing: 4) {
 									let node = coreDataTools.getNodeInfo(id: hop.num, context: context)
 
-									Image(systemName: "hare")
-										.font(.system(size: 10))
-										.foregroundColor(.gray)
-										.frame(width: 24)
+									if let node, node.viaMqtt {
+										Image(systemName: "network")
+											.font(.system(size: 10))
+											.foregroundColor(.gray)
+											.frame(width: 24)
+									}
+									else {
+										Image(systemName: "hare")
+											.font(.system(size: 10))
+											.foregroundColor(.gray)
+											.frame(width: 24)
+									}
 
-									Text(node?.user?.longName ?? "Unknown node")
-										.font(.system(size: 10))
-										.foregroundColor(.gray)
+									HStack(alignment: .center, spacing: 4) {
+										Text(node?.user?.longName ?? "Unknown node")
+											.font(.system(size: 10))
+											.foregroundColor(.gray)
+
+										if let hopTime = hop.time {
+											Text(hopTime.relative())
+												.font(.system(size: 10))
+												.foregroundColor(.gray)
+										}
+									}
 								}
 							}
 
@@ -231,39 +247,6 @@ struct TraceRoute: View {
 
 	@ViewBuilder
 	private func routeDetail(for route: TraceRouteEntity) -> some View {
-		let hops = route.hops?.count
-
-		if let hops, hops > 0 {
-			HStack(alignment: .center, spacing: 8) {
-				Image(systemName: "signpost.right.and.left")
-					.font(.system(size: 32))
-
-				if let routeText = route.routeText {
-					Text("Route: \(routeText)")
-						.font(.body)
-				}
-				else {
-					Text("Unknown route")
-						.font(.body)
-				}
-			}
-		}
-		else {
-			HStack(alignment: .center, spacing: 8) {
-				Image(systemName: "signpost.right.and.left")
-					.font(.system(size: 32))
-
-				if let longName = route.node?.user?.longName {
-					Text("Trace route from \(longName) received directly")
-						.font(.body)
-				}
-				else {
-					Text("Trace route received directly")
-						.font(.body)
-				}
-			}
-		}
-
 		if route.hasPositions {
 			Map(
 				position: $position,
@@ -285,7 +268,7 @@ struct TraceRoute: View {
 
 				// Direct Trace Route
 				if
-					let hops,
+					let hops = route.hops?.count,
 					let positions = route.node?.positions,
 					let mostRecent = positions.lastObject as? PositionEntity,
 					hops == 0
@@ -319,8 +302,7 @@ struct TraceRoute: View {
 		}
 
 		if
-			let positions = route.node?.positions,
-			let lastPosition = positions.lastObject as? PositionEntity,
+			let lastPosition = route.node?.positions?.lastObject as? PositionEntity,
 			let currentCoordinate = route.coordinate,
 			let lastCoordinateLatitude = lastPosition.latitude,
 			let lastCoordinateLongitude = lastPosition.longitude

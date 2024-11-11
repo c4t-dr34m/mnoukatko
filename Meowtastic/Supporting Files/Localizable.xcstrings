@@ -11219,9 +11219,6 @@
     "Root Topic" : {
 
     },
-    "Route: %@" : {
-
-    },
     "routes.activitytype.biking" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -13762,12 +13759,6 @@
     "Trace Route" : {
 
     },
-    "Trace route from %@ received directly" : {
-
-    },
-    "Trace route received directly" : {
-
-    },
     "Transmit Enabled" : {
 
     },
@@ -13846,9 +13837,6 @@
 
     },
     "Unknown hardware" : {
-
-    },
-    "Unknown route" : {
 
     },
     "unset" : {

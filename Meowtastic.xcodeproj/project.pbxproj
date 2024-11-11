@@ -240,6 +240,7 @@
 		B266A76B2C59298900DFC723 /* GPSUpdateIntervals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GPSUpdateIntervals.swift; sourceTree = "<group>"; };
 		B266DA8F2C53CEFB0067D317 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		B26C91F52C59740F0029F249 /* PositionFlags.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionFlags.swift; sourceTree = "<group>"; };
+		B27508972CE1D97E0067E65D /* MeshtasticDataModel_v44.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MeshtasticDataModel_v44.xcdatamodel; sourceTree = "<group>"; };
 		B27A4B992CA6A96500F813C3 /* NodeListSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeListSummary.swift; sourceTree = "<group>"; };
 		B27A4B9B2CA6B8CC00F813C3 /* NodeListConnectedItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeListConnectedItem.swift; sourceTree = "<group>"; };
 		B284A42C2C6F87B200D5122B /* BLEManager+CBCentralManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BLEManager+CBCentralManager.swift"; sourceTree = "<group>"; };
@@ -1430,8 +1431,9 @@
 			children = (
 				080092A22CCECFEA00A1309D /* MeshtasticDataModel_v42.xcdatamodel */,
 				080092A32CCECFEA00A1309D /* MeshtasticDataModel_v43.xcdatamodel */,
+				B27508972CE1D97E0067E65D /* MeshtasticDataModel_v44.xcdatamodel */,
 			);
-			currentVersion = 080092A32CCECFEA00A1309D /* MeshtasticDataModel_v43.xcdatamodel */;
+			currentVersion = B27508972CE1D97E0067E65D /* MeshtasticDataModel_v44.xcdatamodel */;
 			path = Meowtastic.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
