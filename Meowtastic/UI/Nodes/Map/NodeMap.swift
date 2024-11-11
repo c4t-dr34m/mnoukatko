@@ -5,7 +5,7 @@ import SwiftUI
 
 struct NodeMap: View {
 	@Environment(\.managedObjectContext)
-	var context
+	private var context
 
 	@AppStorage("mapLayer")
 	private var selectedMapLayer: MapLayer = .standard

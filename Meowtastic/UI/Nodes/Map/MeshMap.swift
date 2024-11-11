@@ -7,20 +7,22 @@ import SwiftUI
 
 struct MeshMap: View {
 	@Environment(\.managedObjectContext)
-	var context
+	private var context
 	@StateObject
-	var appState = AppState.shared
+	private var appState = AppState.shared
 	@Namespace
-	var mapScope
+	private var mapScope
 	@State
-	var mapStyle = MapStyle.standard(
+	private var mapStyle = MapStyle.standard(
 		elevation: .realistic,
 		emphasis: MapStyle.StandardEmphasis.muted
 	)
 	@State
-	var position = MapCameraPosition.automatic
+	private var position = MapCameraPosition.automatic
 	@State
-	var selectedPosition: PositionEntity?
+	private var selectedPosition: PositionEntity?
+
+	private let node: NodeInfoEntity?
 
 	@FetchRequest(
 		fetchRequest: PositionEntity.allPositionsFetchRequest()
@@ -30,6 +32,8 @@ struct MeshMap: View {
 	var body: some View {
 		NavigationStack {
 			ZStack {
+				var mostRecent = node?.positions?.lastObject as? PositionEntity
+
 				MapReader { _ in
 					Map(
 						position: $position,
@@ -60,6 +64,23 @@ struct MeshMap: View {
 							.mapControlVisibility(.automatic)
 					}
 					.controlSize(.regular)
+					.onChange(of: node, initial: true) {
+						mostRecent = node?.positions?.lastObject as? PositionEntity
+
+						if let mostRecent, mostRecent.coordinate.isValid {
+							position = .camera(
+								MapCamera(
+									centerCoordinate: mostRecent.coordinate,
+									distance: position.camera?.distance ?? 64_000,
+									heading: 0,
+									pitch: 40
+								)
+							)
+						}
+						else {
+							position = .automatic
+						}
+					}
 				}
 			}
 			.popover(item: $selectedPosition) { position in
@@ -68,7 +89,7 @@ struct MeshMap: View {
 						node: node,
 						isInSheet: true
 					)
-						.presentationDetents([.medium])
+					.presentationDetents([.medium])
 				}
 			}
 			.navigationTitle("Mesh")
@@ -85,5 +106,9 @@ struct MeshMap: View {
 				]
 			)
 		}
+	}
+
+	init(node: NodeInfoEntity? = nil) {
+		self.node = node
 	}
 }

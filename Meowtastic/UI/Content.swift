@@ -69,7 +69,7 @@ struct Content: View {
 				.tag(ContentTab.nodes)
 				.badge(nodeOnlineCount)
 
-			MeshMap()
+			MeshMap(node: nodeConnected)
 				.tabItem {
 					Label("Mesh", systemImage: "map")
 				}
