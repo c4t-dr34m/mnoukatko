@@ -3,8 +3,9 @@ import MeshtasticProtobufs
 import OSLog
 import SwiftUI
 
-struct DisplayConfig: View {
-	private let coreDataTools = CoreDataTools()
+struct DisplayConfig: OptionsScreen {
+	var node: NodeInfoEntity
+	var coreDataTools = CoreDataTools()
 
 	@Environment(\.managedObjectContext)
 	private var context
@@ -14,19 +15,26 @@ struct DisplayConfig: View {
 	private var nodeConfig: NodeConfig
 	@Environment(\.dismiss)
 	private var goBack
-
-	var node: NodeInfoEntity
-
-	@State var hasChanges = false
-	@State var screenOnSeconds = 0
-	@State var screenCarouselInterval = 0
-	@State var gpsFormat = 0
-	@State var compassNorthTop = false
-	@State var wakeOnTapOrMotion = false
-	@State var flipScreen = false
-	@State var oledType = 0
-	@State var displayMode = 0
-	@State var units = 0
+	@State
+	private var hasChanges = false
+	@State
+	private var screenOnSeconds = 0
+	@State
+	private var screenCarouselInterval = 0
+	@State
+	private var gpsFormat = 0
+	@State
+	private var compassNorthTop = false
+	@State
+	private var wakeOnTapOrMotion = false
+	@State
+	private var flipScreen = false
+	@State
+	private var oledType = 0
+	@State
+	private var displayMode = 0
+	@State
+	private var units = 0
 
 	var body: some View {
 		Form {
@@ -73,6 +81,7 @@ struct DisplayConfig: View {
 				}
 				.pickerStyle(DefaultPickerStyle())
 			}
+			.headerProminence(.increased)
 
 			Section(header: Text("Timing & Format")) {
 				VStack(alignment: .leading) {
@@ -126,51 +135,18 @@ struct DisplayConfig: View {
 				}
 				.pickerStyle(DefaultPickerStyle())
 			}
+			.headerProminence(.increased)
 		}
 		.disabled(connectedDevice.device == nil || node.displayConfig == nil)
-		.onAppear {
-			Analytics.logEvent(AnalyticEvents.optionsDisplay.id, parameters: nil)
-		}
-
-		SaveConfigButton(node: node, hasChanges: $hasChanges) {
-			if
-				let device = connectedDevice.device,
-				let connectedNode = coreDataTools.getNodeInfo(
-					id: device.num,
-					context: context
-				)
-			{
-				var dc = Config.DisplayConfig()
-				dc.gpsFormat = GPSFormats(rawValue: gpsFormat)!.protoEnumValue()
-				dc.screenOnSecs = UInt32(screenOnSeconds)
-				dc.autoScreenCarouselSecs = UInt32(screenCarouselInterval)
-				dc.compassNorthTop = compassNorthTop
-				dc.wakeOnTapOrMotion = wakeOnTapOrMotion
-				dc.flipScreen = flipScreen
-				dc.oled = OLEDTypes(rawValue: oledType)!.protoEnumValue()
-				dc.displaymode = DisplayModes(rawValue: displayMode)!.protoEnumValue()
-				dc.units = Units(rawValue: units)!.protoEnumValue()
-
-				let adminMessageId = nodeConfig.saveDisplayConfig(
-					config: dc,
-					fromUser: connectedNode.user!,
-					toUser: node.user!,
-					adminIndex: connectedNode.myInfo?.adminIndex ?? 0
-				)
-
-				if adminMessageId > 0 {
-					hasChanges = false
-					goBack()
-				}
-			}
-		}
-
 		.navigationTitle("Display Config")
 		.navigationBarItems(
-			trailing: ConnectionInfo()
+			trailing: SaveButton(node, changes: $hasChanges) {
+				save()
+			}
 		)
 		.onAppear {
-			setDisplayValues()
+			Analytics.logEvent(AnalyticEvents.optionsDisplay.id, parameters: nil)
+			setInitialValues()
 
 			// Need to request a LoRaConfig from the remote node before allowing changes
 			if
@@ -214,7 +190,19 @@ struct DisplayConfig: View {
 		}
 	}
 
-	private func setDisplayValues() {
+	func setInitialValues() {
+		if
+			let device = connectedDevice.device,
+			let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context),
+			let fromUser = connectedNode.user,
+			let toUser = node.user,
+			validateSession(for: node),
+			node.displayConfig == nil
+		{
+			let adminIndex = connectedNode.myInfo?.adminIndex ?? 0
+			nodeConfig.requestDisplayConfig(fromUser: fromUser, toUser: toUser, adminIndex: adminIndex)
+		}
+
 		if let config = node.displayConfig {
 			gpsFormat = Int(config.gpsFormat)
 			compassNorthTop = config.compassNorthTop
@@ -238,6 +226,43 @@ struct DisplayConfig: View {
 			units = 0
 		}
 
-		self.hasChanges = false
+		hasChanges = false
+	}
+
+	func save() {
+		guard
+			let device = connectedDevice.device,
+			let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context),
+			let fromUser = connectedNode.user,
+			let toUser = node.user
+		else {
+			return
+		}
+
+		// swiftlint:disable force_unwrapping
+		var config = Config.DisplayConfig()
+		config.gpsFormat = GPSFormats(rawValue: gpsFormat)!.protoEnumValue()
+		config.screenOnSecs = UInt32(screenOnSeconds)
+		config.autoScreenCarouselSecs = UInt32(screenCarouselInterval)
+		config.compassNorthTop = compassNorthTop
+		config.wakeOnTapOrMotion = wakeOnTapOrMotion
+		config.flipScreen = flipScreen
+		config.oled = OLEDTypes(rawValue: oledType)!.protoEnumValue()
+		config.displaymode = DisplayModes(rawValue: displayMode)!.protoEnumValue()
+		config.units = Units(rawValue: units)!.protoEnumValue()
+		// swiftlint:enable force_unwrapping
+
+		let adminIndex = connectedNode.myInfo?.adminIndex ?? 0
+		if
+			nodeConfig.saveDisplayConfig(
+				config: config,
+				fromUser: fromUser,
+				toUser: toUser,
+				adminIndex: adminIndex
+			) > 0
+		{
+			hasChanges = false
+			goBack()
+		}
 	}
 }

@@ -34,75 +34,76 @@ struct NetworkConfig: OptionsScreen {
 
 	@ViewBuilder
 	var body: some View {
-		ZStack {
-			Form {
-				if node.metadata?.hasWifi ?? false {
-					Section(header: Text("WiFi")) {
-						Toggle(isOn: $wifiEnabled) {
-							Label("Enabled", systemImage: "wifi")
-							Text("Enabling WiFi will disable the bluetooth connection to the app.")
-						}
-						.toggleStyle(SwitchToggleStyle(tint: .accentColor))
-
-						HStack {
-							Label("SSID", systemImage: "network")
-
-							TextField("SSID", text: $wifiSsid)
-								.foregroundColor(.gray)
-								.keyboardType(.default)
-								.autocapitalization(.none)
-								.disableAutocorrection(true)
-								.onChange(of: wifiSsid) {
-									let totalBytes = wifiSsid.utf8.count
-									// Only mess with the value if it is too big
-									if totalBytes > 32 {
-										wifiSsid = String(wifiSsid.dropLast())
-									}
-									hasChanges = true
-								}
-						}
-
-						HStack {
-							Label("Password", systemImage: "wallet.pass")
-							TextField("Password", text: $wifiPsk)
-								.foregroundColor(.gray)
-								.keyboardType(.default)
-								.autocapitalization(.none)
-								.disableAutocorrection(true)
-								.onChange(of: wifiPsk) {
-									let totalBytes = wifiPsk.utf8.count
-									// Only mess with the value if it is too big
-									if totalBytes > 63 {
-										wifiPsk = String(wifiPsk.dropLast())
-									}
-									hasChanges = true
-								}
-						}
+		Form {
+			if node.metadata?.hasWifi ?? false {
+				Section(header: Text("WiFi")) {
+					Toggle(isOn: $wifiEnabled) {
+						Text("Enabled")
+							.font(.body)
+						Text("Enabling WiFi will disable the bluetooth connection to the app.")
 					}
-					.headerProminence(.increased)
-				}
+					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
-				if let metadata = node.metadata, metadata.hasEthernet {
-					Section(header: Text("Ethernet")) {
-						Toggle(isOn: $ethEnabled) {
-							Label("Enabled", systemImage: "network")
-							Text("Enabling Ethernet will disable the bluetooth connection to the app.")
-						}
-						.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+					HStack {
+						Text("SSID:")
+							.font(.body)
+						Spacer()
+						TextField("SSID", text: $wifiSsid)
+							.foregroundColor(.gray)
+							.keyboardType(.default)
+							.autocapitalization(.none)
+							.disableAutocorrection(true)
+							.onChange(of: wifiSsid) {
+								let totalBytes = wifiSsid.utf8.count
+								// Only mess with the value if it is too big
+								if totalBytes > 32 {
+									wifiSsid = String(wifiSsid.dropLast())
+								}
+								hasChanges = true
+							}
 					}
-					.headerProminence(.increased)
+
+					HStack {
+						Text("Password:")
+							.font(.body)
+						Spacer()
+						TextField("Password", text: $wifiPsk)
+							.foregroundColor(.gray)
+							.keyboardType(.default)
+							.autocapitalization(.none)
+							.disableAutocorrection(true)
+							.onChange(of: wifiPsk) {
+								let totalBytes = wifiPsk.utf8.count
+								// Only mess with the value if it is too big
+								if totalBytes > 63 {
+									wifiPsk = String(wifiPsk.dropLast())
+								}
+								hasChanges = true
+							}
+					}
 				}
+				.headerProminence(.increased)
 			}
-			.disabled(connectedDevice.device == nil || node.networkConfig == nil)
-			.scrollDismissesKeyboard(.interactively)
 
-			SaveConfigButton(node: node, hasChanges: $hasChanges) {
-				save()
+			if let metadata = node.metadata, metadata.hasEthernet {
+				Section(header: Text("Ethernet")) {
+					Toggle(isOn: $ethEnabled) {
+						Text("Enabled")
+							.font(.body)
+						Text("Enabling Ethernet will disable the bluetooth connection to the app.")
+					}
+					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+				}
+				.headerProminence(.increased)
 			}
 		}
+		.disabled(connectedDevice.device == nil || node.networkConfig == nil)
+		.scrollDismissesKeyboard(.interactively)
 		.navigationTitle("Network Config")
 		.navigationBarItems(
-			trailing: ConnectionInfo()
+			trailing: SaveButton(node, changes: $hasChanges) {
+				save()
+			}
 		)
 		.onAppear {
 			Analytics.logEvent(AnalyticEvents.optionsNetwork.id, parameters: nil)
@@ -166,17 +167,17 @@ struct NetworkConfig: OptionsScreen {
 			let fromUser = connectedNode.user,
 			let toUser = node.user
 		{
-			var network = Config.NetworkConfig()
-			network.wifiEnabled = self.wifiEnabled
-			network.wifiSsid = self.wifiSsid
-			network.wifiPsk = self.wifiPsk
-			network.ethEnabled = self.ethEnabled
+			var config = Config.NetworkConfig()
+			config.wifiEnabled = self.wifiEnabled
+			config.wifiSsid = self.wifiSsid
+			config.wifiPsk = self.wifiPsk
+			config.ethEnabled = self.ethEnabled
 			// network.addressMode = Config.NetworkConfig.AddressMode.dhcp
 
 			let adminIndex = connectedNode.myInfo?.adminIndex ?? 0
 			if
 				nodeConfig.saveNetworkConfig(
-					config: network,
+					config: config,
 					fromUser: fromUser,
 					toUser: toUser,
 					adminIndex: adminIndex

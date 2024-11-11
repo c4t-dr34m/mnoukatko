@@ -28,6 +28,7 @@ enum AnalyticEvents: String {
 	case optionsNetwork
 	case optionsPower
 	case optionsSecurity
+	case optionsTelemetry
 	case traceRoute
 
 	// MARK: - events

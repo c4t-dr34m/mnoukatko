@@ -3,9 +3,10 @@ import MeshtasticProtobufs
 import OSLog
 import SwiftUI
 
-struct BluetoothConfig: View {
-	private let node: NodeInfoEntity
-	private let coreDataTools = CoreDataTools()
+struct BluetoothConfig: OptionsScreen {
+	var node: NodeInfoEntity
+	var coreDataTools = CoreDataTools()
+
 	private let numberFormatter: NumberFormatter = {
 		let formatter = NumberFormatter()
 		formatter.numberStyle = .none
@@ -52,10 +53,8 @@ struct BluetoothConfig: View {
 
 			if mode == 1 {
 				HStack {
-					Text("Fixed PIN")
-
+					Text("Fixed PIN:")
 					Spacer()
-
 					TextField("Fixed PIN", text: $fixedPin)
 						.foregroundColor(.gray)
 						.onChange(of: fixedPin) {
@@ -93,45 +92,15 @@ struct BluetoothConfig: View {
 			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 		}
 		.disabled(connectedDevice.device == nil || node.bluetoothConfig == nil)
+		.navigationTitle("Bluetooth Config")
+		.navigationBarItems(
+			trailing: SaveButton(node, changes: $hasChanges) {
+				save()
+			}
+		)
 		.onAppear {
 			Analytics.logEvent(AnalyticEvents.optionsBluetooth.id, parameters: nil)
-		}
-
-		SaveConfigButton(node: node, hasChanges: $hasChanges) {
-			if
-				let myNodeNum = connectedDevice.device?.num,
-				let connectedNode = coreDataTools.getNodeInfo(id: myNodeNum, context: context)
-			{
-				var config = Config.BluetoothConfig()
-				config.enabled = enabled
-				config.mode = BluetoothModes(rawValue: mode)?.protoEnumValue() ?? Config.BluetoothConfig.PairingMode.randomPin
-				config.fixedPin = UInt32(fixedPin) ?? 123456
-
-				let adminMessageId = nodeConfig.saveBluetoothConfig(
-					config: config,
-					fromUser: connectedNode.user!,
-					toUser: node.user!,
-					adminIndex: connectedNode.myInfo?.adminIndex ?? 0
-				)
-
-				if adminMessageId > 0 {
-					hasChanges = false
-					goBack()
-				}
-			}
-		}
-		.onAppear {
 			setInitialValues()
-
-			if let device = connectedDevice.device, node.bluetoothConfig == nil {
-				if let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context) {
-					nodeConfig.requestBluetoothConfig(
-						fromUser: connectedNode.user!,
-						toUser: node.user!,
-						adminIndex: connectedNode.myInfo?.adminIndex ?? 0
-					)
-				}
-			}
 		}
 		.onChange(of: enabled) {
 			hasChanges = true
@@ -145,17 +114,25 @@ struct BluetoothConfig: View {
 		.onChange(of: deviceLoggingEnabled) {
 			hasChanges = true
 		}
-		.navigationTitle("Bluetooth Config")
-		.navigationBarItems(
-			trailing: ConnectionInfo()
-		)
 	}
 
 	init(node: NodeInfoEntity) {
 		self.node = node
 	}
 
-	private func setInitialValues() {
+	func setInitialValues() {
+		if
+			let device = connectedDevice.device,
+			let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context),
+			let fromUser = connectedNode.user,
+			let toUser = node.user,
+			validateSession(for: node),
+			node.securityConfig == nil
+		{
+			let adminIndex = connectedNode.myInfo?.adminIndex ?? 0
+			nodeConfig.requestBluetoothConfig(fromUser: fromUser, toUser: toUser, adminIndex: adminIndex)
+		}
+
 		if let config = node.bluetoothConfig {
 			enabled = config.enabled
 			mode = Int(config.mode)
@@ -168,5 +145,34 @@ struct BluetoothConfig: View {
 		}
 
 		hasChanges = false
+	}
+
+	func save() {
+		guard
+			let device = connectedDevice.device,
+			let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context),
+			let fromUser = connectedNode.user,
+			let toUser = node.user
+		else {
+			return
+		}
+
+		var config = Config.BluetoothConfig()
+		config.enabled = enabled
+		config.mode = BluetoothModes(rawValue: mode)?.protoEnumValue() ?? Config.BluetoothConfig.PairingMode.randomPin
+		config.fixedPin = UInt32(fixedPin) ?? 123456
+
+		let adminIndex = connectedNode.myInfo?.adminIndex ?? 0
+		if
+			nodeConfig.saveBluetoothConfig(
+				config: config,
+				fromUser: fromUser,
+				toUser: toUser,
+				adminIndex: adminIndex
+			) > 0
+		{
+			hasChanges = false
+			goBack()
+		}
 	}
 }

@@ -4,21 +4,22 @@ import MeshtasticProtobufs
 import OSLog
 import SwiftUI
 
-struct MQTTConfig: View {
+struct MQTTConfig: OptionsScreen {
 	var node: NodeInfoEntity
+	var coreDataTools = CoreDataTools()
 
 	private let locale = Locale.current
-	private let coreDataTools = CoreDataTools()
 
 	@Environment(\.managedObjectContext)
 	private var context
 	@EnvironmentObject
 	private var bleManager: BLEManager
 	@EnvironmentObject
+	private var connectedDevice: CurrentDevice
+	@EnvironmentObject
 	private var nodeConfig: NodeConfig
 	@Environment(\.dismiss)
 	private var goBack
-
 	@State
 	private var isPresentingSaveConfirm = false
 	@State
@@ -118,6 +119,7 @@ struct MQTTConfig: View {
 					hasChanges = true
 				}
 			}
+			.headerProminence(.increased)
 
 			Section(header: Text("Map Report")) {
 				Toggle(isOn: $mapReportingEnabled) {
@@ -177,6 +179,7 @@ struct MQTTConfig: View {
 					}
 				}
 			}
+			.headerProminence(.increased)
 
 			Section(header: Text("Root Topic")) {
 				HStack {
@@ -204,6 +207,7 @@ struct MQTTConfig: View {
 					.foregroundColor(.gray)
 					.font(.callout)
 			}
+			.headerProminence(.increased)
 
 			Section(header: Text("Server")) {
 				HStack {
@@ -254,17 +258,17 @@ struct MQTTConfig: View {
 						"Password",
 						text: $password
 					)
-						.keyboardType(.default)
-						.autocapitalization(.none)
-						.disableAutocorrection(true)
-						.foregroundColor(.gray)
-						.onChange(of: password) {
-							if password.utf8.count > 62 {
-								password = String(password.dropLast())
-							}
-
-							hasChanges = true
+					.keyboardType(.default)
+					.autocapitalization(.none)
+					.disableAutocorrection(true)
+					.foregroundColor(.gray)
+					.onChange(of: password) {
+						if password.utf8.count > 62 {
+							password = String(password.dropLast())
 						}
+
+						hasChanges = true
+					}
 				}
 				.listRowSeparator(/*@START_MENU_TOKEN@*/.visible/*@END_MENU_TOKEN@*/)
 
@@ -281,81 +285,38 @@ struct MQTTConfig: View {
 					hasChanges = true
 				}
 			}
+			.headerProminence(.increased)
 
 			Text("For all Mqtt functionality other than the map report you must also set uplink and downlink for each channel you want to bridge over Mqtt.")
 				.font(.callout)
 		}
 		.scrollDismissesKeyboard(.interactively)
-		.disabled(bleManager.getConnectedDevice() == nil || node.mqttConfig == nil)
-		.onAppear {
-			Analytics.logEvent(AnalyticEvents.optionsMQTT.id, parameters: nil)
-		}
-
-		SaveConfigButton(node: node, hasChanges: $hasChanges) {
-			let connectedNode = coreDataTools.getNodeInfo(
-				id: bleManager.getConnectedDevice()?.num ?? -1,
-				context: context
-			)
-
-			if let connectedNode {
-				var mqtt = ModuleConfig.MQTTConfig()
-				mqtt.enabled = enabled
-				mqtt.proxyToClientEnabled = proxyToClientEnabled
-				mqtt.address = address
-				mqtt.username = username
-				mqtt.password = password
-				mqtt.root = root
-				mqtt.encryptionEnabled = encryptionEnabled
-				mqtt.jsonEnabled = jsonEnabled
-				mqtt.tlsEnabled = tlsEnabled
-				mqtt.mapReportingEnabled = mapReportingEnabled
-				mqtt.mapReportSettings.positionPrecision = UInt32(mapPositionPrecision)
-				mqtt.mapReportSettings.publishIntervalSecs = UInt32(mapPublishIntervalSecs)
-
-				let adminMessageId = nodeConfig.saveMQTTConfig(
-					config: mqtt,
-					fromUser: connectedNode.user!,
-					toUser: node.user!,
-					adminIndex: connectedNode.myInfo?.adminIndex ?? 0
-				)
-
-				if adminMessageId > 0 {
-					hasChanges = false
-
-					if mqtt.enabled, let config = node.mqttConfig {
-						bleManager.connectMQTT(config: config)
-					}
-					else {
-						bleManager.disconnectMQTT()
-					}
-
-					goBack()
-				}
-			}
-		}
+		.disabled(connectedDevice.device == nil || node.mqttConfig == nil)
 		.navigationTitle("MQTT Config")
 		.navigationBarItems(
-			trailing: ConnectionInfo()
+			trailing: SaveButton(node, changes: $hasChanges) {
+				save()
+			}
 		)
 		.onAppear {
-			setMqttValues()
-
-			// Need to request a TelemetryModuleConfig from the remote node before allowing changes
-			if
-				let peripheral = bleManager.getConnectedDevice(),
-				let connectedNode = coreDataTools.getNodeInfo(id: peripheral.num, context: context),
-				node.mqttConfig == nil
-			{
-				nodeConfig.requestMQTTConfig(
-					fromUser: connectedNode.user!,
-					toUser: node.user!,
-					adminIndex: connectedNode.myInfo?.adminIndex ?? 0
-				)
-			}
+			Analytics.logEvent(AnalyticEvents.optionsMQTT.id, parameters: nil)
+			setInitialValues()
 		}
 	}
 
-	private func setMqttValues() {
+	func setInitialValues() {
+		if
+			let device = connectedDevice.device,
+			let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context),
+			let fromUser = connectedNode.user,
+			let toUser = node.user,
+			validateSession(for: node),
+			node.mqttConfig == nil
+		{
+			let adminIndex = connectedNode.myInfo?.adminIndex ?? 0
+			nodeConfig.requestMQTTConfig(fromUser: fromUser, toUser: toUser, adminIndex: adminIndex)
+		}
+
 		if mapPositionPrecision == 0 {
 			mapPositionPrecision = 12
 		}
@@ -395,5 +356,51 @@ struct MQTTConfig: View {
 		}
 
 		hasChanges = false
+	}
+
+	func save() {
+		guard
+			let device = connectedDevice.device,
+			let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context),
+			let fromUser = connectedNode.user,
+			let toUser = node.user
+		else {
+			return
+		}
+
+		var config = ModuleConfig.MQTTConfig()
+		config.enabled = enabled
+		config.proxyToClientEnabled = proxyToClientEnabled
+		config.address = address
+		config.username = username
+		config.password = password
+		config.root = root
+		config.encryptionEnabled = encryptionEnabled
+		config.jsonEnabled = jsonEnabled
+		config.tlsEnabled = tlsEnabled
+		config.mapReportingEnabled = mapReportingEnabled
+		config.mapReportSettings.positionPrecision = UInt32(mapPositionPrecision)
+		config.mapReportSettings.publishIntervalSecs = UInt32(mapPublishIntervalSecs)
+
+		let adminIndex = connectedNode.myInfo?.adminIndex ?? 0
+		if
+			nodeConfig.saveMQTTConfig(
+				config: config,
+				fromUser: fromUser,
+				toUser: toUser,
+				adminIndex: adminIndex
+			) > 0
+		{
+			hasChanges = false
+
+			if config.enabled, let config = node.mqttConfig {
+				bleManager.connectMQTT(config: config)
+			}
+			else {
+				bleManager.disconnectMQTT()
+			}
+
+			goBack()
+		}
 	}
 }

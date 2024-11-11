@@ -2,8 +2,9 @@ import FirebaseAnalytics
 import MeshtasticProtobufs
 import SwiftUI
 
-struct PowerConfig: View {
-	private let coreDataTools = CoreDataTools()
+struct PowerConfig: OptionsScreen {
+	var node: NodeInfoEntity
+	var coreDataTools = CoreDataTools()
 
 	@Environment(\.managedObjectContext)
 	private var context
@@ -13,24 +14,28 @@ struct PowerConfig: View {
 	private var nodeConfig: NodeConfig
 	@Environment(\.dismiss)
 	private var goBack
-
-	let node: NodeInfoEntity
-
-	@State private var isPowerSaving = false
-
-	@State private var shutdownOnPowerLoss = false
-	@State private var shutdownAfterSecs = 0
-	@State private var adcOverride = false
-	@State private var adcMultiplier: Float = 0.0
-
-	@State private var waitBluetoothSecs = 60
-	@State private var lsSecs = 300
-	@State private var minWakeSecs = 10
-
-	@State private var currentDevice: DeviceHardware?
-
-	@State private var hasChanges: Bool = false
-	@FocusState private var isFocused: Bool
+	@State
+	private var isPowerSaving = false
+	@State
+	private var shutdownOnPowerLoss = false
+	@State
+	private var shutdownAfterSecs = 0
+	@State
+	private var adcOverride = false
+	@State
+	private var adcMultiplier: Float = 0.0
+	@State
+	private var waitBluetoothSecs = 60
+	@State
+	private var lsSecs = 300
+	@State
+	private var minWakeSecs = 10
+	@State
+	private var currentDevice: DeviceHardware?
+	@State
+	private var hasChanges: Bool = false
+	@FocusState
+	private var isFocused: Bool
 
 	var body: some View {
 		Form {
@@ -63,6 +68,7 @@ struct PowerConfig: View {
 			} header: {
 				Text("config.power.settings")
 			}
+			.headerProminence(.increased)
 
 			if currentDevice?.architecture == .esp32 || currentDevice?.architecture == .esp32S3 {
 				Section {
@@ -91,12 +97,15 @@ struct PowerConfig: View {
 				} header: {
 					Text("config.power.section.battery")
 				}
+				.headerProminence(.increased)
 			}
 		}
 		.disabled(connectedDevice.device == nil || node.powerConfig == nil)
 		.navigationTitle("Power Config")
 		.navigationBarItems(
-			trailing: ConnectionInfo()
+			trailing: SaveButton(node, changes: $hasChanges) {
+				save()
+			}
 		)
 		.toolbar {
 			ToolbarItemGroup(placement: .keyboard) {
@@ -120,22 +129,8 @@ struct PowerConfig: View {
 					}
 				}
 			}
-			setPowerValues()
 
-			// Need to request a Power config from the remote node before allowing changes
-			if
-				let device = connectedDevice.device,
-				node.powerConfig == nil,
-				let connectedNode = coreDataTools.getNodeInfo(
-					id: device.num ?? 0,
-					context: context
-				)
-			{
-				nodeConfig.requestPowerConfig(
-					fromUser: connectedNode.user!,
-					toUser: node.user!,
-					adminIndex: connectedNode.myInfo?.adminIndex ?? 0)
-			}
+			setInitialValues()
 		}
 		.onChange(of: isPowerSaving) {
 			hasChanges = true
@@ -161,44 +156,21 @@ struct PowerConfig: View {
 		.onChange(of: minWakeSecs) {
 			hasChanges = true
 		}
-
-		SaveConfigButton(node: node, hasChanges: $hasChanges) {
-			guard
-				let device = connectedDevice.device,
-				let connectedNode = coreDataTools.getNodeInfo(
-					id: device.num,
-					context: context
-				),
-				let fromUser = connectedNode.user,
-				let toUser = node.user
-			else {
-				return
-			}
-
-			var config = Config.PowerConfig()
-			config.isPowerSaving = isPowerSaving
-			config.onBatteryShutdownAfterSecs = shutdownOnPowerLoss ? UInt32(shutdownAfterSecs) : 0
-			config.adcMultiplierOverride = adcOverride ? adcMultiplier : 0
-			config.waitBluetoothSecs = UInt32(waitBluetoothSecs)
-			config.lsSecs = UInt32(lsSecs)
-			config.minWakeSecs = UInt32(minWakeSecs)
-
-			let adminMessageId = nodeConfig.savePowerConfig(
-				config: config,
-				fromUser: fromUser,
-				toUser: toUser,
-				adminIndex: connectedNode.myInfo?.adminIndex ?? 0
-			)
-			if adminMessageId > 0 {
-				// Should show a saved successfully alert once I know that to be true
-				// for now just disable the button after a successful save
-				hasChanges = false
-				goBack()
-			}
-		}
 	}
 
-	private func setPowerValues() {
+	func setInitialValues() {
+		if
+			let device = connectedDevice.device,
+			let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context),
+			let fromUser = connectedNode.user,
+			let toUser = node.user,
+			validateSession(for: node),
+			node.powerConfig == nil
+		{
+			let adminIndex = connectedNode.myInfo?.adminIndex ?? 0
+			nodeConfig.requestPowerConfig(fromUser: fromUser, toUser: toUser, adminIndex: adminIndex)
+		}
+
 		if let config = node.powerConfig {
 			isPowerSaving = config.isPowerSaving
 			adcMultiplier = config.adcMultiplierOverride
@@ -212,6 +184,40 @@ struct PowerConfig: View {
 		else {
 			adcOverride = adcMultiplier != 0
 			shutdownOnPowerLoss = shutdownAfterSecs != 0
+		}
+
+		hasChanges = false
+	}
+
+	func save() {
+		guard
+			let device = connectedDevice.device,
+			let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context),
+			let fromUser = connectedNode.user,
+			let toUser = node.user
+		else {
+			return
+		}
+
+		var config = Config.PowerConfig()
+		config.isPowerSaving = isPowerSaving
+		config.onBatteryShutdownAfterSecs = shutdownOnPowerLoss ? UInt32(shutdownAfterSecs) : 0
+		config.adcMultiplierOverride = adcOverride ? adcMultiplier : 0
+		config.waitBluetoothSecs = UInt32(waitBluetoothSecs)
+		config.lsSecs = UInt32(lsSecs)
+		config.minWakeSecs = UInt32(minWakeSecs)
+
+		let adminIndex = connectedNode.myInfo?.adminIndex ?? 0
+		if
+			nodeConfig.savePowerConfig(
+				config: config,
+				fromUser: fromUser,
+				toUser: toUser,
+				adminIndex: adminIndex
+			) > 0
+		{
+			hasChanges = false
+			goBack()
 		}
 	}
 }

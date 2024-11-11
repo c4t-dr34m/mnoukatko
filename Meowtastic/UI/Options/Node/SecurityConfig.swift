@@ -40,79 +40,86 @@ struct SecurityConfig: OptionsScreen {
 
 	@ViewBuilder
 	var body: some View {
-		ZStack {
-			Form {
-				Section(header: Text("Message Keys")) {
-					VStack(alignment: .leading) {
-						publicKeyEntry
-						Divider()
+		Form {
+			Section(header: Text("Message Keys")) {
+				VStack(alignment: .leading) {
+					publicKeyEntry
+					Divider()
 
-						privateKeyEntry
-						Divider()
+					privateKeyEntry
+					Divider()
 
-						Label("Primary Admin Key", systemImage: "key.viewfinder")
-						TextEntry($adminKey, monospaced: true, placeholder: "Primary Admin Key") { key in
-							validate(key: key, allowEmpty: true)
-						}
-						Divider()
+					Text("Primary Admin Key")
+						.font(.body)
 
-						Label("Secondary Admin Key", systemImage: "key.viewfinder")
-						TextEntry($adminKey2, monospaced: true, placeholder: "Secondary Admin Key") { key in
-							validate(key: key, allowEmpty: true)
-						}
-						Divider()
+					TextEntry($adminKey, monospaced: true, placeholder: "Primary Admin Key") { key in
+						validate(key: key, allowEmpty: true)
+					}
+					Divider()
 
-						Label("Tertiary Admin Key", systemImage: "key.viewfinder")
-						TextEntry($adminKey3, monospaced: true, placeholder: "Tertiary Admin Key") { key in
-							validate(key: key, allowEmpty: true)
-						}
+					Text("Secondary Admin Key")
+						.font(.body)
+
+					TextEntry($adminKey2, monospaced: true, placeholder: "Secondary Admin Key") { key in
+						validate(key: key, allowEmpty: true)
+					}
+					Divider()
+
+					Text("Tertiary Admin Key")
+						.font(.body)
+
+					TextEntry($adminKey3, monospaced: true, placeholder: "Tertiary Admin Key") { key in
+						validate(key: key, allowEmpty: true)
 					}
 				}
-				.headerProminence(.increased)
-
-				Section(header: Text("Logs")) {
-					Toggle(isOn: $serialEnabled) {
-						Label("Serial Console", systemImage: "terminal")
-						Text("Serial Console over the Stream API.")
-					}
-					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
-
-					Toggle(isOn: $debugLogApiEnabled) {
-						Label("Debug Logs", systemImage: "ant.fill")
-						Text("Output live debug logging over serial, view and export position-redacted device logs over Bluetooth.")
-					}
-					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
-				}
-				.headerProminence(.increased)
-
-				Section(header: Text("Administration")) {
-					if adminKey.length > 0 || adminChannelEnabled {
-						Toggle(isOn: $isManaged) {
-							Label("Managed Device", systemImage: "gearshape.arrow.triangle.2.circlepath")
-							Text("Device is managed by a mesh administrator, the user is unable to access any of the device settings.")
-						}
-						.toggleStyle(SwitchToggleStyle(tint: .accentColor))
-					}
-
-					Toggle(isOn: $adminChannelEnabled) {
-						Label("Legacy Administration", systemImage: "lock.slash")
-
-						Text("Allow incoming device control over the insecure legacy admin channel.")
-					}
-					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
-				}
-				.headerProminence(.increased)
 			}
-			.disabled(connectedDevice.device == nil || node.networkConfig == nil)
-			.scrollDismissesKeyboard(.immediately)
+			.headerProminence(.increased)
 
-			SaveConfigButton(node: node, hasChanges: $hasChanges) {
-				save()
+			Section(header: Text("Logs")) {
+				Toggle(isOn: $serialEnabled) {
+					Text("Serial Console")
+						.font(.body)
+					Text("Serial Console over the Stream API.")
+				}
+				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+
+				Toggle(isOn: $debugLogApiEnabled) {
+					Text("Debug Logs")
+						.font(.body)
+
+					Text("Output live debug logging over serial, view and export position-redacted device logs over Bluetooth.")
+				}
+				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 			}
+			.headerProminence(.increased)
+
+			Section(header: Text("Administration")) {
+				if adminKey.length > 0 || adminChannelEnabled {
+					Toggle(isOn: $isManaged) {
+						Text("Managed Device")
+							.font(.body)
+						Text("Device is managed by a mesh administrator, the user is unable to access any of the device settings.")
+					}
+					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+				}
+
+				Toggle(isOn: $adminChannelEnabled) {
+					Text("Legacy Administration")
+						.font(.body)
+
+					Text("Allow incoming device control over the insecure legacy admin channel.")
+				}
+				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+			}
+			.headerProminence(.increased)
 		}
+		.disabled(connectedDevice.device == nil || node.networkConfig == nil)
+		.scrollDismissesKeyboard(.interactively)
 		.navigationTitle("Network Config")
 		.navigationBarItems(
-			trailing: ConnectionInfo()
+			trailing: SaveButton(node, changes: $hasChanges) {
+				save()
+			}
 		)
 		.onAppear {
 			Analytics.logEvent(AnalyticEvents.optionsSecurity.id, parameters: nil)
@@ -149,7 +156,8 @@ struct SecurityConfig: OptionsScreen {
 
 	@ViewBuilder
 	private var publicKeyEntry: some View {
-		Label("Public Key", systemImage: "key")
+		Text("Public Key")
+			.font(.body)
 
 		TextEntry($publicKey, monospaced: true, placeholder: "Public Key") { key in
 			validate(key: key)
@@ -162,7 +170,8 @@ struct SecurityConfig: OptionsScreen {
 
 	@ViewBuilder
 	private var privateKeyEntry: some View {
-		Label("Private Key", systemImage: "key.fill")
+		Text("Private Key")
+			.font(.body)
 
 		TextEntry($privateKey, monospaced: true, placeholder: "Private Key") { key in
 			validate(key: key)
@@ -216,14 +225,6 @@ struct SecurityConfig: OptionsScreen {
 
 	func save() {
 		guard
-			validate(key: publicKey)
-				|| validate(key: privateKey)
-				|| validate(key: adminKey, allowEmpty: true)
-		else {
-			return
-		}
-
-		guard
 			let device = connectedDevice.device,
 			let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context),
 			let fromUser = connectedNode.user,
@@ -232,23 +233,23 @@ struct SecurityConfig: OptionsScreen {
 			return
 		}
 
-		var security = Config.SecurityConfig()
-		security.publicKey = Data(base64Encoded: publicKey) ?? Data()
-		security.privateKey = Data(base64Encoded: privateKey) ?? Data()
-		security.adminKey = [
+		var config = Config.SecurityConfig()
+		config.publicKey = Data(base64Encoded: publicKey) ?? Data()
+		config.privateKey = Data(base64Encoded: privateKey) ?? Data()
+		config.adminKey = [
 			Data(base64Encoded: adminKey) ?? Data(),
 			Data(base64Encoded: adminKey2) ?? Data(),
 			Data(base64Encoded: adminKey3) ?? Data()
 		]
-		security.isManaged = isManaged
-		security.serialEnabled = serialEnabled
-		security.debugLogApiEnabled = debugLogApiEnabled
-		security.adminChannelEnabled = adminChannelEnabled
+		config.isManaged = isManaged
+		config.serialEnabled = serialEnabled
+		config.debugLogApiEnabled = debugLogApiEnabled
+		config.adminChannelEnabled = adminChannelEnabled
 
 		let adminIndex = connectedNode.myInfo?.adminIndex ?? 0
 		if
 			nodeConfig.saveSecurityConfig(
-				config: security,
+				config: config,
 				fromUser: fromUser,
 				toUser: toUser,
 				adminIndex: adminIndex

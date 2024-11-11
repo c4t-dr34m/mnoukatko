@@ -4,42 +4,18 @@ import MeshtasticProtobufs
 import OSLog
 import SwiftUI
 
-struct PositionConfig: View {
-	private let coreDataTools = CoreDataTools()
-	private let locationManager = CLLocationManager()
-
+struct PositionConfig: OptionsScreen {
 	var node: NodeInfoEntity
+	var coreDataTools = CoreDataTools()
 
-	@State var hasChanges = false
-	@State var hasFlagChanges = false
-	@State var smartPositionEnabled = true
-	@State var deviceGpsEnabled = true
-	@State var gpsMode = 0
-	@State var rxGpio = 0
-	@State var txGpio = 0
-	@State var gpsEnGpio = 0
-	@State var fixedPosition = false
-	@State var gpsUpdateInterval = 0
-	@State var positionBroadcastSeconds = 0
-	@State var broadcastSmartMinimumDistance = 0
-	@State var broadcastSmartMinimumIntervalSecs = 0
-	@State var positionFlags = 811
-	@State var includeAltitude = false
-	@State var includeAltitudeMsl = false
-	@State var includeGeoidalSeparation = false
-	@State var includeDop = false
-	@State var includeHvdop = false
-	@State var includeSatsinview = false
-	@State var includeSeqNo = false
-	@State var includeTimestamp = false
-	@State var includeSpeed = false
-	@State var includeHeading = false
-	@State var minimumVersion = "2.3.3"
+	private let locationManager = CLLocationManager()
 
 	@Environment(\.managedObjectContext)
 	private var context
 	@EnvironmentObject
 	private var bleManager: BLEManager
+	@EnvironmentObject
+	private var connectedDevice: CurrentDevice
 	@EnvironmentObject
 	private var nodeConfig: NodeConfig
 	@Environment(\.dismiss)
@@ -48,6 +24,56 @@ struct PositionConfig: View {
 	private var supportedVersion = true
 	@State
 	private var showingSetFixedAlert = false
+	@State
+	private var hasChanges = false
+	@State
+	private var hasFlagChanges = false
+	@State
+	private var smartPositionEnabled = true
+	@State
+	private var deviceGpsEnabled = true
+	@State
+	private var gpsMode = 0
+	@State
+	private var rxGpio = 0
+	@State
+	private var txGpio = 0
+	@State
+	private var gpsEnGpio = 0
+	@State
+	private var fixedPosition = false
+	@State
+	private var gpsUpdateInterval = 0
+	@State
+	private var positionBroadcastSeconds = 0
+	@State
+	private var broadcastSmartMinimumDistance = 0
+	@State
+	private var broadcastSmartMinimumIntervalSecs = 0
+	@State
+	private var positionFlags = 811
+	@State
+	private var includeAltitude = false
+	@State
+	private var includeAltitudeMsl = false
+	@State
+	private var includeGeoidalSeparation = false
+	@State
+	private var includeDop = false
+	@State
+	private var includeHvdop = false
+	@State
+	private var includeSatsinview = false
+	@State
+	private var includeSeqNo = false
+	@State
+	private var includeTimestamp = false
+	@State
+	private var includeSpeed = false
+	@State
+	private var includeHeading = false
+	@State
+	private var minimumVersion = "2.3.3"
 
 	@ViewBuilder
 	var body: some View {
@@ -57,11 +83,69 @@ struct PositionConfig: View {
 				deviceGPSSection
 				positionFlagsSection
 				advancedPositionFlagsSection
+
 				if gpsMode == 1 {
 					advancedDeviceGPSSection
 				}
 			}
-			.disabled(bleManager.getConnectedDevice() == nil || node.positionConfig == nil)
+			.disabled(connectedDevice.device == nil || node.positionConfig == nil)
+			.navigationTitle("Position Config")
+			.navigationBarItems(
+				trailing: SaveButton(node, changes: $hasChanges) {
+					save()
+				}
+			)
+			.onAppear {
+				Analytics.logEvent(AnalyticEvents.optionsPosition.id, parameters: nil)
+
+				supportedVersion = bleManager.connectedVersion == "0.0.0"
+				|| minimumVersion.compare(bleManager.connectedVersion, options: .numeric) == .orderedAscending
+				|| minimumVersion.compare(bleManager.connectedVersion, options: .numeric) == .orderedSame
+
+				setInitialValues()
+			}
+			.onChange(of: fixedPosition) {
+				guard supportedVersion, let positionConfig = node.positionConfig else {
+					return
+				}
+
+				if !positionConfig.fixedPosition, fixedPosition {
+					showingSetFixedAlert = true
+				}
+				else if positionConfig.fixedPosition, !fixedPosition {
+					showingSetFixedAlert = true
+				}
+			}
+			.onChange(of: gpsMode) {
+				handleChanges()
+			}
+			.onChange(of: rxGpio) {
+				handleChanges()
+			}
+			.onChange(of: txGpio) {
+				handleChanges()
+			}
+			.onChange(of: gpsEnGpio) {
+				handleChanges()
+			}
+			.onChange(of: smartPositionEnabled) {
+				handleChanges()
+			}
+			.onChange(of: positionBroadcastSeconds) {
+				handleChanges()
+			}
+			.onChange(of: broadcastSmartMinimumIntervalSecs) {
+				handleChanges()
+			}
+			.onChange(of: broadcastSmartMinimumDistance) {
+				handleChanges()
+			}
+			.onChange(of: gpsUpdateInterval) {
+				handleChanges()
+			}
+			.onChange(of: positionFlags) {
+				handleChanges()
+			}
 			.alert(setFixedAlertTitle, isPresented: $showingSetFixedAlert) {
 				Button("Cancel", role: .cancel) {
 					fixedPosition.toggle()
@@ -80,75 +164,6 @@ struct PositionConfig: View {
 			} message: {
 				Text(node.positionConfig?.fixedPosition ?? false ? "This will disable fixed position and remove the currently set position." : "This will send a current position from your phone and enable fixed position.")
 			}
-			saveButton
-		}
-		.navigationTitle("Position Config")
-		.navigationBarItems(
-			trailing: ConnectionInfo()
-		)
-		.onAppear {
-			Analytics.logEvent(AnalyticEvents.optionsPosition.id, parameters: nil)
-
-			setPositionValues()
-
-			supportedVersion = bleManager.connectedVersion == "0.0.0"
-			|| self.minimumVersion.compare(bleManager.connectedVersion, options: .numeric) == .orderedAscending
-			|| minimumVersion.compare(bleManager.connectedVersion, options: .numeric) == .orderedSame
-
-			// Need to request a PositionConfig from the remote node before allowing changes
-			if let connectedPeripheral = bleManager.getConnectedDevice(), node.positionConfig == nil {
-				Logger.mesh.info("empty position config")
-
-				if let connectedNode = coreDataTools.getNodeInfo(id: connectedPeripheral.num, context: context) {
-					nodeConfig.requestPositionConfig(
-						fromUser: connectedNode.user!,
-						toUser: node.user!,
-						adminIndex: connectedNode.myInfo?.adminIndex ?? 0
-					)
-				}
-			}
-		}
-		.onChange(of: fixedPosition) {
-			if supportedVersion {
-				if let positionConfig = node.positionConfig {
-					if !positionConfig.fixedPosition && fixedPosition {
-						showingSetFixedAlert = true
-					}
-					else if positionConfig.fixedPosition && !fixedPosition {
-						showingSetFixedAlert = true
-					}
-				}
-			}
-		}
-		.onChange(of: gpsMode) {
-			handleChanges()
-		}
-		.onChange(of: rxGpio) {
-			handleChanges()
-		}
-		.onChange(of: txGpio) {
-			handleChanges()
-		}
-		.onChange(of: gpsEnGpio) {
-			handleChanges()
-		}
-		.onChange(of: smartPositionEnabled) {
-			handleChanges()
-		}
-		.onChange(of: positionBroadcastSeconds) {
-			handleChanges()
-		}
-		.onChange(of: broadcastSmartMinimumIntervalSecs) {
-			handleChanges()
-		}
-		.onChange(of: broadcastSmartMinimumDistance) {
-			handleChanges()
-		}
-		.onChange(of: gpsUpdateInterval) {
-			handleChanges()
-		}
-		.onChange(of: positionFlags) {
-			handleChanges()
 		}
 	}
 
@@ -209,6 +224,7 @@ struct PositionConfig: View {
 				}
 			}
 		}
+		.headerProminence(.increased)
 	}
 
 	@ViewBuilder
@@ -254,12 +270,12 @@ struct PositionConfig: View {
 				}
 			}
 		}
+		.headerProminence(.increased)
 	}
 
 	@ViewBuilder
 	var positionFlagsSection: some View {
 		Section(header: Text("Position Flags")) {
-
 			Text("Optional fields to include when assembling position messages. the more fields are included, the larger the message will be - leading to longer airtime and a higher risk of packet loss")
 				.foregroundColor(.gray)
 				.font(.callout)
@@ -294,12 +310,12 @@ struct PositionConfig: View {
 			}
 			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 		}
+		.headerProminence(.increased)
 	}
 
 	@ViewBuilder
 	var advancedPositionFlagsSection: some View {
 		Section(header: Text("Advanced Position Flags")) {
-
 			if includeAltitude {
 				Toggle(isOn: $includeAltitudeMsl) {
 					Label("Altitude is Mean Sea Level", systemImage: "arrow.up.to.line.compact")
@@ -323,6 +339,7 @@ struct PositionConfig: View {
 				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 			}
 		}
+		.headerProminence(.increased)
 	}
 
 	@ViewBuilder
@@ -367,59 +384,7 @@ struct PositionConfig: View {
 			Text("(Re)define PIN_GPS_EN for your board.")
 				.font(.caption)
 		}
-	}
-
-	@ViewBuilder
-	var saveButton: some View {
-		SaveConfigButton(node: node, hasChanges: $hasChanges) {
-			if fixedPosition && !supportedVersion {
-				bleManager.sendPosition(channel: 0, destNum: node.num, wantResponse: true)
-			}
-
-			if
-				let device = bleManager.getConnectedDevice(),
-				let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context)
-			{
-				var pf: PositionFlags = []
-				if includeAltitude { pf.insert(.Altitude) }
-				if includeAltitudeMsl { pf.insert(.AltitudeMsl) }
-				if includeGeoidalSeparation { pf.insert(.GeoidalSeparation) }
-				if includeDop { pf.insert(.Dop) }
-				if includeHvdop { pf.insert(.Hvdop) }
-				if includeSatsinview { pf.insert(.Satsinview) }
-				if includeSeqNo { pf.insert(.SeqNo) }
-				if includeTimestamp { pf.insert(.Timestamp) }
-				if includeSpeed { pf.insert(.Speed) }
-				if includeHeading { pf.insert(.Heading) }
-
-				var pc = Config.PositionConfig()
-				pc.positionBroadcastSmartEnabled = smartPositionEnabled
-				pc.gpsEnabled = gpsMode == 1
-				pc.gpsMode = Config.PositionConfig.GpsMode(rawValue: gpsMode) ?? Config.PositionConfig.GpsMode.notPresent
-				pc.fixedPosition = fixedPosition
-				pc.gpsUpdateInterval = UInt32(gpsUpdateInterval)
-				pc.positionBroadcastSecs = UInt32(positionBroadcastSeconds)
-				pc.broadcastSmartMinimumIntervalSecs = UInt32(broadcastSmartMinimumIntervalSecs)
-				pc.broadcastSmartMinimumDistance = UInt32(broadcastSmartMinimumDistance)
-				pc.rxGpio = UInt32(rxGpio)
-				pc.txGpio = UInt32(txGpio)
-				pc.gpsEnGpio = UInt32(gpsEnGpio)
-				pc.positionFlags = UInt32(pf.rawValue)
-
-				let adminMessageId = nodeConfig.savePositionConfig(
-					config: pc,
-					fromUser: connectedNode.user!,
-					toUser: node.user!,
-					adminIndex: connectedNode.myInfo?.adminIndex ?? 0
-				)
-
-				if adminMessageId > 0 {
-					// Disable the button after a successful save
-					hasChanges = false
-					goBack()
-				}
-			}
-		}
+		.headerProminence(.increased)
 	}
 
 	var setFixedAlertTitle: String {
@@ -436,7 +401,8 @@ struct PositionConfig: View {
 			return
 		}
 
-		let hasLocation = [.authorizedWhenInUse, .authorizedAlways].contains(locationManager.authorizationStatus)
+		let hasLocation = [.authorizedWhenInUse, .authorizedAlways]
+			.contains(locationManager.authorizationStatus)
 		if !hasLocation, gpsMode == GPSMode.enabled.rawValue || fixedPosition == true {
 			locationManager.requestAlwaysAuthorization()
 		}
@@ -494,6 +460,140 @@ struct PositionConfig: View {
 		self.includeHeading = pf.contains(.Heading)
 
 		self.hasChanges = false
+	}
+
+	func setInitialValues() {
+		if
+			let device = connectedDevice.device,
+			let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context),
+			let fromUser = connectedNode.user,
+			let toUser = node.user,
+			validateSession(for: node),
+			node.positionConfig == nil
+		{
+			let adminIndex = connectedNode.myInfo?.adminIndex ?? 0
+			nodeConfig.requestPositionConfig(fromUser: fromUser, toUser: toUser, adminIndex: adminIndex)
+		}
+
+		if let config = node.positionConfig {
+			smartPositionEnabled = config.smartPositionEnabled
+			deviceGpsEnabled = config.deviceGpsEnabled
+			fixedPosition = config.fixedPosition
+			rxGpio = Int(config.rxGpio)
+			txGpio = Int(config.txGpio)
+			gpsEnGpio = Int(config.gpsEnGpio)
+			gpsUpdateInterval = Int(config.gpsUpdateInterval)
+			positionBroadcastSeconds = Int(config.positionBroadcastSeconds)
+			broadcastSmartMinimumIntervalSecs = Int(config.broadcastSmartMinimumIntervalSecs)
+			broadcastSmartMinimumDistance = Int(config.broadcastSmartMinimumDistance)
+			positionFlags = Int(config.positionFlags)
+
+			gpsMode = Int(config.gpsMode)
+			if config.deviceGpsEnabled, gpsMode != 1 {
+				gpsMode = 1
+			}
+		}
+		else {
+			smartPositionEnabled = true
+			deviceGpsEnabled = false
+			fixedPosition = false
+			rxGpio = 0
+			txGpio = 0
+			gpsEnGpio = 0
+			gpsUpdateInterval = 30
+			positionBroadcastSeconds = 900
+			broadcastSmartMinimumIntervalSecs = 30
+			broadcastSmartMinimumDistance = 50
+			positionFlags = 3
+
+			gpsMode = 0
+		}
+
+		let flags = PositionFlags(rawValue: self.positionFlags)
+		includeAltitude = flags.contains(.Altitude)
+		includeAltitudeMsl = flags.contains(.AltitudeMsl)
+		includeGeoidalSeparation = flags.contains(.GeoidalSeparation)
+		includeDop = flags.contains(.Dop)
+		includeHvdop = flags.contains(.Hvdop)
+		includeSatsinview = flags.contains(.Satsinview)
+		includeSeqNo = flags.contains(.SeqNo)
+		includeTimestamp = flags.contains(.Timestamp)
+		includeSpeed = flags.contains(.Speed)
+		includeHeading = flags.contains(.Heading)
+
+		hasChanges = false
+	}
+
+	func save() {
+		guard
+			let device = connectedDevice.device,
+			let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context),
+			let fromUser = connectedNode.user,
+			let toUser = node.user
+		else {
+			return
+		}
+
+		var flags: PositionFlags = []
+		if includeAltitude {
+			flags.insert(.Altitude)
+		}
+		if includeAltitudeMsl {
+			flags.insert(.AltitudeMsl)
+		}
+		if includeGeoidalSeparation {
+			flags.insert(.GeoidalSeparation)
+		}
+		if includeDop {
+			flags.insert(.Dop)
+		}
+		if includeHvdop {
+			flags.insert(.Hvdop)
+		}
+		if includeSatsinview {
+			flags.insert(.Satsinview)
+		}
+		if includeSeqNo {
+			flags.insert(.SeqNo)
+		}
+		if includeTimestamp {
+			flags.insert(.Timestamp)
+		}
+		if includeSpeed {
+			flags.insert(.Speed)
+		}
+		if includeHeading {
+			flags.insert(.Heading)
+		}
+
+		var config = Config.PositionConfig()
+		config.positionBroadcastSmartEnabled = smartPositionEnabled
+		config.gpsEnabled = gpsMode == 1
+		config.gpsMode = Config.PositionConfig.GpsMode(
+			rawValue: gpsMode
+		) ?? Config.PositionConfig.GpsMode.notPresent
+		config.fixedPosition = fixedPosition
+		config.gpsUpdateInterval = UInt32(gpsUpdateInterval)
+		config.positionBroadcastSecs = UInt32(positionBroadcastSeconds)
+		config.broadcastSmartMinimumIntervalSecs = UInt32(broadcastSmartMinimumIntervalSecs)
+		config.broadcastSmartMinimumDistance = UInt32(broadcastSmartMinimumDistance)
+		config.rxGpio = UInt32(rxGpio)
+		config.txGpio = UInt32(txGpio)
+		config.gpsEnGpio = UInt32(gpsEnGpio)
+		config.positionFlags = UInt32(flags.rawValue)
+
+		let adminIndex = connectedNode.myInfo?.adminIndex ?? 0
+		if
+			nodeConfig.savePositionConfig(
+				config: config,
+				fromUser: fromUser,
+				toUser: toUser,
+				adminIndex: adminIndex
+			) > 0
+		{
+			hasChanges = false
+			goBack()
+		}
 	}
 
 	private func setFixedPosition() {

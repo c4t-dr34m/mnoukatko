@@ -4,21 +4,22 @@ import MeshtasticProtobufs
 import OSLog
 import SwiftUI
 
-struct LoRaConfig: View {
+struct LoRaConfig: OptionsScreen {
 	enum Field: Hashable {
 		case channelNum
 		case frequencyOverride
 	}
 
-	private let coreDataTools = CoreDataTools()
+	var node: NodeInfoEntity
+	var coreDataTools = CoreDataTools()
+
 	private let formatter: NumberFormatter = {
 		let formatter = NumberFormatter()
 		formatter.numberStyle = .decimal
 		formatter.groupingSeparator = ""
+
 		return formatter
 	}()
-
-	var node: NodeInfoEntity
 
 	@Environment(\.managedObjectContext)
 	private var context
@@ -30,21 +31,34 @@ struct LoRaConfig: View {
 	private var goBack
 	@FocusState
 	private var focusedField: Field?
-
-	@State var hasChanges = false
-	@State var region: Int = 0
-	@State var modemPreset = 0
-	@State var hopLimit = 3
-	@State var txPower = 0
-	@State var txEnabled = true
-	@State var usePreset = true
-	@State var channelNum = 0
-	@State var bandwidth = 0
-	@State var spreadFactor = 0
-	@State var codingRate = 0
-	@State var rxBoostedGain = false
-	@State var overrideFrequency: Float = 0.0
-	@State var ignoreMqtt = false
+	@State
+	private var hasChanges = false
+	@State
+	private var region = 0
+	@State
+	private var modemPreset = 0
+	@State
+	private var hopLimit = 3
+	@State
+	private var txPower = 0
+	@State
+	private var txEnabled = true
+	@State
+	private var usePreset = true
+	@State
+	private var channelNum = 0
+	@State
+	private var bandwidth = 0
+	@State
+	private var spreadFactor = 0
+	@State
+	private var codingRate = 0
+	@State
+	private var rxBoostedGain = false
+	@State
+	private var overrideFrequency: Float = 0.0
+	@State
+	private var ignoreMqtt = false
 
 	let floatFormatter: NumberFormatter = {
 		let formatter = NumberFormatter()
@@ -54,74 +68,20 @@ struct LoRaConfig: View {
 
 	@ViewBuilder
 	var body: some View {
-		VStack {
-			Form {
-				sectionOptions
-				sectionAdvanced
-			}
-			.disabled(connectedDevice.device == nil || node.loRaConfig == nil)
-
-			SaveConfigButton(node: node, hasChanges: $hasChanges) {
-				if
-					let device = connectedDevice.device,
-					let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context)
-				{
-					var lc = Config.LoRaConfig()
-					lc.hopLimit = UInt32(hopLimit)
-					lc.region = RegionCodes(rawValue: region)!.protoEnumValue()
-					lc.modemPreset = ModemPresets(rawValue: modemPreset)!.protoEnumValue()
-					lc.usePreset = usePreset
-					lc.txEnabled = txEnabled
-					lc.txPower = Int32(txPower)
-					lc.channelNum = UInt32(channelNum)
-					lc.bandwidth = UInt32(bandwidth)
-					lc.codingRate = UInt32(codingRate)
-					lc.spreadFactor = UInt32(spreadFactor)
-					lc.sx126XRxBoostedGain = rxBoostedGain
-					lc.overrideFrequency = overrideFrequency
-					lc.ignoreMqtt = ignoreMqtt
-
-					if connectedNode.num == node.user?.num ?? 0 {
-						UserDefaults.modemPreset = modemPreset
-					}
-
-					let adminMessageId = nodeConfig.saveLoRaConfig(
-						config: lc,
-						fromUser: connectedNode.user!,
-						toUser: node.user!,
-						adminIndex: connectedNode.myInfo?.adminIndex ?? 0
-					)
-
-					if adminMessageId > 0 {
-						hasChanges = false
-						goBack()
-					}
-				}
-			}
+		Form {
+			sectionOptions
+			sectionAdvanced
 		}
+		.disabled(connectedDevice.device == nil || node.loRaConfig == nil)
 		.navigationTitle("LoRa Config")
 		.navigationBarItems(
-			trailing: ConnectionInfo()
+			trailing: SaveButton(node, changes: $hasChanges) {
+				save()
+			}
 		)
 		.onAppear {
 			Analytics.logEvent(AnalyticEvents.optionsLoRa.id, parameters: nil)
-
-			setLoRaValues()
-
-			// Need to request a LoRaConfig from the remote node before allowing changes
-			if node.loRaConfig == nil {
-				Logger.mesh.info("Empty LoRa config")
-			}
-			else if
-				let device = connectedDevice.device,
-				let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context)
-			{
-				nodeConfig.requestLoRaConfig(
-					fromUser: connectedNode.user!,
-					toUser: node.user!,
-					adminIndex: connectedNode.myInfo?.adminIndex ?? 0
-				)
-			}
+			setInitialValues()
 		}
 		.onChange(of: region) {
 			hasChanges = true
@@ -168,11 +128,12 @@ struct LoRaConfig: View {
 	private var sectionOptions: some View {
 		Section(header: Text("Options")) {
 			VStack(alignment: .leading) {
-				Picker("Region", selection: $region ) {
+				Picker("Region", selection: $region) {
 					ForEach(RegionCodes.allCases) { region in
 						Text(region.description)
 					}
 				}
+				.pickerStyle(DefaultPickerStyle())
 				.fixedSize()
 
 				Text("The region where you will be using your radios.")
@@ -182,7 +143,8 @@ struct LoRaConfig: View {
 			.pickerStyle(DefaultPickerStyle())
 
 			Toggle(isOn: $usePreset) {
-				Label("Use Preset", systemImage: "list.bullet.rectangle")
+				Text("Use Preset")
+					.font(.body)
 			}
 			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
@@ -202,18 +164,21 @@ struct LoRaConfig: View {
 				}
 			}
 		}
+		.headerProminence(.increased)
 	}
 
 	@ViewBuilder
 	private var sectionAdvanced: some View {
 		Section(header: Text("Advanced")) {
 			Toggle(isOn: $ignoreMqtt) {
-				Label("Ignore MQTT", systemImage: "server.rack")
+				Text("Ignore MQTT")
+					.font(.body)
 			}
 			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 			Toggle(isOn: $txEnabled) {
-				Label("Transmit Enabled", systemImage: "waveform.path")
+				Text("Transmit Enabled")
+					.font(.body)
 			}
 			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
@@ -286,13 +251,18 @@ struct LoRaConfig: View {
 			}
 
 			Toggle(isOn: $rxBoostedGain) {
-				Label("RX Boosted Gain", systemImage: "waveform.badge.plus")
+				Text("RX Boosted Gain")
+					.font(.body)
+
 			}
 			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 			HStack {
-				Label("Frequency Override", systemImage: "waveform.path.ecg")
+				Text("Frequency Override")
+					.font(.body)
+
 				Spacer()
+
 				TextField("Frequency Override", value: $overrideFrequency, formatter: floatFormatter)
 					.keyboardType(.decimalPad)
 					.scrollDismissesKeyboard(.immediately)
@@ -300,16 +270,26 @@ struct LoRaConfig: View {
 			}
 
 			HStack {
-				Image(systemName: "antenna.radiowaves.left.and.right")
-					.foregroundColor(.accentColor)
-
 				Stepper("\(txPower)dBm Transmit Power", value: $txPower, in: 1...30, step: 1)
 					.padding(5)
 			}
 		}
+		.headerProminence(.increased)
 	}
 
-	private func setLoRaValues() {
+	func setInitialValues() {
+		if
+			let device = connectedDevice.device,
+			let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context),
+			let fromUser = connectedNode.user,
+			let toUser = node.user,
+			validateSession(for: node),
+			node.loRaConfig == nil
+		{
+			let adminIndex = connectedNode.myInfo?.adminIndex ?? 0
+			nodeConfig.requestLoRaConfig(fromUser: fromUser, toUser: toUser, adminIndex: adminIndex)
+		}
+
 		if let config = node.loRaConfig {
 			hopLimit = Int(config.hopLimit)
 			region = Int(config.regionCode)
@@ -342,5 +322,47 @@ struct LoRaConfig: View {
 		}
 
 		hasChanges = false
+	}
+
+	func save() {
+		guard
+			let device = connectedDevice.device,
+			let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context),
+			let fromUser = connectedNode.user,
+			let toUser = node.user
+		else {
+			return
+		}
+
+		// swiftlint:disable force_unwrapping
+		var config = Config.LoRaConfig()
+		config.hopLimit = UInt32(hopLimit)
+		config.region = RegionCodes(rawValue: region)!.protoEnumValue()
+		config.modemPreset = ModemPresets(rawValue: modemPreset)!.protoEnumValue()
+		config.usePreset = usePreset
+		config.txEnabled = txEnabled
+		config.txPower = Int32(txPower)
+		config.channelNum = UInt32(channelNum)
+		config.bandwidth = UInt32(bandwidth)
+		config.codingRate = UInt32(codingRate)
+		config.spreadFactor = UInt32(spreadFactor)
+		config.sx126XRxBoostedGain = rxBoostedGain
+		config.overrideFrequency = overrideFrequency
+		config.ignoreMqtt = ignoreMqtt
+		// swiftlint:enable force_unwrapping
+
+		let adminIndex = connectedNode.myInfo?.adminIndex ?? 0
+		if
+			nodeConfig.saveLoRaConfig(
+				config: config,
+				fromUser: fromUser,
+				toUser: toUser,
+				adminIndex: adminIndex
+			) > 0
+		{
+			UserDefaults.modemPreset = modemPreset
+			hasChanges = false
+			goBack()
+		}
 	}
 }

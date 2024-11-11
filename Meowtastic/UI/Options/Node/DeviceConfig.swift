@@ -1,49 +1,42 @@
-//
-//  DeviceConfig.swift
-//  Meshtastic Apple
-//
-//  Copyright (c) Garth Vander Houwen 6/13/22.
-//
 import FirebaseAnalytics
 import MeshtasticProtobufs
 import OSLog
 import SwiftUI
 
-struct DeviceConfig: View {
-
-	private let coreDataTools = CoreDataTools()
+struct DeviceConfig: OptionsScreen {
+	var node: NodeInfoEntity
+	var coreDataTools = CoreDataTools()
 
 	@Environment(\.managedObjectContext)
 	private var context
 	@EnvironmentObject
 	private var bleManager: BLEManager
 	@EnvironmentObject
+	private var connectedDevice: CurrentDevice
+	@EnvironmentObject
 	private var nodeConfig: NodeConfig
 	@Environment(\.dismiss)
 	private var goBack
-
-	var node: NodeInfoEntity
-
 	@State
-	var hasChanges = false
+	private var hasChanges = false
 	@State
-	var deviceRole = 0
+	private var deviceRole = 0
 	@State
-	var buzzerGPIO = 0
+	private var buzzerGPIO = 0
 	@State
-	var buttonGPIO = 0
+	private var buttonGPIO = 0
 	@State
-	var rebroadcastMode = 0
+	private var rebroadcastMode = 0
 	@State
-	var nodeInfoBroadcastSecs = 10800
+	private var nodeInfoBroadcastSecs = 10800
 	@State
-	var doubleTapAsButtonPress = false
+	private var doubleTapAsButtonPress = false
 	@State
-	var ledHeartbeatEnabled = true
+	private var ledHeartbeatEnabled = true
 	@State
-	var isManaged = false
+	private var isManaged = false
 	@State
-	var tzdef = ""
+	private var tzdef = ""
 	@State
 	private var isPresentingNodeDBResetConfirm = false
 	@State
@@ -92,6 +85,7 @@ struct DeviceConfig: View {
 					}
 					.pickerStyle(DefaultPickerStyle())
 				}
+				.headerProminence(.increased)
 
 				Section(header: Text("Hardware")) {
 					Toggle(isOn: $doubleTapAsButtonPress) {
@@ -106,6 +100,7 @@ struct DeviceConfig: View {
 					}
 					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 				}
+				.headerProminence(.increased)
 
 				Section(header: Text("Debug")) {
 					VStack(alignment: .leading) {
@@ -114,197 +109,109 @@ struct DeviceConfig: View {
 
 							TextField("Time Zone", text: $tzdef, axis: .vertical)
 								.foregroundColor(.gray)
-								.onChange(of: tzdef, perform: { _ in
+								.onChange(of: tzdef) {
 									let totalBytes = tzdef.utf8.count
 									// Only mess with the value if it is too big
 									if totalBytes > 63 {
 										tzdef = String(tzdef.dropLast())
 									}
-								})
+								}
 								.foregroundColor(.gray)
 
 						}
 						.keyboardType(.default)
 						.disableAutocorrection(true)
+
 						Text("Time zone for dates on the device screen and log.")
 							.foregroundColor(.gray)
 							.font(.callout)
 					}
 				}
+				.headerProminence(.increased)
+
 				Section(header: Text("GPIO")) {
 					Picker("Button GPIO", selection: $buttonGPIO) {
-						ForEach(0..<49) {
-							if $0 == 0 {
-								Text("unset")
-							} else {
-								Text("Pin \($0)")
+						ForEach(0 ..< 49) { gpio in
+							if gpio == 0 {
+								Text("Unset")
+							}
+							else {
+								Text("Pin \(gpio)")
 							}
 						}
 					}
 					.pickerStyle(DefaultPickerStyle())
+
 					Picker("Buzzer GPIO", selection: $buzzerGPIO) {
-						ForEach(0..<49) {
-							if $0 == 0 {
-								Text("unset")
+						ForEach(0 ..< 49) { gpio in
+							if gpio == 0 {
+								Text("Unset")
 							}
 							else {
-								Text("Pin \($0)")
+								Text("Pin \(gpio)")
 							}
 						}
 					}
 					.pickerStyle(DefaultPickerStyle())
 				}
+				.headerProminence(.increased)
 			}
-			.disabled(bleManager.getConnectedDevice() == nil || node.deviceConfig == nil)
-			// Only show these buttons for the BLE connected node
-
-			if
-				let connectedDevice = bleManager.getConnectedDevice(),
-				node.num ?? -1 == connectedDevice.num
-			{
-				HStack {
-					Button("Reset NodeDB", role: .destructive) {
-						isPresentingNodeDBResetConfirm = true
-					}
-					.disabled(node.user == nil)
-					.buttonStyle(.bordered)
-					.buttonBorderShape(.capsule)
-					.controlSize(.large)
-					.padding(.leading)
-					.confirmationDialog(
-						"are.you.sure",
-						isPresented: $isPresentingNodeDBResetConfirm,
-						titleVisibility: .visible
-					) {
-						Button("Erase all device and app data?", role: .destructive) {
-							if nodeConfig.sendNodeDBReset(fromUser: node.user!, toUser: node.user!) {
-								DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-									bleManager.disconnectDevice()
-									coreDataTools.clearCoreDataDatabase(context: context, includeRoutes: false)
-								}
-							}
-							else {
-								Logger.mesh.error("NodeDB Reset Failed")
-							}
-						}
-					}
-					Button("Factory Reset", role: .destructive) {
-						isPresentingFactoryResetConfirm = true
-					}
-					.disabled(node.user == nil)
-					.buttonStyle(.bordered)
-					.buttonBorderShape(.capsule)
-					.controlSize(.large)
-					.padding(.trailing)
-					.confirmationDialog(
-						"All device and app data will be deleted. You will also need to forget your devices under Settings > Bluetooth.",
-						isPresented: $isPresentingFactoryResetConfirm,
-						titleVisibility: .visible
-					) {
-						Button("Factory reset your device and app? ", role: .destructive) {
-							if nodeConfig.sendFactoryReset(fromUser: node.user!, toUser: node.user!) {
-								DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-									bleManager.disconnectDevice()
-									coreDataTools.clearCoreDataDatabase(context: context, includeRoutes: false)
-								}
-							}
-							else {
-								Logger.mesh.error("Factory Reset Failed")
-							}
-						}
-					}
+			.disabled(connectedDevice.device == nil || node.deviceConfig == nil)
+			.navigationTitle("Device Config")
+			.navigationBarItems(
+				trailing: SaveButton(node, changes: $hasChanges) {
+					save()
 				}
+			)
+			.onAppear {
+				Analytics.logEvent(AnalyticEvents.optionsDevice.id, parameters: nil)
+				setInitialValues()
 			}
+			.onChange(of: deviceRole) {
+				hasChanges = true
+			}
+			.onChange(of: buttonGPIO) {
+				hasChanges = true
+			}
+			.onChange(of: buzzerGPIO) {
+				hasChanges = true
+			}
+			.onChange(of: rebroadcastMode) {
+				hasChanges = true
+			}
+			.onChange(of: nodeInfoBroadcastSecs) {
+				hasChanges = true
+			}
+			.onChange(of: doubleTapAsButtonPress) {
+				hasChanges = true
+			}
+			.onChange(of: isManaged) {
+				hasChanges = true
+			}
+			.onChange(of: tzdef) {
+				hasChanges = true
+			}
+
 			HStack {
-				SaveConfigButton(node: node, hasChanges: $hasChanges) {
-					if
-						let connectedDevice = bleManager.getConnectedDevice(),
-						let connectedNode = coreDataTools.getNodeInfo(
-							id: connectedDevice.num,
-							context: context
-						)
-					{
-						var dc = Config.DeviceConfig()
-						dc.role = DeviceRoles(rawValue: deviceRole)!.protoEnumValue()
-						dc.buttonGpio = UInt32(buttonGPIO)
-						dc.buzzerGpio = UInt32(buzzerGPIO)
-						dc.rebroadcastMode = RebroadcastModes(rawValue: rebroadcastMode)?.protoEnumValue() ?? RebroadcastModes.all.protoEnumValue()
-						dc.nodeInfoBroadcastSecs = UInt32(nodeInfoBroadcastSecs)
-						dc.doubleTapAsButtonPress = doubleTapAsButtonPress
-						dc.isManaged = isManaged
-						dc.tzdef = tzdef
-						dc.ledHeartbeatDisabled = !ledHeartbeatEnabled
-
-						let adminMessageId = nodeConfig.saveDeviceConfig(
-							config: dc,
-							fromUser: connectedNode.user!,
-							toUser: node.user!,
-							adminIndex: connectedNode.myInfo?.adminIndex ?? 0
-						)
-
-						if adminMessageId > 0 {
-							hasChanges = false
-							goBack()
-						}
-					}
-				}
+				resetDatabasButton
+				factoryResetButton
 			}
-			Spacer()
-		}
-		.navigationTitle("Device Config")
-		.navigationBarItems(
-			trailing: ConnectionInfo()
-		)
-		.onAppear {
-			Analytics.logEvent(AnalyticEvents.optionsDevice.id, parameters: nil)
-
-			setDeviceValues()
-
-			// Need to request a LoRaConfig from the remote node before allowing changes
-			if let device = bleManager.getConnectedDevice(), node.deviceConfig == nil {
-				Logger.mesh.info("empty device config")
-
-				let connectedNode = coreDataTools.getNodeInfo(
-					id: device.num,
-					context: context
-				)
-
-				if let connectedNode, connectedNode.user != nil {
-					nodeConfig.requestDeviceConfig(
-						fromUser: connectedNode.user!,
-						toUser: node.user!,
-						adminIndex: connectedNode.myInfo?.adminIndex ?? 0
-					)
-				}
-			}
-		}
-		.onChange(of: deviceRole) {
-			hasChanges = true
-		}
-		.onChange(of: buttonGPIO) {
-			hasChanges = true
-		}
-		.onChange(of: buzzerGPIO) {
-			hasChanges = true
-		}
-		.onChange(of: rebroadcastMode) {
-			hasChanges = true
-		}
-		.onChange(of: nodeInfoBroadcastSecs) {
-			hasChanges = true
-		}
-		.onChange(of: doubleTapAsButtonPress) {
-			hasChanges = true
-		}
-		.onChange(of: isManaged) {
-			hasChanges = true
-		}
-		.onChange(of: tzdef) {
-			hasChanges = true
 		}
 	}
 
-	func setDeviceValues() {
+	func setInitialValues() {
+		if
+			let device = connectedDevice.device,
+			let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context),
+			let fromUser = connectedNode.user,
+			let toUser = node.user,
+			validateSession(for: node),
+			node.deviceConfig == nil
+		{
+			let adminIndex = connectedNode.myInfo?.adminIndex ?? 0
+			nodeConfig.requestDeviceConfig(fromUser: fromUser, toUser: toUser, adminIndex: adminIndex)
+		}
+
 		if let config = node.deviceConfig {
 			doubleTapAsButtonPress = config.doubleTapAsButtonPress
 			ledHeartbeatEnabled = config.ledHeartbeatEnabled
@@ -338,6 +245,114 @@ struct DeviceConfig: View {
 		}
 		else {
 			hasChanges = false
+		}
+	}
+
+	func save() {
+		guard
+			let device = connectedDevice.device,
+			let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context),
+			let fromUser = connectedNode.user,
+			let toUser = node.user
+		else {
+			return
+		}
+
+		var config = Config.DeviceConfig()
+		config.role = DeviceRoles(rawValue: deviceRole)!.protoEnumValue()
+		config.buttonGpio = UInt32(buttonGPIO)
+		config.buzzerGpio = UInt32(buzzerGPIO)
+		config.rebroadcastMode = RebroadcastModes(rawValue: rebroadcastMode)?
+			.protoEnumValue() ?? RebroadcastModes.all.protoEnumValue()
+		config.nodeInfoBroadcastSecs = UInt32(nodeInfoBroadcastSecs)
+		config.doubleTapAsButtonPress = doubleTapAsButtonPress
+		config.isManaged = isManaged
+		config.tzdef = tzdef
+		config.ledHeartbeatDisabled = !ledHeartbeatEnabled
+
+		let adminIndex = connectedNode.myInfo?.adminIndex ?? 0
+		if
+			nodeConfig.saveDeviceConfig(
+				config: config,
+				fromUser: fromUser,
+				toUser: toUser,
+				adminIndex: adminIndex
+			) > 0
+		{
+			hasChanges = false
+			goBack()
+		}
+	}
+
+	@ViewBuilder
+	private var resetDatabasButton: some View {
+		if
+			let device = connectedDevice.device,
+			let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context),
+			let fromUser = connectedNode.user,
+			let toUser = node.user
+		{
+			Button("Reset NodeDB", role: .destructive) {
+				isPresentingNodeDBResetConfirm = true
+			}
+			.disabled(node.user == nil)
+			.buttonStyle(.bordered)
+			.buttonBorderShape(.capsule)
+			.controlSize(.large)
+			.padding(.leading)
+			.confirmationDialog(
+				"Are you sure?",
+				isPresented: $isPresentingNodeDBResetConfirm,
+				titleVisibility: .visible
+			) {
+				Button("Erase all device and app data?", role: .destructive) {
+					if nodeConfig.sendNodeDBReset(fromUser: fromUser, toUser: toUser) {
+						DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+							bleManager.disconnectDevice()
+							coreDataTools.clearCoreDataDatabase(context: context, includeRoutes: false)
+						}
+					}
+					else {
+						Logger.mesh.error("NodeDB Reset Failed")
+					}
+				}
+			}
+		}
+	}
+
+	@ViewBuilder
+	private var factoryResetButton: some View {
+		if
+			let device = connectedDevice.device,
+			let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context),
+			let fromUser = connectedNode.user,
+			let toUser = node.user
+		{
+			Button("Factory Reset", role: .destructive) {
+				isPresentingFactoryResetConfirm = true
+			}
+			.disabled(node.user == nil)
+			.buttonStyle(.bordered)
+			.buttonBorderShape(.capsule)
+			.controlSize(.large)
+			.padding(.trailing)
+			.confirmationDialog(
+				"Are you sure?",
+				isPresented: $isPresentingFactoryResetConfirm,
+				titleVisibility: .visible
+			) {
+				Button("Factory reset your device and app?", role: .destructive) {
+					if nodeConfig.sendFactoryReset(fromUser: fromUser, toUser: toUser) {
+						DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+							bleManager.disconnectDevice()
+							coreDataTools.clearCoreDataDatabase(context: context, includeRoutes: false)
+						}
+					}
+					else {
+						Logger.mesh.error("Factory Reset Failed")
+					}
+				}
+			}
 		}
 	}
 }

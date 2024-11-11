@@ -35,7 +35,7 @@
     "%lld hops" : {
 
     },
-    "%llddb Transmit Power" : {
+    "%llddB Transmit Power" : {
 
     },
     "%llddBm Transmit Power" : {
@@ -264,9 +264,6 @@
       }
     },
     "Air Time" : {
-
-    },
-    "All device and app data will be deleted. You will also need to forget your devices under Settings > Bluetooth." : {
 
     },
     "Allow incoming device control over the insecure legacy admin channel." : {
@@ -2406,6 +2403,7 @@
       }
     },
     "config.save.confirm" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3613,7 +3611,7 @@
     "Factory Reset" : {
 
     },
-    "Factory reset your device and app? " : {
+    "Factory reset your device and app?" : {
 
     },
     "Favorite" : {
@@ -3688,6 +3686,9 @@
 
     },
     "Fixed PIN" : {
+
+    },
+    "Fixed PIN:" : {
 
     },
     "Fixed Position" : {
@@ -10667,6 +10668,9 @@
     "Password" : {
 
     },
+    "Password:" : {
+
+    },
     "phone.gps.interval.description" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -12279,6 +12283,7 @@
       }
     },
     "save" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -12339,7 +12344,7 @@
     "Save" : {
 
     },
-    "Save User Config to %@?" : {
+    "Save configuration" : {
 
     },
     "save.config %@" : {
@@ -13070,6 +13075,9 @@
       }
     },
     "SSID" : {
+
+    },
+    "SSID:" : {
 
     },
     "standard" : {
