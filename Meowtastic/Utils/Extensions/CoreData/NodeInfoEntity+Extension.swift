@@ -3,6 +3,12 @@ import Foundation
 import SwiftUI
 
 extension NodeInfoEntity {
+	var color: Color {
+		Color(
+			UIColor(hex: UInt32(num))
+		)
+	}
+
 	var latestEnvironmentMetrics: TelemetryEntity? {
 		telemetries?.filtered(
 			using: NSPredicate(format: "metricsType == 1")
@@ -18,13 +24,15 @@ extension NodeInfoEntity {
 	}
 
 	var hasDeviceMetrics: Bool {
-		let deviceMetrics = telemetries?.filter { ($0 as AnyObject).metricsType == 0 }
-		return deviceMetrics?.count ?? 0 > 0
+		return telemetries?.filter { telemetry in
+			(telemetry as AnyObject).metricsType == 0
+		}.first != nil
 	}
 
 	var hasEnvironmentMetrics: Bool {
-		let environmentMetrics = telemetries?.filter { ($0 as AnyObject).metricsType == 1 }
-		return environmentMetrics?.count ?? 0 > 0
+		return telemetries?.filter { telemetry in
+			(telemetry as AnyObject).metricsType == 1
+		}.first != nil
 	}
 
 	var hasDetectionSensorMetrics: Bool {
@@ -54,17 +62,20 @@ extension NodeInfoEntity {
 }
 
 public func createNodeInfo(num: Int64, context: NSManagedObjectContext) -> NodeInfoEntity {
-	let newNode = NodeInfoEntity(context: context)
-	newNode.id = Int64(num)
-	newNode.num = Int64(num)
+	let userId = String(format: "%2X", num)
+	let last4 = String(userId.suffix(4))
+
 	let newUser = UserEntity(context: context)
 	newUser.num = Int64(num)
-	let userId = String(format: "%2X", num)
 	newUser.userId = "!\(userId)"
-	let last4 = String(userId.suffix(4))
 	newUser.longName = "Meshtastic \(last4)"
 	newUser.shortName = last4
 	newUser.hwModel = "UNSET"
+
+	let newNode = NodeInfoEntity(context: context)
+	newNode.id = Int64(num)
+	newNode.num = Int64(num)
 	newNode.user = newUser
+
 	return newNode
 }

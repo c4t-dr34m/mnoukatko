@@ -67,8 +67,6 @@ struct MQTTConfig: View {
 				}
 			}
 
-			ConfigHeader(title: "MQTT", config: \.mqttConfig, node: node)
-
 			Section(header: Text("Options")) {
 				Toggle(isOn: $enabled) {
 					Label("Enabled", systemImage: "dot.radiowaves.up.forward")

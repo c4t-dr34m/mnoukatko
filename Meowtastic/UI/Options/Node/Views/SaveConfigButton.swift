@@ -6,35 +6,36 @@ struct SaveConfigButton: View {
 
 	@EnvironmentObject
 	private var connectedDevice: CurrentDevice
-	@State
-	private var isPresentingSaveConfirm = false
 	@Binding
 	private var hasChanges: Bool
+	@State
+	private var isPresentingSaveConfirm = false
 
 	@ViewBuilder
 	var body: some View {
 		Button {
 			isPresentingSaveConfirm = true
 		} label: {
-			Label("Save", systemImage: "square.and.arrow.down")
+			Image(systemName: "square.and.arrow.down")
+				.font(.system(size: 32))
+				.foregroundStyle(Color.accentColor)
 		}
 		.disabled(connectedDevice.device == nil || !hasChanges)
-		.buttonStyle(.bordered)
-		.buttonBorderShape(.capsule)
-		.controlSize(.large)
 		.padding(.all, 8)
+		.buttonStyle(.bordered)
+		.buttonBorderShape(.circle)
+		.controlSize(.large)
+		.frame(alignment: .bottomTrailing)
 		.confirmationDialog(
 			"Are you sure?",
 			isPresented: $isPresentingSaveConfirm,
 			titleVisibility: .visible
 		) {
-			let buttonText = String.localizedStringWithFormat("Save")
-
-			Button(buttonText) {
+			Button("Save") {
 				onSave()
 			}
 		} message: {
-			Text("After config values save the node will reboot")
+			Text("Node will reboot after saving changes.")
 		}
 	}
 

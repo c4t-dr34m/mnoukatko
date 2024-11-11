@@ -163,6 +163,19 @@ struct Options: View {
 					}
 				}
 
+				// TODO: add version check; this requires 2.5+
+				NavigationLink {
+					NavigationLazyView(
+						SecurityConfig(node: nodeSelected)
+					)
+				} label: {
+					Label {
+						Text("Security")
+					} icon: {
+						Image(systemName: "lock")
+					}
+				}
+
 				NavigationLink {
 					NavigationLazyView(
 						MQTTConfig(node: nodeSelected)
@@ -193,7 +206,7 @@ struct Options: View {
 					)
 				} label: {
 					Label {
-						Text("WiFi")
+						Text("Network")
 					} icon: {
 						Image(systemName: "wifi.router")
 					}

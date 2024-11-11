@@ -52,9 +52,7 @@ struct DeviceConfig: View {
 	var body: some View {
 		VStack {
 			Form {
-				ConfigHeader(title: "Device", config: \.deviceConfig, node: node)
-
-				Section(header: Text("options")) {
+				Section(header: Text("Options")) {
 					VStack(alignment: .leading) {
 						Picker("Device Role", selection: $deviceRole ) {
 							ForEach(DeviceRoles.allCases) { dr in

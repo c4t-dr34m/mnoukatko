@@ -330,6 +330,21 @@ final class NodeConfig: ObservableObject {
 	}
 
 	@discardableResult
+	func requestSecurityConfig(
+		fromUser: UserEntity,
+		toUser: UserEntity,
+		adminIndex: Int32
+	) -> Bool {
+		sendConfigRequest(
+			to: toUser,
+			from: fromUser,
+			index: adminIndex,
+			type: AdminMessage.ConfigType.securityConfig,
+			event: .securityConfig
+		)
+	}
+
+	@discardableResult
 	func saveNetworkConfig(
 		config: Config.NetworkConfig,
 		fromUser: UserEntity,
@@ -347,6 +362,31 @@ final class NodeConfig: ObservableObject {
 			event: .networkConfigSave
 		) {
 			self.coreDataTools.upsertNetworkConfigPacket(
+				config: config,
+				nodeNum: toUser.num,
+				context: self.context
+			)
+		}
+	}
+
+	@discardableResult
+	func saveSecurityConfig(
+		config: Config.SecurityConfig,
+		fromUser: UserEntity,
+		toUser: UserEntity,
+		adminIndex: Int32
+	) -> Int64 {
+		var message = AdminMessage()
+		message.setConfig.security = config
+
+		return sendRequest(
+			to: toUser,
+			from: fromUser,
+			index: adminIndex,
+			message: message,
+			event: .securityConfigSave
+		) {
+			self.coreDataTools.upsertSecurityConfigPacket(
 				config: config,
 				nodeNum: toUser.num,
 				context: self.context

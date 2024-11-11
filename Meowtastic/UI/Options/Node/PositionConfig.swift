@@ -53,8 +53,6 @@ struct PositionConfig: View {
 	var body: some View {
 		VStack {
 			Form {
-				ConfigHeader(title: "Position", config: \.positionConfig, node: node)
-
 				positionPacketSection
 				deviceGPSSection
 				positionFlagsSection

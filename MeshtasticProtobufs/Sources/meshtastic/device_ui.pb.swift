@@ -111,6 +111,30 @@ public enum Language: SwiftProtobuf.Enum, Swift.CaseIterable {
   ///
   /// Turkish
   case turkish // = 9
+
+  ///
+  /// Serbian
+  case serbian // = 10
+
+  ///
+  /// Russian
+  case russian // = 11
+
+  ///
+  /// Dutch
+  case dutch // = 12
+
+  ///
+  /// Greek
+  case greek // = 13
+
+  ///
+  /// Simplified Chinese (experimental)
+  case simplifiedChinese // = 30
+
+  ///
+  /// Traditional Chinese (experimental)
+  case traditionalChinese // = 31
   case UNRECOGNIZED(Int)
 
   public init() {
@@ -129,6 +153,12 @@ public enum Language: SwiftProtobuf.Enum, Swift.CaseIterable {
     case 7: self = .finnish
     case 8: self = .polish
     case 9: self = .turkish
+    case 10: self = .serbian
+    case 11: self = .russian
+    case 12: self = .dutch
+    case 13: self = .greek
+    case 30: self = .simplifiedChinese
+    case 31: self = .traditionalChinese
     default: self = .UNRECOGNIZED(rawValue)
     }
   }
@@ -145,6 +175,12 @@ public enum Language: SwiftProtobuf.Enum, Swift.CaseIterable {
     case .finnish: return 7
     case .polish: return 8
     case .turkish: return 9
+    case .serbian: return 10
+    case .russian: return 11
+    case .dutch: return 12
+    case .greek: return 13
+    case .simplifiedChinese: return 30
+    case .traditionalChinese: return 31
     case .UNRECOGNIZED(let i): return i
     }
   }
@@ -161,6 +197,12 @@ public enum Language: SwiftProtobuf.Enum, Swift.CaseIterable {
     .finnish,
     .polish,
     .turkish,
+    .serbian,
+    .russian,
+    .dutch,
+    .greek,
+    .simplifiedChinese,
+    .traditionalChinese,
   ]
 
 }
@@ -169,6 +211,13 @@ public struct DeviceUIConfig: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
+
+  ///
+  /// A version integer used to invalidate saved files when we make incompatible changes.
+  public var version: UInt32 {
+    get {return _storage._version}
+    set {_uniqueStorage()._version = newValue}
+  }
 
   ///
   /// TFT display brightness 1..255 
@@ -185,10 +234,20 @@ public struct DeviceUIConfig: @unchecked Sendable {
   }
 
   ///
-  /// Screen lock enabled 
+  /// Screen/Settings lock enabled 
   public var screenLock: Bool {
     get {return _storage._screenLock}
     set {_uniqueStorage()._screenLock = newValue}
+  }
+
+  public var settingsLock: Bool {
+    get {return _storage._settingsLock}
+    set {_uniqueStorage()._settingsLock = newValue}
+  }
+
+  public var pinCode: UInt32 {
+    get {return _storage._pinCode}
+    set {_uniqueStorage()._pinCode = newValue}
   }
 
   ///
@@ -199,10 +258,20 @@ public struct DeviceUIConfig: @unchecked Sendable {
   }
 
   ///
-  /// Audible message alert enabled
+  /// Audible message, banner and ring tone
   public var alertEnabled: Bool {
     get {return _storage._alertEnabled}
     set {_uniqueStorage()._alertEnabled = newValue}
+  }
+
+  public var bannerEnabled: Bool {
+    get {return _storage._bannerEnabled}
+    set {_uniqueStorage()._bannerEnabled = newValue}
+  }
+
+  public var ringToneID: UInt32 {
+    get {return _storage._ringToneID}
+    set {_uniqueStorage()._ringToneID = newValue}
   }
 
   ///
@@ -224,7 +293,7 @@ public struct DeviceUIConfig: @unchecked Sendable {
   public mutating func clearNodeFilter() {_uniqueStorage()._nodeFilter = nil}
 
   ///
-  /// Node list highlightening 
+  /// Node list highlightening
   public var nodeHighlight: NodeHighlight {
     get {return _storage._nodeHighlight ?? NodeHighlight()}
     set {_uniqueStorage()._nodeHighlight = newValue}
@@ -329,28 +398,44 @@ extension Language: SwiftProtobuf._ProtoNameProviding {
     7: .same(proto: "FINNISH"),
     8: .same(proto: "POLISH"),
     9: .same(proto: "TURKISH"),
+    10: .same(proto: "SERBIAN"),
+    11: .same(proto: "RUSSIAN"),
+    12: .same(proto: "DUTCH"),
+    13: .same(proto: "GREEK"),
+    30: .same(proto: "SIMPLIFIED_CHINESE"),
+    31: .same(proto: "TRADITIONAL_CHINESE"),
   ]
 }
 
 extension DeviceUIConfig: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".DeviceUIConfig"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .standard(proto: "screen_brightness"),
-    2: .standard(proto: "screen_timeout"),
-    3: .standard(proto: "screen_lock"),
-    4: .same(proto: "theme"),
-    5: .standard(proto: "alert_enabled"),
-    6: .same(proto: "language"),
-    7: .standard(proto: "node_filter"),
-    8: .standard(proto: "node_highlight"),
+    1: .same(proto: "version"),
+    2: .standard(proto: "screen_brightness"),
+    3: .standard(proto: "screen_timeout"),
+    4: .standard(proto: "screen_lock"),
+    5: .standard(proto: "settings_lock"),
+    6: .standard(proto: "pin_code"),
+    7: .same(proto: "theme"),
+    8: .standard(proto: "alert_enabled"),
+    9: .standard(proto: "banner_enabled"),
+    10: .standard(proto: "ring_tone_id"),
+    11: .same(proto: "language"),
+    12: .standard(proto: "node_filter"),
+    13: .standard(proto: "node_highlight"),
   ]
 
   fileprivate class _StorageClass {
+    var _version: UInt32 = 0
     var _screenBrightness: UInt32 = 0
     var _screenTimeout: UInt32 = 0
     var _screenLock: Bool = false
+    var _settingsLock: Bool = false
+    var _pinCode: UInt32 = 0
     var _theme: Theme = .dark
     var _alertEnabled: Bool = false
+    var _bannerEnabled: Bool = false
+    var _ringToneID: UInt32 = 0
     var _language: Language = .english
     var _nodeFilter: NodeFilter? = nil
     var _nodeHighlight: NodeHighlight? = nil
@@ -368,11 +453,16 @@ extension DeviceUIConfig: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     private init() {}
 
     init(copying source: _StorageClass) {
+      _version = source._version
       _screenBrightness = source._screenBrightness
       _screenTimeout = source._screenTimeout
       _screenLock = source._screenLock
+      _settingsLock = source._settingsLock
+      _pinCode = source._pinCode
       _theme = source._theme
       _alertEnabled = source._alertEnabled
+      _bannerEnabled = source._bannerEnabled
+      _ringToneID = source._ringToneID
       _language = source._language
       _nodeFilter = source._nodeFilter
       _nodeHighlight = source._nodeHighlight
@@ -394,14 +484,19 @@ extension DeviceUIConfig: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
         // allocates stack space for every case branch when no optimizations are
         // enabled. https://github.com/apple/swift-protobuf/issues/1034
         switch fieldNumber {
-        case 1: try { try decoder.decodeSingularUInt32Field(value: &_storage._screenBrightness) }()
-        case 2: try { try decoder.decodeSingularUInt32Field(value: &_storage._screenTimeout) }()
-        case 3: try { try decoder.decodeSingularBoolField(value: &_storage._screenLock) }()
-        case 4: try { try decoder.decodeSingularEnumField(value: &_storage._theme) }()
-        case 5: try { try decoder.decodeSingularBoolField(value: &_storage._alertEnabled) }()
-        case 6: try { try decoder.decodeSingularEnumField(value: &_storage._language) }()
-        case 7: try { try decoder.decodeSingularMessageField(value: &_storage._nodeFilter) }()
-        case 8: try { try decoder.decodeSingularMessageField(value: &_storage._nodeHighlight) }()
+        case 1: try { try decoder.decodeSingularUInt32Field(value: &_storage._version) }()
+        case 2: try { try decoder.decodeSingularUInt32Field(value: &_storage._screenBrightness) }()
+        case 3: try { try decoder.decodeSingularUInt32Field(value: &_storage._screenTimeout) }()
+        case 4: try { try decoder.decodeSingularBoolField(value: &_storage._screenLock) }()
+        case 5: try { try decoder.decodeSingularBoolField(value: &_storage._settingsLock) }()
+        case 6: try { try decoder.decodeSingularUInt32Field(value: &_storage._pinCode) }()
+        case 7: try { try decoder.decodeSingularEnumField(value: &_storage._theme) }()
+        case 8: try { try decoder.decodeSingularBoolField(value: &_storage._alertEnabled) }()
+        case 9: try { try decoder.decodeSingularBoolField(value: &_storage._bannerEnabled) }()
+        case 10: try { try decoder.decodeSingularUInt32Field(value: &_storage._ringToneID) }()
+        case 11: try { try decoder.decodeSingularEnumField(value: &_storage._language) }()
+        case 12: try { try decoder.decodeSingularMessageField(value: &_storage._nodeFilter) }()
+        case 13: try { try decoder.decodeSingularMessageField(value: &_storage._nodeHighlight) }()
         default: break
         }
       }
@@ -414,29 +509,44 @@ extension DeviceUIConfig: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
       // allocates stack space for every if/case branch local when no optimizations
       // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
       // https://github.com/apple/swift-protobuf/issues/1182
+      if _storage._version != 0 {
+        try visitor.visitSingularUInt32Field(value: _storage._version, fieldNumber: 1)
+      }
       if _storage._screenBrightness != 0 {
-        try visitor.visitSingularUInt32Field(value: _storage._screenBrightness, fieldNumber: 1)
+        try visitor.visitSingularUInt32Field(value: _storage._screenBrightness, fieldNumber: 2)
       }
       if _storage._screenTimeout != 0 {
-        try visitor.visitSingularUInt32Field(value: _storage._screenTimeout, fieldNumber: 2)
+        try visitor.visitSingularUInt32Field(value: _storage._screenTimeout, fieldNumber: 3)
       }
       if _storage._screenLock != false {
-        try visitor.visitSingularBoolField(value: _storage._screenLock, fieldNumber: 3)
+        try visitor.visitSingularBoolField(value: _storage._screenLock, fieldNumber: 4)
+      }
+      if _storage._settingsLock != false {
+        try visitor.visitSingularBoolField(value: _storage._settingsLock, fieldNumber: 5)
+      }
+      if _storage._pinCode != 0 {
+        try visitor.visitSingularUInt32Field(value: _storage._pinCode, fieldNumber: 6)
       }
       if _storage._theme != .dark {
-        try visitor.visitSingularEnumField(value: _storage._theme, fieldNumber: 4)
+        try visitor.visitSingularEnumField(value: _storage._theme, fieldNumber: 7)
       }
       if _storage._alertEnabled != false {
-        try visitor.visitSingularBoolField(value: _storage._alertEnabled, fieldNumber: 5)
+        try visitor.visitSingularBoolField(value: _storage._alertEnabled, fieldNumber: 8)
+      }
+      if _storage._bannerEnabled != false {
+        try visitor.visitSingularBoolField(value: _storage._bannerEnabled, fieldNumber: 9)
+      }
+      if _storage._ringToneID != 0 {
+        try visitor.visitSingularUInt32Field(value: _storage._ringToneID, fieldNumber: 10)
       }
       if _storage._language != .english {
-        try visitor.visitSingularEnumField(value: _storage._language, fieldNumber: 6)
+        try visitor.visitSingularEnumField(value: _storage._language, fieldNumber: 11)
       }
       try { if let v = _storage._nodeFilter {
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 12)
       } }()
       try { if let v = _storage._nodeHighlight {
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 8)
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 13)
       } }()
     }
     try unknownFields.traverse(visitor: &visitor)
@@ -447,11 +557,16 @@ extension DeviceUIConfig: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0
         let rhs_storage = _args.1
+        if _storage._version != rhs_storage._version {return false}
         if _storage._screenBrightness != rhs_storage._screenBrightness {return false}
         if _storage._screenTimeout != rhs_storage._screenTimeout {return false}
         if _storage._screenLock != rhs_storage._screenLock {return false}
+        if _storage._settingsLock != rhs_storage._settingsLock {return false}
+        if _storage._pinCode != rhs_storage._pinCode {return false}
         if _storage._theme != rhs_storage._theme {return false}
         if _storage._alertEnabled != rhs_storage._alertEnabled {return false}
+        if _storage._bannerEnabled != rhs_storage._bannerEnabled {return false}
+        if _storage._ringToneID != rhs_storage._ringToneID {return false}
         if _storage._language != rhs_storage._language {return false}
         if _storage._nodeFilter != rhs_storage._nodeFilter {return false}
         if _storage._nodeHighlight != rhs_storage._nodeHighlight {return false}

@@ -20,9 +20,6 @@
         }
       }
     },
-    "%@ config data was requested over the admin channel but no response has been returned from the remote node. You can check the status of admin message requests in the admin message log." : {
-
-    },
     "%d hop" : {
 
     },
@@ -207,9 +204,6 @@
     "Advanced Position Flags" : {
 
     },
-    "After config values save the node will reboot" : {
-
-    },
     "ago" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -273,6 +267,9 @@
 
     },
     "All device and app data will be deleted. You will also need to forget your devices under Settings > Bluetooth." : {
+
+    },
+    "Allow incoming device control over the insecure legacy admin channel." : {
 
     },
     "Allow Location" : {
@@ -2466,9 +2463,6 @@
         }
       }
     },
-    "Configuration for: %@" : {
-
-    },
     "Connected" : {
 
     },
@@ -2617,6 +2611,9 @@
     "Debug" : {
 
     },
+    "Debug Logs" : {
+
+    },
     "default" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2759,6 +2756,9 @@
 
     },
     "Device GPS" : {
+
+    },
+    "Device is managed by a mesh administrator, the user is unable to access any of the device settings." : {
 
     },
     "Device Logging" : {
@@ -3604,7 +3604,7 @@
     "Erase all device and app data?" : {
 
     },
-    "Ethernet Options" : {
+    "Ethernet" : {
 
     },
     "Exchange Positions" : {
@@ -6901,6 +6901,9 @@
     "LED Heartbeat" : {
 
     },
+    "Legacy Administration" : {
+
+    },
     "Licensed Operator" : {
 
     },
@@ -7012,6 +7015,9 @@
           }
         }
       }
+    },
+    "Logs" : {
+
     },
     "Long Name" : {
 
@@ -9750,6 +9756,9 @@
     "Meshtastic® is a registered trademark of Meshtastic LLC" : {
 
     },
+    "Message Keys" : {
+
+    },
     "Messages" : {
 
     },
@@ -10112,6 +10121,9 @@
 
     },
     "Node will disconnect when app is in background." : {
+
+    },
+    "Node will reboot after saving changes." : {
 
     },
     "Node will stay connected as long as iOS allows." : {
@@ -10523,6 +10535,7 @@
 
     },
     "options" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -10583,6 +10596,9 @@
     "Options" : {
 
     },
+    "Output live debug logging over serial, view and export position-redacted device logs over Bluetooth." : {
+
+    },
     "Override automatic OLED screen detection." : {
 
     },
@@ -10590,6 +10606,7 @@
 
     },
     "password" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -10713,9 +10730,6 @@
 
     },
     "PIN must be 6 digits long" : {
-
-    },
-    "Please connect to a radio to configure settings." : {
 
     },
     "position" : {
@@ -10910,7 +10924,16 @@
     "Primary" : {
 
     },
+    "Primary Admin Key" : {
+
+    },
     "Primary Channel" : {
+
+    },
+    "Private Key" : {
+
+    },
+    "Public Key" : {
 
     },
     "range.test.blocked" : {
@@ -11129,9 +11152,6 @@
           }
         }
       }
-    },
-    "Remote administration for: %@" : {
-
     },
     "Remove" : {
 
@@ -12387,6 +12407,12 @@
     "Secondary" : {
 
     },
+    "Secondary Admin Key" : {
+
+    },
+    "Security" : {
+
+    },
     "select.contact" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -12570,7 +12596,16 @@
     "Sensor Options" : {
 
     },
+    "Sent out to other nodes on the mesh to allow them to compute a shared secret key." : {
+
+    },
     "Sequence number" : {
+
+    },
+    "Serial Console" : {
+
+    },
+    "Serial Console over the Stream API." : {
 
     },
     "serial.mode.default" : {
@@ -12976,6 +13011,7 @@
 
     },
     "ssid" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -13032,6 +13068,9 @@
           }
         }
       }
+    },
+    "SSID" : {
+
     },
     "standard" : {
       "extractionState" : "manual",
@@ -13638,6 +13677,9 @@
     "Temperature" : {
 
     },
+    "Tertiary Admin Key" : {
+
+    },
     "The compass heading on the screen outside of the circle will always point north." : {
 
     },
@@ -13663,9 +13705,6 @@
 
     },
     "The root topic to use for MQTT." : {
-
-    },
-    "There has been no response to a request for device metadata over the admin channel for this node." : {
 
     },
     "This app is based on and still benefits from their work" : {
@@ -13973,6 +14012,9 @@
     "Use Preset" : {
 
     },
+    "Used to create a shared key with a remote device." : {
+
+    },
     "User" : {
 
     },
@@ -14092,9 +14134,6 @@
 
     },
     "WiFi" : {
-
-    },
-    "WiFi Options" : {
 
     },
     "Your current location will be set as the fixed position and broadcast over the mesh on the position interval." : {

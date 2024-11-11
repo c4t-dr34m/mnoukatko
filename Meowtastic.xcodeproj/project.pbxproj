@@ -57,6 +57,9 @@
 		B266A76C2C59298900DFC723 /* GPSUpdateIntervals.swift in Sources */ = {isa = PBXBuildFile; fileRef = B266A76B2C59298900DFC723 /* GPSUpdateIntervals.swift */; };
 		B266DA902C53CEFB0067D317 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B266DA8F2C53CEFB0067D317 /* Constants.swift */; };
 		B26C91F62C59740F0029F249 /* PositionFlags.swift in Sources */ = {isa = PBXBuildFile; fileRef = B26C91F52C59740F0029F249 /* PositionFlags.swift */; };
+		B27508992CE20AE90067E65D /* SecurityConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27508982CE20AE60067E65D /* SecurityConfig.swift */; };
+		B275089D2CE22FCC0067E65D /* TextEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = B275089C2CE22FC40067E65D /* TextEntry.swift */; };
+		B27508A02CE23F880067E65D /* OptionsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B275089F2CE23F840067E65D /* OptionsScreen.swift */; };
 		B27A4B9A2CA6A96900F813C3 /* NodeListSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27A4B992CA6A96500F813C3 /* NodeListSummary.swift */; };
 		B27A4B9C2CA6B8D200F813C3 /* NodeListConnectedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27A4B9B2CA6B8CC00F813C3 /* NodeListConnectedItem.swift */; };
 		B284A42D2C6F87B200D5122B /* BLEManager+CBCentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B284A42C2C6F87B200D5122B /* BLEManager+CBCentralManager.swift */; };
@@ -77,7 +80,6 @@
 		B2A5F3022C5668FD009457AB /* BLEManager+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2E12C5668FD009457AB /* BLEManager+Extensions.swift */; };
 		B2A5F3032C5668FD009457AB /* NodeDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2E22C5668FD009457AB /* NodeDetail.swift */; };
 		B2A5F3042C5668FD009457AB /* NodeIconsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2E32C5668FD009457AB /* NodeIconsView.swift */; };
-		B2A5F3062C5668FD009457AB /* NodeInfoEntity+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2E52C5668FD009457AB /* NodeInfoEntity+Extensions.swift */; };
 		B2A5F3072C5668FD009457AB /* NodeInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2E62C5668FD009457AB /* NodeInfoView.swift */; };
 		B2A5F3092C5668FD009457AB /* NodeListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2E82C5668FD009457AB /* NodeListItem.swift */; };
 		B2A5F30A2C5668FD009457AB /* MeshMapContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2EA2C5668FD009457AB /* MeshMapContent.swift */; };
@@ -88,7 +90,6 @@
 		B2A5F3142C5668FD009457AB /* NodeList.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2F62C5668FD009457AB /* NodeList.swift */; };
 		B2A5F31C2C566D98009457AB /* TraceRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F31B2C566D98009457AB /* TraceRoute.swift */; };
 		B2AF95D22CAAE92D00EAD056 /* MessageListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2AF95D12CAAE92600EAD056 /* MessageListItem.swift */; };
-		B2AF95D72CABE8E000EAD056 /* ConfigHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2AF95D42CABE8E000EAD056 /* ConfigHeader.swift */; };
 		B2AF95D82CABE8E000EAD056 /* SaveConfigButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2AF95D52CABE8E000EAD056 /* SaveConfigButton.swift */; };
 		B2AF95DA2CAC306700EAD056 /* PositionPrecision.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2AF95D92CAC306300EAD056 /* PositionPrecision.swift */; };
 		B2BDCD7A2C6CB6440040D7ED /* AnalyticEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2BDCD792C6CB6440040D7ED /* AnalyticEvents.swift */; };
@@ -241,6 +242,9 @@
 		B266DA8F2C53CEFB0067D317 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		B26C91F52C59740F0029F249 /* PositionFlags.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionFlags.swift; sourceTree = "<group>"; };
 		B27508972CE1D97E0067E65D /* MeshtasticDataModel_v44.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MeshtasticDataModel_v44.xcdatamodel; sourceTree = "<group>"; };
+		B27508982CE20AE60067E65D /* SecurityConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityConfig.swift; sourceTree = "<group>"; };
+		B275089C2CE22FC40067E65D /* TextEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextEntry.swift; sourceTree = "<group>"; };
+		B275089F2CE23F840067E65D /* OptionsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionsScreen.swift; sourceTree = "<group>"; };
 		B27A4B992CA6A96500F813C3 /* NodeListSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeListSummary.swift; sourceTree = "<group>"; };
 		B27A4B9B2CA6B8CC00F813C3 /* NodeListConnectedItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeListConnectedItem.swift; sourceTree = "<group>"; };
 		B284A42C2C6F87B200D5122B /* BLEManager+CBCentralManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BLEManager+CBCentralManager.swift"; sourceTree = "<group>"; };
@@ -258,7 +262,6 @@
 		B2A5F2E12C5668FD009457AB /* BLEManager+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "BLEManager+Extensions.swift"; sourceTree = "<group>"; };
 		B2A5F2E22C5668FD009457AB /* NodeDetail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeDetail.swift; sourceTree = "<group>"; };
 		B2A5F2E32C5668FD009457AB /* NodeIconsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeIconsView.swift; sourceTree = "<group>"; };
-		B2A5F2E52C5668FD009457AB /* NodeInfoEntity+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NodeInfoEntity+Extensions.swift"; sourceTree = "<group>"; };
 		B2A5F2E62C5668FD009457AB /* NodeInfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeInfoView.swift; sourceTree = "<group>"; };
 		B2A5F2E82C5668FD009457AB /* NodeListItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeListItem.swift; sourceTree = "<group>"; };
 		B2A5F2EA2C5668FD009457AB /* MeshMapContent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeshMapContent.swift; sourceTree = "<group>"; };
@@ -269,7 +272,6 @@
 		B2A5F2F62C5668FD009457AB /* NodeList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeList.swift; sourceTree = "<group>"; };
 		B2A5F31B2C566D98009457AB /* TraceRoute.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TraceRoute.swift; sourceTree = "<group>"; };
 		B2AF95D12CAAE92600EAD056 /* MessageListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageListItem.swift; sourceTree = "<group>"; };
-		B2AF95D42CABE8E000EAD056 /* ConfigHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigHeader.swift; sourceTree = "<group>"; };
 		B2AF95D52CABE8E000EAD056 /* SaveConfigButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveConfigButton.swift; sourceTree = "<group>"; };
 		B2AF95D92CAC306300EAD056 /* PositionPrecision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionPrecision.swift; sourceTree = "<group>"; };
 		B2BDCD792C6CB6440040D7ED /* AnalyticEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticEvents.swift; sourceTree = "<group>"; };
@@ -522,6 +524,14 @@
 			path = Messages;
 			sourceTree = "<group>";
 		};
+		B275089E2CE23F800067E65D /* Protocol */ = {
+			isa = PBXGroup;
+			children = (
+				B275089F2CE23F840067E65D /* OptionsScreen.swift */,
+			);
+			path = Protocol;
+			sourceTree = "<group>";
+		};
 		B284A42B2C6F877D00D5122B /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -616,8 +626,8 @@
 			isa = PBXGroup;
 			children = (
 				DD93800D2BA74D0C008BEC06 /* ChannelForm.swift */,
-				B2AF95D42CABE8E000EAD056 /* ConfigHeader.swift */,
 				B2AF95D52CABE8E000EAD056 /* SaveConfigButton.swift */,
+				B275089C2CE22FC40067E65D /* TextEntry.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -680,16 +690,18 @@
 			isa = PBXGroup;
 			children = (
 				DDB6ABD528AE742000384BA1 /* BluetoothConfig.swift */,
-				DDA0B6B1294CDC55001356EC /* Channels.swift */,
 				DD41582528582E9B009B0E59 /* DeviceConfig.swift */,
 				DD8EBF42285058FA00426DCA /* DisplayConfig.swift */,
+				DDA0B6B1294CDC55001356EC /* Channels.swift */,
 				DD2553562855B02500E55709 /* LoRaConfig.swift */,
 				DD2160AE28C5552500C17253 /* MQTTConfig.swift */,
 				DD8ED9C42898D51F00B3B0AB /* NetworkConfig.swift */,
 				DD2553582855B52700E55709 /* PositionConfig.swift */,
 				D93068DA2B81C85E0066FBC8 /* PowerConfig.swift */,
+				B27508982CE20AE60067E65D /* SecurityConfig.swift */,
 				081C3AEE2C989B8C00F93C46 /* TelemetryConfig.swift */,
 				DDCE4E2B2869F92900BE9F8F /* UserConfig.swift */,
+				B275089E2CE23F800067E65D /* Protocol */,
 				B2AF95D62CABE8E000EAD056 /* Views */,
 			);
 			path = Node;
@@ -843,7 +855,6 @@
 				DDDB444D29F8AB0E00EE2349 /* Int.swift */,
 				DDD5BB0C2C285F00007E03CA /* Logger.swift */,
 				DD1933772B084F4200771CD5 /* Measurement.swift */,
-				B2A5F2E52C5668FD009457AB /* NodeInfoEntity+Extensions.swift */,
 				DDD5BB172C2F9C36007E03CA /* OSLogEntryLog.swift */,
 				DDDB444729F8A9C900EE2349 /* String.swift */,
 				DDF45C362BC46A5A005ED5F2 /* TimeZone.swift */,
@@ -1024,11 +1035,12 @@
 				B2E8CE4A2CC94BF400407417 /* ConfigType.swift in Sources */,
 				DD4A911E2708C65400501B7E /* AppSettings.swift in Sources */,
 				B266A75D2C59265000DFC723 /* OLEDTypes.swift in Sources */,
+				B275089D2CE22FCC0067E65D /* TextEntry.swift in Sources */,
+				B27508992CE20AE90067E65D /* SecurityConfig.swift in Sources */,
 				DD2160AF28C5552500C17253 /* MQTTConfig.swift in Sources */,
 				6DEDA55C2A9592F900321D2E /* MessageEntity+Extension.swift in Sources */,
 				DDDB444229F8A88700EE2349 /* Double.swift in Sources */,
 				DDF45C342BC1A48E005ED5F2 /* MQTTChannelIcon.swift in Sources */,
-				B2A5F3062C5668FD009457AB /* NodeInfoEntity+Extensions.swift in Sources */,
 				B2A5F31C2C566D98009457AB /* TraceRoute.swift in Sources */,
 				B2AF95D22CAAE92D00EAD056 /* MessageListItem.swift in Sources */,
 				B2A5F3042C5668FD009457AB /* NodeIconsView.swift in Sources */,
@@ -1107,7 +1119,6 @@
 				B2A5F30B2C5668FD009457AB /* NodeMapContent.swift in Sources */,
 				D93068D52B812B700066FBC8 /* MessageDestination.swift in Sources */,
 				B266A7532C59219E00DFC723 /* Architecture.swift in Sources */,
-				B2AF95D72CABE8E000EAD056 /* ConfigHeader.swift in Sources */,
 				B2AF95D82CABE8E000EAD056 /* SaveConfigButton.swift in Sources */,
 				DDDB444E29F8AB0E00EE2349 /* Int.swift in Sources */,
 				B266DA902C53CEFB0067D317 /* Constants.swift in Sources */,
@@ -1121,6 +1132,7 @@
 				B266A7612C59275000DFC723 /* Units.swift in Sources */,
 				08DD7E5D2C42833200548159 /* LoraSignal.swift in Sources */,
 				DDDB444429F8A8DD00EE2349 /* Float.swift in Sources */,
+				B27508A02CE23F880067E65D /* OptionsScreen.swift in Sources */,
 				DDAB580F2B0DAFBC00147258 /* LocationEntity+Extension.swift in Sources */,
 				B3E905B12B71F7F300654D07 /* TextMessageField.swift in Sources */,
 				086C1CE52CD7DE0B00486505 /* Name+Extensions.swift in Sources */,

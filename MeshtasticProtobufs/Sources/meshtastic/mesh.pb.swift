@@ -845,7 +845,135 @@ public enum CriticalErrorCode: SwiftProtobuf.Enum, Swift.CaseIterable {
 }
 
 ///
-/// a gps position
+/// Enum for modules excluded from a device's configuration.
+/// Each value represents a ModuleConfigType that can be toggled as excluded
+/// by setting its corresponding bit in the `excluded_modules` bitmask field.
+public enum ExcludedModules: SwiftProtobuf.Enum, Swift.CaseIterable {
+  public typealias RawValue = Int
+
+  ///
+  /// Default value of 0 indicates no modules are excluded.
+  case excludedNone // = 0
+
+  ///
+  /// MQTT module
+  case mqttConfig // = 1
+
+  ///
+  /// Serial module
+  case serialConfig // = 2
+
+  ///
+  /// External Notification module
+  case extnotifConfig // = 4
+
+  ///
+  /// Store and Forward module
+  case storeforwardConfig // = 8
+
+  ///
+  /// Range Test module
+  case rangetestConfig // = 16
+
+  ///
+  /// Telemetry module
+  case telemetryConfig // = 32
+
+  ///
+  /// Canned Message module
+  case cannedmsgConfig // = 64
+
+  ///
+  /// Audio module
+  case audioConfig // = 128
+
+  ///
+  /// Remote Hardware module
+  case remotehardwareConfig // = 256
+
+  ///
+  /// Neighbor Info module
+  case neighborinfoConfig // = 512
+
+  ///
+  /// Ambient Lighting module
+  case ambientlightingConfig // = 1024
+
+  ///
+  /// Detection Sensor module
+  case detectionsensorConfig // = 2048
+
+  ///
+  /// Paxcounter module
+  case paxcounterConfig // = 4096
+  case UNRECOGNIZED(Int)
+
+  public init() {
+    self = .excludedNone
+  }
+
+  public init?(rawValue: Int) {
+    switch rawValue {
+    case 0: self = .excludedNone
+    case 1: self = .mqttConfig
+    case 2: self = .serialConfig
+    case 4: self = .extnotifConfig
+    case 8: self = .storeforwardConfig
+    case 16: self = .rangetestConfig
+    case 32: self = .telemetryConfig
+    case 64: self = .cannedmsgConfig
+    case 128: self = .audioConfig
+    case 256: self = .remotehardwareConfig
+    case 512: self = .neighborinfoConfig
+    case 1024: self = .ambientlightingConfig
+    case 2048: self = .detectionsensorConfig
+    case 4096: self = .paxcounterConfig
+    default: self = .UNRECOGNIZED(rawValue)
+    }
+  }
+
+  public var rawValue: Int {
+    switch self {
+    case .excludedNone: return 0
+    case .mqttConfig: return 1
+    case .serialConfig: return 2
+    case .extnotifConfig: return 4
+    case .storeforwardConfig: return 8
+    case .rangetestConfig: return 16
+    case .telemetryConfig: return 32
+    case .cannedmsgConfig: return 64
+    case .audioConfig: return 128
+    case .remotehardwareConfig: return 256
+    case .neighborinfoConfig: return 512
+    case .ambientlightingConfig: return 1024
+    case .detectionsensorConfig: return 2048
+    case .paxcounterConfig: return 4096
+    case .UNRECOGNIZED(let i): return i
+    }
+  }
+
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  public static let allCases: [ExcludedModules] = [
+    .excludedNone,
+    .mqttConfig,
+    .serialConfig,
+    .extnotifConfig,
+    .storeforwardConfig,
+    .rangetestConfig,
+    .telemetryConfig,
+    .cannedmsgConfig,
+    .audioConfig,
+    .remotehardwareConfig,
+    .neighborinfoConfig,
+    .ambientlightingConfig,
+    .detectionsensorConfig,
+    .paxcounterConfig,
+  ]
+
+}
+
+///
+/// A GPS Position
 public struct Position: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -1777,7 +1905,7 @@ public struct MeshPacket: @unchecked Sendable {
   }
 
   ///
-  /// If unset treated as zero (no forwarding, send to adjacent nodes only)
+  /// If unset treated as zero (no forwarding, send to direct neighbor nodes only)
   /// if 1, allow hopping through one node, etc...
   /// For our usecase real world topologies probably have a max of about 3.
   /// This field is normally placed into a few of bits in the header.
@@ -2125,7 +2253,7 @@ public struct NodeInfo: @unchecked Sendable {
   }
 
   ///
-  /// Number of hops away from us this node is (0 if adjacent)
+  /// Number of hops away from us this node is (0 if direct neighbor)
   public var hopsAway: UInt32 {
     get {return _storage._hopsAway ?? 0}
     set {_uniqueStorage()._hopsAway = newValue}
@@ -2177,6 +2305,10 @@ public struct MyNodeInfo: @unchecked Sendable {
   ///
   /// Unique hardware identifier for this device
   public var deviceID: Data = Data()
+
+  ///
+  /// The PlatformIO environment used to build this firmware
+  public var pioEnv: String = String()
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -2872,6 +3004,11 @@ public struct DeviceMetadata: Sendable {
   /// Has PKC capabilities
   public var hasPkc_p: Bool = false
 
+  ///
+  /// Bit field of boolean for excluded modules
+  /// (bitwise OR of ExcludedModules)
+  public var excludedModules: UInt32 = 0
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -3137,6 +3274,25 @@ extension CriticalErrorCode: SwiftProtobuf._ProtoNameProviding {
     11: .same(proto: "RADIO_SPI_BUG"),
     12: .same(proto: "FLASH_CORRUPTION_RECOVERABLE"),
     13: .same(proto: "FLASH_CORRUPTION_UNRECOVERABLE"),
+  ]
+}
+
+extension ExcludedModules: SwiftProtobuf._ProtoNameProviding {
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    0: .same(proto: "EXCLUDED_NONE"),
+    1: .same(proto: "MQTT_CONFIG"),
+    2: .same(proto: "SERIAL_CONFIG"),
+    4: .same(proto: "EXTNOTIF_CONFIG"),
+    8: .same(proto: "STOREFORWARD_CONFIG"),
+    16: .same(proto: "RANGETEST_CONFIG"),
+    32: .same(proto: "TELEMETRY_CONFIG"),
+    64: .same(proto: "CANNEDMSG_CONFIG"),
+    128: .same(proto: "AUDIO_CONFIG"),
+    256: .same(proto: "REMOTEHARDWARE_CONFIG"),
+    512: .same(proto: "NEIGHBORINFO_CONFIG"),
+    1024: .same(proto: "AMBIENTLIGHTING_CONFIG"),
+    2048: .same(proto: "DETECTIONSENSOR_CONFIG"),
+    4096: .same(proto: "PAXCOUNTER_CONFIG"),
   ]
 }
 
@@ -4275,6 +4431,7 @@ extension MyNodeInfo: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
     8: .standard(proto: "reboot_count"),
     11: .standard(proto: "min_app_version"),
     12: .standard(proto: "device_id"),
+    13: .standard(proto: "pio_env"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -4287,6 +4444,7 @@ extension MyNodeInfo: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
       case 8: try { try decoder.decodeSingularUInt32Field(value: &self.rebootCount) }()
       case 11: try { try decoder.decodeSingularUInt32Field(value: &self.minAppVersion) }()
       case 12: try { try decoder.decodeSingularBytesField(value: &self.deviceID) }()
+      case 13: try { try decoder.decodeSingularStringField(value: &self.pioEnv) }()
       default: break
       }
     }
@@ -4305,6 +4463,9 @@ extension MyNodeInfo: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
     if !self.deviceID.isEmpty {
       try visitor.visitSingularBytesField(value: self.deviceID, fieldNumber: 12)
     }
+    if !self.pioEnv.isEmpty {
+      try visitor.visitSingularStringField(value: self.pioEnv, fieldNumber: 13)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -4313,6 +4474,7 @@ extension MyNodeInfo: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
     if lhs.rebootCount != rhs.rebootCount {return false}
     if lhs.minAppVersion != rhs.minAppVersion {return false}
     if lhs.deviceID != rhs.deviceID {return false}
+    if lhs.pioEnv != rhs.pioEnv {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -5124,6 +5286,7 @@ extension DeviceMetadata: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     9: .standard(proto: "hw_model"),
     10: .same(proto: "hasRemoteHardware"),
     11: .same(proto: "hasPKC"),
+    12: .standard(proto: "excluded_modules"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -5143,6 +5306,7 @@ extension DeviceMetadata: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
       case 9: try { try decoder.decodeSingularEnumField(value: &self.hwModel) }()
       case 10: try { try decoder.decodeSingularBoolField(value: &self.hasRemoteHardware_p) }()
       case 11: try { try decoder.decodeSingularBoolField(value: &self.hasPkc_p) }()
+      case 12: try { try decoder.decodeSingularUInt32Field(value: &self.excludedModules) }()
       default: break
       }
     }
@@ -5182,6 +5346,9 @@ extension DeviceMetadata: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     if self.hasPkc_p != false {
       try visitor.visitSingularBoolField(value: self.hasPkc_p, fieldNumber: 11)
     }
+    if self.excludedModules != 0 {
+      try visitor.visitSingularUInt32Field(value: self.excludedModules, fieldNumber: 12)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -5197,6 +5364,7 @@ extension DeviceMetadata: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     if lhs.hwModel != rhs.hwModel {return false}
     if lhs.hasRemoteHardware_p != rhs.hasRemoteHardware_p {return false}
     if lhs.hasPkc_p != rhs.hasPkc_p {return false}
+    if lhs.excludedModules != rhs.excludedModules {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

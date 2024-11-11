@@ -519,7 +519,11 @@ extension CoreDataTools {
 		}
 	}
 
-	func upsertNetworkConfigPacket(config: Config.NetworkConfig, nodeNum: Int64, context: NSManagedObjectContext) {
+	func upsertNetworkConfigPacket(
+		config: Config.NetworkConfig,
+		nodeNum: Int64,
+		context: NSManagedObjectContext
+	) {
 		let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
 		fetchNodeInfoRequest.predicate = NSPredicate(format: "num == %lld", Int64(nodeNum))
 
@@ -533,6 +537,7 @@ extension CoreDataTools {
 					newNetworkConfig.wifiSsid = config.wifiSsid
 					newNetworkConfig.wifiPsk = config.wifiPsk
 					newNetworkConfig.ethEnabled = config.ethEnabled
+
 					fetchedNode[0].networkConfig = newNetworkConfig
 				}
 				else {
@@ -553,6 +558,66 @@ extension CoreDataTools {
 		catch {
 			let nsError = error as NSError
 			Logger.data.error("💥 [NetworkConfigEntity] Fetching node for core data failed: \(nsError, privacy: .public)")
+		}
+	}
+
+	func upsertSecurityConfigPacket(
+		config: Config.SecurityConfig,
+		nodeNum: Int64,
+		sessionPasskey: Data? = Data(),
+		context: NSManagedObjectContext
+	) {
+		let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
+		fetchNodeInfoRequest.predicate = NSPredicate(format: "num == %lld", Int64(nodeNum))
+
+		do {
+			let fetchedNode = try context.fetch(fetchNodeInfoRequest)
+			// Found a node, save Security Config
+			if !fetchedNode.isEmpty {
+				if fetchedNode[0].securityConfig == nil {
+					let newSecurityConfig = SecurityConfigEntity(context: context)
+					newSecurityConfig.publicKey = config.publicKey
+					newSecurityConfig.privateKey = config.privateKey
+					if config.adminKey.count > 0 {
+						newSecurityConfig.adminKey = config.adminKey[0]
+					}
+					newSecurityConfig.isManaged = config.isManaged
+					newSecurityConfig.serialEnabled = config.serialEnabled
+					newSecurityConfig.debugLogApiEnabled = config.debugLogApiEnabled
+					newSecurityConfig.adminChannelEnabled = config.adminChannelEnabled
+
+					fetchedNode[0].securityConfig = newSecurityConfig
+				}
+				else {
+					fetchedNode[0].securityConfig?.publicKey = config.publicKey
+					fetchedNode[0].securityConfig?.privateKey = config.privateKey
+					if config.adminKey.count > 0 {
+						fetchedNode[0].securityConfig?.adminKey = config.adminKey[0]
+					}
+					fetchedNode[0].securityConfig?.isManaged = config.isManaged
+					fetchedNode[0].securityConfig?.serialEnabled = config.serialEnabled
+					fetchedNode[0].securityConfig?.debugLogApiEnabled = config.debugLogApiEnabled
+					fetchedNode[0].securityConfig?.adminChannelEnabled = config.adminChannelEnabled
+				}
+
+				/* TODO: make this work
+				if sessionPasskey?.count != 0 {
+					fetchedNode[0].sessionPasskey = sessionPasskey
+					fetchedNode[0].sessionExpiration = Date().addingTimeInterval(300)
+				}
+				 */
+
+				debounce.emit { [weak self] in
+					await self?.saveData(with: context)
+				}
+			}
+			else {
+				Logger.data.error("💥 [SecurityConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save Security Config")
+			}
+		}
+		catch {
+			let nsError = error as NSError
+			Logger.data.error("💥 [SecurityConfigEntity] Fetching node for core data failed: \(nsError, privacy: .public)")
 		}
 	}
 

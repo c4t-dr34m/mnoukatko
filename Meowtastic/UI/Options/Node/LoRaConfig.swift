@@ -56,8 +56,6 @@ struct LoRaConfig: View {
 	var body: some View {
 		VStack {
 			Form {
-				ConfigHeader(title: "LoRa", config: \.loRaConfig, node: node)
-
 				sectionOptions
 				sectionAdvanced
 			}

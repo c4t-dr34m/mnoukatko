@@ -1,16 +1,11 @@
-//
-//  NetworkConfig.swift
-//  Meshtastic
-//
-//  Copyright (c) Garth Vander Houwen 8/1/2022
-//
 import FirebaseAnalytics
 import MeshtasticProtobufs
 import OSLog
 import SwiftUI
 
-struct NetworkConfig: View {
-	private let coreDataTools = CoreDataTools()
+struct NetworkConfig: OptionsScreen {
+	var node: NodeInfoEntity
+	var coreDataTools = CoreDataTools()
 
 	@Environment(\.managedObjectContext)
 	private var context
@@ -20,106 +15,89 @@ struct NetworkConfig: View {
 	private var nodeConfig: NodeConfig
 	@Environment(\.dismiss)
 	private var goBack
+	@State
+	private var hasChanges: Bool = false
+	@State
+	private var wifiEnabled = false
+	@State
+	private var wifiSsid = ""
+	@State
+	private var wifiPsk = ""
+	@State
+	private var wifiMode = 0
+	@State
+	private var ntpServer = ""
+	@State
+	private var ethEnabled = false
+	@State
+	private var ethMode = 0
 
-	var node: NodeInfoEntity
-
-	@State var hasChanges: Bool = false
-	@State var wifiEnabled = false
-	@State var wifiSsid = ""
-	@State var wifiPsk = ""
-	@State var wifiMode = 0
-	@State var ntpServer = ""
-	@State var ethEnabled = false
-	@State var ethMode = 0
-
+	@ViewBuilder
 	var body: some View {
-		VStack {
+		ZStack {
 			Form {
-				ConfigHeader(title: "Network", config: \.networkConfig, node: node)
-
 				if node.metadata?.hasWifi ?? false {
-					Section(header: Text("WiFi Options")) {
-
+					Section(header: Text("WiFi")) {
 						Toggle(isOn: $wifiEnabled) {
-							Label("enabled", systemImage: "wifi")
+							Label("Enabled", systemImage: "wifi")
 							Text("Enabling WiFi will disable the bluetooth connection to the app.")
 						}
 						.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 						HStack {
-							Label("ssid", systemImage: "network")
-							TextField("ssid", text: $wifiSsid)
+							Label("SSID", systemImage: "network")
+
+							TextField("SSID", text: $wifiSsid)
 								.foregroundColor(.gray)
+								.keyboardType(.default)
 								.autocapitalization(.none)
 								.disableAutocorrection(true)
-								.onChange(of: wifiSsid, perform: { _ in
+								.onChange(of: wifiSsid) {
 									let totalBytes = wifiSsid.utf8.count
 									// Only mess with the value if it is too big
 									if totalBytes > 32 {
 										wifiSsid = String(wifiSsid.dropLast())
 									}
 									hasChanges = true
-								})
-								.foregroundColor(.gray)
+								}
 						}
-						.keyboardType(.default)
+
 						HStack {
-							Label("password", systemImage: "wallet.pass")
-							TextField("password", text: $wifiPsk)
+							Label("Password", systemImage: "wallet.pass")
+							TextField("Password", text: $wifiPsk)
 								.foregroundColor(.gray)
+								.keyboardType(.default)
 								.autocapitalization(.none)
 								.disableAutocorrection(true)
-								.onChange(of: wifiPsk, perform: { _ in
+								.onChange(of: wifiPsk) {
 									let totalBytes = wifiPsk.utf8.count
 									// Only mess with the value if it is too big
 									if totalBytes > 63 {
 										wifiPsk = String(wifiPsk.dropLast())
 									}
 									hasChanges = true
-								})
-								.foregroundColor(.gray)
+								}
 						}
-						.keyboardType(.default)
 					}
+					.headerProminence(.increased)
 				}
 
-				if node.metadata?.hasEthernet ?? false {
-					Section(header: Text("Ethernet Options")) {
+				if let metadata = node.metadata, metadata.hasEthernet {
+					Section(header: Text("Ethernet")) {
 						Toggle(isOn: $ethEnabled) {
-							Label("enabled", systemImage: "network")
+							Label("Enabled", systemImage: "network")
 							Text("Enabling Ethernet will disable the bluetooth connection to the app.")
 						}
 						.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 					}
+					.headerProminence(.increased)
 				}
 			}
-			.scrollDismissesKeyboard(.interactively)
 			.disabled(connectedDevice.device == nil || node.networkConfig == nil)
+			.scrollDismissesKeyboard(.interactively)
 
 			SaveConfigButton(node: node, hasChanges: $hasChanges) {
-				if
-					let device = connectedDevice.device,
-					let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context)
-				{
-					var network = Config.NetworkConfig()
-					network.wifiEnabled = self.wifiEnabled
-					network.wifiSsid = self.wifiSsid
-					network.wifiPsk = self.wifiPsk
-					network.ethEnabled = self.ethEnabled
-					// network.addressMode = Config.NetworkConfig.AddressMode.dhcp
-
-					let adminMessageId = nodeConfig.saveNetworkConfig(
-						config: network,
-						fromUser: connectedNode.user!,
-						toUser: node.user!,
-						adminIndex: connectedNode.myInfo?.adminIndex ?? 0
-					)
-
-					if adminMessageId > 0 {
-						hasChanges = false
-						goBack()
-					}
-				}
+				save()
 			}
 		}
 		.navigationTitle("Network Config")
@@ -128,21 +106,7 @@ struct NetworkConfig: View {
 		)
 		.onAppear {
 			Analytics.logEvent(AnalyticEvents.optionsNetwork.id, parameters: nil)
-
-			setNetworkValues()
-
-			// Need to request a NetworkConfig from the remote node before allowing changes
-			if let device = connectedDevice.device, node.networkConfig == nil {
-				Logger.mesh.info("empty network config")
-
-				if let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context) {
-					nodeConfig.requestNetworkConfig(
-						fromUser: connectedNode.user!,
-						toUser: node.user!,
-						adminIndex: connectedNode.myInfo?.adminIndex ?? 0
-					)
-				}
-			}
+			setInitialValues()
 		}
 		.onChange(of: wifiEnabled) {
 			hasChanges = true
@@ -161,7 +125,22 @@ struct NetworkConfig: View {
 		}
 	}
 
-	private func setNetworkValues() {
+	func setInitialValues() {
+		if
+			let device = connectedDevice.device,
+			let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context),
+			let fromUser = connectedNode.user,
+			let toUser = node.user
+		{
+			let adminIndex = connectedNode.myInfo?.adminIndex ?? 0
+
+			nodeConfig.requestNetworkConfig(
+				fromUser: fromUser,
+				toUser: toUser,
+				adminIndex: adminIndex
+			)
+		}
+
 		if let config = node.networkConfig {
 			wifiEnabled = config.wifiEnabled
 			wifiSsid = config.wifiSsid ?? ""
@@ -178,5 +157,34 @@ struct NetworkConfig: View {
 		}
 
 		hasChanges = false
+	}
+
+	func save() {
+		if
+			let device = connectedDevice.device,
+			let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context),
+			let fromUser = connectedNode.user,
+			let toUser = node.user
+		{
+			var network = Config.NetworkConfig()
+			network.wifiEnabled = self.wifiEnabled
+			network.wifiSsid = self.wifiSsid
+			network.wifiPsk = self.wifiPsk
+			network.ethEnabled = self.ethEnabled
+			// network.addressMode = Config.NetworkConfig.AddressMode.dhcp
+
+			let adminIndex = connectedNode.myInfo?.adminIndex ?? 0
+			if
+				nodeConfig.saveNetworkConfig(
+					config: network,
+					fromUser: fromUser,
+					toUser: toUser,
+					adminIndex: adminIndex
+				) > 0
+			{
+				hasChanges = false
+				goBack()
+			}
+		}
 	}
 }

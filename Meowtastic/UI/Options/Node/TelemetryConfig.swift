@@ -10,7 +10,7 @@ struct TelemetryConfig: View {
 	@Environment(\.managedObjectContext)
 	private var context
 	@EnvironmentObject
-	private var bleManager: BLEManager
+	private var connectedDevice: CurrentDevice
 	@EnvironmentObject
 	private var nodeConfig: NodeConfig
 	@Environment(\.dismiss)
@@ -30,12 +30,6 @@ struct TelemetryConfig: View {
 	var body: some View {
 		VStack {
 			Form {
-				ConfigHeader(
-					title: "Telemetry",
-					config: \.telemetryConfig,
-					node: node
-				)
-
 				Section(header: Text("Update Interval")) {
 					Picker("Device Metrics", selection: $deviceUpdateInterval ) {
 						ForEach(UpdateIntervals.allCases) { ui in
@@ -116,17 +110,12 @@ struct TelemetryConfig: View {
 					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 				}
 			}
-			.disabled(
-				bleManager.getConnectedDevice() == nil || node.telemetryConfig == nil
-			)
+			.disabled(connectedDevice.device == nil || node.networkConfig == nil)
 
 			SaveConfigButton(node: node, hasChanges: $hasChanges) {
 				if
-					let device = bleManager.getConnectedDevice(),
-					let connectedNode = coreDataTools.getNodeInfo(
-						id: device.num,
-						context: context
-					)
+					let device = connectedDevice.device,
+					let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context)
 				{
 					var tc = ModuleConfig.TelemetryConfig()
 					tc.deviceUpdateInterval = UInt32(deviceUpdateInterval)
@@ -154,15 +143,21 @@ struct TelemetryConfig: View {
 			.onAppear {
 				setTelemetryValues()
 
-				// Need to request a TelemetryModuleConfig from the remote node before allowing changes
-				if
-					let peripheral = bleManager.getConnectedDevice(),
-					let connectedNode = coreDataTools.getNodeInfo(id: peripheral.num, context: context),
-					node.telemetryConfig == nil
-				{
+				guard
+					let device = connectedDevice.device,
+					let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context),
+					let fromUser = connectedNode.user,
+					let toUser = node.user
+				else {
+					return
+				}
+
+				let sessionExp: Date? = UserDefaults.enableAdministration ? node.sessionExpiration : nil
+				// swiftlint:disable:next force_unwrapping
+				if sessionExp == nil || sessionExp! < Date.now, node.telemetryConfig == nil {
 					nodeConfig.requestTelemetryConfig(
-						fromUser: connectedNode.user!,
-						toUser: node.user!,
+						fromUser: fromUser,
+						toUser: toUser,
 						adminIndex: connectedNode.myInfo?.adminIndex ?? 0
 					)
 				}

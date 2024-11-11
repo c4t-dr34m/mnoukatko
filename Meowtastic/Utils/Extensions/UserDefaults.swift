@@ -43,6 +43,7 @@ extension UserDefaults {
 		case wantConfigNonce
 		case preferredPeripheralId
 		case preferredPeripheralNum
+		case enableAdministration
 		case provideLocation
 		case provideLocationInterval
 		case mapLayer
@@ -73,6 +74,9 @@ extension UserDefaults {
 
 	@UserDefault(.preferredPeripheralNum, defaultValue: 0)
 	static var preferredPeripheralNum: Int
+
+	@UserDefault(.enableAdministration, defaultValue: false)
+	static var enableAdministration: Bool
 
 	@UserDefault(.provideLocation, defaultValue: false)
 	static var provideLocation: Bool

@@ -181,7 +181,7 @@ public struct NodeInfoLite: @unchecked Sendable {
   }
 
   ///
-  /// Number of hops away from us this node is (0 if adjacent)
+  /// Number of hops away from us this node is (0 if direct neighbor)
   public var hopsAway: UInt32 {
     get {return _storage._hopsAway ?? 0}
     set {_uniqueStorage()._hopsAway = newValue}

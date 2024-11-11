@@ -27,6 +27,7 @@ enum AnalyticEvents: String {
 	case optionsPosition
 	case optionsNetwork
 	case optionsPower
+	case optionsSecurity
 	case traceRoute
 
 	// MARK: - events
@@ -78,6 +79,8 @@ enum AnalyticEvents: String {
 		case reboot
 		case rebootOTA
 		case resetDB
+		case securityConfig
+		case securityConfigSave
 		case shutdown
 		case userSave
 		case wantConfig

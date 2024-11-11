@@ -30,8 +30,6 @@ struct DisplayConfig: View {
 
 	var body: some View {
 		Form {
-			ConfigHeader(title: "Display", config: \.displayConfig, node: node)
-
 			Section(header: Text("Device Screen")) {
 				VStack(alignment: .leading) {
 					Picker("Display Mode", selection: $displayMode ) {

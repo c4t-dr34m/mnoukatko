@@ -34,8 +34,6 @@ struct PowerConfig: View {
 
 	var body: some View {
 		Form {
-			ConfigHeader(title: "config.power.title", config: \.powerConfig, node: node)
-
 			Section {
 				if
 					currentDevice?.architecture == .esp32
