@@ -91,7 +91,7 @@ struct PositionConfig: OptionsScreen {
 			.disabled(connectedDevice.device == nil || node.positionConfig == nil)
 			.navigationTitle("Position Config")
 			.navigationBarItems(
-				trailing: SaveButton(node, changes: $hasChanges) {
+				trailing: SaveButton(changes: $hasChanges) {
 					save()
 				}
 			)

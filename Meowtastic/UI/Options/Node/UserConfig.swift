@@ -81,7 +81,7 @@ struct UserConfig: OptionsScreen {
 
 				VStack(alignment: .leading) {
 					HStack {
-						Text("Short mame")
+						Text("Short name")
 							.font(.body)
 
 						Spacer()
@@ -148,7 +148,7 @@ struct UserConfig: OptionsScreen {
 		.disabled(connectedDevice.device == nil)
 		.navigationTitle("User Config")
 		.navigationBarItems(
-			trailing: SaveButton(node, changes: $hasChanges) {
+			trailing: SaveButton(changes: $hasChanges) {
 				save()
 			}
 		)

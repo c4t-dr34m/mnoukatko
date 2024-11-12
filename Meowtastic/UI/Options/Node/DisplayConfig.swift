@@ -103,7 +103,7 @@ struct DisplayConfig: OptionsScreen {
 		.disabled(connectedDevice.device == nil || node.displayConfig == nil)
 		.navigationTitle("Display Config")
 		.navigationBarItems(
-			trailing: SaveButton(node, changes: $hasChanges) {
+			trailing: SaveButton(changes: $hasChanges) {
 				save()
 			}
 		)

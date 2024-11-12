@@ -188,110 +188,19 @@ struct Channels: View {
 					positionsEnabled: $positionsEnabled,
 					hasChanges: $hasChanges,
 					hasValidKey: $hasValidKey,
-					supportedVersion: $supportedVersion
+					supportedVersion: $supportedVersion,
+					onSave: {
+						save()
+					}
 				)
-				.presentationDetents([.large])
+				.presentationDetents(
+					[.medium]
+				)
 				.presentationDragIndicator(.visible)
 				.onAppear {
 					supportedVersion = bleManager.connectedVersion == "0.0.0"
 					|| [.orderedAscending, .orderedSame]
 						.contains(minimumVersion.compare(bleManager.connectedVersion, options: .numeric))
-				}
-
-				HStack {
-					Button {
-						var channel = Channel()
-						channel.index = channelIndex
-						channel.role = ChannelRoles(rawValue: channelRole)?.protoEnumValue() ?? .secondary
-						channel.index = channelIndex
-						channel.settings.name = channelName
-						channel.settings.psk = Data(base64Encoded: channelKey) ?? Data()
-						channel.settings.uplinkEnabled = uplink
-						channel.settings.downlinkEnabled = downlink
-						channel.settings.moduleSettings.positionPrecision = UInt32(positionPrecision)
-
-						if let selectedChannel {
-							selectedChannel.role = Int32(channelRole)
-							selectedChannel.index = channelIndex
-							selectedChannel.name = channelName
-							selectedChannel.psk = Data(base64Encoded: channelKey) ?? Data()
-							selectedChannel.uplinkEnabled = uplink
-							selectedChannel.downlinkEnabled = downlink
-							selectedChannel.positionPrecision = Int32(positionPrecision)
-						}
-
-						guard let mutableChannels = node.myInfo?.channels?.mutableCopy() as? NSMutableOrderedSet else {
-							return
-						}
-
-						if mutableChannels.contains(selectedChannel as Any) {
-							let replaceChannel = mutableChannels.first(
-								where: {
-									selectedChannel?.psk == ($0 as AnyObject).psk
-									&& selectedChannel?.name == ($0 as AnyObject).name
-								}
-							)
-							mutableChannels.replaceObject(
-								at: mutableChannels.index(of: replaceChannel as Any),
-								with: selectedChannel as Any
-							)
-						}
-						else {
-							mutableChannels.add(selectedChannel as Any)
-						}
-
-						node.myInfo?.channels = mutableChannels.copy() as? NSOrderedSet
-						context.refresh(selectedChannel!, mergeChanges: true)
-
-						if channel.role != Channel.Role.disabled {
-							do {
-								try context.save()
-							}
-							catch {
-								context.rollback()
-							}
-						}
-						else {
-							let objects = selectedChannel?.allPrivateMessages ?? []
-
-							for object in objects {
-								context.delete(object)
-							}
-
-							for node in nodes where node.channel == channel.index {
-								context.delete(node)
-							}
-
-							context.delete(selectedChannel!)
-
-							do {
-								try context.save()
-							}
-							catch {
-								context.rollback()
-							}
-						}
-
-						let adminMessageId = nodeConfig.saveChannel(
-							channel: channel,
-							fromUser: node.user!,
-							toUser: node.user!
-						)
-
-						if adminMessageId > 0 {
-							selectedChannel = nil
-							channelName = ""
-							channelRole = 2
-							hasChanges = false
-						}
-					} label: {
-						Label("Save", systemImage: "square.and.arrow.down")
-					}
-					.disabled(bleManager.getConnectedDevice() == nil || !hasChanges || !hasValidKey)
-					.buttonStyle(.bordered)
-					.buttonBorderShape(.capsule)
-					.controlSize(.large)
-					.padding(.bottom)
 				}
 			}
 
@@ -338,9 +247,6 @@ struct Channels: View {
 			}
 		}
 		.navigationTitle("Channels")
-		.navigationBarItems(
-			trailing: ConnectionInfo()
-		)
 		.onAppear {
 			Analytics.logEvent(AnalyticEvents.optionsChannels.id, parameters: nil)
 		}
@@ -359,5 +265,92 @@ struct Channels: View {
 		}
 
 		return indexes.count + 1
+	}
+
+	private func save() {
+		var channel = Channel()
+		channel.index = channelIndex
+		channel.role = ChannelRoles(rawValue: channelRole)?.protoEnumValue() ?? .secondary
+		channel.index = channelIndex
+		channel.settings.name = channelName
+		channel.settings.psk = Data(base64Encoded: channelKey) ?? Data()
+		channel.settings.uplinkEnabled = uplink
+		channel.settings.downlinkEnabled = downlink
+		channel.settings.moduleSettings.positionPrecision = UInt32(positionPrecision)
+
+		if let selectedChannel {
+			selectedChannel.role = Int32(channelRole)
+			selectedChannel.index = channelIndex
+			selectedChannel.name = channelName
+			selectedChannel.psk = Data(base64Encoded: channelKey) ?? Data()
+			selectedChannel.uplinkEnabled = uplink
+			selectedChannel.downlinkEnabled = downlink
+			selectedChannel.positionPrecision = Int32(positionPrecision)
+		}
+
+		guard let mutableChannels = node.myInfo?.channels?.mutableCopy() as? NSMutableOrderedSet else {
+			return
+		}
+
+		if mutableChannels.contains(selectedChannel as Any) {
+			let replaceChannel = mutableChannels.first(
+				where: {
+					selectedChannel?.psk == ($0 as AnyObject).psk
+					&& selectedChannel?.name == ($0 as AnyObject).name
+				}
+			)
+			mutableChannels.replaceObject(
+				at: mutableChannels.index(of: replaceChannel as Any),
+				with: selectedChannel as Any
+			)
+		}
+		else {
+			mutableChannels.add(selectedChannel as Any)
+		}
+
+		node.myInfo?.channels = mutableChannels.copy() as? NSOrderedSet
+		context.refresh(selectedChannel!, mergeChanges: true)
+
+		if channel.role != Channel.Role.disabled {
+			do {
+				try context.save()
+			}
+			catch {
+				context.rollback()
+			}
+		}
+		else {
+			let objects = selectedChannel?.allPrivateMessages ?? []
+
+			for object in objects {
+				context.delete(object)
+			}
+
+			for node in nodes where node.channel == channel.index {
+				context.delete(node)
+			}
+
+			context.delete(selectedChannel!)
+
+			do {
+				try context.save()
+			}
+			catch {
+				context.rollback()
+			}
+		}
+
+		let adminMessageId = nodeConfig.saveChannel(
+			channel: channel,
+			fromUser: node.user!,
+			toUser: node.user!
+		)
+
+		if adminMessageId > 0 {
+			selectedChannel = nil
+			channelName = ""
+			channelRole = 2
+			hasChanges = false
+		}
 	}
 }

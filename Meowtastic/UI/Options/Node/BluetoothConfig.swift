@@ -95,7 +95,7 @@ struct BluetoothConfig: OptionsScreen {
 		.disabled(connectedDevice.device == nil || node.bluetoothConfig == nil)
 		.navigationTitle("Bluetooth Config")
 		.navigationBarItems(
-			trailing: SaveButton(node, changes: $hasChanges) {
+			trailing: SaveButton(changes: $hasChanges) {
 				save()
 			}
 		)

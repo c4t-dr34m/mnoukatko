@@ -59,6 +59,12 @@
     "Actions" : {
 
     },
+    "ADC multiplier" : {
+
+    },
+    "ADC override" : {
+
+    },
     "Add Channel" : {
 
     },
@@ -355,10 +361,10 @@
     "Application" : {
 
     },
-    "Approximate location" : {
+    "Approximate" : {
 
     },
-    "Approximate Location" : {
+    "Approximate location" : {
 
     },
     "appsettings.newNodeNotifications" : {
@@ -727,6 +733,9 @@
 
     },
     "Bandwidth" : {
+
+    },
+    "Battery" : {
 
     },
     "Before We Start" : {
@@ -1523,10 +1532,7 @@
     "Channel #%d" : {
 
     },
-    "Channel Name" : {
-
-    },
-    "Channel Role" : {
+    "Channel Config" : {
 
     },
     "channel.role.disabled" : {
@@ -1713,6 +1719,7 @@
 
     },
     "config.power.adc.multiplier" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1765,6 +1772,7 @@
       }
     },
     "config.power.adc.override" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1923,6 +1931,7 @@
       }
     },
     "config.power.saving" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1975,6 +1984,7 @@
       }
     },
     "config.power.saving.description" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2027,6 +2037,7 @@
       }
     },
     "config.power.section.battery" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2185,6 +2196,7 @@
       }
     },
     "config.power.shutdown.after.secs" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2237,6 +2249,7 @@
       }
     },
     "config.power.shutdown.on.power.loss" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3301,6 +3314,7 @@
 
     },
     "dismiss.keyboard" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3667,9 +3681,6 @@
 
     },
     "Flip screen" : {
-
-    },
-    "For all Mqtt functionality other than the map report you must also set uplink and downlink for each channel you want to bridge over Mqtt." : {
 
     },
     "Frequency" : {
@@ -6776,7 +6787,7 @@
     "Key" : {
 
     },
-    "Key Size" : {
+    "Key size" : {
 
     },
     "keyboard.type" : {
@@ -10763,9 +10774,6 @@
         }
       }
     },
-    "Positions Enabled" : {
-
-    },
     "Positions will be provided by your device GPS, if you select disabled or not present you can set a fixed position." : {
 
     },
@@ -10781,16 +10789,19 @@
     "Power Options" : {
 
     },
+    "Power saving" : {
+
+    },
     "Power Saving Mode" : {
 
     },
     "Power screen" : {
 
     },
-    "Precise location" : {
+    "Precise" : {
 
     },
-    "Precise Location" : {
+    "Precise location" : {
 
     },
     "preferred.radio" : {
@@ -12909,7 +12920,7 @@
         }
       }
     },
-    "Short mame" : {
+    "Short name" : {
 
     },
     "Show alerts" : {
@@ -12928,6 +12939,12 @@
 
     },
     "Shut Down Node?" : {
+
+    },
+    "Shutdown after" : {
+
+    },
+    "Shutdown on power loss" : {
 
     },
     "Skip" : {

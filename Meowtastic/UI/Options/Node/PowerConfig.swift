@@ -39,62 +39,59 @@ struct PowerConfig: OptionsScreen {
 
 	var body: some View {
 		Form {
-			Section {
+			Section(header: Text("Power")) {
 				if
 					currentDevice?.architecture == .esp32
 						|| currentDevice?.architecture == .esp32S3
 						|| (currentDevice?.architecture == .nrf52840 && (node.deviceConfig?.role ?? 0 == 5 || node.deviceConfig?.role ?? 0 == 6))
 				{
 					Toggle(isOn: $isPowerSaving) {
-						Label("config.power.saving", systemImage: "bolt")
-						Text("config.power.saving.description")
+						Text("Power saving")
+							.font(.body)
 					}
 					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 				}
 
 				Toggle(isOn: $shutdownOnPowerLoss) {
-					Label("config.power.shutdown.on.power.loss", systemImage: "power")
+					Text("Shutdown on power loss")
+						.font(.body)
 				}
 				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 				if shutdownOnPowerLoss {
-					Picker("config.power.shutdown.after.secs", selection: $shutdownAfterSecs) {
+					Picker("Shutdown after", selection: $shutdownAfterSecs) {
 						ForEach(UpdateIntervals.allCases) { at in
 							Text(at.description)
 						}
 					}
 				}
-			} header: {
-				Text("Power Config")
 			}
 			.headerProminence(.increased)
 
 			if currentDevice?.architecture == .esp32 || currentDevice?.architecture == .esp32S3 {
-				Section {
+				Section(header: Text("Battery")) {
 					Toggle(isOn: $adcOverride) {
-						Text("config.power.adc.override")
+						Text("ADC override")
+							.font(.body)
 					}
 					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 					if adcOverride {
 						HStack {
-							Text("config.power.adc.multiplier")
+							Text("ADC multiplier")
+								.font(.body)
 
 							Spacer()
 
 							FloatField(
-								title: "config.power.adc.multiplier",
+								title: "Multiplier",
 								number: $adcMultiplier
 							) {
 								(2.0 ... 6.0).contains($0)
 							}
 							.focused($isFocused)
-
-							Spacer()
 						}
 					}
-				} header: {
-					Text("config.power.section.battery")
 				}
 				.headerProminence(.increased)
 			}
@@ -102,19 +99,10 @@ struct PowerConfig: OptionsScreen {
 		.disabled(connectedDevice.device == nil || node.powerConfig == nil)
 		.navigationTitle("Power Config")
 		.navigationBarItems(
-			trailing: SaveButton(node, changes: $hasChanges) {
+			trailing: SaveButton(changes: $hasChanges) {
 				save()
 			}
 		)
-		.toolbar {
-			ToolbarItemGroup(placement: .keyboard) {
-				Spacer()
-				Button("dismiss.keyboard") {
-					isFocused = false
-				}
-				.font(.subheadline)
-			}
-		}
 		.onAppear {
 			Analytics.logEvent(AnalyticEvents.optionsPower.id, parameters: nil)
 

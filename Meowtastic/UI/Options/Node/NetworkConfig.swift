@@ -103,7 +103,7 @@ struct NetworkConfig: OptionsScreen {
 		.scrollDismissesKeyboard(.interactively)
 		.navigationTitle("Network Config")
 		.navigationBarItems(
-			trailing: SaveButton(node, changes: $hasChanges) {
+			trailing: SaveButton(changes: $hasChanges) {
 				save()
 			}
 		)

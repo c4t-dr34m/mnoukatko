@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct SaveButton: View {
-	private let node: NodeInfoEntity
+	private let willReboot: Bool
 	private let onSave: () -> Void
 
 	@EnvironmentObject
@@ -18,7 +18,12 @@ struct SaveButton: View {
 	@ViewBuilder
 	var body: some View {
 		Button {
-			isPresentingSaveConfirm = true
+			if willReboot {
+				isPresentingSaveConfirm = true
+			}
+			else {
+				onSave()
+			}
 		} label: {
 			HStack(alignment: .center, spacing: 8) {
 				Image(systemName: "square.and.arrow.down")
@@ -51,12 +56,12 @@ struct SaveButton: View {
 	}
 
 	init(
-		_ node: NodeInfoEntity,
 		changes: Binding<Bool>,
+		willReboot: Bool = true,
 		onSave: @escaping () -> Void
 	) {
-		self.node = node
 		self._changes = changes
+		self.willReboot = willReboot
 		self.onSave = onSave
 	}
 }

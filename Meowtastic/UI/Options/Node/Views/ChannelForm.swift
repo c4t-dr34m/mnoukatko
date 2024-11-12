@@ -27,6 +27,7 @@ struct ChannelForm: View {
 	var hasValidKey: Bool
 	@Binding
 	var supportedVersion: Bool
+	var onSave: (() -> Void)?
 
 	@ViewBuilder
 	var body: some View {
@@ -38,22 +39,20 @@ struct ChannelForm: View {
 
 						Spacer()
 
-						TextField(
-							"Channel Name",
-							text: $channelName
-						)
-						.optionsStyle()
-						.onChange(of: channelName) {
-							channelName = channelName.replacing(" ", with: "")
-							if channelName.utf8.count > 11 {
-								channelName = String(channelName.dropLast())
+						TextField("", text: $channelName)
+							.optionsStyle()
+							.onChange(of: channelName) {
+								channelName = channelName.replacing(" ", with: "")
+								if channelName.utf8.count > 11 {
+									channelName = String(channelName.dropLast())
+								}
+
+								hasChanges = true
 							}
-							hasChanges = true
-						}
 					}
 
 					HStack {
-						Picker("Key Size", selection: $channelKeySize) {
+						Picker("Key size", selection: $channelKeySize) {
 							Text("Default").tag(-1)
 							Text("Empty").tag(0)
 							Text("1 byte").tag(1)
@@ -85,52 +84,40 @@ struct ChannelForm: View {
 
 						Spacer()
 
-						TextField(
-							"Key",
-							text: $channelKey,
-							axis: .vertical
-						)
-						.optionsStyle()
-						.disableAutocorrection(true)
-						.keyboardType(.alphabet)
-						.textSelection(.enabled)
-						.background(
-							RoundedRectangle(cornerRadius: 10.0)
-								.stroke(
-									hasValidKey ? Color.clear : Color.red,
-									lineWidth: 2.0
-								)
-						)
-						.onChange(of: channelKey) {
-							if
-								let tempKey = Data(base64Encoded: channelKey),
-								tempKey.count == channelKeySize || channelKeySize == -1
-							{
-								hasValidKey = true
-							}
-							else {
-								hasValidKey = false
-							}
+						TextField("", text: $channelKey)
+							.optionsStyle()
+							.disableAutocorrection(true)
+							.keyboardType(.alphabet)
+							.textSelection(.enabled)
+							.disabled(channelKeySize <= 0)
+							.onChange(of: channelKey) {
+								if
+									let tempKey = Data(base64Encoded: channelKey),
+									tempKey.count == channelKeySize || channelKeySize == -1
+								{
+									hasValidKey = true
+								}
+								else {
+									hasValidKey = false
+								}
 
-							hasChanges = true
-						}
-						.disabled(channelKeySize <= 0)
+								hasChanges = true
+							}
 					}
 
 					HStack {
 						if channelRole == 1 {
-							Picker("Channel Role", selection: $channelRole) {
+							Picker("Role", selection: $channelRole) {
 								Text("Primary").tag(1)
 							}
-							.pickerStyle(.automatic)
 							.disabled(true)
 						}
 						else {
-							Text("Channel Role")
+							Text("Role")
 
 							Spacer()
 
-							Picker("Channel Role", selection: $channelRole) {
+							Picker("Role", selection: $channelRole) {
 								Text("Disabled").tag(0)
 								Text("Secondary").tag(2)
 							}
@@ -143,10 +130,8 @@ struct ChannelForm: View {
 				Section(header: Text("Position")) {
 					VStack(alignment: .leading) {
 						Toggle(isOn: $positionsEnabled) {
-							Label(
-								channelRole == 1 ? "Positions Enabled" : "Allow Position Requests",
-								systemImage: positionsEnabled ? "mappin" : "mappin.slash"
-							)
+							Text(channelRole == 1 ? "Enabled" : "Allow Position Requests")
+								.font(.body)
 						}
 						.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 						.disabled(!supportedVersion)
@@ -155,11 +140,11 @@ struct ChannelForm: View {
 					if positionsEnabled {
 						VStack(alignment: .leading) {
 							Toggle(isOn: $preciseLocation) {
-								Label("Precise Location", systemImage: "scope")
+								Text("Precise")
+									.font(.body)
 							}
 							.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 							.disabled(!supportedVersion)
-							.listRowSeparator(.visible)
 							.onChange(of: preciseLocation) {
 								if !preciseLocation {
 									positionPrecision = 13
@@ -169,7 +154,8 @@ struct ChannelForm: View {
 
 						if !preciseLocation {
 							VStack(alignment: .leading) {
-								Label("Approximate Location", systemImage: "location.slash.circle.fill")
+								Text("Approximate")
+									.font(.body)
 
 								Slider(value: $positionPrecision, in: 10...19, step: 1) {
 
@@ -190,19 +176,25 @@ struct ChannelForm: View {
 
 				Section(header: Text("MQTT")) {
 					Toggle(isOn: $uplink) {
-						Label("Uplink", systemImage: "arrowshape.up")
+						Text("Uplink")
+							.font(.body)
 					}
 					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
-					.listRowSeparator(.visible)
 
 					Toggle(isOn: $downlink) {
-						Label("Downlink", systemImage: "arrowshape.down")
+						Text("Downlink")
+							.font(.body)
 					}
 					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
-					.listRowSeparator(.visible)
 				}
 				.headerProminence(.increased)
 			}
+			.navigationTitle("Channel Config")
+			.navigationBarItems(
+				trailing: SaveButton(changes: .constant(true), willReboot: false) {
+					onSave?()
+				}
+			)
 			.onAppear {
 				let tempKey = Data(base64Encoded: channelKey) ?? Data()
 				if tempKey.count == channelKeySize || channelKeySize == -1 {

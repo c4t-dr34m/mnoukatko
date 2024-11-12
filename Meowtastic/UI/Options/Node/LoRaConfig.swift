@@ -75,7 +75,7 @@ struct LoRaConfig: OptionsScreen {
 		.disabled(connectedDevice.device == nil || node.loRaConfig == nil)
 		.navigationTitle("LoRa Config")
 		.navigationBarItems(
-			trailing: SaveButton(node, changes: $hasChanges) {
+			trailing: SaveButton(changes: $hasChanges) {
 				save()
 			}
 		)

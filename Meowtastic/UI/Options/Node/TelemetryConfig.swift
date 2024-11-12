@@ -46,7 +46,6 @@ struct TelemetryConfig: OptionsScreen {
 						}
 					}
 				}
-				.listRowSeparator(.hidden)
 
 				Picker("Sensor metrics", selection: $environmentUpdateInterval ) {
 					ForEach(UpdateIntervals.allCases) { ui in
@@ -55,7 +54,6 @@ struct TelemetryConfig: OptionsScreen {
 						}
 					}
 				}
-				.listRowSeparator(.hidden)
 			}
 			.headerProminence(.increased)
 
@@ -86,10 +84,10 @@ struct TelemetryConfig: OptionsScreen {
 
 			Section(header: Text("Power Options")) {
 				Toggle(isOn: $powerMeasurementEnabled) {
-					Label("Power metrics", systemImage: "bolt")
+					Text("Power metrics")
+						.font(.body)
 				}
 				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
-				.listRowSeparator(.visible)
 
 				Picker("Update interval", selection: $powerUpdateInterval ) {
 					ForEach(UpdateIntervals.allCases) { ui in
@@ -98,7 +96,6 @@ struct TelemetryConfig: OptionsScreen {
 						}
 					}
 				}
-				.listRowSeparator(.hidden)
 
 				Toggle(isOn: $powerScreenEnabled) {
 					Text("Power screen")
@@ -111,7 +108,7 @@ struct TelemetryConfig: OptionsScreen {
 		.disabled(connectedDevice.device == nil || node.telemetryConfig == nil)
 		.navigationTitle("Telemetry Config")
 		.navigationBarItems(
-			trailing: SaveButton(node, changes: $hasChanges) {
+			trailing: SaveButton(changes: $hasChanges) {
 				save()
 			}
 		)

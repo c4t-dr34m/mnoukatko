@@ -148,7 +148,6 @@ struct MQTTConfig: OptionsScreen {
 							.font(.body)
 					}
 					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
-					.listRowSeparator(.visible)
 					.onChange(of: preciseLocation) {
 						if preciseLocation == false {
 							mapPositionPrecision = 12
@@ -201,7 +200,6 @@ struct MQTTConfig: OptionsScreen {
 							hasChanges = true
 						}
 				}
-				.listRowSeparator(.hidden)
 			}
 			.headerProminence(.increased)
 
@@ -266,7 +264,6 @@ struct MQTTConfig: OptionsScreen {
 							hasChanges = true
 						}
 				}
-				.listRowSeparator(.visible)
 
 				Toggle(isOn: $tlsEnabled) {
 					Text("TLS")
@@ -278,15 +275,12 @@ struct MQTTConfig: OptionsScreen {
 				}
 			}
 			.headerProminence(.increased)
-
-			Text("For all Mqtt functionality other than the map report you must also set uplink and downlink for each channel you want to bridge over Mqtt.")
-				.font(.callout)
 		}
 		.scrollDismissesKeyboard(.interactively)
 		.disabled(connectedDevice.device == nil || node.mqttConfig == nil)
 		.navigationTitle("MQTT Config")
 		.navigationBarItems(
-			trailing: SaveButton(node, changes: $hasChanges) {
+			trailing: SaveButton(changes: $hasChanges) {
 				save()
 			}
 		)
