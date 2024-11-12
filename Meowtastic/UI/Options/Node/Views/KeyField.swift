@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct TextEntry: View {
+struct KeyField: View {
 	private let monospaced: Bool
 	private let placeholder: String?
 	private let validator: ((String) -> Bool)?
@@ -8,42 +8,22 @@ struct TextEntry: View {
 	@Binding
 	private var text: String
 	@State
-	private var borderColor: Color = .gray.opacity(0.4)
+	private var invalid: Bool = false
 
 	@ViewBuilder
 	var body: some View {
 		if monospaced {
 			TextField(placeholder ?? "", text: $text)
-				.font(.body)
+				.optionsStyle(invalid: $invalid)
 				.monospaced()
 				.autocorrectionDisabled()
-				.padding(.horizontal, 16)
-				.padding(.vertical, 8)
-				.overlay(
-					RoundedRectangle(cornerRadius: 16)
-						.stroke(borderColor, lineWidth: 2)
-				)
-				.clipShape(
-					RoundedRectangle(cornerRadius: 16)
-				)
-				.frame(minHeight: 32)
 				.onChange(of: text, initial: true) {
 					validate()
 				}
 		}
 		else {
 			TextField(placeholder ?? "", text: $text)
-				.font(.body)
-				.padding(.horizontal, 16)
-				.padding(.vertical, 8)
-				.overlay(
-					RoundedRectangle(cornerRadius: 16)
-						.stroke(borderColor, lineWidth: 2)
-				)
-				.clipShape(
-					RoundedRectangle(cornerRadius: 16)
-				)
-				.frame(minHeight: 32)
+				.optionsStyle(invalid: $invalid)
 				.onChange(of: text, initial: true) {
 					validate()
 				}
@@ -63,11 +43,6 @@ struct TextEntry: View {
 	}
 
 	private func validate() {
-		if validator?(text) ?? true {
-			borderColor = .gray.opacity(0.4)
-		}
-		else {
-			borderColor = .red
-		}
+		invalid = !(validator?(text) ?? true)
 	}
 }

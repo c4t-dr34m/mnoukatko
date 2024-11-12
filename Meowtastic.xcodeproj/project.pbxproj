@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		080092A42CCECFEA00A1309D /* Meowtastic.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 080092A12CCECFEA00A1309D /* Meowtastic.xcdatamodeld */; };
+		080488AB2CE3CF1000CD35F4 /* TextFieldModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 080488AA2CE3CF0B00CD35F4 /* TextFieldModifier.swift */; };
 		081C3AEB2C971E1900F93C46 /* BackgroundWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 081C3AEA2C971E1600F93C46 /* BackgroundWatcher.swift */; };
 		081C3AED2C97494000F93C46 /* CBManagerState+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 081C3AEC2C97493900F93C46 /* CBManagerState+Extension.swift */; };
 		081C3AEF2C989B8F00F93C46 /* TelemetryConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 081C3AEE2C989B8C00F93C46 /* TelemetryConfig.swift */; };
@@ -58,7 +59,7 @@
 		B266DA902C53CEFB0067D317 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B266DA8F2C53CEFB0067D317 /* Constants.swift */; };
 		B26C91F62C59740F0029F249 /* PositionFlags.swift in Sources */ = {isa = PBXBuildFile; fileRef = B26C91F52C59740F0029F249 /* PositionFlags.swift */; };
 		B27508992CE20AE90067E65D /* SecurityConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27508982CE20AE60067E65D /* SecurityConfig.swift */; };
-		B275089D2CE22FCC0067E65D /* TextEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = B275089C2CE22FC40067E65D /* TextEntry.swift */; };
+		B275089D2CE22FCC0067E65D /* KeyField.swift in Sources */ = {isa = PBXBuildFile; fileRef = B275089C2CE22FC40067E65D /* KeyField.swift */; };
 		B27508A02CE23F880067E65D /* OptionsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B275089F2CE23F840067E65D /* OptionsScreen.swift */; };
 		B27A4B9A2CA6A96900F813C3 /* NodeListSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27A4B992CA6A96500F813C3 /* NodeListSummary.swift */; };
 		B27A4B9C2CA6B8D200F813C3 /* NodeListConnectedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27A4B9B2CA6B8CC00F813C3 /* NodeListConnectedItem.swift */; };
@@ -197,6 +198,7 @@
 /* Begin PBXFileReference section */
 		080092A22CCECFEA00A1309D /* MeshtasticDataModel_v42.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MeshtasticDataModel_v42.xcdatamodel; sourceTree = "<group>"; };
 		080092A32CCECFEA00A1309D /* MeshtasticDataModel_v43.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MeshtasticDataModel_v43.xcdatamodel; sourceTree = "<group>"; };
+		080488AA2CE3CF0B00CD35F4 /* TextFieldModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldModifier.swift; sourceTree = "<group>"; };
 		081C3AEA2C971E1600F93C46 /* BackgroundWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundWatcher.swift; sourceTree = "<group>"; };
 		081C3AEC2C97493900F93C46 /* CBManagerState+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CBManagerState+Extension.swift"; sourceTree = "<group>"; };
 		081C3AEE2C989B8C00F93C46 /* TelemetryConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryConfig.swift; sourceTree = "<group>"; };
@@ -243,7 +245,7 @@
 		B26C91F52C59740F0029F249 /* PositionFlags.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionFlags.swift; sourceTree = "<group>"; };
 		B27508972CE1D97E0067E65D /* MeshtasticDataModel_v44.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MeshtasticDataModel_v44.xcdatamodel; sourceTree = "<group>"; };
 		B27508982CE20AE60067E65D /* SecurityConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityConfig.swift; sourceTree = "<group>"; };
-		B275089C2CE22FC40067E65D /* TextEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextEntry.swift; sourceTree = "<group>"; };
+		B275089C2CE22FC40067E65D /* KeyField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyField.swift; sourceTree = "<group>"; };
 		B275089F2CE23F840067E65D /* OptionsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionsScreen.swift; sourceTree = "<group>"; };
 		B27A4B992CA6A96500F813C3 /* NodeListSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeListSummary.swift; sourceTree = "<group>"; };
 		B27A4B9B2CA6B8CC00F813C3 /* NodeListConnectedItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeListConnectedItem.swift; sourceTree = "<group>"; };
@@ -625,9 +627,10 @@
 		B2AF95D62CABE8E000EAD056 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				080488AA2CE3CF0B00CD35F4 /* TextFieldModifier.swift */,
 				DD93800D2BA74D0C008BEC06 /* ChannelForm.swift */,
 				B2AF95D52CABE8E000EAD056 /* SaveButton.swift */,
-				B275089C2CE22FC40067E65D /* TextEntry.swift */,
+				B275089C2CE22FC40067E65D /* KeyField.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1035,7 +1038,7 @@
 				B2E8CE4A2CC94BF400407417 /* ConfigType.swift in Sources */,
 				DD4A911E2708C65400501B7E /* AppSettings.swift in Sources */,
 				B266A75D2C59265000DFC723 /* OLEDTypes.swift in Sources */,
-				B275089D2CE22FCC0067E65D /* TextEntry.swift in Sources */,
+				B275089D2CE22FCC0067E65D /* KeyField.swift in Sources */,
 				B27508992CE20AE90067E65D /* SecurityConfig.swift in Sources */,
 				DD2160AF28C5552500C17253 /* MQTTConfig.swift in Sources */,
 				6DEDA55C2A9592F900321D2E /* MessageEntity+Extension.swift in Sources */,
@@ -1113,6 +1116,7 @@
 				DDB6ABE228B13FB500384BA1 /* GPSFormats.swift in Sources */,
 				DD994B69295F88B60013760A /* UpdateIntervals.swift in Sources */,
 				B2A5F30F2C5668FD009457AB /* SimpleNodeMap.swift in Sources */,
+				080488AB2CE3CF1000CD35F4 /* TextFieldModifier.swift in Sources */,
 				081C3AED2C97494000F93C46 /* CBManagerState+Extension.swift in Sources */,
 				B266A76C2C59298900DFC723 /* GPSUpdateIntervals.swift in Sources */,
 				DD3CC6C028E7A60700FA9159 /* Tapbacks.swift in Sources */,

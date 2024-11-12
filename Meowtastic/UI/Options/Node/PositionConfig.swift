@@ -170,57 +170,39 @@ struct PositionConfig: OptionsScreen {
 	@ViewBuilder
 	var positionPacketSection: some View {
 		Section(header: Text("Position Packet")) {
-			VStack(alignment: .leading) {
-				Picker("Broadcast Interval", selection: $positionBroadcastSeconds) {
-					ForEach(UpdateIntervals.allCases) { at in
-						if at.rawValue >= 300 {
-							Text(at.description)
-						}
+			Picker("Broadcast interval", selection: $positionBroadcastSeconds) {
+				ForEach(UpdateIntervals.allCases) { at in
+					if at.rawValue >= 300 {
+						Text(at.description)
 					}
 				}
-				.pickerStyle(DefaultPickerStyle())
-				Text("The maximum interval that can elapse without a node broadcasting a position")
-					.foregroundColor(.gray)
-					.font(.callout)
 			}
 
 			Toggle(isOn: $smartPositionEnabled) {
-				Label("Smart Position", systemImage: "brain")
+				Text("Smart position")
+					.font(.body)
 			}
 			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 			if smartPositionEnabled {
-				VStack(alignment: .leading) {
-					Picker("Minimum Interval", selection: $broadcastSmartMinimumIntervalSecs) {
-						ForEach(UpdateIntervals.allCases) { at in
-							Text(at.description)
-						}
+				Picker("Min. update interval", selection: $broadcastSmartMinimumIntervalSecs) {
+					ForEach(UpdateIntervals.allCases) { at in
+						Text(at.description)
 					}
-					.pickerStyle(DefaultPickerStyle())
-
-					Text("The fastest that position updates will be sent if the minimum distance has been satisfied")
-						.foregroundColor(.gray)
-						.font(.callout)
 				}
 
-				VStack(alignment: .leading) {
+				Picker("Minimum distance", selection: $broadcastSmartMinimumDistance) {
 					let options = [0, 10, 25, 50, 75, 100, 125, 150]
-					Picker("Minimum Distance", selection: $broadcastSmartMinimumDistance) {
-						ForEach(options, id: \.self) {
-							if $0 == 0 {
-								Text("Unset")
-							}
-							else {
-								Text("\($0)")
-									.tag($0)
-							}
+
+					ForEach(options, id: \.self) {
+						if $0 == 0 {
+							Text("Unset")
+						}
+						else {
+							Text("\($0)")
+								.tag($0)
 						}
 					}
-					.pickerStyle(DefaultPickerStyle())
-
-					Text("The minimum distance change in meters to be considered for a smart position broadcast.")
-						.foregroundColor(.gray)
-						.font(.callout)
 				}
 			}
 		}
@@ -246,25 +228,18 @@ struct PositionConfig: OptionsScreen {
 					.foregroundColor(.gray)
 					.font(.callout)
 
-				VStack(alignment: .leading) {
-					Picker("Update Interval", selection: $gpsUpdateInterval) {
-						ForEach(GPSUpdateIntervals.allCases) { ui in
-							Text(ui.description)
-						}
+				Picker("Update interval", selection: $gpsUpdateInterval) {
+					ForEach(GPSUpdateIntervals.allCases) { ui in
+						Text(ui.description)
 					}
-					Text("How often should we try to get a GPS position.")
-						.foregroundColor(.gray)
-						.font(.callout)
 				}
 			}
+
 			if (gpsMode != 1 && node.num == bleManager.getConnectedDevice()?.num ?? -1) || fixedPosition {
 				VStack(alignment: .leading) {
 					Toggle(isOn: $fixedPosition) {
-						Label("Fixed Position", systemImage: "location.square.fill")
-
-						if !(node.positionConfig?.fixedPosition ?? false) {
-							Text("Your current location will be set as the fixed position and broadcast over the mesh on the position interval.")
-						}
+						Text("Fixed position")
+							.font(.body)
 					}
 					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 				}
@@ -275,38 +250,40 @@ struct PositionConfig: OptionsScreen {
 
 	@ViewBuilder
 	var positionFlagsSection: some View {
-		Section(header: Text("Position Flags")) {
-			Text("Optional fields to include when assembling position messages. the more fields are included, the larger the message will be - leading to longer airtime and a higher risk of packet loss")
-				.foregroundColor(.gray)
-				.font(.callout)
-
+		Section(header: Text("Send With Position")) {
 			Toggle(isOn: $includeAltitude) {
-				Label("Altitude", systemImage: "arrow.up")
+				Text("Altitude")
+					.font(.body)
 			}
 			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 			Toggle(isOn: $includeSatsinview) {
-				Label("Number of satellites", systemImage: "skew")
+				Text("Number of satellites")
+					.font(.body)
 			}
 			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
-			Toggle(isOn: $includeSeqNo) { // 64
-				Label("Sequence number", systemImage: "number")
+			Toggle(isOn: $includeSeqNo) {
+				Text("Sequence number")
+					.font(.body)
 			}
 			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
-			Toggle(isOn: $includeTimestamp) { // 128
-				Label("timestamp", systemImage: "clock")
+			Toggle(isOn: $includeTimestamp) {
+				Text("Timestamp")
+					.font(.body)
 			}
 			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
-			Toggle(isOn: $includeHeading) { // 128
-				Label("Vehicle heading", systemImage: "location.circle")
+			Toggle(isOn: $includeHeading) {
+				Text("Heading")
+					.font(.body)
 			}
 			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
-			Toggle(isOn: $includeSpeed) { // 128
-				Label("Vehicle speed", systemImage: "speedometer")
+			Toggle(isOn: $includeSpeed) {
+				Text("Speed")
+					.font(.body)
 			}
 			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 		}
@@ -315,26 +292,30 @@ struct PositionConfig: OptionsScreen {
 
 	@ViewBuilder
 	var advancedPositionFlagsSection: some View {
-		Section(header: Text("Advanced Position Flags")) {
+		Section(header: Text("Advanced Options")) {
 			if includeAltitude {
 				Toggle(isOn: $includeAltitudeMsl) {
-					Label("Altitude is Mean Sea Level", systemImage: "arrow.up.to.line.compact")
+					Text("Altitude is mean sea level")
+						.font(.body)
 				}
 				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+
 				Toggle(isOn: $includeGeoidalSeparation) {
-					Label("Altitude Geoidal Separation", systemImage: "globe.americas")
+					Text("Altitude geoidal separation")
+						.font(.body)
 				}
 				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 			}
 
 			Toggle(isOn: $includeDop) {
-				Text("Dilution of precision (DOP) PDOP used by default")
+				Text("Dilution of precision")
+					.font(.body)
 			}
 			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 			if includeDop {
 				Toggle(isOn: $includeHvdop) {
-					Text("If DOP is set, use HDOP / VDOP values instead of PDOP")
+					Text("Use HDOP/VDOP instead of PDOP")
 				}
 				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 			}
@@ -344,45 +325,39 @@ struct PositionConfig: OptionsScreen {
 
 	@ViewBuilder
 	var advancedDeviceGPSSection: some View {
-		Section(header: Text("Advanced Device GPS")) {
-			Picker("GPS Receive GPIO", selection: $rxGpio) {
+		Section(header: Text("Device GPS")) {
+			Picker("Receive GPIO", selection: $rxGpio) {
 				ForEach(0..<49) {
 					if $0 == 0 {
-						Text("unset")
+						Text("Not set")
 					}
 					else {
 						Text("Pin \($0)")
 					}
 				}
 			}
-			.pickerStyle(DefaultPickerStyle())
 
-			Picker("GPS Transmit GPIO", selection: $txGpio) {
+			Picker("Transmit GPIO", selection: $txGpio) {
 				ForEach(0..<49) {
 					if $0 == 0 {
-						Text("unset")
+						Text("Not set")
 					}
 					else {
 						Text("Pin \($0)")
 					}
 				}
 			}
-			.pickerStyle(DefaultPickerStyle())
 
-			Picker("GPS EN GPIO", selection: $gpsEnGpio) {
+			Picker("EN GPIO", selection: $gpsEnGpio) {
 				ForEach(0..<49) {
 					if $0 == 0 {
-						Text("unset")
+						Text("Not set")
 					}
 					else {
 						Text("Pin \($0)")
 					}
 				}
 			}
-			.pickerStyle(DefaultPickerStyle())
-
-			Text("(Re)define PIN_GPS_EN for your board.")
-				.font(.caption)
 		}
 		.headerProminence(.increased)
 	}

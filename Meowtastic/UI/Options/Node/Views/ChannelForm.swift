@@ -42,9 +42,7 @@ struct ChannelForm: View {
 							"Channel Name",
 							text: $channelName
 						)
-						.disableAutocorrection(true)
-						.keyboardType(.alphabet)
-						.foregroundColor(Color.gray)
+						.optionsStyle()
 						.onChange(of: channelName) {
 							channelName = channelName.replacing(" ", with: "")
 							if channelName.utf8.count > 11 {
@@ -62,7 +60,6 @@ struct ChannelForm: View {
 							Text("128 bit").tag(16)
 							Text("256 bit").tag(32)
 						}
-						.pickerStyle(DefaultPickerStyle())
 
 						Spacer()
 
@@ -93,10 +90,9 @@ struct ChannelForm: View {
 							text: $channelKey,
 							axis: .vertical
 						)
-						.padding(6)
+						.optionsStyle()
 						.disableAutocorrection(true)
 						.keyboardType(.alphabet)
-						.foregroundColor(Color.gray)
 						.textSelection(.enabled)
 						.background(
 							RoundedRectangle(cornerRadius: 10.0)

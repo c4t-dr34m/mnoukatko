@@ -39,34 +39,23 @@ struct TelemetryConfig: OptionsScreen {
 	var body: some View {
 		Form {
 			Section(header: Text("Update Interval")) {
-				Picker("Device Metrics", selection: $deviceUpdateInterval ) {
+				Picker("Device metrics", selection: $deviceUpdateInterval ) {
 					ForEach(UpdateIntervals.allCases) { ui in
 						if ui.rawValue >= 900 {
 							Text(ui.description)
 						}
 					}
 				}
-				.pickerStyle(DefaultPickerStyle())
 				.listRowSeparator(.hidden)
 
-				Text("How often device metrics are sent out over the mesh. Default is 30 minutes.")
-					.foregroundColor(.gray)
-					.font(.callout)
-					.listRowSeparator(.visible)
-
-				Picker("Sensor Metrics", selection: $environmentUpdateInterval ) {
+				Picker("Sensor metrics", selection: $environmentUpdateInterval ) {
 					ForEach(UpdateIntervals.allCases) { ui in
 						if ui.rawValue >= 900 {
 							Text(ui.description)
 						}
 					}
 				}
-				.pickerStyle(DefaultPickerStyle())
 				.listRowSeparator(.hidden)
-
-				Text("How often sensor metrics are sent out over the mesh. Default is 30 minutes.")
-					.foregroundColor(.gray)
-					.font(.callout)
 			}
 			.headerProminence(.increased)
 
@@ -76,17 +65,20 @@ struct TelemetryConfig: OptionsScreen {
 					.font(.callout)
 
 				Toggle(isOn: $environmentMeasurementEnabled) {
-					Label("Enabled", systemImage: "chart.xyaxis.line")
+					Text("Environment metrics")
+						.font(.body)
 				}
 				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 				Toggle(isOn: $environmentScreenEnabled) {
-					Label("Show on device screen", systemImage: "display")
+					Text("Show on device screen")
+						.font(.body)
 				}
 				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 				Toggle(isOn: $environmentDisplayFahrenheit) {
-					Label("Display Fahrenheit", systemImage: "thermometer")
+					Text("Fahrenheit")
+						.font(.body)
 				}
 				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 			}
@@ -94,28 +86,23 @@ struct TelemetryConfig: OptionsScreen {
 
 			Section(header: Text("Power Options")) {
 				Toggle(isOn: $powerMeasurementEnabled) {
-					Label("Enabled", systemImage: "bolt")
+					Label("Power metrics", systemImage: "bolt")
 				}
 				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 				.listRowSeparator(.visible)
 
-				Picker("Power Metrics", selection: $powerUpdateInterval ) {
+				Picker("Update interval", selection: $powerUpdateInterval ) {
 					ForEach(UpdateIntervals.allCases) { ui in
 						if ui.rawValue >= 900 {
 							Text(ui.description)
 						}
 					}
 				}
-				.pickerStyle(DefaultPickerStyle())
 				.listRowSeparator(.hidden)
 
-				Text("How often power metrics are sent out over the mesh. Default is 30 minutes.")
-					.foregroundColor(.gray)
-					.font(.callout)
-					.listRowSeparator(.visible)
-
 				Toggle(isOn: $powerScreenEnabled) {
-					Label("Power Screen", systemImage: "tv")
+					Text("Power screen")
+						.font(.body)
 				}
 				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 			}

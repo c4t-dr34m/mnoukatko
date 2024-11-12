@@ -58,59 +58,59 @@ struct MQTTConfig: OptionsScreen {
 	@ViewBuilder
 	var body: some View {
 		Form {
-			if let loraConfig = node.loRaConfig {
-				let rc = RegionCodes(rawValue: Int(loraConfig.regionCode))
+			if
+				let loraConfig = node.loRaConfig,
+				let dutyCycle = RegionCodes(rawValue: Int(loraConfig.regionCode))?.dutyCycle,
+				dutyCycle > 0, dutyCycle < 100
+			{
+				HStack(alignment: .center) {
+					Image(systemName: "exclamationmark.triangle")
+						.font(.system(size: 32, weight: .semibold))
+						.foregroundColor(.orange)
 
-				if rc?.dutyCycle ?? 0 > 0 && rc?.dutyCycle ?? 0 < 100 {
-					Text("Your region has a \(rc?.dutyCycle ?? 0)% duty cycle. MQTT is not advised when you are duty cycle restricted, the extra traffic will quickly overwhelm your LoRa mesh.")
-						.font(.callout)
-						.foregroundColor(.red)
+					Text("Your region has a \(dutyCycle)% duty cycle. MQTT is not advised when your duty cycle is restricted as the extra traffic may quickly overwhelm your LoRa mesh.")
+						.font(.body)
 				}
 			}
 
 			Section(header: Text("Options")) {
 				Toggle(isOn: $enabled) {
-					Label("Enabled", systemImage: "dot.radiowaves.up.forward")
+					Text("MQTT")
+						.font(.body)
 				}
 				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 				.onChange(of: enabled) {
 					hasChanges = true
 				}
 
-				Toggle(isOn: $proxyToClientEnabled) {
-					Label(
-						"Client Proxy",
-						systemImage: "iphone.radiowaves.left.and.right"
-					)
-
-					Text("Utilizes the network connection on your phone to connect to MQTT.")
+				Toggle(isOn: $encryptionEnabled) {
+					Text("Encryption")
+						.font(.body)
 				}
 				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+
+				Toggle(isOn: $proxyToClientEnabled) {
+					Text("Use mobile data")
+						.font(.body)
+						.strikethrough(jsonEnabled)
+				}
+				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+				.disabled(jsonEnabled)
 				.onChange(of: proxyToClientEnabled) {
 					if proxyToClientEnabled {
 						jsonEnabled = false
 					}
-					if let mqttConfig = node.mqttConfig {
-						if proxyToClientEnabled != mqttConfig.proxyToClientEnabled {
-							hasChanges = true
-						}
 
-						if proxyToClientEnabled {
-							jsonEnabled = false
-						}
-					}
+					hasChanges = true
 				}
-
-				Toggle(isOn: $encryptionEnabled) {
-					Label("Encryption Enabled", systemImage: "lock.icloud")
-				}
-				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 				Toggle(isOn: $jsonEnabled) {
-					Label("JSON Enabled", systemImage: "ellipsis.curlybraces")
-					Text("JSON mode is a limited, unencrypted MQTT output for locally integrating with home assistant")
+					Text("JSON")
+						.font(.body)
+						.strikethrough(proxyToClientEnabled)
 				}
 				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+				.disabled(proxyToClientEnabled)
 				.onChange(of: jsonEnabled) {
 					if jsonEnabled {
 						proxyToClientEnabled = false
@@ -123,7 +123,8 @@ struct MQTTConfig: OptionsScreen {
 
 			Section(header: Text("Map Report")) {
 				Toggle(isOn: $mapReportingEnabled) {
-					Label("enabled", systemImage: "map")
+					Text("Map report")
+						.font(.body)
 				}
 				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 				.onChange(of: mapReportingEnabled) {
@@ -131,39 +132,38 @@ struct MQTTConfig: OptionsScreen {
 				}
 
 				if mapReportingEnabled {
-					Picker("Map Publish Interval", selection: $mapPublishIntervalSecs ) {
+					Picker("Publish interval", selection: $mapPublishIntervalSecs ) {
 						ForEach(UpdateIntervals.allCases) { ui in
 							if ui.rawValue >= 3600 {
 								Text(ui.description)
 							}
 						}
 					}
-					.pickerStyle(DefaultPickerStyle())
 					.onChange(of: mapPublishIntervalSecs) {
 						hasChanges = true
 					}
 
-					VStack(alignment: .leading) {
-						Toggle(isOn: $preciseLocation) {
-							Label("Precise Location", systemImage: "scope")
+					Toggle(isOn: $preciseLocation) {
+						Text("Precise location")
+							.font(.body)
+					}
+					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+					.listRowSeparator(.visible)
+					.onChange(of: preciseLocation) {
+						if preciseLocation == false {
+							mapPositionPrecision = 12
 						}
-						.toggleStyle(SwitchToggleStyle(tint: .accentColor))
-						.listRowSeparator(.visible)
-						.onChange(of: preciseLocation) {
-							if preciseLocation == false {
-								mapPositionPrecision = 12
-							}
-							else {
-								mapPositionPrecision = 32
-							}
+						else {
+							mapPositionPrecision = 32
+						}
 
-							hasChanges = true
-						}
+						hasChanges = true
 					}
 
 					if !preciseLocation {
 						VStack(alignment: .leading) {
-							Label("Approximate Location", systemImage: "location.slash.circle.fill")
+							Text("Approximate location")
+								.font(.body)
 
 							Slider(value: $mapPositionPrecision, in: 11...16, step: 1) {
 							} minimumValueLabel: {
@@ -183,16 +183,16 @@ struct MQTTConfig: OptionsScreen {
 
 			Section(header: Text("Root Topic")) {
 				HStack {
-					Label(
-						"Root Topic",
-						systemImage: "tree"
-					)
+					Text("Root topic")
+						.font(.body)
 
-					TextField("Root Topic", text: $root)
+					Spacer()
+
+					TextField("", text: $root)
+						.optionsStyle()
 						.keyboardType(.asciiCapable)
 						.autocapitalization(.none)
 						.disableAutocorrection(true)
-						.foregroundColor(.gray)
 						.onChange(of: root) {
 							if root.utf8.count > 30 {
 								root = String(root.dropLast())
@@ -202,25 +202,21 @@ struct MQTTConfig: OptionsScreen {
 						}
 				}
 				.listRowSeparator(.hidden)
-
-				Text("The root topic to use for MQTT.")
-					.foregroundColor(.gray)
-					.font(.callout)
 			}
 			.headerProminence(.increased)
 
 			Section(header: Text("Server")) {
 				HStack {
-					Label(
-						"Address",
-						systemImage: "server.rack"
-					)
+					Text("Address")
+						.font(.body)
 
-					TextField("Address", text: $address)
+					Spacer()
+
+					TextField("", text: $address)
+						.optionsStyle()
 						.keyboardType(.default)
 						.autocapitalization(.none)
 						.disableAutocorrection(true)
-						.foregroundColor(.gray)
 						.onChange(of: address) {
 							if address.utf8.count > 62 {
 								address = String(address.dropLast())
@@ -231,16 +227,16 @@ struct MQTTConfig: OptionsScreen {
 				}
 
 				HStack {
-					Label(
-						"Username",
-						systemImage: "person.text.rectangle"
-					)
+					Text("Username")
+						.font(.body)
 
-					TextField("Username", text: $username)
+					Spacer()
+
+					TextField("", text: $username)
+						.optionsStyle()
 						.keyboardType(.default)
 						.autocapitalization(.none)
 						.disableAutocorrection(true)
-						.foregroundColor(.gray)
 						.onChange(of: username) {
 							if username.utf8.count > 62 {
 								username = String(username.dropLast())
@@ -252,33 +248,29 @@ struct MQTTConfig: OptionsScreen {
 				.scrollDismissesKeyboard(.interactively)
 
 				HStack {
-					Label("Password", systemImage: "wallet.pass")
+					Text("Password")
+						.font(.body)
 
-					TextField(
-						"Password",
-						text: $password
-					)
-					.keyboardType(.default)
-					.autocapitalization(.none)
-					.disableAutocorrection(true)
-					.foregroundColor(.gray)
-					.onChange(of: password) {
-						if password.utf8.count > 62 {
-							password = String(password.dropLast())
+					Spacer()
+
+					TextField("", text: $password)
+						.optionsStyle()
+						.keyboardType(.default)
+						.autocapitalization(.none)
+						.disableAutocorrection(true)
+						.onChange(of: password) {
+							if password.utf8.count > 62 {
+								password = String(password.dropLast())
+							}
+
+							hasChanges = true
 						}
-
-						hasChanges = true
-					}
 				}
-				.listRowSeparator(/*@START_MENU_TOKEN@*/.visible/*@END_MENU_TOKEN@*/)
+				.listRowSeparator(.visible)
 
 				Toggle(isOn: $tlsEnabled) {
-					Label(
-						"TLS Enabled",
-						systemImage: "checkmark.shield.fill"
-					)
-
-					Text("Your MQTT Server must support TLS.")
+					Text("TLS")
+						.font(.body)
 				}
 				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 				.onChange(of: tlsEnabled) {

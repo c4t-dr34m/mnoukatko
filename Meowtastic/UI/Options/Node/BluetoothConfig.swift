@@ -44,19 +44,20 @@ struct BluetoothConfig: OptionsScreen {
 			}
 			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
-			Picker("Pairing Mode", selection: $mode) {
+			Picker("Pairing mode", selection: $mode) {
 				ForEach(BluetoothModes.allCases) { bm in
 					Text(bm.description)
 				}
 			}
-			.pickerStyle(DefaultPickerStyle())
 
 			if mode == 1 {
 				HStack {
-					Text("Fixed PIN:")
+					Text("Fixed PIN")
+
 					Spacer()
-					TextField("Fixed PIN", text: $fixedPin)
-						.foregroundColor(.gray)
+
+					TextField("", text: $fixedPin)
+						.optionsStyle()
 						.onChange(of: fixedPin) {
 							// Don't let the first character be 0 because it will get stripped when saving a UInt32
 							if fixedPin.first == "0" {
@@ -87,7 +88,7 @@ struct BluetoothConfig: OptionsScreen {
 			}
 
 			Toggle(isOn: $deviceLoggingEnabled) {
-				Text("Device Logging")
+				Text("Device logging")
 			}
 			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 		}

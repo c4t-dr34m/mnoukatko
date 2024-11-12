@@ -7,9 +7,6 @@
     "(%@)" : {
 
     },
-    "(Re)define PIN_GPS_EN for your board." : {
-
-    },
     "%@ can be up to %@ bytes long." : {
       "localizations" : {
         "en" : {
@@ -29,16 +26,16 @@
     "%lld" : {
 
     },
+    "%lld dBm transmit power" : {
+
+    },
     "%lld hop" : {
 
     },
     "%lld hops" : {
 
     },
-    "%llddB Transmit Power" : {
-
-    },
-    "%llddBm Transmit Power" : {
+    "%llddB transmit power" : {
 
     },
     "🦕 End of life Version 🦖 ☄️" : {
@@ -133,6 +130,9 @@
         }
       }
     },
+    "Admin Keys" : {
+
+    },
     "admin.log" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -198,10 +198,7 @@
     "Advanced" : {
 
     },
-    "Advanced Device GPS" : {
-
-    },
-    "Advanced Position Flags" : {
+    "Advanced Options" : {
 
     },
     "ago" : {
@@ -281,10 +278,10 @@
     "Altitude" : {
 
     },
-    "Altitude Geoidal Separation" : {
+    "Altitude geoidal separation" : {
 
     },
-    "Altitude is Mean Sea Level" : {
+    "Altitude is mean sea level" : {
 
     },
     "Always point north" : {
@@ -356,6 +353,9 @@
 
     },
     "Application" : {
+
+    },
+    "Approximate location" : {
 
     },
     "Approximate Location" : {
@@ -722,12 +722,6 @@
           }
         }
       }
-    },
-    "Automatically toggles to the next page on the screen like a carousel, based the specified interval." : {
-
-    },
-    "Available modem presets, default is Long Fast." : {
-
     },
     "Background Update Summary" : {
 
@@ -1266,7 +1260,7 @@
         }
       }
     },
-    "Broadcast Interval" : {
+    "Broadcast interval" : {
 
     },
     "Button GPIO" : {
@@ -1334,7 +1328,7 @@
         }
       }
     },
-    "Call Sign" : {
+    "Call sign" : {
 
     },
     "Call Sign must not be empty" : {
@@ -1520,7 +1514,7 @@
         }
       }
     },
-    "Carousel Interval" : {
+    "Carousel interval" : {
 
     },
     "Channel" : {
@@ -1715,10 +1709,7 @@
     "Channels" : {
 
     },
-    "Client Proxy" : {
-
-    },
-    "Coding Rate" : {
+    "Coding rate" : {
 
     },
     "config.power.adc.multiplier" : {
@@ -2141,6 +2132,7 @@
       }
     },
     "config.power.settings" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2594,9 +2586,6 @@
     "Continue" : {
 
     },
-    "Controls the blinking LED on the device.  For most devices this will control one of the up to 4 LEDS, the charger and GPS LEDs are not controllable." : {
-
-    },
     "Copy message text" : {
 
     },
@@ -2607,9 +2596,6 @@
 
     },
     "Debug" : {
-
-    },
-    "Debug Logs" : {
 
     },
     "default" : {
@@ -2756,16 +2742,13 @@
     "Device GPS" : {
 
     },
-    "Device is managed by a mesh administrator, the user is unable to access any of the device settings." : {
+    "Device logging" : {
 
     },
-    "Device Logging" : {
+    "Device metrics" : {
 
     },
-    "Device Metrics" : {
-
-    },
-    "Device Role" : {
+    "Device role" : {
 
     },
     "Device Screen" : {
@@ -3302,7 +3285,7 @@
         }
       }
     },
-    "Dilution of precision (DOP) PDOP used by default" : {
+    "Dilution of precision" : {
 
     },
     "Direct" : {
@@ -3381,13 +3364,7 @@
     "Display Config" : {
 
     },
-    "Display Fahrenheit" : {
-
-    },
-    "Display Mode" : {
-
-    },
-    "Display Units" : {
+    "Display mode" : {
 
     },
     "distance" : {
@@ -3452,7 +3429,7 @@
     "Done" : {
 
     },
-    "Double Tap as Button" : {
+    "Double tap = USER button" : {
 
     },
     "Downlink" : {
@@ -3520,7 +3497,11 @@
     "Empty" : {
 
     },
+    "EN GPIO" : {
+
+    },
     "enabled" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3581,19 +3562,13 @@
     "Enabled" : {
 
     },
-    "Enabling Ethernet will disable the bluetooth connection to the app." : {
-
-    },
-    "Enabling Managed mode will restrict access to all radio configurations, such as short/long names, regions, channels, modules, etc. and will only be accessible through the Admin channel. To avoid being locked out, make sure the Admin channel is working properly before enabling it." : {
-
-    },
-    "Enabling WiFi will disable the bluetooth connection to the app." : {
-
-    },
-    "Encryption Enabled" : {
+    "Encryption" : {
 
     },
     "Environment" : {
+
+    },
+    "Environment metrics" : {
 
     },
     "Erase all device and app data?" : {
@@ -3609,6 +3584,9 @@
 
     },
     "Factory reset your device and app?" : {
+
+    },
+    "Fahrenheit" : {
 
     },
     "Favorite" : {
@@ -3685,16 +3663,10 @@
     "Fixed PIN" : {
 
     },
-    "Fixed PIN:" : {
+    "Fixed position" : {
 
     },
-    "Fixed Position" : {
-
-    },
-    "Flip Screen" : {
-
-    },
-    "Flip screen vertically" : {
+    "Flip screen" : {
 
     },
     "For all Mqtt functionality other than the map report you must also set uplink and downlink for each channel you want to bridge over Mqtt." : {
@@ -3703,10 +3675,10 @@
     "Frequency" : {
 
     },
-    "Frequency Override" : {
+    "Frequency override" : {
 
     },
-    "Frequency Slot" : {
+    "Frequency slot" : {
 
     },
     "Garth Vander Houwen" : {
@@ -3836,16 +3808,7 @@
     "GPS" : {
 
     },
-    "GPS EN GPIO" : {
-
-    },
-    "GPS Format" : {
-
-    },
-    "GPS Receive GPIO" : {
-
-    },
-    "GPS Transmit GPIO" : {
+    "GPS format" : {
 
     },
     "gpsformat.dec" : {
@@ -4310,6 +4273,9 @@
     "Hardware" : {
 
     },
+    "Heading" : {
+
+    },
     "heard" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4437,21 +4403,6 @@
     "Hops" : {
 
     },
-    "How long the screen remains on after the user button is pressed or messages are received." : {
-
-    },
-    "How often device metrics are sent out over the mesh. Default is 30 minutes." : {
-
-    },
-    "How often power metrics are sent out over the mesh. Default is 30 minutes." : {
-
-    },
-    "How often sensor metrics are sent out over the mesh. Default is 30 minutes." : {
-
-    },
-    "How often should we try to get a GPS position." : {
-
-    },
     "hybrid" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4569,9 +4520,6 @@
           }
         }
       }
-    },
-    "If DOP is set, use HDOP / VDOP values instead of PDOP" : {
-
     },
     "Ignore MQTT" : {
 
@@ -6822,10 +6770,7 @@
         }
       }
     },
-    "JSON Enabled" : {
-
-    },
-    "JSON mode is a limited, unencrypted MQTT output for locally integrating with home assistant" : {
+    "JSON" : {
 
     },
     "Key" : {
@@ -6896,13 +6841,13 @@
     "Last Heard" : {
 
     },
-    "LED Heartbeat" : {
+    "LED heartbeat" : {
 
     },
-    "Legacy Administration" : {
+    "Legacy administration" : {
 
     },
-    "Licensed Operator" : {
+    "Licensed operator" : {
 
     },
     "Location" : {
@@ -7014,10 +6959,10 @@
         }
       }
     },
-    "Logs" : {
+    "Logging" : {
 
     },
-    "Long Name" : {
+    "Long name" : {
 
     },
     "Look & Feel" : {
@@ -7094,10 +7039,10 @@
     "Low Battery" : {
 
     },
-    "Managed Device" : {
+    "Managed device" : {
 
     },
-    "Map Publish Interval" : {
+    "Map report" : {
 
     },
     "Map Report" : {
@@ -9763,10 +9708,10 @@
     "Messages in the channel will be deleted" : {
 
     },
-    "Minimum Distance" : {
+    "Min. update interval" : {
 
     },
-    "Minimum Interval" : {
+    "Minimum distance" : {
 
     },
     "More Colors" : {
@@ -10112,7 +10057,7 @@
     "Node Discovered" : {
 
     },
-    "Node Info Broadcast Interval" : {
+    "Node info broadcast interval" : {
 
     },
     "Node Number" : {
@@ -10258,6 +10203,9 @@
 
     },
     "Not Connected" : {
+
+    },
+    "Not set" : {
 
     },
     "Nothing for last %@s" : {
@@ -10458,7 +10406,7 @@
     "OK" : {
 
     },
-    "OLED Type" : {
+    "OLED type" : {
 
     },
     "on.boot" : {
@@ -10529,9 +10477,6 @@
     "Open Settings" : {
 
     },
-    "Optional fields to include when assembling position messages. the more fields are included, the larger the message will be - leading to longer airtime and a higher risk of packet loss" : {
-
-    },
     "options" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -10594,13 +10539,7 @@
     "Options" : {
 
     },
-    "Output live debug logging over serial, view and export position-redacted device logs over Bluetooth." : {
-
-    },
-    "Override automatic OLED screen detection." : {
-
-    },
-    "Pairing Mode" : {
+    "Pairing mode" : {
 
     },
     "password" : {
@@ -10663,9 +10602,6 @@
       }
     },
     "Password" : {
-
-    },
-    "Password:" : {
 
     },
     "phone.gps.interval.description" : {
@@ -10798,9 +10734,6 @@
     "Position Config" : {
 
     },
-    "Position Flags" : {
-
-    },
     "Position Packet" : {
 
     },
@@ -10842,7 +10775,7 @@
     "Power Config" : {
 
     },
-    "Power Metrics" : {
+    "Power metrics" : {
 
     },
     "Power Options" : {
@@ -10851,7 +10784,10 @@
     "Power Saving Mode" : {
 
     },
-    "Power Screen" : {
+    "Power screen" : {
+
+    },
+    "Precise location" : {
 
     },
     "Precise Location" : {
@@ -10925,16 +10861,16 @@
     "Primary" : {
 
     },
-    "Primary Admin Key" : {
-
-    },
     "Primary Channel" : {
 
     },
-    "Private Key" : {
+    "Private" : {
 
     },
-    "Public Key" : {
+    "Public" : {
+
+    },
+    "Publish interval" : {
 
     },
     "range.test.blocked" : {
@@ -11060,7 +10996,10 @@
         }
       }
     },
-    "Rebroadcast Mode" : {
+    "Rebroadcast mode" : {
+
+    },
+    "Receive GPIO" : {
 
     },
     "Refresh Device Metadata" : {
@@ -11172,9 +11111,6 @@
     "Request sent to" : {
 
     },
-    "Requires that there be an accelerometer on your device." : {
-
-    },
     "Reset NodeDB" : {
 
     },
@@ -11238,6 +11174,9 @@
       }
     },
     "Role" : {
+
+    },
+    "Root topic" : {
 
     },
     "Root Topic" : {
@@ -12158,7 +12097,7 @@
     "RSSI: %ddBm" : {
 
     },
-    "RX Boosted Gain" : {
+    "Rx boosted gain" : {
 
     },
     "satellite" : {
@@ -12403,13 +12342,10 @@
         }
       }
     },
-    "Screen on for" : {
+    "Screen on" : {
 
     },
     "Secondary" : {
-
-    },
-    "Secondary Admin Key" : {
 
     },
     "Security" : {
@@ -12592,22 +12528,22 @@
         }
       }
     },
-    "Sensor Metrics" : {
+    "Send With Position" : {
+
+    },
+    "Sensor metrics" : {
 
     },
     "Sensor Options" : {
 
     },
-    "Sent out to other nodes on the mesh to allow them to compute a shared secret key." : {
-
-    },
     "Sequence number" : {
 
     },
-    "Serial Console" : {
+    "Serial console" : {
 
     },
-    "Serial Console over the Stream API." : {
+    "Serial Console" : {
 
     },
     "serial.mode.default" : {
@@ -12911,9 +12847,6 @@
     "Set" : {
 
     },
-    "Sets the maximum number of hops, default is 3. Increasing hops also increases congestion and should be used carefully. O hop broadcast messages will not get ACKs." : {
-
-    },
     "Settings" : {
 
     },
@@ -12976,7 +12909,7 @@
         }
       }
     },
-    "Short Name" : {
+    "Short mame" : {
 
     },
     "Show alerts" : {
@@ -13000,7 +12933,7 @@
     "Skip" : {
 
     },
-    "Smart Position" : {
+    "Smart position" : {
 
     },
     "SNR: %@dB" : {
@@ -13009,7 +12942,10 @@
     "Source" : {
 
     },
-    "Spread Factor" : {
+    "Speed" : {
+
+    },
+    "Spread factor" : {
 
     },
     "ssid" : {
@@ -13072,9 +13008,6 @@
       }
     },
     "SSID" : {
-
-    },
-    "SSID:" : {
 
     },
     "standard" : {
@@ -13682,34 +13615,13 @@
     "Temperature" : {
 
     },
-    "Tertiary Admin Key" : {
-
-    },
-    "The compass heading on the screen outside of the circle will always point north." : {
-
-    },
-    "The fastest that position updates will be sent if the minimum distance has been satisfied" : {
-
-    },
-    "The format used to display GPS coordinates on the device screen." : {
+    "Tertiary" : {
 
     },
     "The last 4 of the device MAC address will be appended to the short name to set the device's BLE Name.  Short name can be up to 4 bytes long." : {
 
     },
-    "The maximum interval that can elapse without a node broadcasting a position" : {
-
-    },
     "The Meshtastic Apple apps support firmware version %@ and above." : {
-
-    },
-    "The minimum distance change in meters to be considered for a smart position broadcast." : {
-
-    },
-    "The region where you will be using your radios." : {
-
-    },
-    "The root topic to use for MQTT." : {
 
     },
     "This app is based on and still benefits from their work" : {
@@ -13730,13 +13642,11 @@
     "This will send a current position from your phone and enable fixed position." : {
 
     },
-    "Time Zone" : {
-
-    },
-    "Time zone for dates on the device screen and log." : {
+    "Time zone" : {
 
     },
     "timestamp" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -13794,10 +13704,13 @@
         }
       }
     },
+    "Timestamp" : {
+
+    },
     "Timing & Format" : {
 
     },
-    "TLS Enabled" : {
+    "TLS" : {
 
     },
     "Total: %lld nodes" : {
@@ -13806,10 +13719,10 @@
     "Trace Route" : {
 
     },
-    "Transmit Enabled" : {
+    "Transmit" : {
 
     },
-    "Treat double tap on supported accelerometers as a user button press." : {
+    "Transmit GPIO" : {
 
     },
     "Try Again" : {
@@ -13877,7 +13790,7 @@
     "Un-Favorite" : {
 
     },
-    "Units displayed on the device screen" : {
+    "Units" : {
 
     },
     "Unknown ACK error" : {
@@ -13887,6 +13800,7 @@
 
     },
     "unset" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -13945,6 +13859,9 @@
       }
     },
     "Unset" : {
+
+    },
+    "Update interval" : {
 
     },
     "Update Interval" : {
@@ -14014,10 +13931,13 @@
     "Uptime" : {
 
     },
-    "Use Preset" : {
+    "Use HDOP/VDOP instead of PDOP" : {
 
     },
-    "Used to create a shared key with a remote device." : {
+    "Use mobile data" : {
+
+    },
+    "Use preset" : {
 
     },
     "User" : {
@@ -14094,16 +14014,7 @@
     "Username" : {
 
     },
-    "Utilizes the network connection on your phone to connect to MQTT." : {
-
-    },
     "v%@" : {
-
-    },
-    "Vehicle heading" : {
-
-    },
-    "Vehicle speed" : {
 
     },
     "Version %@ includes breaking changes to devices and the client apps. Only nodes version %@ and above are supported." : {
@@ -14132,7 +14043,7 @@
     "Visible Devices" : {
 
     },
-    "Wake Screen on tap or motion" : {
+    "Wake screen on tap or motion" : {
 
     },
     "What licensed operator mode does:\n* Sets the node name to your call sign \n* Broadcasts node info every 10 minutes \n* Overrides frequency, dutycycle and tx power \n* Disables encryption" : {
@@ -14141,16 +14052,10 @@
     "WiFi" : {
 
     },
-    "Your current location will be set as the fixed position and broadcast over the mesh on the position interval." : {
-
-    },
-    "Your MQTT Server must support TLS." : {
-
-    },
     "Your position has been sent with a request for a response with their position." : {
 
     },
-    "Your region has a %lld%% duty cycle. MQTT is not advised when you are duty cycle restricted, the extra traffic will quickly overwhelm your LoRa mesh." : {
+    "Your region has a %lld%% duty cycle. MQTT is not advised when your duty cycle is restricted as the extra traffic may quickly overwhelm your LoRa mesh." : {
 
     }
   },

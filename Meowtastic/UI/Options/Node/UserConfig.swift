@@ -51,12 +51,13 @@ struct UserConfig: OptionsScreen {
 			Section(header: Text("User Details")) {
 				VStack(alignment: .leading) {
 					HStack {
-						Label(
-							isLicensed ? "Call Sign" : "Long Name",
-							systemImage: "person.crop.rectangle.fill"
-						)
+						Text(isLicensed ? "Call sign" : "Long name")
+							.font(.body)
 
-						TextField("Long Name", text: $longName)
+						Spacer()
+
+						TextField("", text: $longName)
+							.optionsStyle()
 							.onChange(of: longName) {
 								if longName.utf8.count > (isLicensed ? 6 : 36) {
 									longName = String(longName.dropLast())
@@ -66,8 +67,9 @@ struct UserConfig: OptionsScreen {
 					.keyboardType(.default)
 					.disableAutocorrection(true)
 
-					if longName.isEmpty && isLicensed {
-						Label("Call Sign must not be empty", systemImage: "exclamationmark.square")
+					if longName.isEmpty, isLicensed {
+						Text("Call Sign must not be empty")
+							.font(.body)
 							.foregroundColor(.red)
 					}
 
@@ -79,10 +81,13 @@ struct UserConfig: OptionsScreen {
 
 				VStack(alignment: .leading) {
 					HStack {
-						Label("Short Name", systemImage: "circlebadge.fill")
+						Text("Short mame")
+							.font(.body)
 
-						TextField("Short Name", text: $shortName)
-							.foregroundColor(.gray)
+						Spacer()
+
+						TextField("", text: $shortName)
+							.optionsStyle()
 							.onChange(of: shortName) {
 								if shortName.utf8.count > 4 {
 									shortName = String(shortName.dropLast())
@@ -105,7 +110,8 @@ struct UserConfig: OptionsScreen {
 					node.num == device.num
 				{
 					Toggle(isOn: $isLicensed) {
-						Label("Licensed Operator", systemImage: "person.text.rectangle")
+						Text("Licensed operator")
+							.font(.body)
 					}
 					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
@@ -116,35 +122,24 @@ struct UserConfig: OptionsScreen {
 							.font(.caption2)
 
 						HStack {
-							Label("Frequency", systemImage: "waveform.path.ecg")
+							Text("Frequency")
+								.font(.body)
 
 							Spacer()
 
 							TextField(
-								"Frequency Override",
+								"Frequency override",
 								value: $overrideFrequency,
 								formatter: floatFormatter
 							)
-								.toolbar {
-									ToolbarItemGroup(placement: .keyboard) {
-										Button("dismiss.keyboard") {
-											focusedField = nil
-										}
-										.font(.subheadline)
-									}
-								}
-								.keyboardType(.decimalPad)
-								.scrollDismissesKeyboard(.immediately)
-								.focused($focusedField, equals: .frequencyOverride)
+							.optionsStyle()
+							.keyboardType(.decimalPad)
+							.scrollDismissesKeyboard(.immediately)
+							.focused($focusedField, equals: .frequencyOverride)
 						}
 
-						HStack {
-							Image(systemName: "antenna.radiowaves.left.and.right")
-								.foregroundColor(.accentColor)
-
-							Stepper("\(txPower)dB Transmit Power", value: $txPower, in: 1...30, step: 1)
-								.padding(5)
-						}
+						Stepper("\(txPower)dB transmit power", value: $txPower, in: 1...30, step: 1)
+							.padding(5)
 					}
 				}
 			}

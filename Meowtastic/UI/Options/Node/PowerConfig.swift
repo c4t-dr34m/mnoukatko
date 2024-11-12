@@ -63,10 +63,9 @@ struct PowerConfig: OptionsScreen {
 							Text(at.description)
 						}
 					}
-					.pickerStyle(DefaultPickerStyle())
 				}
 			} header: {
-				Text("config.power.settings")
+				Text("Power Config")
 			}
 			.headerProminence(.increased)
 
@@ -236,9 +235,7 @@ private struct FloatField: View {
 
 	var body: some View {
 		TextField(title.localized, value: $typingNumber, format: .number)
-			.keyboardType(.decimalPad)
-			.foregroundColor(.gray)
-			.multilineTextAlignment(.trailing)
+			.optionsStyle()
 			.onChange(of: typingNumber, initial: true) {
 				if isValid(typingNumber) {
 					number = typingNumber

@@ -38,18 +38,19 @@ struct NetworkConfig: OptionsScreen {
 			if node.metadata?.hasWifi ?? false {
 				Section(header: Text("WiFi")) {
 					Toggle(isOn: $wifiEnabled) {
-						Text("Enabled")
+						Text("WiFi")
 							.font(.body)
-						Text("Enabling WiFi will disable the bluetooth connection to the app.")
 					}
 					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 					HStack {
-						Text("SSID:")
+						Text("SSID")
 							.font(.body)
+
 						Spacer()
-						TextField("SSID", text: $wifiSsid)
-							.foregroundColor(.gray)
+
+						TextField("", text: $wifiSsid)
+							.optionsStyle()
 							.keyboardType(.default)
 							.autocapitalization(.none)
 							.disableAutocorrection(true)
@@ -64,11 +65,13 @@ struct NetworkConfig: OptionsScreen {
 					}
 
 					HStack {
-						Text("Password:")
+						Text("Password")
 							.font(.body)
+
 						Spacer()
-						TextField("Password", text: $wifiPsk)
-							.foregroundColor(.gray)
+
+						TextField("", text: $wifiPsk)
+							.optionsStyle()
 							.keyboardType(.default)
 							.autocapitalization(.none)
 							.disableAutocorrection(true)
@@ -90,7 +93,6 @@ struct NetworkConfig: OptionsScreen {
 					Toggle(isOn: $ethEnabled) {
 						Text("Enabled")
 							.font(.body)
-						Text("Enabling Ethernet will disable the bluetooth connection to the app.")
 					}
 					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 				}

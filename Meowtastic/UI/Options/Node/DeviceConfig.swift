@@ -46,86 +46,64 @@ struct DeviceConfig: OptionsScreen {
 		VStack {
 			Form {
 				Section(header: Text("Options")) {
-					VStack(alignment: .leading) {
-						Picker("Device Role", selection: $deviceRole ) {
-							ForEach(DeviceRoles.allCases) { dr in
-								Text(dr.name)
-							}
+					Picker("Device role", selection: $deviceRole ) {
+						ForEach(DeviceRoles.allCases) { dr in
+							Text(dr.name)
 						}
-						Text(DeviceRoles(rawValue: deviceRole)?.description ?? "")
-							.foregroundColor(.gray)
-							.font(.callout)
 					}
-					.pickerStyle(DefaultPickerStyle())
 
-					VStack(alignment: .leading) {
-						Picker("Rebroadcast Mode", selection: $rebroadcastMode ) {
-							ForEach(RebroadcastModes.allCases) { rm in
-								Text(rm.name)
-							}
+					Picker("Rebroadcast mode", selection: $rebroadcastMode ) {
+						ForEach(RebroadcastModes.allCases) { rm in
+							Text(rm.name)
 						}
-						Text(RebroadcastModes(rawValue: rebroadcastMode)?.description ?? "")
-							.foregroundColor(.gray)
-							.font(.callout)
 					}
-					.pickerStyle(DefaultPickerStyle())
 
-					Toggle(isOn: $isManaged) {
-						Label("Managed Device", systemImage: "gearshape.arrow.triangle.2.circlepath")
-						Text("Enabling Managed mode will restrict access to all radio configurations, such as short/long names, regions, channels, modules, etc. and will only be accessible through the Admin channel. To avoid being locked out, make sure the Admin channel is working properly before enabling it.")
-					}
-					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
-
-					Picker("Node Info Broadcast Interval", selection: $nodeInfoBroadcastSecs ) {
+					Picker("Node info broadcast interval", selection: $nodeInfoBroadcastSecs ) {
 						ForEach(UpdateIntervals.allCases) { ui in
 							if ui.rawValue >= 3600 {
 								Text(ui.description)
 							}
 						}
 					}
-					.pickerStyle(DefaultPickerStyle())
 				}
 				.headerProminence(.increased)
 
 				Section(header: Text("Hardware")) {
 					Toggle(isOn: $doubleTapAsButtonPress) {
-						Label("Double Tap as Button", systemImage: "hand.tap")
-						Text("Treat double tap on supported accelerometers as a user button press.")
+						Text("Double tap = USER button")
+							.font(.body)
 					}
 					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 					Toggle(isOn: $ledHeartbeatEnabled) {
-						Label("LED Heartbeat", systemImage: "waveform.path.ecg")
-						Text("Controls the blinking LED on the device.  For most devices this will control one of the up to 4 LEDS, the charger and GPS LEDs are not controllable.")
+						Text("LED heartbeat")
+							.font(.body)
 					}
 					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 				}
 				.headerProminence(.increased)
 
 				Section(header: Text("Debug")) {
-					VStack(alignment: .leading) {
-						HStack {
-							Label("Time Zone", systemImage: "clock.badge.exclamationmark")
+					HStack {
+						Text("Time zone")
+							.font(.body)
 
-							TextField("Time Zone", text: $tzdef, axis: .vertical)
-								.foregroundColor(.gray)
-								.onChange(of: tzdef) {
-									let totalBytes = tzdef.utf8.count
-									// Only mess with the value if it is too big
-									if totalBytes > 63 {
-										tzdef = String(tzdef.dropLast())
-									}
+						Spacer()
+
+						TextField("", text: $tzdef, axis: .vertical)
+							.optionsStyle()
+							.onChange(of: tzdef) {
+								let totalBytes = tzdef.utf8.count
+								// Only mess with the value if it is too big
+								if totalBytes > 63 {
+									tzdef = String(tzdef.dropLast())
 								}
-								.foregroundColor(.gray)
-
-						}
-						.keyboardType(.default)
-						.disableAutocorrection(true)
-
-						Text("Time zone for dates on the device screen and log.")
+							}
 							.foregroundColor(.gray)
-							.font(.callout)
+
 					}
+					.keyboardType(.default)
+					.disableAutocorrection(true)
 				}
 				.headerProminence(.increased)
 
@@ -140,7 +118,6 @@ struct DeviceConfig: OptionsScreen {
 							}
 						}
 					}
-					.pickerStyle(DefaultPickerStyle())
 
 					Picker("Buzzer GPIO", selection: $buzzerGPIO) {
 						ForEach(0 ..< 49) { gpio in
@@ -152,7 +129,6 @@ struct DeviceConfig: OptionsScreen {
 							}
 						}
 					}
-					.pickerStyle(DefaultPickerStyle())
 				}
 				.headerProminence(.increased)
 			}

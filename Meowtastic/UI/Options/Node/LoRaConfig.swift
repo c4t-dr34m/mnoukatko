@@ -127,40 +127,23 @@ struct LoRaConfig: OptionsScreen {
 	@ViewBuilder
 	private var sectionOptions: some View {
 		Section(header: Text("Options")) {
-			VStack(alignment: .leading) {
-				Picker("Region", selection: $region) {
-					ForEach(RegionCodes.allCases) { region in
-						Text(region.description)
-					}
+			Picker("Region", selection: $region) {
+				ForEach(RegionCodes.allCases) { region in
+					Text(region.description)
 				}
-				.pickerStyle(DefaultPickerStyle())
-				.fixedSize()
-
-				Text("The region where you will be using your radios.")
-					.foregroundColor(.gray)
-					.font(.callout)
 			}
-			.pickerStyle(DefaultPickerStyle())
 
 			Toggle(isOn: $usePreset) {
-				Text("Use Preset")
+				Text("Use preset")
 					.font(.body)
 			}
 			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 			if usePreset {
-				VStack(alignment: .leading) {
-					Picker("Presets", selection: $modemPreset ) {
-						ForEach(ModemPresets.allCases) { m in
-							Text(m.description)
-						}
+				Picker("Presets", selection: $modemPreset ) {
+					ForEach(ModemPresets.allCases) { m in
+						Text(m.description)
 					}
-					.pickerStyle(DefaultPickerStyle())
-					.fixedSize()
-
-					Text("Available modem presets, default is Long Fast.")
-						.foregroundColor(.gray)
-						.font(.callout)
 				}
 			}
 		}
@@ -177,70 +160,51 @@ struct LoRaConfig: OptionsScreen {
 			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 			Toggle(isOn: $txEnabled) {
-				Text("Transmit Enabled")
+				Text("Transmit")
 					.font(.body)
 			}
 			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 			if !usePreset {
-				HStack {
-					Picker("Bandwidth", selection: $bandwidth) {
-						ForEach(Bandwidths.allCases) { bw in
-							Text(bw.description)
-								.tag(bw.rawValue == 250 ? 0 : bw.rawValue)
-						}
+				Picker("Bandwidth", selection: $bandwidth) {
+					ForEach(Bandwidths.allCases) { bw in
+						Text(bw.description)
+							.tag(bw.rawValue == 250 ? 0 : bw.rawValue)
 					}
 				}
 
-				HStack {
-					Picker("Spread Factor", selection: $spreadFactor) {
-						ForEach(7..<13) {
-							Text("\($0)")
-								.tag($0 == 12 ? 0 : $0)
-						}
-					}
-				}
-
-				HStack {
-					Picker("Coding Rate", selection: $codingRate) {
-						ForEach(5..<9) {
-							Text("\($0)")
-								.tag($0 == 8 ? 0 : $0)
-						}
-					}
-				}
-			}
-
-			VStack(alignment: .leading) {
-				Picker("Number of hops", selection: $hopLimit) {
-					ForEach(0..<8) {
+				Picker("Spread factor", selection: $spreadFactor) {
+					ForEach(7..<13) {
 						Text("\($0)")
-							.tag($0)
+							.tag($0 == 12 ? 0 : $0)
 					}
 				}
 
-				Text("Sets the maximum number of hops, default is 3. Increasing hops also increases congestion and should be used carefully. O hop broadcast messages will not get ACKs.")
-					.foregroundColor(.gray)
-					.font(.callout)
+				Picker("Coding rate", selection: $codingRate) {
+					ForEach(5..<9) {
+						Text("\($0)")
+							.tag($0 == 8 ? 0 : $0)
+					}
+				}
 			}
-			.pickerStyle(DefaultPickerStyle())
+
+			Picker("Number of hops", selection: $hopLimit) {
+				ForEach(0..<8) {
+					Text("\($0)")
+						.tag($0)
+				}
+			}
 
 			VStack(alignment: .leading) {
 				HStack {
-					Text("Frequency Slot")
+					Text("Frequency slot")
 						.fixedSize()
 
-					TextField("Frequency Slot", value: $channelNum, formatter: formatter)
-						.toolbar {
-							ToolbarItemGroup(placement: .keyboard) {
-								Button("dismiss.keyboard") {
-									focusedField = nil
-								}
-								.font(.subheadline)
-							}
-						}
+					Spacer()
+
+					TextField("", value: $channelNum, formatter: formatter)
+						.optionsStyle()
 						.keyboardType(.decimalPad)
-						.scrollDismissesKeyboard(.immediately)
 						.focused($focusedField, equals: .channelNum)
 						.disabled(overrideFrequency > 0.0)
 				}
@@ -251,28 +215,31 @@ struct LoRaConfig: OptionsScreen {
 			}
 
 			Toggle(isOn: $rxBoostedGain) {
-				Text("RX Boosted Gain")
+				Text("Rx boosted gain")
 					.font(.body)
 
 			}
 			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 			HStack {
-				Text("Frequency Override")
+				Text("Frequency override")
 					.font(.body)
 
 				Spacer()
 
-				TextField("Frequency Override", value: $overrideFrequency, formatter: floatFormatter)
+				TextField("", value: $overrideFrequency, formatter: floatFormatter)
+					.optionsStyle()
 					.keyboardType(.decimalPad)
-					.scrollDismissesKeyboard(.immediately)
 					.focused($focusedField, equals: .frequencyOverride)
 			}
 
-			HStack {
-				Stepper("\(txPower)dBm Transmit Power", value: $txPower, in: 1...30, step: 1)
-					.padding(5)
-			}
+			Stepper(
+				"\(txPower) dBm transmit power",
+				value: $txPower,
+				in: 1...30,
+				step: 1
+			)
+			.padding(5)
 		}
 		.headerProminence(.increased)
 	}

@@ -42,52 +42,75 @@ struct SecurityConfig: OptionsScreen {
 	var body: some View {
 		Form {
 			Section(header: Text("Message Keys")) {
-				VStack(alignment: .leading) {
-					publicKeyEntry
-					Divider()
-
-					privateKeyEntry
-					Divider()
-
-					Text("Primary Admin Key")
+				HStack {
+					Text("Public")
 						.font(.body)
 
-					TextEntry($adminKey, monospaced: true, placeholder: "Primary Admin Key") { key in
+					Spacer()
+
+					KeyField($publicKey, monospaced: true) { key in
+						validate(key: key)
+					}
+				}
+
+				HStack {
+					Text("Private")
+						.font(.body)
+
+					Spacer()
+
+					KeyField($privateKey, monospaced: true) { key in
+						validate(key: key)
+					}
+				}
+			}
+
+			Section(header: Text("Admin Keys")) {
+				HStack {
+					Text("Primary")
+						.font(.body)
+
+					Spacer()
+
+					KeyField($adminKey, monospaced: true) { key in
 						validate(key: key, allowEmpty: true)
 					}
-					Divider()
+				}
 
-					Text("Secondary Admin Key")
+				HStack {
+					Text("Secondary")
 						.font(.body)
 
-					TextEntry($adminKey2, monospaced: true, placeholder: "Secondary Admin Key") { key in
+					Spacer()
+
+					KeyField($adminKey2, monospaced: true) { key in
 						validate(key: key, allowEmpty: true)
 					}
-					Divider()
+				}
 
-					Text("Tertiary Admin Key")
+				HStack {
+					Text("Tertiary")
 						.font(.body)
 
-					TextEntry($adminKey3, monospaced: true, placeholder: "Tertiary Admin Key") { key in
+					Spacer()
+
+					KeyField($adminKey3, monospaced: true) { key in
 						validate(key: key, allowEmpty: true)
 					}
 				}
 			}
 			.headerProminence(.increased)
 
-			Section(header: Text("Logs")) {
+			Section(header: Text("Serial Console")) {
 				Toggle(isOn: $serialEnabled) {
-					Text("Serial Console")
+					Text("Serial console")
 						.font(.body)
-					Text("Serial Console over the Stream API.")
 				}
 				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
 				Toggle(isOn: $debugLogApiEnabled) {
-					Text("Debug Logs")
+					Text("Logging")
 						.font(.body)
-
-					Text("Output live debug logging over serial, view and export position-redacted device logs over Bluetooth.")
 				}
 				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 			}
@@ -96,15 +119,14 @@ struct SecurityConfig: OptionsScreen {
 			Section(header: Text("Administration")) {
 				if adminKey.length > 0 || adminChannelEnabled {
 					Toggle(isOn: $isManaged) {
-						Text("Managed Device")
+						Text("Managed device")
 							.font(.body)
-						Text("Device is managed by a mesh administrator, the user is unable to access any of the device settings.")
 					}
 					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 				}
 
 				Toggle(isOn: $adminChannelEnabled) {
-					Text("Legacy Administration")
+					Text("Legacy administration")
 						.font(.body)
 
 					Text("Allow incoming device control over the insecure legacy admin channel.")
@@ -152,34 +174,6 @@ struct SecurityConfig: OptionsScreen {
 		.onChange(of: adminKey3) {
 			hasChanges = true
 		}
-	}
-
-	@ViewBuilder
-	private var publicKeyEntry: some View {
-		Text("Public Key")
-			.font(.body)
-
-		TextEntry($publicKey, monospaced: true, placeholder: "Public Key") { key in
-			validate(key: key)
-		}
-
-		Text("Sent out to other nodes on the mesh to allow them to compute a shared secret key.")
-			.foregroundStyle(.secondary)
-			.font(.caption)
-	}
-
-	@ViewBuilder
-	private var privateKeyEntry: some View {
-		Text("Private Key")
-			.font(.body)
-
-		TextEntry($privateKey, monospaced: true, placeholder: "Private Key") { key in
-			validate(key: key)
-		}
-
-		Text("Used to create a shared key with a remote device.")
-			.foregroundStyle(.secondary)
-			.font(.caption)
 	}
 
 	func setInitialValues() {
