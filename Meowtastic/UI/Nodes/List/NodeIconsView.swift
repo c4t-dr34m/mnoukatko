@@ -3,11 +3,6 @@ import Foundation
 import SwiftUI
 
 struct NodeIconsView: View {
-	var connectedNode: Int64
-
-	@ObservedObject
-	var node: NodeInfoEntity
-
 	private let detailIconSize: CGFloat = 16
 	private let detailIconSpacing: CGFloat = 6
 	private let detailInfoTextFont = Font.system(size: 12, weight: .semibold, design: .rounded)
@@ -18,12 +13,17 @@ struct NodeIconsView: View {
 	private var colorScheme: ColorScheme
 	@EnvironmentObject
 	private var locationManager: LocationManager
+	@ObservedObject
+	private var node: NodeInfoEntity
 	@State
 	private var telemetryHistory = Calendar.current.startOfDay(
 		// swiftlint:disable:next force_unwrapping
 		for: Calendar.current.date(byAdding: .day, value: -5, to: .now)!
 	)
-
+	private var connectedNode: Int64
+	private var modemPreset: ModemPresets = ModemPresets(
+		rawValue: UserDefaults.modemPreset
+	) ?? ModemPresets.longFast
 	private var nodePosition: PositionEntity? {
 		node.positions?.lastObject as? PositionEntity
 	}
@@ -71,6 +71,17 @@ struct NodeIconsView: View {
 
 				if node.hopsAway == 0 {
 					divider
+
+					if
+						!node.viaMqtt,
+						let signal = LoRaSignal.getSignalStrength(snr: node.snr, rssi: node.rssi, preset: modemPreset)
+					{
+						SignalStrengthIndicator(
+							signalStrength: signal,
+							size: detailIconSize,
+							color: .gray
+						)
+					}
 
 					Image(systemName: "eye")
 						.font(detailInfoIconFont)
@@ -217,5 +228,10 @@ struct NodeIconsView: View {
 		Divider()
 			.frame(height: 16)
 			.foregroundColor(.gray)
+	}
+
+	init(connectedNode: Int64, node: NodeInfoEntity) {
+		self.connectedNode = connectedNode
+		self.node = node
 	}
 }

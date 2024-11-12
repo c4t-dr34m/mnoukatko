@@ -12,7 +12,7 @@ struct LoraSignalView: View {
 
 	var body: some View {
 		if snr != 0.0 && rssi != 0 {
-			let signalStrength = LoRaSignal.getStrength(snr: snr, rssi: rssi, preset: preset)
+			let signalStrength = LoRaSignal.getSignalStrength(snr: snr, rssi: rssi, preset: preset)
 
 			HStack {
 				Image(systemName: "cellularbars")
@@ -21,7 +21,7 @@ struct LoraSignalView: View {
 					.frame(width: 16)
 
 				Gauge(
-					value: Double(signalStrength.rawValue),
+					value: Double(signalStrength?.rawValue ?? 0),
 					in: 0...3
 				) { }
 					.gaugeStyle(.accessoryLinearCapacity)

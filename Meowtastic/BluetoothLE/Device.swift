@@ -17,15 +17,15 @@ public struct Device: Identifiable, Equatable {
 		lhs.id == rhs.id
 	}
 
-	public func getSignalStrength() -> BLESignalStrength {
+	public func getSignalStrength() -> SignalStrength {
 		if rssi > -65 {
-			return BLESignalStrength.strong
+			return SignalStrength.strong
 		}
 		else if rssi > -85 {
-			return BLESignalStrength.normal
+			return SignalStrength.normal
 		}
 		else {
-			return BLESignalStrength.weak
+			return SignalStrength.weak
 		}
 	}
 }

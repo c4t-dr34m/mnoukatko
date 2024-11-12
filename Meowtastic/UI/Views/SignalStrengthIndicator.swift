@@ -32,7 +32,7 @@ import Foundation
 import SwiftUI
 
 struct SignalStrengthIndicator: View {
-	private let signalStrength: BLESignalStrength
+	private let signalStrength: SignalStrength
 	private let size: CGFloat
 	private let colorOverride: Color?
 
@@ -67,7 +67,7 @@ struct SignalStrengthIndicator: View {
 	}
 
 	init(
-		signalStrength: BLESignalStrength,
+		signalStrength: SignalStrength,
 		size: CGFloat,
 		color: Color? = nil
 	) {
@@ -86,7 +86,7 @@ struct Divided<S: Shape>: Shape {
 	}
 }
 
-public enum BLESignalStrength: Int {
+public enum SignalStrength: Int {
 	case weak = 0
 	case normal = 1
 	case strong = 2
