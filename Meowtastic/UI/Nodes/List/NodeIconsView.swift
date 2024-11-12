@@ -76,17 +76,22 @@ struct NodeIconsView: View {
 						!node.viaMqtt,
 						let signal = LoRaSignal.getSignalStrength(snr: node.snr, rssi: node.rssi, preset: modemPreset)
 					{
-						SignalStrengthIndicator(
-							signalStrength: signal,
-							size: detailIconSize,
-							color: .gray
-						)
-					}
-
-					Image(systemName: "eye")
-						.font(detailInfoIconFont)
-						.foregroundColor(.gray)
+						ZStack(alignment: .center) {
+							SignalStrengthIndicator(
+								signalStrength: signal,
+								size: detailIconSize - 2,
+								color: .gray,
+								thin: true
+							)
+						}
 						.frame(width: detailIconSize)
+					}
+					else {
+						Image(systemName: "eye")
+							.font(detailInfoIconFont)
+							.foregroundColor(.gray)
+							.frame(width: detailIconSize)
+					}
 				}
 				else {
 					divider

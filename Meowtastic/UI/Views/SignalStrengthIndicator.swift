@@ -34,6 +34,7 @@ import SwiftUI
 struct SignalStrengthIndicator: View {
 	private let signalStrength: SignalStrength
 	private let size: CGFloat
+	private let thin: Bool
 	private let colorOverride: Color?
 
 	private var color: Color {
@@ -55,12 +56,15 @@ struct SignalStrengthIndicator: View {
 
 	@ViewBuilder
 	var body: some View {
-		HStack(alignment: .bottom, spacing: size / 10) {
+		let spacing = size / (thin ? 5 : 10)
+		let width = (size - 2 * spacing) / 3
+
+		HStack(alignment: .bottom, spacing: spacing) {
 			ForEach(0..<3) { bar in
-				RoundedRectangle(cornerRadius: size / 8)
+				RoundedRectangle(cornerRadius: width / 3)
 					.divided(amount: (CGFloat(bar) + 1) / CGFloat(3))
 					.fill(color.opacity(bar <= signalStrength.rawValue ? 1 : 0.3))
-					.frame(width: size / 3, height: size)
+					.frame(width: width, height: size)
 			}
 		}
 		.frame(width: size, height: size)
@@ -69,11 +73,13 @@ struct SignalStrengthIndicator: View {
 	init(
 		signalStrength: SignalStrength,
 		size: CGFloat,
-		color: Color? = nil
+		color: Color? = nil,
+		thin: Bool = false
 	) {
 		self.signalStrength = signalStrength
 		self.size = size
 		self.colorOverride = color
+		self.thin = thin
 	}
 }
 
