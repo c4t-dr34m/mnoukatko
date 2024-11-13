@@ -36,6 +36,17 @@ struct NodeList: View {
 		]
 	)
 	private var nodes: FetchedResults<NodeInfoEntity>
+	private var nodesOnline: [NodeInfoEntity] {
+		nodes.filter { node in
+			node.num != connectedNodeNum && node.isOnline == true
+		}
+	}
+	private var nodesOffline: [NodeInfoEntity] {
+		nodes.filter { node in
+			node.num != connectedNodeNum && node.isOnline == false
+		}
+
+	}
 	private var connectedNode: NodeInfoEntity? {
 		coreDataTools.getNodeInfo(
 			id: connectedNodeNum,
@@ -49,19 +60,40 @@ struct NodeList: View {
 	var body: some View {
 		NavigationStack {
 			List(selection: $selectedNode) {
-				Section(
-					header: Text("Summary").fontDesign(.rounded)
-				) {
-					NodeListSummary()
-				}
-				.headerProminence(.increased)
+				if connectedNode != nil {
+					Section(
+						header: Text("Summary").fontDesign(.rounded)
+					) {
+						NodeListSummary()
+					}
+					.headerProminence(.increased)
 
-				Section(
-					header: Text("Connected Device").fontDesign(.rounded)
-				) {
-					NodeListConnectedItem()
+					Section(
+						header: Text("Connected Device").fontDesign(.rounded)
+					) {
+						NodeListConnectedItem()
+					}
+					.headerProminence(.increased)
 				}
-				.headerProminence(.increased)
+				else {
+					NavigationLink {
+						NavigationLazyView(
+							Connect(node: connectedNode)
+						)
+					} label: {
+						Label {
+							Text("Connection")
+						} icon: {
+							if connectedNode != nil {
+								Image(systemName: "wifi")
+							}
+							else {
+								Image(systemName: "wifi.slash")
+							}
+						}
+					}
+
+				}
 
 				nodeListOnline
 				nodeListOffline
@@ -111,17 +143,13 @@ struct NodeList: View {
 
 	@ViewBuilder
 	private var nodeListOnline: some View {
-		let nodeList = nodes.filter { node in
-			node.num != connectedNodeNum && node.isOnline == true
-		}
-
 		Section(
 			header: listHeader(
 				title: "Online",
-				nodesCount: nodeList.count
+				nodesCount: nodesOnline.count
 			)
 		) {
-			ForEach(nodeList, id: \.num) { node in
+			ForEach(nodesOnline, id: \.num) { node in
 				NodeListItem(
 					node: node,
 					connected: connectedDevice.device?.num ?? -1 == node.num
@@ -139,20 +167,16 @@ struct NodeList: View {
 
 	@ViewBuilder
 	private var nodeListOffline: some View {
-		let nodeList = nodes.filter { node in
-			node.num != connectedNodeNum && node.isOnline == false
-		}
-
 		Section(
 			header: listHeader(
 				title: "Offline",
-				nodesCount: nodeList.count,
+				nodesCount: nodesOffline.count,
 				collapsible: true,
 				property: $showOffline
 			)
 		) {
-			if showOffline {
-				ForEach(nodeList, id: \.num) { node in
+			if showOffline || nodesOnline.isEmpty {
+				ForEach(nodesOffline, id: \.num) { node in
 					NodeListItem(
 						node: node,
 						connected: connectedDevice.device?.num ?? -1 == node.num

@@ -31,7 +31,7 @@ struct AvatarNode: View {
 			return node.color
 		}
 		else {
-			return Color.gray.opacity(0.7)
+			return Color.gray.opacity(0.2)
 		}
 	}
 
