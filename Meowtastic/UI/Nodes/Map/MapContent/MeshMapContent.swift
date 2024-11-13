@@ -70,15 +70,31 @@ struct MeshMapContent: MapContent {
 			.frame(width: 64, height: 64)
 		}
 		else {
-			ZStack(alignment: .center) {
-				RoundedRectangle(cornerRadius: 4)
-					.frame(width: 12, height: 12)
-					.foregroundColor(colorScheme == .dark ? .black.opacity(0.7) : .white.opacity(0.7))
-				RoundedRectangle(cornerRadius: 2)
-					.frame(width: 8, height: 8)
-					.foregroundColor(node.color)
+			HStack(alignment: .center, spacing: 4) {
+				ZStack(alignment: .center) {
+					RoundedRectangle(cornerRadius: 4)
+						.frame(width: 12, height: 12)
+						.foregroundColor(colorScheme == .dark ? .black.opacity(0.7) : .white.opacity(0.7))
+					RoundedRectangle(cornerRadius: 2)
+						.frame(width: 8, height: 8)
+						.foregroundColor(node.color)
+				}
+
+				if let name = node.user?.longName {
+					Text(name)
+						.font(.system(size: 10, weight: .light, design: .rounded))
+						.foregroundColor(.primary.opacity(0.7))
+				}
 			}
-			.padding(.all, 8)
+			.padding(.all, 4)
+			.overlay(
+				RoundedRectangle(cornerRadius: 8)
+					.stroke(.gray.opacity(0.5), lineWidth: 1)
+					.background(.gray.opacity(0.2))
+			)
+			.clipShape(
+				RoundedRectangle(cornerRadius: 8)
+			)
 		}
 	}
 }
