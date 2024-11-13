@@ -9,7 +9,10 @@ struct AvatarAbstract: View {
 	// swiftlint:disable:next large_tuple
 	private let corners: (Bool, Bool, Bool, Bool)?
 
-	private var background: Color {
+	private var foregroundColor: Color {
+		backgroundColor.isLight() ? .black : .white
+	}
+	private var backgroundColor: Color {
 		if let color {
 			return color
 		}
@@ -17,8 +20,16 @@ struct AvatarAbstract: View {
 			return .accentColor
 		}
 	}
-	private var foreground: Color {
-		background.isLight() ? .black : .white
+	private var background: RadialGradient {
+		RadialGradient(
+			colors: [
+				backgroundColor,
+				backgroundColor.opacity(0.7)
+			],
+			center: .topLeading,
+			startRadius: 0,
+			endRadius: size
+		)
 	}
 
 	private var radii: RectangleCornerRadii {
@@ -47,7 +58,7 @@ struct AvatarAbstract: View {
 			if let name, !name.isEmpty {
 				Text(name)
 					.font(.system(size: 128, weight: .heavy, design: .rounded))
-					.foregroundColor(foreground)
+					.foregroundColor(foregroundColor)
 					.lineLimit(1)
 					.minimumScaleFactor(0.01)
 					.padding(.all, size / 8)
@@ -57,7 +68,7 @@ struct AvatarAbstract: View {
 				Image(systemName: icon)
 					.resizable()
 					.scaledToFit()
-					.foregroundColor(foreground)
+					.foregroundColor(foregroundColor)
 					.padding(.all, size / 8)
 					.frame(width: size, height: size)
 			}

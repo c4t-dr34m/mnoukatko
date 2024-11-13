@@ -21,12 +21,13 @@ struct AvatarNode: View {
 		// swiftlint:disable:next force_unwrapping
 		for: Calendar.current.date(byAdding: .minute, value: -10, to: .now)!
 	)
-
 	private var name: String? {
 		node.user?.shortName
 	}
-
-	private var background: Color {
+	private var foregroundColor: Color {
+		backgroundColor.isLight() ? .black : .white
+	}
+	private var backgroundColor: Color {
 		if node.isOnline || ignoreOffline {
 			return node.color
 		}
@@ -34,11 +35,17 @@ struct AvatarNode: View {
 			return Color.gray.opacity(0.2)
 		}
 	}
-
-	private var foreground: Color {
-		background.isLight() ? .black : .white
+	private var background: RadialGradient {
+		RadialGradient(
+			colors: [
+				backgroundColor,
+				backgroundColor.opacity(0.7)
+			],
+			center: .topLeading,
+			startRadius: 0,
+			endRadius: size
+		)
 	}
-
 	private var temperature: Double? {
 		let nodeEnvironment = node
 			.telemetries?
@@ -80,7 +87,7 @@ struct AvatarNode: View {
 			if let name = name, !name.isEmpty {
 				Text(name)
 					.font(.system(size: 128, weight: .heavy, design: .rounded))
-					.foregroundColor(foreground)
+					.foregroundColor(foregroundColor)
 					.lineLimit(1)
 					.minimumScaleFactor(0.01)
 					.padding(.all, size / 8)
@@ -90,7 +97,7 @@ struct AvatarNode: View {
 				Image(systemName: "questionmark")
 					.resizable()
 					.scaledToFit()
-					.foregroundColor(foreground)
+					.foregroundColor(foregroundColor)
 					.padding(.all, size / 8)
 					.frame(width: size, height: size)
 			}
@@ -107,33 +114,33 @@ struct AvatarNode: View {
 						if diff < 1 {
 							Text("now")
 								.font(.system(size: size / 6, weight: .semibold, design: .rounded))
-								.foregroundColor(background.opacity(0.8))
+								.foregroundColor(backgroundColor.opacity(0.8))
 								.lineLimit(1)
 								.minimumScaleFactor(0.2)
 						}
 						else if diff < 60 {
 							Text(String(format: "%.0f", diff) + "\"")
 								.font(.system(size: size / 6, weight: .bold, design: .rounded))
-								.foregroundColor(background.opacity(0.8))
+								.foregroundColor(backgroundColor.opacity(0.8))
 								.lineLimit(1)
 								.minimumScaleFactor(0.2)
 						}
 						else {
 							Text(String(format: "%.0f", diff / 60) + "'")
 								.font(.system(size: size / 6, weight: .bold, design: .rounded))
-								.foregroundColor(background.opacity(0.8))
+								.foregroundColor(backgroundColor.opacity(0.8))
 								.lineLimit(1)
 								.minimumScaleFactor(0.2)
 						}
 
 						Image(systemName: "clock")
 							.font(.system(size: size / 8, weight: .semibold, design: .rounded))
-							.foregroundColor(background.opacity(0.8))
+							.foregroundColor(backgroundColor.opacity(0.8))
 					}
 					.padding(.leading, size / 16)
 					.padding(.trailing, size / 8)
 					.padding(.vertical, size / 36)
-					.background(foreground.opacity(0.8))
+					.background(foregroundColor.opacity(0.8))
 					.clipShape(
 						UnevenRoundedRectangle(
 							cornerRadii: RectangleCornerRadii(topLeading: 4)
@@ -144,11 +151,11 @@ struct AvatarNode: View {
 				else {
 					Image(systemName: "antenna.radiowaves.left.and.right.slash")
 						.font(.system(size: size / 8, weight: .semibold, design: .rounded))
-						.foregroundColor(background.opacity(0.8))
+						.foregroundColor(backgroundColor.opacity(0.8))
 						.padding(.leading, size / 16)
 						.padding(.trailing, size / 8)
 						.padding(.vertical, size / 36)
-						.background(foreground.opacity(0.8))
+						.background(foregroundColor.opacity(0.8))
 						.clipShape(
 							UnevenRoundedRectangle(
 								cornerRadii: RectangleCornerRadii(topLeading: 4)
@@ -167,17 +174,17 @@ struct AvatarNode: View {
 				HStack(alignment: .center, spacing: 2) {
 					Text(tempFormatted)
 						.font(.system(size: size / 6, weight: .bold, design: .rounded))
-						.foregroundColor(background.opacity(0.8))
+						.foregroundColor(backgroundColor.opacity(0.8))
 						.lineLimit(1)
 
 					Image(systemName: "thermometer.variable")
 						.font(.system(size: size / 8, weight: .semibold, design: .rounded))
-						.foregroundColor(background.opacity(0.8))
+						.foregroundColor(backgroundColor.opacity(0.8))
 				}
 				.padding(.leading, size / 16)
 				.padding(.trailing, size / 8)
 				.padding(.vertical, size / 36)
-				.background(foreground.opacity(0.8))
+				.background(foregroundColor.opacity(0.8))
 				.clipShape(
 					UnevenRoundedRectangle(
 						cornerRadii: RectangleCornerRadii(topLeading: 4)
