@@ -81,18 +81,8 @@ struct NodeList: View {
 							Connect(node: connectedNode)
 						)
 					} label: {
-						Label {
-							Text("Connection")
-						} icon: {
-							if connectedNode != nil {
-								Image(systemName: "wifi")
-							}
-							else {
-								Image(systemName: "wifi.slash")
-							}
-						}
+						Text("Connection")
 					}
-
 				}
 
 				nodeListOnline

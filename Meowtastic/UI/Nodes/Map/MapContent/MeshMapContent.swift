@@ -95,6 +95,7 @@ struct MeshMapContent: MapContent {
 			.clipShape(
 				RoundedRectangle(cornerRadius: 8)
 			)
+			.rotationEffect(.degrees(27.5))
 		}
 	}
 }
