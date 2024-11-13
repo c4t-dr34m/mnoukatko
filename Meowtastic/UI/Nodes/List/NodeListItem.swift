@@ -6,6 +6,7 @@ struct NodeListItem: View {
 	private let connected: Bool
 	private let modemPreset: ModemPresets
 	private let node: NodeInfoEntity
+	private let detailNameFont = Font.system(size: 20, weight: .semibold, design: .rounded)
 	private let detailInfoFont = Font.system(size: 14, weight: .regular, design: .rounded)
 	private let detailIconWidth: CGFloat = 20
 
@@ -22,11 +23,12 @@ struct NodeListItem: View {
 				NodeDetail(node: node)
 			)
 		} label: {
-			HStack(alignment: .center) {
+			HStack(alignment: .top) {
 				avatar
 
 				VStack(alignment: .leading, spacing: 8) {
 					Spacer()
+						.frame(height: 2)
 
 					name
 
@@ -36,8 +38,6 @@ struct NodeListItem: View {
 					else {
 						lastHeard
 					}
-
-					Spacer()
 				}
 
 				Spacer()
@@ -86,8 +86,7 @@ struct NodeListItem: View {
 	@ViewBuilder
 	private var name: some View {
 		Text(node.user?.longName ?? "Unknown node")
-			.fontWeight(.medium)
-			.font(.title2)
+			.font(detailNameFont)
 			.lineLimit(2)
 			.minimumScaleFactor(0.5)
 	}

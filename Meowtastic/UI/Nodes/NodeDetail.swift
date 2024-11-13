@@ -11,8 +11,9 @@ struct NodeDetail: View {
 	private let node: NodeInfoEntity
 	private let isInSheet: Bool
 	private let distanceFormatter = MKDistanceFormatter()
-	private let detailInfoFont = Font.system(size: 14, weight: .regular, design: .rounded)
-	private let detailIconSize: CGFloat = 14
+	private let detailInfoTextFont = Font.system(size: 14, weight: .regular, design: .rounded)
+	private let detailInfoIconFont = Font.system(size: 16, weight: .regular, design: .rounded)
+	private let detailIconSize: CGFloat = 18
 
 	@Environment(\.managedObjectContext)
 	private var context
@@ -271,13 +272,13 @@ struct NodeDetail: View {
 					let distanceFormatted = distanceFormatter.string(fromDistance: Double(distance))
 
 					Image(systemName: "mappin.and.ellipse")
-						.font(detailInfoFont)
-						.foregroundColor(.gray)
+						.font(detailInfoIconFont)
+						.foregroundColor(.primary)
 						.frame(width: detailIconSize)
 
 					Text(distanceFormatted)
-						.font(detailInfoFont)
-						.foregroundColor(.gray)
+						.font(detailInfoTextFont)
+						.foregroundColor(.primary)
 
 					Spacer()
 						.frame(width: 4)
@@ -309,25 +310,25 @@ struct NodeDetail: View {
 					)
 
 					Image(systemName: "gauge.open.with.lines.needle.33percent")
-						.font(detailInfoFont)
-						.foregroundColor(.gray)
+						.font(detailInfoIconFont)
+						.foregroundColor(.primary)
 						.frame(width: detailIconSize)
 
 					Text(speedFormatted)
-						.font(detailInfoFont)
-						.foregroundColor(.gray)
+						.font(detailInfoTextFont)
+						.foregroundColor(.primary)
 
 					Spacer()
 						.frame(width: 4)
 
 					Image(systemName: "safari")
-						.font(detailInfoFont)
-						.foregroundColor(.gray)
+						.font(detailInfoIconFont)
+						.foregroundColor(.primary)
 						.frame(width: detailIconSize)
 
 					Text(headingFormatted)
-						.font(detailInfoFont)
-						.foregroundColor(.gray)
+						.font(detailInfoTextFont)
+						.foregroundColor(.primary)
 
 					Spacer()
 						.frame(width: 4)
@@ -338,13 +339,13 @@ struct NodeDetail: View {
 				)
 
 				Image(systemName: "mountain.2")
-					.font(detailInfoFont)
-					.foregroundColor(.gray)
+					.font(detailInfoIconFont)
+					.foregroundColor(.primary)
 					.frame(width: detailIconSize)
 
 				Text(altitudeFormatted)
-					.font(detailInfoFont)
-					.foregroundColor(.gray)
+					.font(detailInfoTextFont)
+					.foregroundColor(.primary)
 
 				let precision = PositionPrecision(rawValue: Int(position.precisionBits))?.precisionMeters
 				if let precision {
@@ -356,13 +357,13 @@ struct NodeDetail: View {
 						.frame(width: 4)
 
 					Image(systemName: "scope")
-						.font(detailInfoFont)
-						.foregroundColor(.gray)
+						.font(detailInfoIconFont)
+						.foregroundColor(.primary)
 						.frame(width: detailIconSize)
 
 					Text(precisionFormatted)
-						.font(detailInfoFont)
-						.foregroundColor(.gray)
+						.font(detailInfoTextFont)
+						.foregroundColor(.primary)
 				}
 
 			}
@@ -385,13 +386,13 @@ struct NodeDetail: View {
 				if nodeEnvironment.windSpeed != 0 {
 					Image(systemName: "arrow.up.circle")
 						.rotationEffect(.degrees(Double(nodeEnvironment.windDirection)))
-						.font(detailInfoFont)
-						.foregroundColor(.gray)
+						.font(detailInfoIconFont)
+						.foregroundColor(.primary)
 						.frame(width: detailIconSize)
 
 					Text(windFormatted)
-						.font(detailInfoFont)
-						.foregroundColor(.gray)
+						.font(detailInfoTextFont)
+						.foregroundColor(.primary)
 
 					Spacer()
 						.frame(width: 4)
@@ -399,39 +400,39 @@ struct NodeDetail: View {
 
 				if temp < 10 {
 					Image(systemName: "thermometer.low")
-						.font(detailInfoFont)
-						.foregroundColor(nodeEnvironmentHistory?.count ?? 0 > 1 ? .blue : .gray)
+						.font(detailInfoIconFont)
+						.foregroundColor(nodeEnvironmentHistory?.count ?? 0 > 1 ? .blue : .primary)
 						.frame(width: detailIconSize)
 				}
 				else if temp < 25 {
 					Image(systemName: "thermometer.medium")
-						.font(detailInfoFont)
-						.foregroundColor(nodeEnvironmentHistory?.count ?? 0 > 1 ? .blue : .gray)
+						.font(detailInfoIconFont)
+						.foregroundColor(nodeEnvironmentHistory?.count ?? 0 > 1 ? .blue : .primary)
 						.frame(width: detailIconSize)
 				}
 				else {
 					Image(systemName: "thermometer.high")
-						.font(detailInfoFont)
-						.foregroundColor(nodeEnvironmentHistory?.count ?? 0 > 1 ? .blue : .gray)
+						.font(detailInfoIconFont)
+						.foregroundColor(nodeEnvironmentHistory?.count ?? 0 > 1 ? .blue : .primary)
 						.frame(width: detailIconSize)
 				}
 
 				Text(tempFormatted)
-					.font(detailInfoFont)
-					.foregroundColor(.gray)
+					.font(detailInfoTextFont)
+					.foregroundColor(.primary)
 
 				if nodeEnvironment.barometricPressure > 0 {
 					Spacer()
 						.frame(width: 4)
 
 					Image(systemName: "barometer")
-						.font(detailInfoFont)
-						.foregroundColor(nodePressureHistory?.count ?? 0 > 1 ? .red : .gray)
+						.font(detailInfoIconFont)
+						.foregroundColor(nodePressureHistory?.count ?? 0 > 1 ? .red : .primary)
 						.frame(width: detailIconSize)
 
 					Text(pressureFormatted)
-						.font(detailInfoFont)
-						.foregroundColor(.gray)
+						.font(detailInfoTextFont)
+						.foregroundColor(.primary)
 				}
 
 				if nodeEnvironment.relativeHumidity > 0, nodeEnvironment.relativeHumidity < 100 {
@@ -439,13 +440,13 @@ struct NodeDetail: View {
 						.frame(width: 4)
 
 					Image(systemName: "humidity")
-						.font(detailInfoFont)
-						.foregroundColor(.gray)
+						.font(detailInfoIconFont)
+						.foregroundColor(.primary)
 						.frame(width: detailIconSize)
 
 					Text(humidityFormatted)
-						.font(detailInfoFont)
-						.foregroundColor(.gray)
+						.font(detailInfoTextFont)
+						.foregroundColor(.primary)
 				}
 			}
 		}

@@ -257,7 +257,7 @@ struct TraceRoute: View {
 							.frame(width: 24)
 					}
 
-					VStack(alignment: .leading, spacing: 4) {
+					VStack(alignment: .leading, spacing: 8) {
 						Text(node?.user?.longName ?? "Unknown node")
 							.font(.system(size: 14))
 							.foregroundColor(.primary)

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct NodeListConnectedItem: View {
 	private let coreDataTools = CoreDataTools()
+	private let detailNameFont = Font.system(size: 20, weight: .semibold, design: .rounded)
 	private let detailInfoFont = Font.system(size: 14, weight: .regular, design: .rounded)
 	private let detailIconSize: CGFloat = 16
 
@@ -41,11 +42,13 @@ struct NodeListConnectedItem: View {
 				connectedNodeAvatar
 
 				VStack(alignment: .leading, spacing: 4) {
+					Spacer()
+						.frame(height: 2)
+
 					if let connectedNode {
 						Text(connectedNode.user?.longName ?? "Unknown node")
 							.lineLimit(2)
-							.fontWeight(.medium)
-							.font(.title2)
+							.font(detailNameFont)
 
 						BatteryView(
 							node: connectedNode,
@@ -151,8 +154,7 @@ struct NodeListConnectedItem: View {
 					else {
 						Text("Not connected")
 							.lineLimit(1)
-							.fontWeight(.medium)
-							.font(.title2)
+							.font(detailNameFont)
 					}
 				}
 				.frame(alignment: .leading)

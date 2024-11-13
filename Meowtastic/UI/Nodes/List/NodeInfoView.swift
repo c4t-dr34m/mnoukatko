@@ -8,6 +8,8 @@ struct NodeInfoView: View {
 	@ObservedObject
 	var node: NodeInfoEntity
 
+	private let detailNameFont = Font.system(size: 20, weight: .semibold, design: .rounded)
+
 	var body: some View {
 		HStack(alignment: .top, spacing: 16) {
 			AvatarNode(
@@ -20,13 +22,13 @@ struct NodeInfoView: View {
 					if let longName = node.user?.longName {
 						Text(longName)
 							.lineLimit(1)
-							.font(.title)
+							.font(detailNameFont)
 							.minimumScaleFactor(0.5)
 					}
 					else {
 						Text("Node Without a Name")
 							.lineLimit(1)
-							.font(.title)
+							.font(detailNameFont)
 							.foregroundColor(.gray)
 							.minimumScaleFactor(0.5)
 					}

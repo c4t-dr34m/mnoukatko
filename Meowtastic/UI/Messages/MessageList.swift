@@ -75,18 +75,14 @@ struct MessageList: View {
 					messageList
 						.scrollDismissesKeyboard(.interactively)
 						.scrollIndicators(.hidden)
-						.onAppear {
-							if let channel {
-								let id = "notification.id.channel_\(channel.index)"
-								notificationManager.remove(with: id)
-							}
-						}
-						.onChange(of: messages.count, initial: true) {
-							if let firstUnreadMessage {
-								scrollView.scrollTo(firstUnreadMessage.messageId)
-							}
-							else if let lastMessage {
-								scrollView.scrollTo(lastMessage.messageId)
+						.onChange(of: messages.last?.messageId, initial: true) {
+							Task {
+								if let firstUnreadMessage {
+									scrollView.scrollTo(firstUnreadMessage.messageId, anchor: .bottom)
+								}
+								else if let lastMessage {
+									scrollView.scrollTo(lastMessage.messageId, anchor: .bottom)
+								}
 							}
 						}
 				}
@@ -105,6 +101,10 @@ struct MessageList: View {
 						"messages_in_list": messages.count
 					]
 				)
+
+				if channel != nil {
+					UserDefaults.channelDisplayed = true
+				}
 			}
 
 			if let destination, connectedDevice.getConnectedDevice() != nil {
@@ -183,6 +183,7 @@ struct MessageList: View {
 					destination: destination,
 					replyMessageId: $replyMessageId
 				)
+				.id(message.messageId)
 				.listRowInsets(.init(top: 4, leading: 0, bottom: 4, trailing: 0))
 				.listRowSeparator(.hidden)
 				.listRowBackground(Color.clear)
@@ -244,17 +245,6 @@ struct MessageList: View {
 		}
 
 		return nil
-	}
-
-	private func getUserColor(for node: NodeInfoEntity?) -> Color {
-		if let node, node.isOnline {
-			return Color(
-				UIColor(hex: UInt32(node.num))
-			)
-		}
-		else {
-			return Color.gray.opacity(0.7)
-		}
 	}
 
 	@discardableResult

@@ -66,7 +66,7 @@ struct NodeList: View {
 				nodeListOnline
 				nodeListOffline
 			}
-			.listStyle(.automatic)
+			.listStyle(.insetGrouped)
 			.disableAutocorrection(true)
 			.scrollDismissesKeyboard(.interactively)
 			.navigationTitle("Nodes")

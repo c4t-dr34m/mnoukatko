@@ -10,30 +10,20 @@ struct MessageContextMenuItems: View {
 	let isCurrentUser: Bool
 	let onReply: () -> Void
 
-	private let dateFormatString = {
-		let format = DateFormatter.dateFormat(
-			fromTemplate: "yyMMddjmmssa",
-			options: 0,
-			locale: Locale.current
-		)
-
-		return format ?? "MM/dd/YY j:mm:ss:a"
-	}()
-
 	@Environment(\.managedObjectContext)
 	private var context
 
 	var body: some View {
-		Button(action: onReply) {
-			Text("Reply")
-			Image(systemName: "arrowshape.turn.up.left")
-		}
-
 		Button {
 			UIPasteboard.general.string = message.messagePayload
 		} label: {
 			Text("Copy message text")
 			Image(systemName: "doc.on.doc")
+		}
+
+		Button(action: onReply) {
+			Text("Reply")
+			Image(systemName: "arrowshape.turn.up.left")
 		}
 
 		Divider()

@@ -3,10 +3,10 @@ import Foundation
 import SwiftUI
 
 struct NodeIconsView: View {
-	private let detailIconSize: CGFloat = 16
-	private let detailIconSpacing: CGFloat = 6
-	private let detailInfoTextFont = Font.system(size: 12, weight: .semibold, design: .rounded)
-	private let detailInfoIconFont = Font.system(size: 14, weight: .regular, design: .rounded)
+	private let detailIconSize: CGFloat = 18
+	private let detailIconSpacing: CGFloat = 12
+	private let detailInfoTextFont = Font.system(size: 14, weight: .regular, design: .rounded)
+	private let detailInfoIconFont = Font.system(size: 16, weight: .regular, design: .rounded)
 	private let detailHopsIconFont = Font.system(size: 10, weight: .semibold, design: .rounded)
 
 	@Environment(\.colorScheme)
@@ -51,113 +51,122 @@ struct NodeIconsView: View {
 
 	@ViewBuilder
 	var body: some View {
-		HStack(alignment: .center, spacing: detailIconSpacing) {
-			if let role = DeviceRoles(rawValue: Int(node.user?.role ?? 0))?.systemName {
-				Image(systemName: role)
-					.font(detailInfoIconFont)
-					.foregroundColor(.gray)
-					.frame(width: detailIconSize)
-			}
-
-			if connectedNode != node.num {
-				if node.viaMqtt {
-					divider
-
-					Image(systemName: "network")
+		VStack(alignment: .leading, spacing: 8) {
+			HStack(alignment: .center, spacing: detailIconSpacing) {
+				if let role = DeviceRoles(rawValue: Int(node.user?.role ?? 0))?.systemName {
+					Image(systemName: role)
 						.font(detailInfoIconFont)
 						.foregroundColor(.gray)
 						.frame(width: detailIconSize)
 				}
 
-				if node.hopsAway == 0 {
-					divider
+				if connectedNode != node.num {
+					if node.viaMqtt {
+						divider
 
-					if
-						!node.viaMqtt,
-						let signal = LoRaSignal.getSignalStrength(snr: node.snr, rssi: node.rssi, preset: modemPreset)
-					{
-						ZStack(alignment: .center) {
-							SignalStrengthIndicator(
-								signalStrength: signal,
-								size: detailIconSize - 2,
-								color: .gray,
-								thin: true
-							)
+						Image(systemName: "network")
+							.font(detailInfoIconFont)
+							.foregroundColor(.gray)
+							.frame(width: detailIconSize)
+					}
+
+					if node.hopsAway == 0 {
+						divider
+
+						if
+							!node.viaMqtt,
+							let signal = LoRaSignal.getSignalStrength(snr: node.snr, rssi: node.rssi, preset: modemPreset)
+						{
+							ZStack(alignment: .center) {
+								SignalStrengthIndicator(
+									signalStrength: signal,
+									size: detailIconSize - 2,
+									color: .gray,
+									thin: true
+								)
+							}
+							.frame(width: detailIconSize)
 						}
-						.frame(width: detailIconSize)
+						else {
+							Image(systemName: "eye")
+								.font(detailInfoIconFont)
+								.foregroundColor(.gray)
+								.frame(width: detailIconSize)
+						}
 					}
 					else {
-						Image(systemName: "eye")
-							.font(detailInfoIconFont)
-							.foregroundColor(.gray)
-							.frame(width: detailIconSize)
+						divider
+
+						ZStack(alignment: .top) {
+							let badgeOffset: CGFloat = 7
+
+							Image(systemName: "arrowshape.bounce.forward")
+								.font(detailInfoIconFont)
+								.foregroundColor(.gray)
+								.frame(width: detailIconSize)
+								.padding(.leading, badgeOffset)
+
+							HStack(spacing: 0) {
+								Image(systemName: "\(node.hopsAway).circle")
+									.font(detailHopsIconFont)
+									.foregroundColor(.gray)
+									.background(Color.listBackground(for: colorScheme))
+									.clipShape(
+										Circle()
+									)
+
+								Spacer()
+							}
+							.frame(width: detailIconSize + badgeOffset)
+						}
 					}
 				}
-				else {
+
+				if node.hasTraceRoutes {
 					divider
 
-					ZStack(alignment: .top) {
-						let badgeOffset: CGFloat = 7
+					Image(systemName: "signpost.right.and.left.fill")
+						.font(detailInfoIconFont)
+						.foregroundColor(.gray)
+						.frame(width: detailIconSize)
+				}
 
-						Image(systemName: "arrowshape.bounce.forward")
-							.font(detailInfoIconFont)
-							.foregroundColor(.gray)
-							.frame(width: detailIconSize)
-							.padding(.leading, badgeOffset)
+				if node.isStoreForwardRouter {
+					divider
 
-						HStack(spacing: 0) {
-							Image(systemName: "\(node.hopsAway).circle")
-								.font(detailHopsIconFont)
-								.foregroundColor(.gray)
-								.background(Color.listBackground(for: colorScheme))
-								.clipShape(
-									Circle()
-								)
+					Image(systemName: "envelope.arrow.triangle.branch")
+						.font(detailInfoIconFont)
+						.foregroundColor(.gray)
+						.frame(width: detailIconSize)
+				}
 
-							Spacer()
-						}
-						.frame(width: detailIconSize + badgeOffset)
-					}
+				if node.hasDetectionSensorMetrics {
+					divider
+
+					Image(systemName: "sensor")
+						.font(detailInfoIconFont)
+						.foregroundColor(.gray)
+						.frame(width: detailIconSize)
 				}
 			}
 
-			if node.hasTraceRoutes {
-				divider
+			if node.hasPositions || nodeEnvironment != nil {
+				HStack(alignment: .center, spacing: detailIconSpacing) {
+					locationInfo
 
-				Image(systemName: "signpost.right.and.left.fill")
-					.font(detailInfoIconFont)
-					.foregroundColor(.gray)
-					.frame(width: detailIconSize)
+					if node.hasPositions, nodeEnvironment != nil {
+						divider
+					}
+
+					environmentInfo
+				}
 			}
-
-			if node.isStoreForwardRouter {
-				divider
-
-				Image(systemName: "envelope.arrow.triangle.branch")
-					.font(detailInfoIconFont)
-					.foregroundColor(.gray)
-					.frame(width: detailIconSize)
-			}
-
-			if node.hasDetectionSensorMetrics {
-				divider
-
-				Image(systemName: "sensor")
-					.font(detailInfoIconFont)
-					.foregroundColor(.gray)
-					.frame(width: detailIconSize)
-			}
-
-			locationInfo
-			environmentInfo
 		}
 	}
 
 	@ViewBuilder
 	private var locationInfo: some View {
 		if node.hasPositions {
-			divider
-
 			if
 				let currentCoordinate = locationManager.getLocation()?.coordinate,
 				let lastCoordinate = (node.positions?.lastObject as? PositionEntity)?.coordinate
@@ -170,6 +179,7 @@ struct NodeIconsView: View {
 					latitude: lastCoordinate.latitude,
 					longitude: lastCoordinate.longitude
 				)
+				let bearing = myLocation.bearing(to: location)
 				let distance = location.distance(from: myLocation) / 1000 // km
 				let distanceFormatted = String(format: "%.0f", distance) + "km"
 
@@ -181,6 +191,13 @@ struct NodeIconsView: View {
 					.font(detailInfoTextFont)
 					.lineLimit(1)
 					.foregroundColor(.gray)
+
+				Image(systemName: "location.north.circle.fill")
+					.font(detailInfoIconFont)
+					.foregroundColor(.gray)
+					.rotationEffect(
+						Angle(degrees: bearing)
+					)
 			}
 			else {
 				Image(systemName: "mappin.and.ellipse")
@@ -197,11 +214,6 @@ struct NodeIconsView: View {
 	@ViewBuilder
 	private var environmentInfo: some View {
 		if let nodeEnvironment {
-			let detailInfoIconFont = Font.system(size: 14, weight: .regular, design: .rounded)
-			let detailInfoTextFont = Font.system(size: 12, weight: .semibold, design: .rounded)
-
-			divider
-
 			let temp = nodeEnvironment.temperature
 			let tempFormatted = String(format: "%.0f", temp) + "°C"
 

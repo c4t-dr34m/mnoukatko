@@ -399,18 +399,18 @@ struct Connect: View {
 						SignalStrengthIndicator(
 							signalStrength: device.getSignalStrength(),
 							size: 14,
-							color: .gray
+							color: .primary
 						)
 
 						if let name = device.peripheral.name {
 							Text(name)
 								.font(deviceFont)
-								.foregroundColor(.gray)
+								.foregroundColor(.primary)
 						}
 						else {
 							Text(device.name)
 								.font(deviceFont)
-								.foregroundColor(.gray)
+								.foregroundColor(.primary)
 						}
 					}
 
@@ -419,7 +419,7 @@ struct Connect: View {
 
 						Image(systemName: "star.fill")
 							.font(deviceFont)
-							.foregroundColor(.gray)
+							.foregroundColor(.yellow)
 					}
 				}
 			}

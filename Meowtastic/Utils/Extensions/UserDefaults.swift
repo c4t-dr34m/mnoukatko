@@ -52,6 +52,7 @@ extension UserDefaults {
 		case lowBatteryNotifications
 		case directMessageNotifications
 		case channelMessageNotifications
+		case channelDisplayed
 		case modemPreset
 		case firmwareVersion
 		case powerSavingMode
@@ -95,6 +96,9 @@ extension UserDefaults {
 
 	@UserDefault(.channelMessageNotifications, defaultValue: true)
 	static var channelMessageNotifications: Bool
+
+	@UserDefault(.channelDisplayed, defaultValue: false)
+	static var channelDisplayed: Bool
 
 	@UserDefault(.newNodeNotifications, defaultValue: false)
 	static var newNodeNotifications: Bool

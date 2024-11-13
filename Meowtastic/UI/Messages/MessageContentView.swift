@@ -99,32 +99,54 @@ struct MessageContentView: View {
 					.zIndex(1)
 				}
 
-				VStack(alignment: .leading, spacing: 8) {
-					Text(markdownText)
-						.font(.body)
-						.foregroundColor(
-							getForegroundColor(
-								for: message,
-								isCurrentUser: isCurrentUser
+				HStack(alignment: .center, spacing: 8) {
+					let isDetectionSensorMessage = message.portNum == Int32(PortNum.detectionSensorApp.rawValue)
+					let showSensor = tapBackDestination.overlaySensorMessage && isDetectionSensorMessage
+
+					if showSensor {
+						Image(systemName: "sensor.fill")
+							.font(.body)
+							.foregroundColor(.gray)
+							.symbolEffect(
+								.variableColor.reversing.cumulative,
+								options: .repeat(.max).speed(2)
 							)
-						)
-						.tint(linkColor)
-						.padding([.leading, .trailing, .top], 16)
+							.padding(.top, 18)
+							.padding(.bottom, 18)
+							.padding(.leading, 16)
 
-					HStack {
-						Spacer()
+						Divider()
+					}
 
-						if isCurrentUser {
-							messageStatus
-								.padding([.leading, .trailing], 8)
-								.padding(.bottom, 4)
-								.id(message.messageId)
-						}
-						else {
-							messageTime
-								.padding([.leading, .trailing], 8)
-								.padding(.bottom, 4)
-								.id(message.messageId)
+					VStack(alignment: .leading, spacing: 8) {
+						Text(markdownText)
+							.font(.body)
+							.foregroundColor(
+								getForegroundColor(
+									for: message,
+									isCurrentUser: isCurrentUser
+								)
+							)
+							.tint(linkColor)
+							.padding(.top, 16)
+							.padding(.leading, showSensor ? 0 : 16)
+							.padding(.trailing, 16)
+
+						HStack {
+							Spacer()
+
+							if isCurrentUser {
+								messageStatus
+									.padding([.leading, .trailing], 8)
+									.padding(.bottom, 4)
+									.id(message.messageId)
+							}
+							else {
+								messageTime
+									.padding([.leading, .trailing], 8)
+									.padding(.bottom, 4)
+									.id(message.messageId)
+							}
 						}
 					}
 				}
@@ -132,22 +154,6 @@ struct MessageContentView: View {
 				.clipShape(
 					UnevenRoundedRectangle(cornerRadii: corners, style: .continuous)
 				)
-				.overlay {
-					let isDetectionSensorMessage = message.portNum == Int32(PortNum.detectionSensorApp.rawValue)
-
-					if tapBackDestination.overlaySensorMessage, isDetectionSensorMessage {
-						Image(systemName: "sensor.fill")
-							.padding()
-							.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-							.foregroundStyle(Color.accentColor)
-							.symbolRenderingMode(.multicolor)
-							.symbolEffect(
-								.variableColor.reversing.cumulative,
-								options: .repeat(20).speed(3)
-							)
-							.offset(x: 20, y: -20)
-					}
-				}
 				.padding(.top, originalMessage == nil ? 0 : -22)
 				.contextMenu {
 					MessageContextMenuItems(

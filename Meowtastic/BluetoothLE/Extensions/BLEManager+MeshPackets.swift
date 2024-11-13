@@ -1033,6 +1033,7 @@ extension BLEManager {
 
 				guard
 					UserDefaults.channelMessageNotifications,
+					UserDefaults.channelDisplayed,
 					unread > 0,
 					let channel = channels.first(where: { channel in
 						channel.index == newMessage.channel
@@ -1043,27 +1044,18 @@ extension BLEManager {
 					return
 				}
 
-				let subtitle: String
-				if unread == 1 {
-					subtitle = "One unread channel message"
+				let channelLabel: String
+				if let name = channel.name {
+					channelLabel = name
 				}
 				else {
-					subtitle = "\(myInfo.unreadMessages) unread channel messages"
-				}
-
-				let body: String
-				if let longName = fromUser.longName {
-					body = "Last message is from \(longName)"
-				}
-				else {
-					body = "Last message: \(messageText)"
+					channelLabel = "#\(channel.index)"
 				}
 
 				let notification = Notification(
 					id: "notification.id.channel_\(channel.index)",
-					title: "New Channel Message Received",
-					subtitle: subtitle,
-					body: body,
+					title: "Channel \(channelLabel)",
+					body: "You have unread channel messages",
 					path: URL(
 						string: "\(AppConstants.meowtasticScheme):///messages?channel=\(channel.index)&id=\(newMessage.messageId)"
 					)
@@ -1071,9 +1063,11 @@ extension BLEManager {
 
 				notificationManager.queue(
 					notification: notification,
-					delay: 3 * 60,
+					delay: 1,
 					removeExisting: true
 				)
+
+				UserDefaults.channelDisplayed = false
 			}
 		}
 	}
