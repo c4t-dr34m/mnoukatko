@@ -32,17 +32,41 @@ struct AvatarNode: View {
 			return node.color
 		}
 		else {
-			return Color.gray.opacity(0.2)
+			return .gray.opacity(0.4)
 		}
 	}
 	private var background: RadialGradient {
-		RadialGradient(
-			colors: [
-				backgroundColor,
-				backgroundColor.opacity(0.7)
-			],
-			center: .topLeading,
-			startRadius: 0,
+		let gradientColors: [Color]
+		if node.isOnline || ignoreOffline {
+			gradientColors = [
+				Color(
+					uiColor: backgroundColor.uiColor
+						.lighter()
+				),
+				Color(
+					uiColor: backgroundColor.uiColor
+						.withIncreasedSaturation(saturationIncrease: 0.5)
+						.darker()
+				)
+			]
+		}
+		else {
+			gradientColors = [
+				Color(
+					uiColor: backgroundColor.uiColor
+						.lighter()
+				),
+				Color(
+					uiColor: backgroundColor.uiColor
+						.darker()
+				)
+			]
+		}
+
+		return RadialGradient(
+			colors: gradientColors,
+			center: .top,
+			startRadius: size / 4,
 			endRadius: size
 		)
 	}

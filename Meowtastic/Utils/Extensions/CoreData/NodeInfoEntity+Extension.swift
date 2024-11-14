@@ -30,7 +30,7 @@ extension NodeInfoEntity {
 	}
 
 	var hasEnvironmentMetrics: Bool {
-		return telemetries?.filter { telemetry in
+		telemetries?.filter { telemetry in
 			(telemetry as AnyObject).metricsType == 1
 		}.first != nil
 	}

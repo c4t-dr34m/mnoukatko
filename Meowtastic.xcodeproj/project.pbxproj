@@ -126,7 +126,6 @@
 		DD47E3D626F17ED900029299 /* AvatarNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD47E3D526F17ED900029299 /* AvatarNode.swift */; };
 		DD4A911E2708C65400501B7E /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD4A911D2708C65400501B7E /* AppSettings.swift */; };
 		DD5D0A9C2931B9F200F7EA61 /* EthernetModes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD5D0A9B2931B9F200F7EA61 /* EthernetModes.swift */; };
-		DD77093F2AA1B146007A8BF0 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD77093E2AA1B146007A8BF0 /* UIColor.swift */; };
 		DD798B072915928D005217CD /* MessageList.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD798B062915928D005217CD /* MessageList.swift */; };
 		DD8169F9271F1A6100F4AB02 /* MeshLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD8169F8271F1A6100F4AB02 /* MeshLogger.swift */; };
 		DD836AE726F6B38600ABCC23 /* Connect.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD836AE626F6B38600ABCC23 /* Connect.swift */; };
@@ -312,7 +311,6 @@
 		DD5394FD276BA0EF00AD86B1 /* PositionEntity+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PositionEntity+Extension.swift"; sourceTree = "<group>"; };
 		DD58C5F12919AD3C00D5BEFB /* ChannelEntity+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelEntity+Extension.swift"; sourceTree = "<group>"; };
 		DD5D0A9B2931B9F200F7EA61 /* EthernetModes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EthernetModes.swift; sourceTree = "<group>"; };
-		DD77093E2AA1B146007A8BF0 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		DD798B062915928D005217CD /* MessageList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageList.swift; sourceTree = "<group>"; };
 		DD8169F8271F1A6100F4AB02 /* MeshLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshLogger.swift; sourceTree = "<group>"; };
 		DD836AE626F6B38600ABCC23 /* Connect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connect.swift; sourceTree = "<group>"; };
@@ -864,7 +862,6 @@
 				DDD5BB172C2F9C36007E03CA /* OSLogEntryLog.swift */,
 				DDDB444729F8A9C900EE2349 /* String.swift */,
 				DDF45C362BC46A5A005ED5F2 /* TimeZone.swift */,
-				DD77093E2AA1B146007A8BF0 /* UIColor.swift */,
 				B2CC14B12C66280000588C16 /* UIColor+Extension.swift */,
 				DDDB444F29F8AC9C00EE2349 /* UIImage.swift */,
 				DDB75A102A059258006ED576 /* Url.swift */,
@@ -1134,7 +1131,6 @@
 				084DCFFA2CA9BEF40032EF46 /* NodeIconsCompactView.swift in Sources */,
 				B2A5F30A2C5668FD009457AB /* MeshMapContent.swift in Sources */,
 				B266A75B2C59262E00DFC723 /* ScreenCarouselIntervals.swift in Sources */,
-				DD77093F2AA1B146007A8BF0 /* UIColor.swift in Sources */,
 				08933D382C81D03A006D57EA /* CoreDataTools.swift in Sources */,
 				DD8169F9271F1A6100F4AB02 /* MeshLogger.swift in Sources */,
 				B266A7612C59275000DFC723 /* Units.swift in Sources */,

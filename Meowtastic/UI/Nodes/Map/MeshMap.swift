@@ -6,6 +6,8 @@ import OSLog
 import SwiftUI
 
 struct MeshMap: View {
+	private let node: NodeInfoEntity?
+
 	@Environment(\.managedObjectContext)
 	private var context
 	@StateObject
@@ -18,12 +20,15 @@ struct MeshMap: View {
 		emphasis: MapStyle.StandardEmphasis.muted
 	)
 	@State
-	private var position = MapCameraPosition.automatic
+	private var cameraPosition = MapCameraPosition.automatic
+	@State
+	private var cameraDistance: Double?
 	@State
 	private var selectedPosition: PositionEntity?
-
-	private let node: NodeInfoEntity?
-
+	@State
+	private var visibleAnnotations = 0
+	@State
+	private var showLabelsForOffline = false
 	@FetchRequest(
 		fetchRequest: PositionEntity.allPositionsFetchRequest()
 	)
@@ -36,7 +41,7 @@ struct MeshMap: View {
 
 				MapReader { _ in
 					Map(
-						position: $position,
+						position: $cameraPosition,
 						bounds: MapCameraBounds(
 							minimumDistance: 250,
 							maximumDistance: .infinity
@@ -45,7 +50,14 @@ struct MeshMap: View {
 					) {
 						UserAnnotation()
 						MeshMapContent(
-							selectedPosition: $selectedPosition
+							selectedPosition: $selectedPosition,
+							showLabelsForOffline: $showLabelsForOffline,
+							onAppear: { _ in
+								visibleAnnotations += 1
+							},
+							onDisappear: { _ in
+								visibleAnnotations -= 1
+							}
 						)
 					}
 					.mapScope(mapScope)
@@ -68,18 +80,21 @@ struct MeshMap: View {
 						mostRecent = node?.positions?.lastObject as? PositionEntity
 
 						if let mostRecent, mostRecent.coordinate.isValid {
-							position = .camera(
+							cameraPosition = .camera(
 								MapCamera(
 									centerCoordinate: mostRecent.coordinate,
-									distance: position.camera?.distance ?? 64_000,
+									distance: cameraPosition.camera?.distance ?? 64_000,
 									heading: 0,
 									pitch: 40
 								)
 							)
 						}
 						else {
-							position = .automatic
+							cameraPosition = .automatic
 						}
+					}
+					.onChange(of: visibleAnnotations, initial: true) {
+						showLabelsForOffline = visibleAnnotations < 100
 					}
 				}
 			}

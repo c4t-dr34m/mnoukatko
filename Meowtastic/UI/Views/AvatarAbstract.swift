@@ -23,11 +23,18 @@ struct AvatarAbstract: View {
 	private var background: RadialGradient {
 		RadialGradient(
 			colors: [
-				backgroundColor,
-				backgroundColor.opacity(0.7)
+				Color(
+					uiColor: backgroundColor.uiColor
+						.lighter()
+				),
+				Color(
+					uiColor: backgroundColor.uiColor
+						.withIncreasedSaturation(saturationIncrease: 0.5)
+						.darker()
+				)
 			],
-			center: .topLeading,
-			startRadius: 0,
+			center: .top,
+			startRadius: size / 4,
 			endRadius: size
 		)
 	}

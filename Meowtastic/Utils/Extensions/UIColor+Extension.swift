@@ -3,8 +3,15 @@ import SwiftUI
 import UIKit
 
 extension UIColor {
-	///  Returns a UInt32 from a UIColor
-	/// - Returns: UInt32
+	static var random: UIColor {
+		UIColor(
+			red: .random(in: 0...1),
+			green: .random(in: 0...1),
+			blue: .random(in: 0...1),
+			alpha: 1.0
+		)
+	}
+
 	var hex: UInt32 {
 		var red: CGFloat = 0
 		var green: CGFloat = 0
@@ -15,31 +22,34 @@ extension UIColor {
 
 		var value: UInt32 = 0
 		value += UInt32(1.0 * 255) << 24
-		value += UInt32(red   * 255) << 16
+		value += UInt32(red * 255) << 16
 		value += UInt32(green * 255) << 8
-		value += UInt32(blue  * 255)
+		value += UInt32(blue * 255)
 
 		return value
 	}
 
-	///  Returns a UIColor from a UInt32 value
-	/// - Parameter hex: UInt32 value  to convert to a color
-	/// - Returns: UIColor
 	convenience init(hex: UInt32) {
 		let red = CGFloat((hex & 0xFF0000) >> 16)
 		let green = CGFloat((hex & 0x00FF00) >> 8)
 		let blue = CGFloat((hex & 0x0000FF))
 
 		self.init(
-			red: red/255.0,
-			green: green/255.0,
-			blue: blue/255.0,
+			red: red / 255.0,
+			green: green / 255.0,
+			blue: blue / 255.0,
 			alpha: 1.0
 		)
 	}
 
-	///  Returns a boolean indicating if a color is light
-	/// - Returns: true if the color is light
+	func lighter(componentDelta: CGFloat = 0.1) -> UIColor {
+		makeColor(componentDelta: componentDelta)
+	}
+
+	func darker(componentDelta: CGFloat = 0.1) -> UIColor {
+		makeColor(componentDelta: -1 * componentDelta)
+	}
+
 	func isLight() -> Bool {
 		guard let components = cgColor.components, components.count > 2 else {
 			return false
@@ -48,5 +58,60 @@ extension UIColor {
 		let brightness = ((components[0] * 299) + (components[1] * 587) + (components[2] * 114)) / 1000
 
 		return brightness > 0.5
+	}
+
+	func withIncreasedSaturation(saturationIncrease: CGFloat) -> UIColor {
+		let hsl = getHSL()
+		let newSaturation = min(1.0, hsl.saturation + saturationIncrease)
+		let saturatedColor = withSaturation(newSaturation)
+
+		return saturatedColor
+	}
+
+	private func add(_ value: CGFloat, toComponent: CGFloat) -> CGFloat {
+		max(0, min(1, toComponent + value))
+	}
+
+	private func makeColor(componentDelta: CGFloat) -> UIColor {
+		var red: CGFloat = 0
+		var blue: CGFloat = 0
+		var green: CGFloat = 0
+		var alpha: CGFloat = 0
+
+		getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+
+		return UIColor(
+			red: add(componentDelta, toComponent: red),
+			green: add(componentDelta, toComponent: green),
+			blue: add(componentDelta, toComponent: blue),
+			alpha: alpha
+		)
+	}
+
+	private func getHSL() -> (hue: CGFloat, saturation: CGFloat, lightness: CGFloat) {
+		var hue: CGFloat = 0
+		var saturation: CGFloat = 0
+		var brightness: CGFloat = 0
+		var alpha: CGFloat = 0
+
+		self.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
+
+		let lightness = (2 - saturation) * brightness / 2
+		let sat = lightness == 0 || lightness == 1 ? 0 : saturation * brightness / (1 - abs(2 * lightness - 1))
+
+		return (hue, sat, lightness)
+	}
+
+	private func withSaturation(_ newSaturation: CGFloat) -> UIColor {
+		var hue: CGFloat = 0
+		var saturation: CGFloat = 0
+		var brightness: CGFloat = 0
+		var alpha: CGFloat = 0
+
+		self.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
+
+		let newColor = UIColor(hue: hue, saturation: min(newSaturation, 1.0), brightness: brightness, alpha: alpha)
+
+		return newColor
 	}
 }

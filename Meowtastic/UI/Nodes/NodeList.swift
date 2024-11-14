@@ -161,7 +161,7 @@ struct NodeList: View {
 			header: listHeader(
 				title: "Offline",
 				nodesCount: nodesOffline.count,
-				collapsible: true,
+				collapsible: $showOffline,
 				property: $showOffline
 			)
 		) {
@@ -187,7 +187,7 @@ struct NodeList: View {
 	private func listHeader(
 		title: String,
 		nodesCount: Int? = nil,
-		collapsible: Bool = false,
+		collapsible: Binding<Bool> = .constant(false),
 		property: Binding<Bool>? = nil
 	) -> some View {
 		HStack(alignment: .center) {
@@ -196,7 +196,7 @@ struct NodeList: View {
 
 			Spacer()
 
-			if collapsible, property != nil {
+			if !collapsible.wrappedValue, property != nil {
 				Button(
 					action: {
 						withAnimation {

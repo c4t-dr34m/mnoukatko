@@ -16,8 +16,10 @@ extension Color {
 		}
 	}
 
-	///  Returns a boolean for a SwiftUI Color to determine what color of text to use
-	/// - Returns: true if the color is light
+	var uiColor: UIColor {
+		UIColor(self)
+	}
+
 	func isLight() -> Bool {
 		guard let components = cgColor?.components, components.count > 2 else {
 			return false
