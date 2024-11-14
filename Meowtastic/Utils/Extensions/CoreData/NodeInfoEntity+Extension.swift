@@ -52,8 +52,9 @@ extension NodeInfoEntity {
 	}
 
 	var isOnline: Bool {
-		let fifteenMinutesAgo = Calendar.current.date(byAdding: .minute, value: -15, to: .now)
-		if lastHeard?.compare(fifteenMinutesAgo!) == .orderedDescending {
+		// swiftlint:disable:next force_unwrapping
+		let fifteenMinutesAgo = Calendar.current.date(byAdding: .minute, value: -15, to: .now)!
+		if lastHeard?.compare(fifteenMinutesAgo) == .orderedDescending {
 			 return true
 		}
 

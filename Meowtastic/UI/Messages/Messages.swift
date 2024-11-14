@@ -394,16 +394,13 @@ struct Messages: View {
 				HStack(spacing: 0) {
 					Spacer()
 
-					if let node = user.userNode {
-						Image(systemName: "star.circle.fill")
-							.font(.system(size: 24))
-							.foregroundColor(node.isOnline ? node.color : Color.gray.opacity(0.2))
-							.foregroundColor(colorScheme == .dark ? .white : .gray)
-							.background(
-								Circle()
-									.foregroundColor(.listBackground(for: colorScheme))
-							)
-					}
+					Image(systemName: "star.circle.fill")
+						.font(.system(size: 24))
+						.foregroundColor(.yellow)
+						.background(
+							Circle()
+								.foregroundColor(.listBackground(for: colorScheme))
+						)
 				}
 			}
 		}

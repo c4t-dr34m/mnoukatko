@@ -37,12 +37,22 @@ struct NodeList: View {
 	)
 	private var nodes: FetchedResults<NodeInfoEntity>
 	private var nodesOnline: [NodeInfoEntity] {
-		nodes.filter { node in
+		if connectedDevice.device == nil {
+			return []
+		}
+
+		return nodes.filter { node in
 			node.num != connectedNodeNum && node.isOnline == true
 		}
 	}
 	private var nodesOffline: [NodeInfoEntity] {
-		nodes.filter { node in
+		if connectedDevice.device == nil {
+			return nodes.map { node in
+				node
+			}
+		}
+
+		return nodes.filter { node in
 			node.num != connectedNodeNum && node.isOnline == false
 		}
 
@@ -161,7 +171,7 @@ struct NodeList: View {
 			header: listHeader(
 				title: "Offline",
 				nodesCount: nodesOffline.count,
-				collapsible: $showOffline,
+				collapsible: !nodesOnline.isEmpty,
 				property: $showOffline
 			)
 		) {
@@ -187,7 +197,7 @@ struct NodeList: View {
 	private func listHeader(
 		title: String,
 		nodesCount: Int? = nil,
-		collapsible: Binding<Bool> = .constant(false),
+		collapsible: Bool = false,
 		property: Binding<Bool>? = nil
 	) -> some View {
 		HStack(alignment: .center) {
@@ -196,7 +206,7 @@ struct NodeList: View {
 
 			Spacer()
 
-			if !collapsible.wrappedValue, property != nil {
+			if collapsible, property != nil {
 				Button(
 					action: {
 						withAnimation {

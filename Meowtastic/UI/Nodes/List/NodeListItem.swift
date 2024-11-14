@@ -72,7 +72,7 @@ struct NodeListItem: View {
 					Spacer()
 					Image(systemName: "star.circle.fill")
 						.font(.system(size: 24))
-						.foregroundColor(node.isOnline ? node.color : Color.gray.opacity(0.2))
+						.foregroundColor(.yellow)
 						.background(
 							Circle()
 								.foregroundColor(.listBackground(for: colorScheme))
