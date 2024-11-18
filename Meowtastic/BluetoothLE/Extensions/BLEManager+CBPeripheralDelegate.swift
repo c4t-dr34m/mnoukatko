@@ -84,7 +84,6 @@ extension BLEManager: CBPeripheralDelegate {
 		lastConfigNonce = nodeConfig.sendWantConfig()
 	}
 
-	// swiftlint:disable:next cyclomatic_complexity
 	func peripheral(
 		_ peripheral: CBPeripheral,
 		didUpdateValueFor characteristic: CBCharacteristic,
@@ -131,361 +130,11 @@ extension BLEManager: CBPeripheralDelegate {
 			handleRadioLog(log)
 
 		case BluetoothUUID.fromRadio:
-			guard
-				let value = characteristic.value,
-				let info = try? FromRadio(serializedData: value),
-				var device = getConnectedDevice()
-			else {
+			guard let value = characteristic.value else {
 				return
 			}
 
-			// Publish mqttClientProxyMessages received on the from radio
-			if info.payloadVariant == FromRadio.OneOf_PayloadVariant.mqttClientProxyMessage(
-				info.mqttClientProxyMessage
-			)
-			{
-				let message = CocoaMQTTMessage(
-					topic: info.mqttClientProxyMessage.topic,
-					payload: [UInt8](info.mqttClientProxyMessage.data),
-					retained: info.mqttClientProxyMessage.retained
-				)
-
-				mqttManager?.client?.publish(message)
-			}
-
-			switch info.packet.decoded.portnum {
-			case .unknownApp:
-				// MyInfo from initial connection
-				if info.myInfo.isInitialized, info.myInfo.myNodeNum > 0 {
-					if let myInfo = myInfoPacket(
-						myInfo: info.myInfo,
-						peripheralId: device.id,
-						context: context
-					) {
-						UserDefaults.preferredPeripheralNum = Int(myInfo.myNodeNum)
-
-						device.num = myInfo.myNodeNum
-						device.name = myInfo.bleName ?? "Unknown node"
-						device.longName = myInfo.bleName ?? "Unknown node"
-
-						currentDevice.update(with: device)
-					}
-				}
-
-				// NodeInfo
-				if info.nodeInfo.num > 0 {
-					if
-						let nodeInfo = nodeInfoPacket(
-							nodeInfo: info.nodeInfo,
-							channel: info.packet.channel,
-							context: context
-						),
-						let user = nodeInfo.user,
-						device.num == nodeInfo.num
-					{
-						device.shortName = user.shortName ?? "?"
-						device.longName = user.longName ?? "Unknown node"
-
-						currentDevice.update(with: device)
-					}
-				}
-
-				// Channels
-				if info.channel.isInitialized {
-					channelPacket(
-						channel: info.channel,
-						fromNum: Int64(truncatingIfNeeded: device.num),
-						context: context
-					)
-				}
-
-				// Config
-				if info.config.isInitialized, !isInvalidFwVersion {
-					localConfig(
-						config: info.config,
-						context: context,
-						nodeNum: Int64(truncatingIfNeeded: device.num),
-						nodeLongName: device.longName
-					)
-				}
-
-				// Module Config
-				if
-					device.num != 0,
-					info.moduleConfig.isInitialized,
-					!isInvalidFwVersion
-				{
-					moduleConfig(
-						config: info.moduleConfig,
-						context: context,
-						nodeNum: Int64(truncatingIfNeeded: device.num),
-						nodeLongName: device.longName
-					)
-				}
-
-				// Device Metadata
-				if info.metadata.firmwareVersion.count > 0, !isInvalidFwVersion {
-					device.firmwareVersion = info.metadata.firmwareVersion
-
-					currentDevice.update(with: device)
-
-					deviceMetadataPacket(
-						metadata: info.metadata,
-						fromNum: device.num,
-						context: context
-					)
-
-					if let lastDotIndex = info.metadata.firmwareVersion.lastIndex(of: ".") {
-						let version = info.metadata.firmwareVersion[...lastDotIndex]
-						connectedVersion = String(version.dropLast())
-						UserDefaults.firmwareVersion = connectedVersion
-					}
-					else {
-						isInvalidFwVersion = true
-						connectedVersion = "0.0.0"
-					}
-
-					let supportedVersion = connectedVersion == "0.0.0"
-					|| [.orderedAscending, .orderedSame].contains(minimumVersion.compare(connectedVersion, options: .numeric))
-
-					if !supportedVersion {
-						isInvalidFwVersion = true
-						lastConnectionError = "🚨" + "update.firmware".localized
-
-						return
-					}
-				}
-
-			case .textMessageApp, .detectionSensorApp:
-				textMessageAppPacket(
-					packet: info.packet,
-					wantRangeTestPackets: wantRangeTestPackets,
-					connectedNode: device.num,
-					context: context,
-					appState: appState
-				)
-
-			case .positionApp:
-				coreDataTools.upsertPositionPacket(packet: info.packet, context: context)
-
-			case .waypointApp:
-				waypointPacket(packet: info.packet, context: context)
-
-			case .nodeinfoApp:
-				guard !isInvalidFwVersion else {
-					break
-				}
-
-				coreDataTools.upsertNodeInfoPacket(packet: info.packet, context: context)
-				onInfoReceived(num: Int64(info.packet.from))
-
-			case .routingApp:
-				guard !isInvalidFwVersion else {
-					break
-				}
-
-				routingPacket(
-					packet: info.packet,
-					connectedNodeNum: device.num,
-					context: context
-				)
-
-			case .adminApp:
-				adminAppPacket(packet: info.packet, context: context)
-
-			case .replyApp:
-				textMessageAppPacket(
-					packet: info.packet,
-					wantRangeTestPackets: wantRangeTestPackets,
-					connectedNode: device.num,
-					context: context,
-					appState: appState
-				)
-
-			case .storeForwardApp:
-				guard wantStoreAndForwardPackets else {
-					break
-				}
-
-				storeAndForwardPacket(
-					packet: info.packet,
-					connectedNodeNum: device.num,
-					context: context
-				)
-
-			case .rangeTestApp:
-				guard wantRangeTestPackets else {
-					break
-				}
-
-				textMessageAppPacket(
-					packet: info.packet,
-					wantRangeTestPackets: true,
-					connectedNode: device.num,
-					context: context,
-					appState: appState
-				)
-
-			case .telemetryApp:
-				guard !isInvalidFwVersion else {
-					break
-				}
-
-				telemetryPacket(
-					packet: info.packet,
-					connectedNode: device.num,
-					context: context
-				)
-
-			case .tracerouteApp:
-				guard
-					let routingMessage = try? RouteDiscovery(serializedData: info.packet.decoded.payload),
-					!routingMessage.route.isEmpty
-				else {
-					break
-				}
-
-				guard
-					let traceRoute = coreDataTools.getTraceRoute(
-						id: Int64(info.packet.decoded.requestID),
-						context: context
-					)
-				else {
-					break
-				}
-
-				traceRoute.response = true
-				traceRoute.route = routingMessage.route
-
-				var hopNodes: [TraceRouteHopEntity] = []
-				for node in routingMessage.route {
-					var hopNode = coreDataTools.getNodeInfo(id: Int64(node), context: context)
-					if hopNode == nil, node != 4294967295 {
-						hopNode = createNodeInfo(num: Int64(node), context: context)
-					}
-
-					let traceRouteHop = TraceRouteHopEntity(context: context)
-					traceRouteHop.time = Date.now
-
-					if
-						let hopNode,
-						let mostRecent = hopNode.positions?.lastObject as? PositionEntity,
-						let time = mostRecent.time,
-						// swiftlint:disable:next force_unwrapping
-						time >= Calendar.current.date(byAdding: .day, value: -1, to: Date.now)!
-					{
-						traceRouteHop.latitudeI = mostRecent.latitudeI
-						traceRouteHop.longitudeI = mostRecent.longitudeI
-						traceRouteHop.altitude = mostRecent.altitude
-
-						traceRoute.hasPositions = true
-					}
-					else {
-						traceRoute.hasPositions = false
-					}
-
-					if let hopNode {
-						traceRouteHop.num = hopNode.num
-						traceRouteHop.name = hopNode.user?.longName ?? "Unknown node"
-
-						if info.packet.rxTime > 0 {
-							hopNode.lastHeard = Date(
-								timeIntervalSince1970: TimeInterval(Int64(info.packet.rxTime))
-							)
-						}
-
-						hopNodes.append(traceRouteHop)
-					}
-				}
-
-				traceRoute.hops = NSOrderedSet(array: hopNodes)
-
-				dataDebounce.emit { [weak self] in
-					await self?.saveData()
-				}
-
-				onTraceRouteReceived(for: traceRoute.node)
-
-				if let user = traceRoute.node?.user {
-					notificationManager.queue(
-						notification: Notification(
-							title: "Trace Route",
-							subtitle: user.longName,
-							body: "Trace route was received",
-							path: URL(string: "\(AppConstants.meowtasticScheme):///nodes?nodenum=\(user.num)")
-						)
-					)
-				}
-
-			case .paxcounterApp:
-				paxCounterPacket(packet: info.packet, context: context)
-
-			default:
-				break
-			}
-
-			let id = info.configCompleteID
-			if id != UInt32.min, id == lastConfigNonce {
-				isInvalidFwVersion = false
-				lastConnectionError = ""
-				isSubscribed = true
-
-				if device.num > 0 {
-					let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
-					fetchNodeInfoRequest.predicate = NSPredicate(
-						format: "num == %lld",
-						Int64(device.num)
-					)
-
-					if
-						let fetchedNodeInfo = try? context.fetch(fetchNodeInfoRequest),
-						!fetchedNodeInfo.isEmpty
-					{
-						let node = fetchedNodeInfo[0]
-
-						if
-							let mqttConfig = node.mqttConfig,
-							mqttConfig.enabled,
-							mqttConfig.proxyToClientEnabled
-						{
-							connectMQTT(config: mqttConfig)
-						}
-						else if mqttConnected {
-							disconnectMQTT()
-						}
-
-						// Set initial unread message badge states
-						appState.unreadChannelMessages = node.myInfo?.unreadMessages ?? 0
-						appState.unreadDirectMessages = node.user?.unreadMessages ?? 0
-
-						if let rtConf = node.rangeTestConfig, rtConf.enabled {
-							wantRangeTestPackets = true
-						}
-
-						if let sfConf = node.storeForwardConfig, sfConf.enabled {
-							wantStoreAndForwardPackets = true
-						}
-					}
-				}
-
-				if UserDefaults.provideLocation {
-					let timer = Timer.scheduledTimer(
-						timeInterval: TimeInterval(UserDefaults.provideLocationInterval),
-						target: self,
-						selector: #selector(positionTimerFired),
-						userInfo: context,
-						repeats: true
-					)
-					RunLoop.current.add(timer, forMode: .common)
-
-					positionTimer = timer
-				}
-
-				devicesDelegate?.onWantConfigFinished()
-				AnalyticEvents.trackBLEEvent(for: .wantConfigComplete, status: .success)
-
-				return
-			}
+			processRadioData(value: value)
 
 		default:
 			break
@@ -493,6 +142,367 @@ extension BLEManager: CBPeripheralDelegate {
 
 		if let characteristicFromRadio {
 			peripheral.readValue(for: characteristicFromRadio)
+		}
+	}
+
+	// swiftlint:disable:next cyclomatic_complexity
+	func processRadioData(value: Data) {
+		guard let info = try? FromRadio(serializedData: value) else {
+			return
+		}
+
+		// Publish mqttClientProxyMessages received on the from radio
+		if info.payloadVariant == FromRadio.OneOf_PayloadVariant.mqttClientProxyMessage(
+			info.mqttClientProxyMessage
+		)
+		{
+			let message = CocoaMQTTMessage(
+				topic: info.mqttClientProxyMessage.topic,
+				payload: [UInt8](info.mqttClientProxyMessage.data),
+				retained: info.mqttClientProxyMessage.retained
+			)
+
+			mqttManager?.client?.publish(message)
+		}
+
+		let num = getConnectedDevice()?.num ?? -1
+
+		switch info.packet.decoded.portnum {
+		case .unknownApp:
+			guard var device = getConnectedDevice() else {
+				break
+			}
+
+			// MyInfo from initial connection
+			if info.myInfo.isInitialized, info.myInfo.myNodeNum > 0 {
+				if let myInfo = myInfoPacket(
+					myInfo: info.myInfo,
+					peripheralId: device.id,
+					context: context
+				) {
+					UserDefaults.preferredPeripheralNum = Int(myInfo.myNodeNum)
+
+					device.num = myInfo.myNodeNum
+					device.name = myInfo.bleName ?? "Unknown node"
+					device.longName = myInfo.bleName ?? "Unknown node"
+
+					currentDevice.update(with: device)
+				}
+			}
+
+			// NodeInfo
+			if info.nodeInfo.num > 0 {
+				if
+					let nodeInfo = nodeInfoPacket(
+						nodeInfo: info.nodeInfo,
+						channel: info.packet.channel,
+						context: context
+					),
+					let user = nodeInfo.user,
+					device.num == nodeInfo.num
+				{
+					device.shortName = user.shortName ?? "?"
+					device.longName = user.longName ?? "Unknown node"
+
+					currentDevice.update(with: device)
+				}
+			}
+
+			// Channels
+			if info.channel.isInitialized {
+				channelPacket(
+					channel: info.channel,
+					fromNum: Int64(truncatingIfNeeded: device.num),
+					context: context
+				)
+			}
+
+			// Config
+			if info.config.isInitialized, !isInvalidFwVersion {
+				localConfig(
+					config: info.config,
+					context: context,
+					nodeNum: Int64(truncatingIfNeeded: device.num),
+					nodeLongName: device.longName
+				)
+			}
+
+			// Module Config
+			if
+				device.num != 0,
+				info.moduleConfig.isInitialized,
+				!isInvalidFwVersion
+			{
+				moduleConfig(
+					config: info.moduleConfig,
+					context: context,
+					nodeNum: Int64(truncatingIfNeeded: device.num),
+					nodeLongName: device.longName
+				)
+			}
+
+			// Device Metadata
+			if info.metadata.firmwareVersion.count > 0, !isInvalidFwVersion {
+				device.firmwareVersion = info.metadata.firmwareVersion
+
+				currentDevice.update(with: device)
+
+				deviceMetadataPacket(
+					metadata: info.metadata,
+					fromNum: device.num,
+					context: context
+				)
+
+				if let lastDotIndex = info.metadata.firmwareVersion.lastIndex(of: ".") {
+					let version = info.metadata.firmwareVersion[...lastDotIndex]
+					connectedVersion = String(version.dropLast())
+					UserDefaults.firmwareVersion = connectedVersion
+				}
+				else {
+					isInvalidFwVersion = true
+					connectedVersion = "0.0.0"
+				}
+
+				let supportedVersion = connectedVersion == "0.0.0"
+				|| [.orderedAscending, .orderedSame].contains(minimumVersion.compare(connectedVersion, options: .numeric))
+
+				if !supportedVersion {
+					isInvalidFwVersion = true
+					lastConnectionError = "🚨" + "update.firmware".localized
+
+					return
+				}
+			}
+
+		case .textMessageApp, .detectionSensorApp:
+			textMessageAppPacket(
+				packet: info.packet,
+				wantRangeTestPackets: wantRangeTestPackets,
+				connectedNode: num,
+				context: context,
+				appState: appState
+			)
+
+		case .positionApp:
+			coreDataTools.upsertPositionPacket(packet: info.packet, context: context)
+
+		case .waypointApp:
+			waypointPacket(packet: info.packet, context: context)
+
+		case .nodeinfoApp:
+			guard !isInvalidFwVersion else {
+				break
+			}
+
+			coreDataTools.upsertNodeInfoPacket(packet: info.packet, context: context)
+			onInfoReceived(num: Int64(info.packet.from))
+
+		case .routingApp:
+			guard !isInvalidFwVersion else {
+				break
+			}
+
+			routingPacket(
+				packet: info.packet,
+				connectedNodeNum: num,
+				context: context
+			)
+
+		case .adminApp:
+			adminAppPacket(packet: info.packet, context: context)
+
+		case .replyApp:
+			textMessageAppPacket(
+				packet: info.packet,
+				wantRangeTestPackets: wantRangeTestPackets,
+				connectedNode: num,
+				context: context,
+				appState: appState
+			)
+
+		case .storeForwardApp:
+			guard wantStoreAndForwardPackets else {
+				break
+			}
+
+			storeAndForwardPacket(
+				packet: info.packet,
+				connectedNodeNum: num,
+				context: context
+			)
+
+		case .rangeTestApp:
+			guard wantRangeTestPackets else {
+				break
+			}
+
+			textMessageAppPacket(
+				packet: info.packet,
+				wantRangeTestPackets: true,
+				connectedNode: num,
+				context: context,
+				appState: appState
+			)
+
+		case .telemetryApp:
+			guard !isInvalidFwVersion else {
+				break
+			}
+
+			telemetryPacket(
+				packet: info.packet,
+				connectedNode: num,
+				context: context
+			)
+
+		case .tracerouteApp:
+			guard
+				let routingMessage = try? RouteDiscovery(serializedData: info.packet.decoded.payload),
+				!routingMessage.route.isEmpty
+			else {
+				break
+			}
+
+			guard
+				let traceRoute = coreDataTools.getTraceRoute(
+					id: Int64(info.packet.decoded.requestID),
+					context: context
+				)
+			else {
+				break
+			}
+
+			traceRoute.response = true
+			traceRoute.route = routingMessage.route
+
+			var hopNodes: [TraceRouteHopEntity] = []
+			for node in routingMessage.route {
+				var hopNode = coreDataTools.getNodeInfo(id: Int64(node), context: context)
+				if hopNode == nil, node != 4294967295 {
+					hopNode = createNodeInfo(num: Int64(node), context: context)
+				}
+
+				let traceRouteHop = TraceRouteHopEntity(context: context)
+				traceRouteHop.time = Date.now
+
+				if
+					let hopNode,
+					let mostRecent = hopNode.positions?.lastObject as? PositionEntity,
+					let time = mostRecent.time,
+					// swiftlint:disable:next force_unwrapping
+					time >= Calendar.current.date(byAdding: .day, value: -1, to: Date.now)!
+				{
+					traceRouteHop.latitudeI = mostRecent.latitudeI
+					traceRouteHop.longitudeI = mostRecent.longitudeI
+					traceRouteHop.altitude = mostRecent.altitude
+
+					traceRoute.hasPositions = true
+				}
+				else {
+					traceRoute.hasPositions = false
+				}
+
+				if let hopNode {
+					traceRouteHop.num = hopNode.num
+					traceRouteHop.name = hopNode.user?.longName ?? "Unknown node"
+
+					if info.packet.rxTime > 0 {
+						hopNode.lastHeard = Date(
+							timeIntervalSince1970: TimeInterval(Int64(info.packet.rxTime))
+						)
+					}
+
+					hopNodes.append(traceRouteHop)
+				}
+			}
+
+			traceRoute.hops = NSOrderedSet(array: hopNodes)
+
+			dataDebounce.emit { [weak self] in
+				await self?.saveData()
+			}
+
+			onTraceRouteReceived(for: traceRoute.node)
+
+			if let user = traceRoute.node?.user {
+				notificationManager.queue(
+					notification: Notification(
+						title: "Trace Route",
+						subtitle: user.longName,
+						body: "Trace route was received",
+						path: URL(string: "\(AppConstants.meowtasticScheme):///nodes?nodenum=\(user.num)")
+					)
+				)
+			}
+
+		case .paxcounterApp:
+			paxCounterPacket(packet: info.packet, context: context)
+
+		default:
+			break
+		}
+
+		let id = info.configCompleteID
+		if id != UInt32.min, id == lastConfigNonce {
+			isInvalidFwVersion = false
+			lastConnectionError = ""
+			isSubscribed = true
+
+			if num > 0 {
+				let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
+				fetchNodeInfoRequest.predicate = NSPredicate(
+					format: "num == %lld",
+					Int64(num)
+				)
+
+				if
+					let fetchedNodeInfo = try? context.fetch(fetchNodeInfoRequest),
+					!fetchedNodeInfo.isEmpty
+				{
+					let node = fetchedNodeInfo[0]
+
+					if
+						let mqttConfig = node.mqttConfig,
+						mqttConfig.enabled,
+						mqttConfig.proxyToClientEnabled
+					{
+						connectMQTT(config: mqttConfig)
+					}
+					else if mqttConnected {
+						disconnectMQTT()
+					}
+
+					// Set initial unread message badge states
+					appState.unreadChannelMessages = node.myInfo?.unreadMessages ?? 0
+					appState.unreadDirectMessages = node.user?.unreadMessages ?? 0
+
+					if let rtConf = node.rangeTestConfig, rtConf.enabled {
+						wantRangeTestPackets = true
+					}
+
+					if let sfConf = node.storeForwardConfig, sfConf.enabled {
+						wantStoreAndForwardPackets = true
+					}
+				}
+			}
+
+			if UserDefaults.provideLocation {
+				let timer = Timer.scheduledTimer(
+					timeInterval: TimeInterval(UserDefaults.provideLocationInterval),
+					target: self,
+					selector: #selector(positionTimerFired),
+					userInfo: context,
+					repeats: true
+				)
+				RunLoop.current.add(timer, forMode: .common)
+
+				positionTimer = timer
+			}
+
+			devicesDelegate?.onWantConfigFinished()
+			AnalyticEvents.trackBLEEvent(for: .wantConfigComplete, status: .success)
+
+			return
 		}
 	}
 

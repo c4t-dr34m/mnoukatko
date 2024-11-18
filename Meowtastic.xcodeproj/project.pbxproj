@@ -447,8 +447,8 @@
 				B284A4322C6F8AE400D5122B /* BluetoothUUID.swift */,
 				B23D3C5E2C944D4B007CEFE2 /* CurrentDevice.swift */,
 				DD23A50E26FD1B4400D9B90C /* Device.swift */,
-				B284A42B2C6F877D00D5122B /* Extensions */,
 				B28DC0E42C7107C4007990B3 /* NodeConfig.swift */,
+				B284A42B2C6F877D00D5122B /* Extensions */,
 				B2E8CE482CC94BC800407417 /* Watchers */,
 			);
 			path = BluetoothLE;

@@ -299,6 +299,9 @@ final class BLEManager: NSObject, ObservableObject {
 	}
 
 	func canHaveDemo() -> Bool {
+		false // disabled forever
+
+		/*
 		guard UserDefaults.preferredPeripheralId.isEmpty else {
 			return false
 		}
@@ -308,6 +311,7 @@ final class BLEManager: NSObject, ObservableObject {
 		}
 
 		return true
+		*/
 	}
 
 	func setIsInvalidFwVersion() {

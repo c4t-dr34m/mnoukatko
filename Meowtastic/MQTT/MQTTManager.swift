@@ -109,8 +109,10 @@ final class MQTTManager {
 		client.logLevel = .warning
 
 		if !client.connect() {
-			delegate?.onMqttError(message: "Mqtt connect error")
+			delegate?.onMqttError(message: "MQTT connect error")
 		}
+
+		Logger.mqtt.debug("Connected & subscribed to \(String(describing: topic))")
 
 		self.topic = topic
 		self.client = client

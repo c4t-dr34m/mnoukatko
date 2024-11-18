@@ -109,7 +109,7 @@ struct Content: View {
 			connectPresented = false
 			connectWasDismissed = true
 
-			// bleManager.connectMQTT() // TODO: connect to mqtt for demo
+			bleManager.connectMQTT()
 		} content: {
 			Connect(isInSheet: true)
 				.presentationDetents([.large])

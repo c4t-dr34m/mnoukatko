@@ -52,21 +52,29 @@ extension BLEManager: MQTTManagerDelegate {
 		toRadio = ToRadio()
 		toRadio.mqttClientProxyMessage = proxyMessage
 
-		if
-			let connectedDevice = getConnectedDevice(),
-			let binaryData: Data = try? toRadio.serializedData()
-		{
+		guard let binaryData = try? toRadio.serializedData() else {
+			return
+		}
+
+		Analytics.logEvent(
+			AnalyticEvents.mqttMessage.id,
+			parameters: [
+				"topic": message.topic
+			]
+		)
+
+		if canHaveDemo() {
+			Logger.mqtt.debug("Received MQTT message in demo mode, trying to process")
+
+			processRadioData(value: binaryData)
+		}
+		else if let connectedDevice = getConnectedDevice() {
+			Logger.mqtt.debug("Received MQTT message, sending to radio")
+
 			connectedDevice.peripheral.writeValue(
 				binaryData,
 				for: characteristicToRadio,
 				type: .withResponse
-			)
-
-			Analytics.logEvent(
-				AnalyticEvents.mqttMessage.id,
-				parameters: [
-					"topic": message.topic
-				]
 			)
 		}
 	}

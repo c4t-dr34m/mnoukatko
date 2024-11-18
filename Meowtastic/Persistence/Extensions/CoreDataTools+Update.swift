@@ -138,8 +138,10 @@ extension CoreDataTools {
 						newUser.hwModel = String(describing: newUserMessage.hwModel).uppercased()
 						newUser.hwModelId = Int32(newUserMessage.hwModel.rawValue)
 						Task {
-							Api().loadDeviceHardwareData { (hw) in
-								let dh = hw.first(where: { $0.hwModel == newUser.hwModelId })
+							Api().loadDeviceHardwareData { hw in
+								let dh = hw.first(where: {
+									$0.hwModel == newUser.hwModelId
+								})
 								newUser.hwDisplayName = dh?.displayName
 							}
 						}
@@ -248,14 +250,16 @@ extension CoreDataTools {
 		fetchNodePositionRequest.predicate = NSPredicate(format: "num == %lld", Int64(packet.from))
 
 		do {
-
 			if let positionMessage = try? Position(serializedData: packet.decoded.payload) {
-
 				/// Don't save empty position packets from null island or apple park
-				if (positionMessage.longitudeI != 0 && positionMessage.latitudeI != 0) && (positionMessage.latitudeI != 373346000 && positionMessage.longitudeI != -1220090000) {
+				if
+					positionMessage.longitudeI != 0,
+					positionMessage.latitudeI != 0,
+					positionMessage.latitudeI != 373346000,
+					positionMessage.longitudeI != -1220090000
+				{
 					let fetchedNode = try context.fetch(fetchNodePositionRequest)
 					if fetchedNode.count == 1 {
-
 						// Unset the current latest position for this node
 						let fetchCurrentLatestPositionsRequest = PositionEntity.fetchRequest()
 						fetchCurrentLatestPositionsRequest.predicate = NSPredicate(format: "nodePosition.num == %lld && latest = true", Int64(packet.from))
