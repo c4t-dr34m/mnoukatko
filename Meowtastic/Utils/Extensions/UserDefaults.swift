@@ -118,7 +118,7 @@ extension UserDefaults {
 	@UserDefault(.bcgNotification, defaultValue: false)
 	static var bcgNotification: Bool
 
-	@UserDefault(.moreColors, defaultValue: true)
+	@UserDefault(.moreColors, defaultValue: false)
 	static var moreColors: Bool
 
 	@UserDefault(.lastConnectionEventCount, defaultValue: 0)

@@ -19,7 +19,10 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
 	private let locationManager: CLLocationManager
 
 	private var hasPermission: Bool {
-		[.authorizedWhenInUse, .authorizedAlways].contains(authorizationStatus)
+		[
+			.authorizedWhenInUse
+			// .authorizedAlways
+		].contains(authorizationStatus)
 	}
 
 	override init() {
