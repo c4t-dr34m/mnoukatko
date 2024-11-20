@@ -26,7 +26,7 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
 		locationManager = CLLocationManager()
 		locationManager.desiredAccuracy = kCLLocationAccuracyBest
 		locationManager.pausesLocationUpdatesAutomatically = false
-		locationManager.allowsBackgroundLocationUpdates = true
+		// locationManager.allowsBackgroundLocationUpdates = true
 		locationManager.activityType = .other
 
 		super.init()
