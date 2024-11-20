@@ -272,12 +272,6 @@
     "Allow incoming device control over the insecure legacy admin channel." : {
 
     },
-    "Allow Location" : {
-
-    },
-    "Allow Notifications" : {
-
-    },
     "Allow Position Requests" : {
 
     },
@@ -9988,6 +9982,9 @@
     "New Direct Message" : {
 
     },
+    "Next" : {
+
+    },
     "No idea" : {
 
     },
@@ -12945,9 +12942,6 @@
 
     },
     "Shutdown on power loss" : {
-
-    },
-    "Skip" : {
 
     },
     "Smart position" : {

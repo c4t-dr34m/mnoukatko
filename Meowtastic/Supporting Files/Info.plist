@@ -72,13 +72,13 @@
 	<string>Bluetooth (Low Energy) is used to connect your iPhone or iPad to a Meshtastic® node. This allows to fully enjoy the Meshtastic® network.</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>Bluetooth (Low Energy) is used to connect your iPhone or iPad to a Meshtastic® node. This allows to fully enjoy the Meshtastic® network.</string>
-	<key>NSLocationUsageDescription</key>
-	<string>Location of you iPhone or iPad is used to show your location relative to other Meshtastic® nodes (map &amp; distances). It also can be used, if you choose so, to send the location to Meshtastic® network.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Location of you iPhone or iPad is used to show your location relative to other Meshtastic® nodes (map &amp; distances). It also can be used, if you choose so, to send the location to Meshtastic® network.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Location of you iPhone or iPad is used to show your location relative to other Meshtastic® nodes (map &amp; distances). It also can be used, if you choose so, to send the location to Meshtastic® network.</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<key>NSLocationUsageDescription</key>
+	<string>Location of you iPhone or iPad is used to show your location relative to other Meshtastic® nodes (map &amp; distances). It also can be used, if you choose so, to send the location to Meshtastic® network.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Location of you iPhone or iPad is used to show your location relative to other Meshtastic® nodes (map &amp; distances). It also can be used, if you choose so, to send the location to Meshtastic® network.</string>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
@@ -93,7 +93,6 @@
 	<array>
 		<string>bluetooth-central</string>
 		<string>fetch</string>
-		<string>location</string>
 		<string>processing</string>
 	</array>
 	<key>UILaunchScreen</key>

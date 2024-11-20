@@ -66,7 +66,7 @@ struct Onboarding: View {
 							Button(action: {
 								authorizeLocation()
 							}) {
-								Text(hasLocation ? "Done" : "Allow Location")
+								Text(hasLocation ? "Done" : "Next")
 							}
 							.disabled(hasLocation)
 							.buttonStyle(.bordered)
@@ -103,7 +103,7 @@ struct Onboarding: View {
 							Button(action: {
 								authorizeNotifications()
 							}) {
-								Text(hasNotifications ? "Done" : "Allow Notifications")
+								Text(hasNotifications ? "Done" : "Next")
 							}
 							.disabled(hasNotifications)
 							.buttonStyle(.bordered)
@@ -120,12 +120,14 @@ struct Onboarding: View {
 
 				Spacer()
 
-				Button(action: {
-					finish()
-				}) {
-					Text(hasPermissions ? "Continue" : "Skip")
+				if hasPermissions {
+					Button(action: {
+						finish()
+					}) {
+						Text("Continue")
+					}
+					.buttonStyle(GrowingButton())
 				}
-				.buttonStyle(GrowingButton())
 			}
 			.padding(.all, 16)
 			.onAppear {
