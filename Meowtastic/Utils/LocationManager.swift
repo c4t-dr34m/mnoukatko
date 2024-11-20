@@ -21,7 +21,6 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
 	private var hasPermission: Bool {
 		[
 			.authorizedWhenInUse
-			// .authorizedAlways
 		].contains(authorizationStatus)
 	}
 
@@ -29,7 +28,6 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
 		locationManager = CLLocationManager()
 		locationManager.desiredAccuracy = kCLLocationAccuracyBest
 		locationManager.pausesLocationUpdatesAutomatically = false
-		// locationManager.allowsBackgroundLocationUpdates = true
 		locationManager.activityType = .other
 
 		super.init()

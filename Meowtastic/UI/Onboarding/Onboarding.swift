@@ -105,7 +105,7 @@ struct Onboarding: View {
 							}) {
 								Text(hasNotifications ? "Done" : "Next")
 							}
-							.disabled(hasNotifications)
+							.disabled(!hasLocation || hasNotifications)
 							.buttonStyle(.bordered)
 							.buttonBorderShape(.capsule)
 							.controlSize(.regular)
@@ -120,14 +120,13 @@ struct Onboarding: View {
 
 				Spacer()
 
-				if hasPermissions {
-					Button(action: {
-						finish()
-					}) {
-						Text("Continue")
-					}
-					.buttonStyle(GrowingButton())
+				Button(action: {
+					finish()
+				}) {
+					Text("Continue")
 				}
+				.buttonStyle(GrowingButton())
+				.disabled(!hasPermissions)
 			}
 			.padding(.all, 16)
 			.onAppear {
