@@ -199,6 +199,21 @@ public struct NodeInfoLite: @unchecked Sendable {
     set {_uniqueStorage()._isFavorite = newValue}
   }
 
+  ///
+  /// True if node is in our ignored list
+  /// Persists between NodeDB internal clean ups
+  public var isIgnored: Bool {
+    get {return _storage._isIgnored}
+    set {_uniqueStorage()._isIgnored = newValue}
+  }
+
+  ///
+  /// Last byte of the node number of the node that should be used as the next hop to reach this node. 
+  public var nextHop: UInt32 {
+    get {return _storage._nextHop}
+    set {_uniqueStorage()._nextHop = newValue}
+  }
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -483,6 +498,8 @@ extension NodeInfoLite: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
     8: .standard(proto: "via_mqtt"),
     9: .standard(proto: "hops_away"),
     10: .standard(proto: "is_favorite"),
+    11: .standard(proto: "is_ignored"),
+    12: .standard(proto: "next_hop"),
   ]
 
   fileprivate class _StorageClass {
@@ -496,6 +513,8 @@ extension NodeInfoLite: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
     var _viaMqtt: Bool = false
     var _hopsAway: UInt32? = nil
     var _isFavorite: Bool = false
+    var _isIgnored: Bool = false
+    var _nextHop: UInt32 = 0
 
     #if swift(>=5.10)
       // This property is used as the initial default value for new instances of the type.
@@ -520,6 +539,8 @@ extension NodeInfoLite: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
       _viaMqtt = source._viaMqtt
       _hopsAway = source._hopsAway
       _isFavorite = source._isFavorite
+      _isIgnored = source._isIgnored
+      _nextHop = source._nextHop
     }
   }
 
@@ -548,6 +569,8 @@ extension NodeInfoLite: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
         case 8: try { try decoder.decodeSingularBoolField(value: &_storage._viaMqtt) }()
         case 9: try { try decoder.decodeSingularUInt32Field(value: &_storage._hopsAway) }()
         case 10: try { try decoder.decodeSingularBoolField(value: &_storage._isFavorite) }()
+        case 11: try { try decoder.decodeSingularBoolField(value: &_storage._isIgnored) }()
+        case 12: try { try decoder.decodeSingularUInt32Field(value: &_storage._nextHop) }()
         default: break
         }
       }
@@ -590,6 +613,12 @@ extension NodeInfoLite: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
       if _storage._isFavorite != false {
         try visitor.visitSingularBoolField(value: _storage._isFavorite, fieldNumber: 10)
       }
+      if _storage._isIgnored != false {
+        try visitor.visitSingularBoolField(value: _storage._isIgnored, fieldNumber: 11)
+      }
+      if _storage._nextHop != 0 {
+        try visitor.visitSingularUInt32Field(value: _storage._nextHop, fieldNumber: 12)
+      }
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -609,6 +638,8 @@ extension NodeInfoLite: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
         if _storage._viaMqtt != rhs_storage._viaMqtt {return false}
         if _storage._hopsAway != rhs_storage._hopsAway {return false}
         if _storage._isFavorite != rhs_storage._isFavorite {return false}
+        if _storage._isIgnored != rhs_storage._isIgnored {return false}
+        if _storage._nextHop != rhs_storage._nextHop {return false}
         return true
       }
       if !storagesAreEqual {return false}

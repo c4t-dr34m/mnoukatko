@@ -1,5 +1,4 @@
-import FirebaseAnalytics
-import FirebaseCore
+import Firebase
 import OSLog
 import SwiftUI
 
