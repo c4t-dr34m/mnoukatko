@@ -53,6 +53,29 @@ struct NodeIconsCompactView: View {
 
 		HStack(alignment: .center, spacing: detailIconSpacing) {
 			if connectedNode != node.num {
+				divider
+
+				if let user = node.user {
+					if user.keyMatch {
+						Image(systemName: "lock")
+							.font(detailInfoIconFont)
+							.foregroundColor(.gray)
+							.frame(width: detailIconSize)
+					}
+					else {
+						Image(systemName: "lock.slash")
+							.font(detailInfoIconFont)
+							.foregroundColor(.gray)
+							.frame(width: detailIconSize)
+					}
+				}
+				else {
+					Image(systemName: "lock.open")
+						.font(detailInfoIconFont)
+						.foregroundColor(.gray)
+						.frame(width: detailIconSize)
+				}
+
 				if node.viaMqtt {
 					divider
 

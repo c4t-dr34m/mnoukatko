@@ -61,6 +61,8 @@ struct NodeIconsView: View {
 				}
 
 				if connectedNode != node.num {
+					divider
+
 					if let user = node.user {
 						if user.keyMatch {
 							Image(systemName: "lock")
