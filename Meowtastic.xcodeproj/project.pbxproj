@@ -258,6 +258,7 @@
 		B28DC0E42C7107C4007990B3 /* NodeConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeConfig.swift; sourceTree = "<group>"; };
 		B29C39172C92E6660082A3FC /* DevicesDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesDelegate.swift; sourceTree = "<group>"; };
 		B2A064CD2C64D16E00B7E9F2 /* NavigationLazyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationLazyView.swift; sourceTree = "<group>"; };
+		B2A5355A2CF4A8D6006FBE1D /* MeshtasticDataModel_v45.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MeshtasticDataModel_v45.xcdatamodel; sourceTree = "<group>"; };
 		B2A5F2DB2C5668FD009457AB /* DeleteNodeButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeleteNodeButton.swift; sourceTree = "<group>"; };
 		B2A5F2DC2C5668FD009457AB /* ExchangePositionsButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExchangePositionsButton.swift; sourceTree = "<group>"; };
 		B2A5F2DD2C5668FD009457AB /* FavoriteNodeButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FavoriteNodeButton.swift; sourceTree = "<group>"; };
@@ -1474,8 +1475,9 @@
 				080092A22CCECFEA00A1309D /* MeshtasticDataModel_v42.xcdatamodel */,
 				080092A32CCECFEA00A1309D /* MeshtasticDataModel_v43.xcdatamodel */,
 				B27508972CE1D97E0067E65D /* MeshtasticDataModel_v44.xcdatamodel */,
+				B2A5355A2CF4A8D6006FBE1D /* MeshtasticDataModel_v45.xcdatamodel */,
 			);
-			currentVersion = B27508972CE1D97E0067E65D /* MeshtasticDataModel_v44.xcdatamodel */;
+			currentVersion = B2A5355A2CF4A8D6006FBE1D /* MeshtasticDataModel_v45.xcdatamodel */;
 			path = Meowtastic.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

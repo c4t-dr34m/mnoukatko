@@ -137,6 +137,11 @@ extension CoreDataTools {
 						newUser.role = Int32(newUserMessage.role.rawValue)
 						newUser.hwModel = String(describing: newUserMessage.hwModel).uppercased()
 						newUser.hwModelId = Int32(newUserMessage.hwModel.rawValue)
+						if !newUserMessage.publicKey.isEmpty {
+							newUser.pkiEncrypted = true
+							newUser.publicKey = newUserMessage.publicKey
+						}
+
 						Task {
 							Api().loadDeviceHardwareData { hw in
 								let dh = hw.first(where: {
@@ -145,6 +150,7 @@ extension CoreDataTools {
 								newUser.hwDisplayName = dh?.displayName
 							}
 						}
+
 						newNode.user = newUser
 
 						if UserDefaults.newNodeNotifications {
@@ -163,6 +169,10 @@ extension CoreDataTools {
 				} else {
 					if packet.from > Constants.minimumNodeNum {
 						let newUser = createUser(num: Int64(packet.from), context: context)
+						if !packet.publicKey.isEmpty {
+							newNode.user?.pkiEncrypted = true
+							newNode.user?.publicKey = packet.publicKey
+						}
 						newNode.user = newUser
 					}
 				}
@@ -220,9 +230,16 @@ extension CoreDataTools {
 						fetchedNode[0].user!.role = Int32(nodeInfoMessage.user.role.rawValue)
 						fetchedNode[0].user!.hwModel = String(describing: nodeInfoMessage.user.hwModel).uppercased()
 						fetchedNode[0].user!.hwModelId = Int32(nodeInfoMessage.user.hwModel.rawValue)
+						if !nodeInfoMessage.user.publicKey.isEmpty {
+							fetchedNode[0].user!.pkiEncrypted = true
+							fetchedNode[0].user!.publicKey = nodeInfoMessage.user.publicKey
+						}
+
 						Task {
-							Api().loadDeviceHardwareData { (hw) in
-								let dh = hw.first(where: { $0.hwModel == fetchedNode[0].user?.hwModelId ?? 0 })
+							Api().loadDeviceHardwareData { hw in
+								let dh = hw.first(where: {
+									$0.hwModel == fetchedNode[0].user?.hwModelId ?? 0
+								})
 								fetchedNode[0].user!.hwDisplayName = dh?.displayName
 							}
 						}
@@ -597,6 +614,13 @@ extension CoreDataTools {
 					fetchedNode[0].securityConfig?.privateKey = config.privateKey
 					if config.adminKey.count > 0 {
 						fetchedNode[0].securityConfig?.adminKey = config.adminKey[0]
+
+						if config.adminKey.count > 1 {
+							fetchedNode[0].securityConfig?.adminKey = config.adminKey[1]
+						}
+						else if config.adminKey.count > 2 {
+							fetchedNode[0].securityConfig?.adminKey = config.adminKey[2]
+						}
 					}
 					fetchedNode[0].securityConfig?.isManaged = config.isManaged
 					fetchedNode[0].securityConfig?.serialEnabled = config.serialEnabled

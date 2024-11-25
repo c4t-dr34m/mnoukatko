@@ -61,6 +61,27 @@ struct NodeIconsView: View {
 				}
 
 				if connectedNode != node.num {
+					if let user = node.user {
+						if user.keyMatch {
+							Image(systemName: "lock")
+								.font(detailInfoIconFont)
+								.foregroundColor(.green)
+								.frame(width: detailIconSize)
+						}
+						else {
+							Image(systemName: "lock.slash")
+								.font(detailInfoIconFont)
+								.foregroundColor(.red)
+								.frame(width: detailIconSize)
+						}
+					}
+					else {
+						Image(systemName: "lock.open")
+							.font(detailInfoIconFont)
+							.foregroundColor(.gray)
+							.frame(width: detailIconSize)
+					}
+
 					if node.viaMqtt {
 						divider
 

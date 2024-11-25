@@ -334,6 +334,10 @@ extension BLEManager {
 				newUser.hwModelId = Int32(nodeInfo.user.hwModel.rawValue)
 				newUser.isLicensed = nodeInfo.user.isLicensed
 				newUser.role = Int32(nodeInfo.user.role.rawValue)
+				if !nodeInfo.user.publicKey.isEmpty {
+					newUser.pkiEncrypted = true
+					newUser.publicKey = nodeInfo.user.publicKey
+				}
 
 				Task {
 					Api().loadDeviceHardwareData { hw in
@@ -414,6 +418,10 @@ extension BLEManager {
 				fetchedNode[0].user?.role = Int32(nodeInfo.user.role.rawValue)
 				fetchedNode[0].user?.hwModel = String(describing: nodeInfo.user.hwModel).uppercased()
 				fetchedNode[0].user?.hwModelId = Int32(nodeInfo.user.hwModel.rawValue)
+				if fetchedNode[0].user?.publicKey == nil, !nodeInfo.user.publicKey.isEmpty {
+					fetchedNode[0].user?.pkiEncrypted = true
+					fetchedNode[0].user?.publicKey = nodeInfo.user.publicKey
+				}
 
 				Task {
 					Api().loadDeviceHardwareData { hw in
@@ -955,6 +963,24 @@ extension BLEManager {
 			$0.num == packet.from
 		}) {
 			newMessage.fromUser = firstUserFrom
+			if newMessage.fromUser?.pkiEncrypted ?? false && packet.pkiEncrypted {
+				newMessage.pkiEncrypted = true
+				newMessage.publicKey = packet.publicKey
+			}
+			if
+				let nodeKey = newMessage.fromUser?.publicKey,
+				newMessage.toUser != nil,
+				packet.pkiEncrypted,
+				!packet.publicKey.isEmpty,
+				nodeKey != newMessage.publicKey
+			{
+				newMessage.fromUser?.keyMatch = false
+				newMessage.fromUser?.newPublicKey = newMessage.publicKey
+			}
+			else if packet.pkiEncrypted, !packet.publicKey.isEmpty {
+				newMessage.fromUser?.pkiEncrypted = true
+				newMessage.fromUser?.publicKey = packet.publicKey
+			}
 
 			if packet.rxTime > 0 {
 				newMessage.fromUser?.userNode?.lastHeard = Date(
