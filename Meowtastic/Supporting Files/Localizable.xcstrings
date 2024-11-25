@@ -10940,7 +10940,7 @@
         }
       }
     },
-    "Rate it" : {
+    "Rate Meowtastic" : {
 
     },
     "Reboot" : {
@@ -11180,6 +11180,9 @@
           }
         }
       }
+    },
+    "Roadmap" : {
+
     },
     "Role" : {
 
@@ -12950,7 +12953,7 @@
     "SNR: %@dB" : {
 
     },
-    "Source" : {
+    "Source code" : {
 
     },
     "Speed" : {
@@ -14041,12 +14044,12 @@
     "Version 1.2 End of life (EOL) Info" : {
 
     },
-    "Version: %@b%@" : {
+    "Version: %@/%@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Version: %1$@b%2$@"
+            "value" : "Version: %1$@/%2$@"
           }
         }
       }

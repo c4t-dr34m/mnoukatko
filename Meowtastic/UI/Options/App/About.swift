@@ -9,7 +9,7 @@ struct About: View {
 	var body: some View {
 		List {
 			Section(header: Text("This Application")) {
-				Button("Rate it") {
+				Button("Rate Meowtastic") {
 					if let scene = UIApplication.shared.connectedScenes.first(where: {
 						$0.activationState == .foregroundActive
 					}) as? UIWindowScene {
@@ -19,13 +19,23 @@ struct About: View {
 				.font(.body)
 
 				Link(
-					"Source",
+					"Roadmap",
+					// swiftlint:disable force_unwrapping
+					destination: URL(
+						string: "https://c4tdr34m.notion.site/3a35d93cc13e4c62ba46dea470e4580d?v=e47eeeaf93b9491ab95436c59e0f6829&pvs=74"
+					)!
+					// swiftlint:enable force_unwrapping
+				)
+				.font(.body)
+
+				Link(
+					"Source code",
 					// swiftlint:disable:next force_unwrapping
 					destination: URL(string: "https://github.com/c4t-dr34m/meowtastic_ios")!
 				)
 				.font(.body)
 
-				Text("Version: \(Bundle.main.appVersionLong)b\(Bundle.main.appBuild)")
+				Text("Version: \(Bundle.main.appVersionLong)/\(Bundle.main.appBuild)")
 			}
 
 			Section(header: Text("Credits")) {
