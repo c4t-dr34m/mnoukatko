@@ -67,13 +67,13 @@ struct NodeIconsView: View {
 						if user.keyMatch {
 							Image(systemName: "lock")
 								.font(detailInfoIconFont)
-								.foregroundColor(.green)
+								.foregroundColor(.gray)
 								.frame(width: detailIconSize)
 						}
 						else {
 							Image(systemName: "lock.slash")
 								.font(detailInfoIconFont)
-								.foregroundColor(.red)
+								.foregroundColor(.gray)
 								.frame(width: detailIconSize)
 						}
 					}

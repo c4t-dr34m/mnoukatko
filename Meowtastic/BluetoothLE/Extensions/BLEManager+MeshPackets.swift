@@ -963,12 +963,14 @@ extension BLEManager {
 			$0.num == packet.from
 		}) {
 			newMessage.fromUser = firstUserFrom
-			if newMessage.fromUser?.pkiEncrypted ?? false, packet.pkiEncrypted {
+
+			if firstUserFrom.pkiEncrypted, packet.pkiEncrypted {
 				newMessage.pkiEncrypted = true
 				newMessage.publicKey = packet.publicKey
 			}
+
 			if
-				let nodeKey = newMessage.fromUser?.publicKey,
+				let nodeKey = firstUserFrom.publicKey,
 				newMessage.toUser != nil,
 				packet.pkiEncrypted,
 				!packet.publicKey.isEmpty,
