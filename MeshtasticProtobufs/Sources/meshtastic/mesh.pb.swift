@@ -687,7 +687,7 @@ public enum Constants: SwiftProtobuf.Enum, Swift.CaseIterable {
   /// From mesh.options
   /// note: this payload length is ONLY the bytes that are sent inside of the Data protobuf (excluding protobuf overhead). The 16 byte header is
   /// outside of this envelope
-  case dataPayloadLen // = 237
+  case dataPayloadLen // = 233
   case UNRECOGNIZED(Int)
 
   public init() {
@@ -697,7 +697,7 @@ public enum Constants: SwiftProtobuf.Enum, Swift.CaseIterable {
   public init?(rawValue: Int) {
     switch rawValue {
     case 0: self = .zero
-    case 237: self = .dataPayloadLen
+    case 233: self = .dataPayloadLen
     default: self = .UNRECOGNIZED(rawValue)
     }
   }
@@ -705,7 +705,7 @@ public enum Constants: SwiftProtobuf.Enum, Swift.CaseIterable {
   public var rawValue: Int {
     switch self {
     case .zero: return 0
-    case .dataPayloadLen: return 237
+    case .dataPayloadLen: return 233
     case .UNRECOGNIZED(let i): return i
     }
   }
@@ -3287,7 +3287,7 @@ extension HardwareModel: SwiftProtobuf._ProtoNameProviding {
 extension Constants: SwiftProtobuf._ProtoNameProviding {
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     0: .same(proto: "ZERO"),
-    237: .same(proto: "DATA_PAYLOAD_LEN"),
+    233: .same(proto: "DATA_PAYLOAD_LEN"),
   ]
 }
 
