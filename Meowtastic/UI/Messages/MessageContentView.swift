@@ -133,6 +133,7 @@ struct MessageContentView: View {
 								)
 							)
 							.tint(linkColor)
+							.strikethrough(message.ackError > 0)
 							.padding(.top, 16)
 							.padding(.bottom, 8)
 							.padding(.leading, showSensor ? 0 : 16)

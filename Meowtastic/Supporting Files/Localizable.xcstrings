@@ -9991,9 +9991,6 @@
     "Next" : {
 
     },
-    "No encrypted message received yet" : {
-
-    },
     "No idea" : {
 
     },
@@ -10223,6 +10220,9 @@
 
     },
     "Not Connected" : {
+
+    },
+    "Not enough messages to validate security" : {
 
     },
     "Not secured" : {
