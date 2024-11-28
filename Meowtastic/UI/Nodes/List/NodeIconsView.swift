@@ -61,36 +61,6 @@ struct NodeIconsView: View {
 				}
 
 				if connectedNode != node.num {
-					divider
-
-					if let user = node.user, user.pkiEncrypted {
-						switch KeyMatch.fromInt(user.keyMatch) {
-						case .notSet:
-							Image(systemName: "lock.open")
-								.font(detailInfoIconFont)
-								.foregroundColor(.gray)
-								.frame(width: detailIconSize)
-
-						case .notMatching:
-							Image(systemName: "lock.slash")
-								.font(detailInfoIconFont)
-								.foregroundColor(.gray)
-								.frame(width: detailIconSize)
-
-						case .matching:
-							Image(systemName: "lock")
-								.font(detailInfoIconFont)
-								.foregroundColor(.gray)
-								.frame(width: detailIconSize)
-						}
-					}
-					else {
-						Image(systemName: "lock.open")
-							.font(detailInfoIconFont)
-							.foregroundColor(.gray)
-							.frame(width: detailIconSize)
-					}
-
 					if node.viaMqtt {
 						divider
 

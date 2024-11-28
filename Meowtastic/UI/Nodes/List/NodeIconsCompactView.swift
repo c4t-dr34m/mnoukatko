@@ -58,7 +58,7 @@ struct NodeIconsCompactView: View {
 				if let user = node.user, user.pkiEncrypted {
 					switch KeyMatch.fromInt(user.keyMatch) {
 					case .notSet:
-						Image(systemName: "lock.open.trianglebadge.exclamationmark")
+						Image(systemName: "lock.trianglebadge.exclamationmark")
 							.font(detailInfoIconFont)
 							.foregroundColor(.gray)
 							.frame(width: detailIconSize)

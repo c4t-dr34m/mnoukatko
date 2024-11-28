@@ -184,7 +184,7 @@ struct MessageList: View {
 					replyMessageId: $replyMessageId
 				)
 				.id(message.messageId)
-				.listRowInsets(.init(top: 4, leading: 0, bottom: 4, trailing: 0))
+				.listRowInsets(.init(top: 8, leading: 0, bottom: 8, trailing: 0))
 				.listRowSeparator(.hidden)
 				.listRowBackground(Color.clear)
 				.scrollContentBackground(.hidden)

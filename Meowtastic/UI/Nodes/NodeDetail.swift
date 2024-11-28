@@ -14,6 +14,7 @@ struct NodeDetail: View {
 	private let detailInfoTextFont = Font.system(size: 14, weight: .regular, design: .rounded)
 	private let detailInfoIconFont = Font.system(size: 16, weight: .regular, design: .rounded)
 	private let detailIconSize: CGFloat = 18
+	private let statusDotSize: CGFloat = 8
 
 	@Environment(\.managedObjectContext)
 	private var context
@@ -784,6 +785,95 @@ struct NodeDetail: View {
 							Image(systemName: "signpost.right.and.left")
 								.symbolRenderingMode(.monochrome)
 								.foregroundColor(.accentColor)
+						}
+					}
+				}
+			}
+
+			if let user = node.user {
+				let keyMatch = KeyMatch.fromInt(user.keyMatch)
+
+				HStack {
+					Label {
+						Text("Messages")
+					} icon: {
+						if user.pkiEncrypted {
+							switch keyMatch {
+							case .notSet:
+								Image(systemName: "lock.trianglebadge.exclamationmark")
+									.symbolRenderingMode(.monochrome)
+									.foregroundColor(.accentColor)
+
+							case .notMatching:
+								Image(systemName: "lock.slash")
+									.symbolRenderingMode(.monochrome)
+									.foregroundColor(.accentColor)
+
+							case .matching:
+								Image(systemName: "lock")
+									.symbolRenderingMode(.monochrome)
+									.foregroundColor(.accentColor)
+							}
+						}
+						else {
+							Image(systemName: "lock.open")
+								.symbolRenderingMode(.monochrome)
+								.foregroundColor(.accentColor)
+						}
+					}
+
+					Spacer()
+
+					if user.pkiEncrypted {
+						switch keyMatch {
+						case .notSet:
+							HStack(alignment: .center, spacing: 8) {
+								Circle()
+									.foregroundStyle(Color.gray)
+									.frame(width: statusDotSize, height: statusDotSize)
+
+								VStack(alignment: .trailing, spacing: 4) {
+									Text("Received node key")
+
+									Text("Not enough messages to validate security")
+										.lineLimit(2)
+										.font(.system(size: 10, weight: .light))
+										.foregroundColor(.gray)
+								}
+							}
+
+						case .notMatching:
+							HStack(alignment: .center, spacing: 8) {
+								Circle()
+									.foregroundStyle(Color.red)
+									.frame(width: statusDotSize, height: statusDotSize)
+
+								VStack(alignment: .trailing, spacing: 4) {
+									Text("Compromised")
+
+									Text("Node & message keys do not match")
+										.font(.system(size: 10, weight: .light))
+										.foregroundColor(.red)
+								}
+							}
+
+						case .matching:
+							HStack(alignment: .center, spacing: 8) {
+								Circle()
+									.foregroundStyle(Color.green)
+									.frame(width: statusDotSize, height: statusDotSize)
+
+								Text("Encrypted")
+							}
+						}
+					}
+					else {
+						HStack(alignment: .center, spacing: 8) {
+							Circle()
+								.foregroundStyle(Color.orange)
+								.frame(width: statusDotSize, height: statusDotSize)
+
+							Text("Not secured")
 						}
 					}
 				}

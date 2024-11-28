@@ -10,6 +10,8 @@ struct MessageListItem: View {
 	@Binding
 	var replyMessageId: Int64
 
+	private let detailInfoTextFont = Font.system(size: 14, weight: .regular, design: .rounded)
+
 	@EnvironmentObject
 	private var connectedDevice: CurrentDevice
 	@AppStorage("preferredPeripheralNum")
@@ -104,11 +106,11 @@ struct MessageListItem: View {
 				HStack(spacing: 4) {
 					if message.fromUser != nil {
 						Image(systemName: "person")
-							.font(.caption)
+							.font(detailInfoTextFont)
 							.foregroundColor(.gray)
 
 						Text(getSenderName(message: message))
-							.font(.caption)
+							.font(detailInfoTextFont)
 							.lineLimit(1)
 							.foregroundColor(.gray)
 
@@ -121,7 +123,7 @@ struct MessageListItem: View {
 					}
 					else {
 						Image(systemName: "person.fill.questionmark")
-							.font(.caption)
+							.font(detailInfoTextFont)
 							.foregroundColor(.gray)
 					}
 				}

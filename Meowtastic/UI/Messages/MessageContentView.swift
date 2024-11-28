@@ -9,8 +9,8 @@ struct MessageContentView: View {
 	let isCurrentUser: Bool
 	let onReply: () -> Void
 
-	private let linkColor = Color(red: 0.4627, green: 0.8392, blue: 1) /* #76d6ff */
-	private let statusFontSize: CGFloat = 12
+	private let statusFontSize: CGFloat = 14
+	private let statusIconSize: CGFloat = 12
 
 	@Environment(\.managedObjectContext)
 	private var context
@@ -18,35 +18,40 @@ struct MessageContentView: View {
 	private var colorScheme: ColorScheme
 	@State
 	private var isShowingDeleteConfirmation = false
-
 	private var isDetectionSensorMessage: Bool {
 		message.portNum == Int32(PortNum.detectionSensorApp.rawValue)
+	}
+	private var linkColor: Color {
+		if colorScheme == .dark {
+			.white
+		}
+		else {
+			.black
+		}
 	}
 
 	private var corners: RectangleCornerRadii {
 		if isCurrentUser {
 			RectangleCornerRadii(
-				topLeading: 24,
-				bottomLeading: 24,
-				bottomTrailing: 2,
-				topTrailing: 24
+				topLeading: 16,
+				bottomLeading: 16,
+				bottomTrailing: 4,
+				topTrailing: 16
 			)
 		}
 		else {
 			RectangleCornerRadii(
-				topLeading: 8,
-				bottomLeading: 24,
-				bottomTrailing: 2,
-				topTrailing: 24
+				topLeading: 4,
+				bottomLeading: 16,
+				bottomTrailing: 4,
+				topTrailing: 16
 			)
 		}
 	}
 
 	var body: some View {
 		ZStack(alignment: .topLeading) {
-			let markdownText = LocalizedStringKey(
-				message.messagePayloadMarkdown ?? (message.messagePayload ?? "EMPTY MESSAGE")
-			)
+			let markdownText = message.messagePayloadMarkdown ?? (message.messagePayload ?? "Empty message received")
 
 			VStack(alignment: isCurrentUser ? .trailing : .leading) {
 				if
@@ -129,23 +134,46 @@ struct MessageContentView: View {
 							)
 							.tint(linkColor)
 							.padding(.top, 16)
+							.padding(.bottom, 8)
 							.padding(.leading, showSensor ? 0 : 16)
 							.padding(.trailing, 16)
 
-						HStack {
+						Divider()
+							.foregroundColor(.gray)
+
+						HStack(alignment: .center) {
 							Spacer()
 
 							if isCurrentUser {
 								messageStatus
-									.padding([.leading, .trailing], 8)
+									.padding(.leading, 4)
 									.padding(.bottom, 4)
 									.id(message.messageId)
 							}
 							else {
 								messageTime
-									.padding([.leading, .trailing], 8)
+									.padding(.leading, 4)
 									.padding(.bottom, 4)
 									.id(message.messageId)
+							}
+
+							Divider()
+								.frame(height: 10)
+								.foregroundColor(.gray)
+
+							if message.pkiEncrypted {
+								Image(systemName: "key")
+									.font(.caption)
+									.foregroundColor(.gray)
+									.padding(.trailing, 8)
+									.padding(.bottom, 4)
+							}
+							else {
+								Image(systemName: "key.slash")
+									.font(.caption)
+									.foregroundColor(.gray)
+									.padding(.trailing, 8)
+									.padding(.bottom, 4)
 							}
 						}
 					}
@@ -184,7 +212,7 @@ struct MessageContentView: View {
 	private var messageTime: some View {
 		HStack(spacing: 4) {
 			Image(systemName: "clock")
-				.font(.system(size: statusFontSize))
+				.font(.system(size: statusIconSize))
 				.foregroundColor(getForegroundColor(for: message).opacity(0.5))
 
 			Text(message.timestamp.relative())

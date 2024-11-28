@@ -1712,6 +1712,9 @@
     "Coding rate" : {
 
     },
+    "Compromised" : {
+
+    },
     "config.power.adc.multiplier" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -3568,6 +3571,9 @@
       }
     },
     "Enabled" : {
+
+    },
+    "Encrypted" : {
 
     },
     "Encryption" : {
@@ -9985,6 +9991,9 @@
     "Next" : {
 
     },
+    "No encrypted message received yet" : {
+
+    },
     "No idea" : {
 
     },
@@ -10060,6 +10069,9 @@
       }
     },
     "Node" : {
+
+    },
+    "Node & message keys do not match" : {
 
     },
     "Node Discovered" : {
@@ -10211,6 +10223,9 @@
 
     },
     "Not Connected" : {
+
+    },
+    "Not secured" : {
 
     },
     "Not set" : {
@@ -11008,6 +11023,9 @@
 
     },
     "Receive GPIO" : {
+
+    },
+    "Received node key" : {
 
     },
     "Refresh Device Metadata" : {
