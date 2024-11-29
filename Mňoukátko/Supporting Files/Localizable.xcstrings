@@ -346,9 +346,6 @@
         }
       }
     },
-    "An open source, off-grid, decentralized, mesh network built to run on affordable, low-power devices. Obviously, this app would be useless without them" : {
-
-    },
     "App Settings" : {
 
     },
@@ -9698,9 +9695,6 @@
         }
       }
     },
-    "Meshtastic®" : {
-
-    },
     "Meshtastic® is a registered trademark of Meshtastic LLC" : {
 
     },
@@ -9719,7 +9713,7 @@
     "Minimum distance" : {
 
     },
-    "Mňoukátko" : {
+    "Mňoukátko — the Meshtastic® client" : {
 
     },
     "Mňoukátko also would like to deliver you notifications in case it discovers new Meshtastic® node, or when you got a new message. You can customize which notifications you would like later in Options." : {
