@@ -16,30 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-import CoreData
+import Foundation
 
-final class CoreDataTools {
-	let debounce = Debounce<() async -> Void>(duration: .milliseconds(606)) { action in
-		await action()
-	}
-
-	@discardableResult
-	func saveData(with context: NSManagedObjectContext) async -> Bool {
-		await context.perform {
-			guard context.hasChanges else {
-				return false
-			}
-
-			do {
-				try context.save()
-
-				return true
-			}
-			catch {
-				context.rollback()
-
-				return false
-			}
-		}
-	}
+extension Foundation.Notification.Name {
+	static let onboardingDone = Foundation.Notification.Name("OnboardingDone")
 }
