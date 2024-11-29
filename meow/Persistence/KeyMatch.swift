@@ -1,7 +1,7 @@
 /*
 Meow - the Meshtastic® client
 
-Copyright (C) 2024 Radovan Paška
+Copyright © 2024 Radovan Paška
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

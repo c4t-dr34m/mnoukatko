@@ -2599,7 +2599,10 @@
     "Copy message text" : {
 
     },
-    "Credits" : {
+    "Copyright © 2022-2024 Garth Vander Houwen" : {
+
+    },
+    "Copyright © 2024 Radovan Paška" : {
 
     },
     "Date" : {
@@ -7527,6 +7530,9 @@
           }
         }
       }
+    },
+    "Meow" : {
+
     },
     "Meow also would like to deliver you notifications in case it discovers new Meshtastic® node, or when you got a new message. You can customize which notifications you would like later in Options." : {
 
@@ -13660,6 +13666,9 @@
 
     },
     "This message was likely not delivered." : {
+
+    },
+    "This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions; visit GitHub repository (see \"Source code\" above) to learn more." : {
 
     },
     "This will disable fixed position and remove the currently set position." : {

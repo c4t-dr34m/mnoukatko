@@ -1,8 +1,8 @@
 /*
 Meow - the Meshtastic® client
 
-Copyright (C) 2022-2024 Garth Vander Houwen
-Copyright (C) 2024 Radovan Paška
+Copyright © 2022-2024 Garth Vander Houwen
+Copyright © 2024 Radovan Paška
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ struct About: View {
 				Text("Version: \(Bundle.main.appVersionLong)/\(Bundle.main.appBuild)")
 			}
 
-			Section(header: Text("Credits")) {
+			Section {
 				VStack(alignment: .leading, spacing: 8) {
 					Link(
 						"Meshtastic®",
@@ -74,6 +74,22 @@ struct About: View {
 					)
 					.font(.footnote)
 					.foregroundColor(.gray)
+				}
+
+				VStack(alignment: .leading, spacing: 8) {
+					Text("Meow")
+						.font(.body)
+						.padding(.bottom, 8)
+
+					Text("Copyright © 2022-2024 Garth Vander Houwen")
+						.font(.body)
+
+					Text("Copyright © 2024 Radovan Paška")
+						.font(.body)
+						.padding(.bottom, 8)
+
+					Text("This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions; visit GitHub repository (see \"Source code\" above) to learn more.")
+						.font(.body)
 				}
 			}
 		}
