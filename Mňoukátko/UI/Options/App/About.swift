@@ -81,7 +81,7 @@ struct About: View {
 
 				VStack(alignment: .leading, spacing: 8) {
 					Text(
-						"Meshtastic® is a registered trademark of Meshtastic LLC"
+						"Meshtastic® is a registered trademark of Meshtastic LLC. Meshtastic LLC is not associated with Mňoukátko."
 					)
 					.font(.footnote)
 				}
