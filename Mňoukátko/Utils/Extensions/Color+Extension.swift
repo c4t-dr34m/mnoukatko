@@ -22,6 +22,10 @@ import SwiftUI
 import UIKit
 
 extension Color {
+	var uiColor: UIColor {
+		UIColor(self)
+	}
+
 	static func listBackground(for scheme: ColorScheme) -> Color {
 		if scheme == .dark {
 			return Color(
@@ -33,10 +37,6 @@ extension Color {
 		else {
 			return .white
 		}
-	}
-
-	var uiColor: UIColor {
-		UIColor(self)
 	}
 
 	func isLight() -> Bool {

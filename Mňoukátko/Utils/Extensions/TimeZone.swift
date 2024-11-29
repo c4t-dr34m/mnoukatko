@@ -23,10 +23,10 @@ extension TimeZone {
 	var posixDescription: String {
 		if let nextDate = nextDaylightSavingTimeTransition, let afterDate = nextDaylightSavingTimeTransition(after: nextDate) {
 			// This timezone observes DST
-
 			// Get the transition dates to/from standard/DST
 			let stdDate: Date
 			let dstDate: Date
+
 			if isDaylightSavingTime(for: nextDate) {
 				stdDate = afterDate
 				dstDate = nextDate
@@ -54,14 +54,37 @@ extension TimeZone {
 			// The hour is based on the post-transition time but we need the pre-transition time
 			var cal = Calendar(identifier: .gregorian)
 			cal.timeZone = self
-			let stdcomps = cal.dateComponents([.month, .weekdayOrdinal, .weekday, .hour, .minute, .second], from: stdDate)
-			let dstcomps = cal.dateComponents([.month, .weekdayOrdinal, .weekday, .hour, .minute, .second], from: dstDate)
+			let stdcomps = cal.dateComponents(
+				[.month, .weekdayOrdinal, .weekday, .hour, .minute, .second],
+				from: stdDate
+			)
+			let dstcomps = cal.dateComponents(
+				[.month, .weekdayOrdinal, .weekday, .hour, .minute, .second],
+				from: dstDate
+			)
 
-			res += String(format: ",M%d.%d.%d/%d:%02d:%02d", dstcomps.month!, dstcomps.weekdayOrdinal!, dstcomps.weekday! - 1, dstcomps.hour! - 1, dstcomps.minute!, dstcomps.second!)
-			res += String(format: ",M%d.%d.%d/%d:%02d:%02d", stdcomps.month!, stdcomps.weekdayOrdinal!, stdcomps.weekday! - 1, stdcomps.hour! + 1, stdcomps.minute!, stdcomps.second!)
+			res += String(
+				format: ",M%d.%d.%d/%d:%02d:%02d",
+				dstcomps.month!,
+				dstcomps.weekdayOrdinal!,
+				dstcomps.weekday! - 1,
+				dstcomps.hour! - 1,
+				dstcomps.minute!,
+				dstcomps.second!
+			)
+			res += String(
+				format: ",M%d.%d.%d/%d:%02d:%02d",
+				stdcomps.month!,
+				stdcomps.weekdayOrdinal!,
+				stdcomps.weekday! - 1,
+				stdcomps.hour! + 1,
+				stdcomps.minute!,
+				stdcomps.second!
+			)
 
 			return res
-		} else {
+		}
+		else {
 			// This timezone does not observe DST
 			return "\(posixAbbreviation())\(posixOffset())"
 		}
@@ -69,6 +92,7 @@ extension TimeZone {
 
 	private func posixAbbreviation(for date: Date = Date()) -> String {
 		let abrev = abbreviation(for: date) ?? "<UNK>" // We never actually get "<UNK>" for any TimeZone identifier
+
 		// Many abbreviations come in the form "GMT+X" or "GMT-X"
 		return abrev.hasPrefix("GMT") ? "GMT" : abrev
 	}

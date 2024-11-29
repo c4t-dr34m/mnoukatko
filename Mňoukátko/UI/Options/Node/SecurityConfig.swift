@@ -136,7 +136,7 @@ struct SecurityConfig: OptionsScreen {
 			.headerProminence(.increased)
 
 			Section(header: Text("Administration")) {
-				if adminKey.length > 0 || adminChannelEnabled {
+				if adminKey.count > 0 || adminChannelEnabled {
 					Toggle(isOn: $isManaged) {
 						Text("Managed device")
 							.font(.body)
@@ -275,10 +275,7 @@ struct SecurityConfig: OptionsScreen {
 
 	private func validate(key: String, allowEmpty: Bool = false) -> Bool {
 		let keyData = Data(base64Encoded: key)
-		if let keyData, keyData.count == 32 {
-			return true
-		}
-		else if allowEmpty, key.isEmpty {
+		if let keyData, keyData.count == 32 || allowEmpty, key.isEmpty {
 			return true
 		}
 

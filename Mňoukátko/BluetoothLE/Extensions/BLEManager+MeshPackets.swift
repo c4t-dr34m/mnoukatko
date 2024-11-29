@@ -713,9 +713,7 @@ extension BLEManager {
 			coreDataTools.upsertRtttlConfigPacket(ringtone: ringtone, nodeNum: Int64(packet.from), context: context)
 
 		default:
-			MeshLogger.log(
-				"🕸️ MESH PACKET received Admin App UNHANDLED \((try? packet.decoded.jsonString()) ?? "JSON Decode Failure")"
-			)
+			break
 		}
 
 		adminResponseAck(packet: packet, context: context)

@@ -14059,12 +14059,12 @@
     "Version 1.2 End of life (EOL) Info" : {
 
     },
-    "Version: %@/%@" : {
+    "Version: %@:%@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Version: %1$@/%2$@"
+            "value" : "Version: %1$@:%2$@"
           }
         }
       }

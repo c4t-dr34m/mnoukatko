@@ -54,7 +54,12 @@ struct About: View {
 				)
 				.font(.body)
 
-				Text("Version: \(Bundle.main.appVersionLong)/\(Bundle.main.appBuild)")
+				if
+					let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
+					let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
+				{
+					Text("Version: \(version):\(build)")
+				}
 			}
 
 			Section {

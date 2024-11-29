@@ -43,15 +43,15 @@ extension NodeInfoEntity {
 	}
 
 	var hasDeviceMetrics: Bool {
-		return telemetries?.filter { telemetry in
+		telemetries?.first(where: { telemetry in
 			(telemetry as AnyObject).metricsType == 0
-		}.first != nil
+		}) != nil
 	}
 
 	var hasEnvironmentMetrics: Bool {
-		telemetries?.filter { telemetry in
+		telemetries?.first(where: { telemetry in
 			(telemetry as AnyObject).metricsType == 1
-		}.first != nil
+		}) != nil
 	}
 
 	var hasDetectionSensorMetrics: Bool {

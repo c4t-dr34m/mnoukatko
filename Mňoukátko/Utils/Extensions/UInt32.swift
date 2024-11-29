@@ -17,28 +17,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-import Foundation
-import RegexBuilder
-
-final class CommonRegex {
-	static let coordinateRegex = Regex {
-		Capture {
-			Regex {
-				"lat="
-				OneOrMore(.digit)
-			}
-		}
-
-		Capture {
-			" "
-		}
-
-		Capture {
-			Regex {
-				"long="
-				OneOrMore(.digit)
-			}
-		}
+extension UInt32 {
+	func toHex() -> String {
+		String(format: "!%2X", self)
 	}
-		.anchorsMatchLineEndings()
 }

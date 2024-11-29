@@ -37,27 +37,6 @@ extension Date {
 		}
 	}
 
-	func relativeTimeOfDay() -> String {
-		let hour = Calendar.current.component(.hour, from: self)
-
-		switch hour {
-		case 6..<12:
-			return "Morning"
-
-		case 12:
-			return "Noon"
-
-		case 13..<17:
-			return "Afternoon"
-
-		case 17..<22:
-			return "Evening"
-
-		default:
-			return "Night"
-		}
-	}
-
 	func relative() -> String {
 		let absoluteFormatter = DateFormatter()
 		absoluteFormatter.dateStyle = .medium

@@ -64,10 +64,6 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
 
 	func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
 		lastKnownLocation = locations.last
-
-		if let coordinate = lastKnownLocation?.coordinate {
-			MeshLogger.log("📍 We got new location: \(coordinate.latitude), \(coordinate.longitude)")
-		}
 	}
 
 	func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {

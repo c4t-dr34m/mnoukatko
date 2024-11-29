@@ -107,6 +107,7 @@ extension UIColor {
 		)
 	}
 
+	// swiftlint:disable:next large_tuple
 	private func getHSL() -> (hue: CGFloat, saturation: CGFloat, lightness: CGFloat) {
 		var hue: CGFloat = 0
 		var saturation: CGFloat = 0

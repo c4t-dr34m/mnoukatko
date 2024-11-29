@@ -531,10 +531,6 @@ extension BLEManager: CBPeripheralDelegate {
 		context: NSManagedObjectContext
 	) {
 		if let storeAndForwardMessage = try? StoreAndForward(serializedData: packet.decoded.payload) {
-			MeshLogger.log(
-				"Store & Forward: Message \(storeAndForwardMessage.rr.rawValue) received from \(packet.from.toHex())"
-			)
-
 			switch storeAndForwardMessage.rr {
 			case .routerHeartbeat:
 				/// When we get a router heartbeat we know there is a store and forward node on the network
