@@ -2596,7 +2596,7 @@
     "Copy message text" : {
 
     },
-    "Copyright © 2022-2024 Garth Vander Houwen" : {
+    "Copyright © 2021-2024 Garth Vander Houwen" : {
 
     },
     "Copyright © 2024 Radovan Paška" : {
@@ -9988,6 +9988,9 @@
     "Next" : {
 
     },
+    "No encrypted message received yet" : {
+
+    },
     "No idea" : {
 
     },
@@ -10217,9 +10220,6 @@
 
     },
     "Not Connected" : {
-
-    },
-    "Not enough messages to validate security" : {
 
     },
     "Not secured" : {

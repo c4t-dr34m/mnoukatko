@@ -177,7 +177,7 @@ struct MessageContentView: View {
 									.id(message.messageId)
 							}
 
-							if message.toUser != nil {
+							if !isCurrentUser, message.toUser != nil {
 								Divider()
 									.frame(height: 10)
 									.foregroundColor(.gray)
@@ -196,6 +196,10 @@ struct MessageContentView: View {
 										.padding(.trailing, 8)
 										.padding(.bottom, 4)
 								}
+							}
+							else {
+								Spacer()
+									.frame(width: 8)
 							}
 						}
 					}
