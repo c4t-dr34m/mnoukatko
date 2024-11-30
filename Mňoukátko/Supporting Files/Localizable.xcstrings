@@ -9988,9 +9988,6 @@
     "Next" : {
 
     },
-    "No encrypted message yet" : {
-
-    },
     "No idea" : {
 
     },
@@ -11022,7 +11019,7 @@
     "Receive GPIO" : {
 
     },
-    "Received node key" : {
+    "Received public key" : {
 
     },
     "Refresh Device Metadata" : {

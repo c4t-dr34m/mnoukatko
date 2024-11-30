@@ -852,8 +852,8 @@ struct NodeDetail: View {
 									.foregroundStyle(Color.gray)
 									.frame(width: statusDotSize, height: statusDotSize)
 
-								VStack(alignment: .leading, spacing: 4) {
-									Text("Received node key")
+								VStack(alignment: .trailing, spacing: 4) {
+									Text("Received public key")
 
 									Text(publicKey.hexString().hashPreview(maxLength: 16))
 										.lineLimit(1)
