@@ -981,27 +981,23 @@ extension BLEManager {
 		}) {
 			newMessage.fromUser = fromUser
 
-			if fromUser.pkiEncrypted, packet.pkiEncrypted {
-				newMessage.pkiEncrypted = true
-				newMessage.publicKey = packet.publicKey
-			}
-
-			if
-				let nodeKey = fromUser.publicKey,
-				newMessage.toUser != nil,
-				packet.pkiEncrypted,
-				!packet.publicKey.isEmpty
-			{
-				if nodeKey == packet.publicKey {
-					newMessage.fromUser?.keyMatch = KeyMatch.matching.rawValue
-				}
-				else {
-					newMessage.fromUser?.keyMatch = KeyMatch.notMatching.rawValue
-				}
-			}
-			else if packet.pkiEncrypted, !packet.publicKey.isEmpty {
+			if packet.pkiEncrypted, !packet.publicKey.isEmpty {
 				newMessage.fromUser?.pkiEncrypted = true
 				newMessage.fromUser?.publicKey = packet.publicKey
+
+				if fromUser.pkiEncrypted  {
+					newMessage.pkiEncrypted = true
+					newMessage.publicKey = packet.publicKey
+				}
+
+				if let nodeKey = fromUser.publicKey, newMessage.toUser != nil {
+					if nodeKey == packet.publicKey {
+						newMessage.fromUser?.keyMatch = KeyMatch.matching.rawValue
+					}
+					else {
+						newMessage.fromUser?.keyMatch = KeyMatch.notMatching.rawValue
+					}
+				}
 			}
 
 			if packet.rxTime > 0 {

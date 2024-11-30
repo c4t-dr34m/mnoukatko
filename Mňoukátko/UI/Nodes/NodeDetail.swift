@@ -810,13 +810,14 @@ struct NodeDetail: View {
 			}
 
 			if let user = node.user {
+				let publicKey = user.publicKey
 				let keyMatch = KeyMatch.fromInt(user.keyMatch)
 
 				HStack {
 					Label {
 						Text("Messages")
 					} icon: {
-						if user.pkiEncrypted, let key = user.publicKey, !key.isEmpty {
+						if user.pkiEncrypted, let publicKey, !publicKey.isEmpty {
 							switch keyMatch {
 							case .notSet:
 								Image(systemName: "lock.trianglebadge.exclamationmark")
@@ -843,7 +844,7 @@ struct NodeDetail: View {
 
 					Spacer()
 
-					if user.pkiEncrypted, let key = user.publicKey, !key.isEmpty {
+					if user.pkiEncrypted, let publicKey, !publicKey.isEmpty {
 						switch keyMatch {
 						case .notSet:
 							HStack(alignment: .center, spacing: 8) {
