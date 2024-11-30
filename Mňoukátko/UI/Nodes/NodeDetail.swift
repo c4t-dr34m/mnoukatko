@@ -855,8 +855,8 @@ struct NodeDetail: View {
 								VStack(alignment: .leading, spacing: 4) {
 									Text("Received node key")
 
-									Text("No encrypted message received yet")
-										.lineLimit(2)
+									Text(publicKey.hexString().hashPreview(maxLength: 16))
+										.lineLimit(1)
 										.font(.system(size: 10, weight: .light))
 										.foregroundColor(.gray)
 								}

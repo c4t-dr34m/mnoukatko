@@ -51,6 +51,18 @@ extension String {
 			}
 	}
 
+	func hashPreview(maxLength: Int = 8) -> String {
+		guard count > maxLength else {
+			return self
+		}
+
+		let part = maxLength / 2
+		let start = String(self.prefix(part))
+		let end = String(self.suffix(part))
+
+		return "\(start)…\(end)"
+	}
+
 	subscript (i: Int) -> String {
 		self[i ..< i + 1]
 	}

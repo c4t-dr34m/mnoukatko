@@ -20,14 +20,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import Foundation
 
 extension Data {
-	func hex() -> String? {
-		guard count > 0 else {
-			return nil
+	func hexString() -> String {
+		guard !isEmpty else {
+			return ""
 		}
 
 		return map {
 			String(format: "%02hhX", $0)
 		}
-		.joined()
+		.joined(separator: "·")
 	}
 }
