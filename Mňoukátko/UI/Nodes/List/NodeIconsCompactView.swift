@@ -1,7 +1,7 @@
 /*
 Mňoukátko - the Meshtastic® client
 
-Copyright © 2022-2024 Garth Vander Houwen
+Copyright © 2021-2024 Garth Vander Houwen
 Copyright © 2024 Radovan Paška
 
 This program is free software: you can redistribute it and/or modify
@@ -74,7 +74,7 @@ struct NodeIconsCompactView: View {
 			if connectedNode != node.num {
 				divider
 
-				if let user = node.user, user.pkiEncrypted {
+				if let user = node.user, user.pkiEncrypted, let key = user.publicKey, !key.isEmpty {
 					switch KeyMatch.fromInt(user.keyMatch) {
 					case .notSet:
 						Image(systemName: "lock.trianglebadge.exclamationmark")

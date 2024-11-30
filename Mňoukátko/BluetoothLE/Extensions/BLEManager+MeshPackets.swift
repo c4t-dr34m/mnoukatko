@@ -1,7 +1,7 @@
 /*
 Mňoukátko - the Meshtastic® client
 
-Copyright © 2022-2024 Garth Vander Houwen
+Copyright © 2021-2024 Garth Vander Houwen
 Copyright © 2024 Radovan Paška
 
 This program is free software: you can redistribute it and/or modify
@@ -981,31 +981,25 @@ extension BLEManager {
 		}) {
 			newMessage.fromUser = fromUser
 
-			// user & message encrypted; set message key
 			if fromUser.pkiEncrypted, packet.pkiEncrypted {
 				newMessage.pkiEncrypted = true
 				newMessage.publicKey = packet.publicKey
 			}
 
-			if let nodeKey = fromUser.publicKey {
-				// node has a key
-				if
-					newMessage.toUser != nil,
-					packet.pkiEncrypted,
-					!packet.publicKey.isEmpty
-				{
-					if nodeKey == packet.publicKey {
-						// node key and message key matches
-						newMessage.fromUser?.keyMatch = KeyMatch.matching.rawValue
-					}
-					else {
-						// node key doesn't match message key
-						newMessage.fromUser?.keyMatch = KeyMatch.notMatching.rawValue
-					}
+			if
+				let nodeKey = fromUser.publicKey,
+				newMessage.toUser != nil,
+				packet.pkiEncrypted,
+				!packet.publicKey.isEmpty
+			{
+				if nodeKey == packet.publicKey {
+					newMessage.fromUser?.keyMatch = KeyMatch.matching.rawValue
+				}
+				else {
+					newMessage.fromUser?.keyMatch = KeyMatch.notMatching.rawValue
 				}
 			}
 			else if packet.pkiEncrypted, !packet.publicKey.isEmpty {
-				// node has no key, but message has some - assign to the node
 				newMessage.fromUser?.pkiEncrypted = true
 				newMessage.fromUser?.publicKey = packet.publicKey
 			}

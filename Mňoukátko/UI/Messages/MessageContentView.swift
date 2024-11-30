@@ -1,7 +1,7 @@
 /*
 Mňoukátko - the Meshtastic® client
 
-Copyright © 2022-2024 Garth Vander Houwen
+Copyright © 2021-2024 Garth Vander Houwen
 Copyright © 2024 Radovan Paška
 
 This program is free software: you can redistribute it and/or modify
@@ -177,23 +177,25 @@ struct MessageContentView: View {
 									.id(message.messageId)
 							}
 
-							Divider()
-								.frame(height: 10)
-								.foregroundColor(.gray)
+							if message.toUser != nil {
+								Divider()
+									.frame(height: 10)
+									.foregroundColor(.gray)
 
-							if message.pkiEncrypted {
-								Image(systemName: "key")
-									.font(.caption)
-									.foregroundColor(.gray)
-									.padding(.trailing, 8)
-									.padding(.bottom, 4)
-							}
-							else {
-								Image(systemName: "key.slash")
-									.font(.caption)
-									.foregroundColor(.gray)
-									.padding(.trailing, 8)
-									.padding(.bottom, 4)
+								if message.pkiEncrypted, let key = message.publicKey, !key.isEmpty {
+									Image(systemName: "key")
+										.font(.caption)
+										.foregroundColor(.gray)
+										.padding(.trailing, 8)
+										.padding(.bottom, 4)
+								}
+								else {
+									Image(systemName: "key.slash")
+										.font(.caption)
+										.foregroundColor(.gray)
+										.padding(.trailing, 8)
+										.padding(.bottom, 4)
+								}
 							}
 						}
 					}

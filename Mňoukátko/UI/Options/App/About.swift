@@ -1,7 +1,7 @@
 /*
 Mňoukátko - the Meshtastic® client
 
-Copyright © 2022-2024 Garth Vander Houwen
+Copyright © 2021-2024 Garth Vander Houwen
 Copyright © 2024 Radovan Paška
 
 This program is free software: you can redistribute it and/or modify
@@ -68,7 +68,7 @@ struct About: View {
 						.font(.body)
 						.padding(.bottom, 8)
 
-					Text("Copyright © 2022-2024 Garth Vander Houwen")
+					Text("Copyright © 2021-2024 Garth Vander Houwen")
 						.font(.body)
 
 					Text("Copyright © 2024 Radovan Paška")

@@ -1,7 +1,7 @@
 /*
 Mňoukátko - the Meshtastic® client
 
-Copyright © 2022-2024 Garth Vander Houwen
+Copyright © 2021-2024 Garth Vander Houwen
 Copyright © 2024 Radovan Paška
 
 This program is free software: you can redistribute it and/or modify
@@ -816,7 +816,7 @@ struct NodeDetail: View {
 					Label {
 						Text("Messages")
 					} icon: {
-						if user.pkiEncrypted {
+						if user.pkiEncrypted, let key = user.publicKey, !key.isEmpty {
 							switch keyMatch {
 							case .notSet:
 								Image(systemName: "lock.trianglebadge.exclamationmark")
@@ -843,7 +843,7 @@ struct NodeDetail: View {
 
 					Spacer()
 
-					if user.pkiEncrypted {
+					if user.pkiEncrypted, let key = user.publicKey, !key.isEmpty {
 						switch keyMatch {
 						case .notSet:
 							HStack(alignment: .center, spacing: 8) {
@@ -854,7 +854,7 @@ struct NodeDetail: View {
 								VStack(alignment: .leading, spacing: 4) {
 									Text("Received node key")
 
-									Text("Not enough messages to validate security")
+									Text("No encrypted message received yet")
 										.lineLimit(2)
 										.font(.system(size: 10, weight: .light))
 										.foregroundColor(.gray)
