@@ -225,7 +225,7 @@ struct MessageList: View {
 		request.sortDescriptors = [
 			NSSortDescriptor(key: "messageTimestamp", ascending: true)
 		]
-		request.predicate = NSPredicate(format: "channel == %lld", channel.index)
+		request.predicate = NSPredicate(format: "toUser == nil && channel == %lld", channel.index)
 
 		self._messages = .init(fetchRequest: request)
 	}
