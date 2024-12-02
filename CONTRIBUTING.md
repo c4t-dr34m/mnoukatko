@@ -7,5 +7,5 @@ In such case, please follow these strict rules
 
 1) Make things better
 2) Create a pull request
-    a) Explain what and why you are trying to achieve
+   - Explain what and why you are trying to achieve
 3) Discuss to find compromise, if necessary
