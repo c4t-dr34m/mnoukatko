@@ -97,6 +97,8 @@
 		B2BDCD7A2C6CB6440040D7ED /* AnalyticEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2BDCD792C6CB6440040D7ED /* AnalyticEvents.swift */; };
 		B2CC14B22C66280000588C16 /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2CC14B12C66280000588C16 /* UIColor+Extension.swift */; };
 		B2CC552C2C7374EC003FB487 /* CBPeripheral+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2CC552B2C7374EC003FB487 /* CBPeripheral+Extensions.swift */; };
+		B2D8488A2CFDDD6B00F59761 /* Spline.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2D848892CFDDD6900F59761 /* Spline.swift */; };
+		B2D8488C2CFDE1CC00F59761 /* XY.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2D8488B2CFDE1C900F59761 /* XY.swift */; };
 		B2DAF0FC2CF8B875004B4AE7 /* KeyMatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2DAF0FB2CF8B873004B4AE7 /* KeyMatch.swift */; };
 		B2E8CE4A2CC94BF400407417 /* ConfigType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E8CE492CC94BF000407417 /* ConfigType.swift */; };
 		B2E8CE4C2CC94C0600407417 /* CommDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E8CE4B2CC94C0200407417 /* CommDelegate.swift */; };
@@ -272,6 +274,8 @@
 		B2BDCD792C6CB6440040D7ED /* AnalyticEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticEvents.swift; sourceTree = "<group>"; };
 		B2CC14B12C66280000588C16 /* UIColor+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extension.swift"; sourceTree = "<group>"; };
 		B2CC552B2C7374EC003FB487 /* CBPeripheral+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CBPeripheral+Extensions.swift"; sourceTree = "<group>"; };
+		B2D848892CFDDD6900F59761 /* Spline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spline.swift; sourceTree = "<group>"; };
+		B2D8488B2CFDE1C900F59761 /* XY.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XY.swift; sourceTree = "<group>"; };
 		B2DAF0FB2CF8B873004B4AE7 /* KeyMatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyMatch.swift; sourceTree = "<group>"; };
 		B2E8CE492CC94BF000407417 /* ConfigType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigType.swift; sourceTree = "<group>"; };
 		B2E8CE4B2CC94C0200407417 /* CommDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommDelegate.swift; sourceTree = "<group>"; };
@@ -566,6 +570,7 @@
 		B2A5F2FB2C5668FD009457AB /* Nodes */ = {
 			isa = PBXGroup;
 			children = (
+				B2D848882CFDDD6200F59761 /* Chart */,
 				B2A5F31A2C566B69009457AB /* List */,
 				B2A5F2F12C5668FD009457AB /* Map */,
 				B2A5F2E22C5668FD009457AB /* NodeDetail.swift */,
@@ -624,6 +629,15 @@
 				B2BDCD792C6CB6440040D7ED /* AnalyticEvents.swift */,
 			);
 			path = Analytics;
+			sourceTree = "<group>";
+		};
+		B2D848882CFDDD6200F59761 /* Chart */ = {
+			isa = PBXGroup;
+			children = (
+				B2D8488B2CFDE1C900F59761 /* XY.swift */,
+				B2D848892CFDDD6900F59761 /* Spline.swift */,
+			);
+			path = Chart;
 			sourceTree = "<group>";
 		};
 		B2E8CE482CC94BC800407417 /* Watchers */ = {
@@ -1040,12 +1054,14 @@
 				B2A5F31C2C566D98009457AB /* TraceRoute.swift in Sources */,
 				B2AF95D22CAAE92D00EAD056 /* MessageListItem.swift in Sources */,
 				B2A5F3042C5668FD009457AB /* NodeIconsView.swift in Sources */,
+				B2D8488C2CFDE1CC00F59761 /* XY.swift in Sources */,
 				DDF924CA26FBB953009FE055 /* ConnectionInfo.swift in Sources */,
 				B284A4332C6F8AE400D5122B /* BluetoothUUID.swift in Sources */,
 				B2A5F3032C5668FD009457AB /* NodeDetail.swift in Sources */,
 				DD3CC6BE28E4CD9800FA9159 /* BatteryView.swift in Sources */,
 				DDDB444A29F8AA3A00EE2349 /* CLLocationCoordinate2D.swift in Sources */,
 				DD41582628582E9B009B0E59 /* DeviceConfig.swift in Sources */,
+				B2D8488A2CFDDD6B00F59761 /* Spline.swift in Sources */,
 				B266A7552C5921BB00DFC723 /* Releases.swift in Sources */,
 				080092A42CCECFEA00A1309D /* Mňoukátko.xcdatamodeld in Sources */,
 				DDF45C372BC46A5A005ED5F2 /* TimeZone.swift in Sources */,
