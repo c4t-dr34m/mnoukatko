@@ -1,5 +1,5 @@
 /*
-Mňoukátko - the Meshtastic® client
+Mňoukátko - a Meshtastic® client
 
 Copyright © 2014-2024 Radovan Paška
 
@@ -16,9 +16,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-public class SplineGraph extends View {
+import UIKit
 
+final class SplineGraph:  {
 	private final ArrayList<SplinePath> mPaths = new ArrayList<SplinePath>();
+
 	private Bitmap mCacheBitmap;
 	private Canvas mCacheCanvas;
 	private int[] mPadding = new int[]{0, 0, 0, 0}; // top, right, bottom, left

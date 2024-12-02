@@ -1,5 +1,5 @@
 /*
-Mňoukátko - the Meshtastic® client
+Mňoukátko - a Meshtastic® client
 
 Copyright © 2012 The Android Open Source Project
 Copyright © 2024 Radovan Paška

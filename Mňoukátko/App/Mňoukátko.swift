@@ -1,5 +1,5 @@
 /*
-Mňoukátko - the Meshtastic® client
+Mňoukátko - a Meshtastic® client
 
 Copyright © 2022 Garth Vander Houwen
 Copyright © 2024 Radovan Paška
