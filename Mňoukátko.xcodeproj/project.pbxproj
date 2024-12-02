@@ -99,6 +99,9 @@
 		B2CC552C2C7374EC003FB487 /* CBPeripheral+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2CC552B2C7374EC003FB487 /* CBPeripheral+Extensions.swift */; };
 		B2D8488A2CFDDD6B00F59761 /* Spline.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2D848892CFDDD6900F59761 /* Spline.swift */; };
 		B2D8488C2CFDE1CC00F59761 /* XY.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2D8488B2CFDE1C900F59761 /* XY.swift */; };
+		B2D8488E2CFDE2CE00F59761 /* DeltaPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2D8488D2CFDE2C900F59761 /* DeltaPoint.swift */; };
+		B2D848902CFDE34100F59761 /* SplinePath.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2D8488F2CFDE33E00F59761 /* SplinePath.swift */; };
+		B2D848922CFDE35E00F59761 /* SplineChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2D848912CFDE35B00F59761 /* SplineChart.swift */; };
 		B2DAF0FC2CF8B875004B4AE7 /* KeyMatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2DAF0FB2CF8B873004B4AE7 /* KeyMatch.swift */; };
 		B2E8CE4A2CC94BF400407417 /* ConfigType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E8CE492CC94BF000407417 /* ConfigType.swift */; };
 		B2E8CE4C2CC94C0600407417 /* CommDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E8CE4B2CC94C0200407417 /* CommDelegate.swift */; };
@@ -276,6 +279,9 @@
 		B2CC552B2C7374EC003FB487 /* CBPeripheral+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CBPeripheral+Extensions.swift"; sourceTree = "<group>"; };
 		B2D848892CFDDD6900F59761 /* Spline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spline.swift; sourceTree = "<group>"; };
 		B2D8488B2CFDE1C900F59761 /* XY.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XY.swift; sourceTree = "<group>"; };
+		B2D8488D2CFDE2C900F59761 /* DeltaPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeltaPoint.swift; sourceTree = "<group>"; };
+		B2D8488F2CFDE33E00F59761 /* SplinePath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplinePath.swift; sourceTree = "<group>"; };
+		B2D848912CFDE35B00F59761 /* SplineChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplineChart.swift; sourceTree = "<group>"; };
 		B2DAF0FB2CF8B873004B4AE7 /* KeyMatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyMatch.swift; sourceTree = "<group>"; };
 		B2E8CE492CC94BF000407417 /* ConfigType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigType.swift; sourceTree = "<group>"; };
 		B2E8CE4B2CC94C0200407417 /* CommDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommDelegate.swift; sourceTree = "<group>"; };
@@ -634,8 +640,11 @@
 		B2D848882CFDDD6200F59761 /* Chart */ = {
 			isa = PBXGroup;
 			children = (
-				B2D8488B2CFDE1C900F59761 /* XY.swift */,
+				B2D8488D2CFDE2C900F59761 /* DeltaPoint.swift */,
 				B2D848892CFDDD6900F59761 /* Spline.swift */,
+				B2D848912CFDE35B00F59761 /* SplineChart.swift */,
+				B2D8488F2CFDE33E00F59761 /* SplinePath.swift */,
+				B2D8488B2CFDE1C900F59761 /* XY.swift */,
 			);
 			path = Chart;
 			sourceTree = "<group>";
@@ -1047,10 +1056,12 @@
 				DD4A911E2708C65400501B7E /* AppSettings.swift in Sources */,
 				B266A75D2C59265000DFC723 /* OLEDTypes.swift in Sources */,
 				B275089D2CE22FCC0067E65D /* KeyField.swift in Sources */,
+				B2D848922CFDE35E00F59761 /* SplineChart.swift in Sources */,
 				B27508992CE20AE90067E65D /* SecurityConfig.swift in Sources */,
 				DD2160AF28C5552500C17253 /* MQTTConfig.swift in Sources */,
 				6DEDA55C2A9592F900321D2E /* MessageEntity+Extension.swift in Sources */,
 				DDF45C342BC1A48E005ED5F2 /* MQTTChannelIcon.swift in Sources */,
+				B2D8488E2CFDE2CE00F59761 /* DeltaPoint.swift in Sources */,
 				B2A5F31C2C566D98009457AB /* TraceRoute.swift in Sources */,
 				B2AF95D22CAAE92D00EAD056 /* MessageListItem.swift in Sources */,
 				B2A5F3042C5668FD009457AB /* NodeIconsView.swift in Sources */,
@@ -1108,6 +1119,7 @@
 				B2A5F3132C5668FD009457AB /* MeshMap.swift in Sources */,
 				DDA1C48E28DB49D3009933EC /* ChannelRoles.swift in Sources */,
 				B27A4B9C2CA6B8D200F813C3 /* NodeListConnectedItem.swift in Sources */,
+				B2D848902CFDE34100F59761 /* SplinePath.swift in Sources */,
 				B284A4312C6F88F400D5122B /* BLEManager+MQTTManagerDelegate.swift in Sources */,
 				DD8ED9C8289CE4B900B3B0AB /* RoutingError.swift in Sources */,
 				DD964FC62975DBFD007C176F /* CoreDataTools+Query.swift in Sources */,
