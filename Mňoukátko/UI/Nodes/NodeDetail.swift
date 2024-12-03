@@ -298,6 +298,8 @@ struct NodeDetail: View {
 
 					Text(distanceFormatted)
 						.font(detailInfoTextFont)
+						.lineLimit(1)
+						.minimumScaleFactor(0.5)
 						.foregroundColor(.primary)
 
 					Spacer()
@@ -336,6 +338,8 @@ struct NodeDetail: View {
 
 					Text(speedFormatted)
 						.font(detailInfoTextFont)
+						.lineLimit(1)
+						.minimumScaleFactor(0.5)
 						.foregroundColor(.primary)
 
 					Spacer()
@@ -348,6 +352,8 @@ struct NodeDetail: View {
 
 					Text(headingFormatted)
 						.font(detailInfoTextFont)
+						.lineLimit(1)
+						.minimumScaleFactor(0.5)
 						.foregroundColor(.primary)
 
 					Spacer()
@@ -365,6 +371,8 @@ struct NodeDetail: View {
 
 				Text(altitudeFormatted)
 					.font(detailInfoTextFont)
+					.lineLimit(1)
+					.minimumScaleFactor(0.5)
 					.foregroundColor(.primary)
 
 				let precision = PositionPrecision(rawValue: Int(position.precisionBits))?.precisionMeters
@@ -383,6 +391,8 @@ struct NodeDetail: View {
 
 					Text(precisionFormatted)
 						.font(detailInfoTextFont)
+						.lineLimit(1)
+						.minimumScaleFactor(0.5)
 						.foregroundColor(.primary)
 				}
 
@@ -855,10 +865,7 @@ struct NodeDetail: View {
 								VStack(alignment: .trailing, spacing: 4) {
 									Text("Received public key")
 
-									Text(publicKey.hexString().hashPreview(maxLength: 16))
-										.lineLimit(1)
-										.font(.system(size: 10, weight: .light))
-										.foregroundColor(.gray)
+									keyPreview(key: publicKey)
 								}
 							}
 
@@ -888,10 +895,7 @@ struct NodeDetail: View {
 								VStack(alignment: .trailing, spacing: 4) {
 									Text("Encrypted")
 
-									Text(publicKey.hexString().hashPreview(maxLength: 16))
-										.lineLimit(1)
-										.font(.system(size: 10, weight: .light))
-										.foregroundColor(.gray)
+									keyPreview(key: publicKey)
 								}
 							}
 						}
@@ -1109,6 +1113,20 @@ struct NodeDetail: View {
 					}
 				}
 			}
+		}
+	}
+
+	@ViewBuilder
+	private func keyPreview(key: Data) -> some View {
+		HStack(alignment: .center, spacing: 4) {
+			Image(systemName: "key.horizontal.fill")
+				.font(.system(size: 10, weight: .bold))
+				.foregroundColor(.gray)
+
+			Text(key.hexString().hashPreview(maxLength: 16))
+				.lineLimit(1)
+				.font(.system(size: 10, weight: .regular))
+				.foregroundColor(.gray)
 		}
 	}
 
