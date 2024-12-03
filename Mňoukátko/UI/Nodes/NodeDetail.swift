@@ -871,9 +871,11 @@ struct NodeDetail: View {
 								VStack(alignment: .trailing, spacing: 4) {
 									Text("Compromised")
 
-									Text("Node & message keys do not match")
-										.font(.system(size: 10, weight: .light))
-										.foregroundColor(.red)
+									VStack(alignment: .trailing, spacing: 4) {
+										Text("Node & message keys do not match")
+											.font(.system(size: 10, weight: .light))
+											.foregroundColor(.red)
+									}
 								}
 							}
 
@@ -883,7 +885,14 @@ struct NodeDetail: View {
 									.foregroundStyle(Color.green)
 									.frame(width: statusDotSize, height: statusDotSize)
 
-								Text("Encrypted")
+								VStack(alignment: .trailing, spacing: 4) {
+									Text("Encrypted")
+
+									Text(publicKey.hexString().hashPreview(maxLength: 16))
+										.lineLimit(1)
+										.font(.system(size: 10, weight: .light))
+										.foregroundColor(.gray)
+								}
 							}
 						}
 					}
