@@ -113,7 +113,7 @@ struct MeshMap: View {
 						}
 					}
 					.onChange(of: visibleAnnotations, initial: true) {
-						showLabelsForOffline = visibleAnnotations < 100
+						showLabelsForOffline = visibleAnnotations < 100 && positions.count > 100
 					}
 				}
 			}
