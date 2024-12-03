@@ -775,7 +775,7 @@ struct NodeDetail: View {
 			Label {
 				Text("Hops")
 			} icon: {
-				Image(systemName: node.hopsAway == 0 ? "eye" : "arrowshape.bounce.forward")
+				Image(systemName: node.hopsAway == 0 ? "eye.circle" : "arrowshape.bounce.forward")
 					.symbolRenderingMode(.monochrome)
 					.foregroundColor(.accentColor)
 			}
@@ -921,7 +921,7 @@ struct NodeDetail: View {
 				Label {
 					Text("Last Heard")
 				} icon: {
-					Image(systemName: "waveform.path.ecg")
+					Image(systemName: "heart")
 						.symbolRenderingMode(.monochrome)
 						.foregroundColor(.accentColor)
 				}
@@ -941,7 +941,7 @@ struct NodeDetail: View {
 				Label {
 					Text("First Heard")
 				} icon: {
-					Image(systemName: "eye")
+					Image(systemName: "eye.circle")
 						.symbolRenderingMode(.monochrome)
 						.foregroundColor(.accentColor)
 				}
