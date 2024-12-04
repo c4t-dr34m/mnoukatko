@@ -2,10 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>BGTaskSchedulerPermittedIdentifiers</key>
-	<array>
-		<string>mnoukatko_refresh</string>
-	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -56,12 +52,10 @@
 	<array>
 		<string>Intent</string>
 	</array>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.utilities</string>
-	<key>LSHasLocalizedDisplayName</key>
-	<true/>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSMultipleInstancesProhibited</key>
 	<true/>
 	<key>LSRequiresIPhoneOS</key>
@@ -80,8 +74,6 @@
 	<string>Location of you iPhone or iPad is used to show your location relative to other Meshtastic® nodes (map &amp; distances). It also can be used, if you choose so, to send the location to Meshtastic® network.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Location of you iPhone or iPad is used to show your location relative to other Meshtastic® nodes (map &amp; distances). It also can be used, if you choose so, to send the location to Meshtastic® network.</string>
-	<key>NSSupportsLiveActivities</key>
-	<true/>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -89,20 +81,27 @@
 	</dict>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>armv7</string>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>bluetooth-central</string>
 		<string>fetch</string>
 		<string>processing</string>
 	</array>
-	<key>UILaunchScreen</key>
-	<dict/>
-	<key>UIRequiredDeviceCapabilities</key>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
-		<string>armv7</string>
+		<string>mnoukatko_refresh</string>
 	</array>
 	<key>UIStatusBarStyle</key>
 	<string></string>
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIImageName</key>
+		<string></string>
+	</dict>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -118,29 +117,7 @@
 	</array>
 	<key>UISupportsDocumentBrowser</key>
 	<true/>
-	<key>UTImportedTypeDeclarations</key>
-	<array>
-		<dict>
-			<key>UTTypeConformsTo</key>
-			<array>
-				<string>public.data</string>
-			</array>
-			<key>UTTypeDescription</key>
-			<string>MBTiles Map</string>
-			<key>UTTypeIconFiles</key>
-			<array/>
-			<key>UTTypeIdentifier</key>
-			<string>gvh.MeshtasticApple.mbtiles</string>
-			<key>UTTypeTagSpecification</key>
-			<dict>
-				<key>public.filename-extension</key>
-				<array>
-					<string>mbtiles</string>
-				</array>
-			</dict>
-		</dict>
-	</array>
-	<key>com.apple.developer.carplay-communication</key>
-	<true/>
+	<key>MBXAccessToken</key>
+	<string></string>
 </dict>
 </plist>

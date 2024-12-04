@@ -1,5 +1,5 @@
 {
-  "originHash" : "da7ee2fb8720bf73600efd0489900f2d087328b25ecbe868d9e99a88223c5d19",
+  "originHash" : "9a8a5ecc962dd8631c6faef93c4d7a802cc500be9ee9e324bb5417f3ef888c34",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -101,6 +101,33 @@
       }
     },
     {
+      "identity" : "mapbox-common-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mapbox/mapbox-common-ios.git",
+      "state" : {
+        "revision" : "2b9ec86affbf41f0e800f0c1c96be31c02e6854f",
+        "version" : "24.8.0"
+      }
+    },
+    {
+      "identity" : "mapbox-core-maps-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mapbox/mapbox-core-maps-ios.git",
+      "state" : {
+        "revision" : "c8d61110fb8b9f6452060a1df65dfc494d30afb2",
+        "version" : "11.8.0"
+      }
+    },
+    {
+      "identity" : "mapbox-maps-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mapbox/mapbox-maps-ios.git",
+      "state" : {
+        "revision" : "77446b55e9e2bc5461fa3a8ca2e00feaeb7179f5",
+        "version" : "11.8.0"
+      }
+    },
+    {
       "identity" : "mqttcocoaasyncsocket",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/leeway1208/MqttCocoaAsyncSocket",
@@ -152,6 +179,15 @@
       "state" : {
         "revision" : "ebc7251dd5b37f627c93698e4374084d98409633",
         "version" : "1.28.2"
+      }
+    },
+    {
+      "identity" : "turf-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mapbox/turf-swift.git",
+      "state" : {
+        "revision" : "1997fb3c3dc0d8181690a1ec192ed907bcead9e8",
+        "version" : "3.0.0"
       }
     }
   ],
