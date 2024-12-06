@@ -212,14 +212,17 @@ struct MessageContentView: View {
 
 	@ViewBuilder
 	private var recipient: some View {
-		let nodeUsed = isCurrentUser ? message.fromUser?.shortName : message.toUser?.shortName
-		if !UserDefaults.preferredPeripheralIdList.isEmpty, let nodeUsed {
+		if
+			!isCurrentUser,
+			!UserDefaults.preferredPeripheralIdList.isEmpty,
+			let nodeUsed = message.toUser?.shortName
+		{
 			HStack(spacing: 4) {
 				Divider()
 					.frame(height: 12)
 					.foregroundColor(.gray)
 
-				Image(systemName: isCurrentUser ? "tray.and.arrow.up" : "tray.and.arrow.down")
+				Image(systemName: "tray.and.arrow.down")
 					.font(.system(size: statusIconSize))
 					.foregroundColor(getForegroundColor(for: message).opacity(0.5))
 
