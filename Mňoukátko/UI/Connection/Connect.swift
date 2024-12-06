@@ -532,9 +532,7 @@ struct Connect: View {
 			device.lastUpdate >= visibleDuration
 		}
 
-		visibleDevices = devices.sorted(by: {
-			$0.name < $1.name
-		})
+		visibleDevices = devices.sortedByPreference()
 	}
 
 	private func fetchNodeInfo() async {
