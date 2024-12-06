@@ -82,7 +82,7 @@ struct AvatarAbstract: View {
 		ZStack(alignment: .center) {
 			if let name, !name.isEmpty {
 				Text(name)
-					.font(.system(size: 128, weight: .heavy, design: .rounded))
+					.font(Font.custom("Iosevka-Fixed-Heavy", size: 128))
 					.foregroundColor(foregroundColor)
 					.lineLimit(1)
 					.minimumScaleFactor(0.01)
