@@ -59,12 +59,12 @@ struct AvatarNode: View {
 			gradientColors = [
 				Color(
 					uiColor: backgroundColor.uiColor
-						.lighter()
+						.lightness(delta: +0.1)
 				),
 				Color(
 					uiColor: backgroundColor.uiColor
-						.withIncreasedSaturation(saturationIncrease: 0.5)
-						.darker()
+						.lightness(delta: -0.1)
+						.saturation(delta: +0.3)
 				)
 			]
 		}
@@ -72,11 +72,11 @@ struct AvatarNode: View {
 			gradientColors = [
 				Color(
 					uiColor: backgroundColor.uiColor
-						.lighter()
+						.lightness(delta: +0.1)
 				),
 				Color(
 					uiColor: backgroundColor.uiColor
-						.darker()
+						.lightness(delta: -0.1)
 				)
 			]
 		}

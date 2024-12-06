@@ -1,22 +1,22 @@
 /*
-Mňoukátko - a Meshtastic® client
+ Mňoukátko - a Meshtastic® client
 
-Copyright © 2021-2024 Garth Vander Houwen
-Copyright © 2024 Radovan Paška
+ Copyright © 2021-2024 Garth Vander Houwen
+ Copyright © 2024 Radovan Paška
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 import Foundation
 import SwiftUI
 import UIKit
@@ -48,6 +48,20 @@ extension UIColor {
 		return value
 	}
 
+	var hsl: (hue: CGFloat, saturation: CGFloat, lightness: CGFloat) {
+		var hue: CGFloat = 0
+		var saturation: CGFloat = 0
+		var brightness: CGFloat = 0
+		var alpha: CGFloat = 0
+
+		self.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
+
+		let lightness = (2 - saturation) * brightness / 2
+		let sat = lightness == 0 || lightness == 1 ? 0 : saturation * brightness / (1 - abs(2 * lightness - 1))
+
+		return (hue, sat, lightness)
+	}
+
 	convenience init(hex: UInt32) {
 		let red = CGFloat((hex & 0xFF0000) >> 16)
 		let green = CGFloat((hex & 0x00FF00) >> 8)
@@ -61,14 +75,6 @@ extension UIColor {
 		)
 	}
 
-	func lighter(componentDelta: CGFloat = 0.1) -> UIColor {
-		makeColor(componentDelta: componentDelta)
-	}
-
-	func darker(componentDelta: CGFloat = 0.1) -> UIColor {
-		makeColor(componentDelta: -1 * componentDelta)
-	}
-
 	func isLight() -> Bool {
 		guard let components = cgColor.components, components.count > 2 else {
 			return false
@@ -79,19 +85,23 @@ extension UIColor {
 		return brightness > 0.5
 	}
 
-	func withIncreasedSaturation(saturationIncrease: CGFloat) -> UIColor {
-		let hsl = getHSL()
-		let newSaturation = min(1.0, hsl.saturation + saturationIncrease)
-		let saturatedColor = withSaturation(newSaturation)
+	func lightness(delta: CGFloat) -> UIColor {
+		let newHSL = (hue: hsl.hue, saturation: hsl.saturation, lightness: hsl.lightness + delta)
+		let rgb = hslToRgb(hue: newHSL.hue, saturation: newHSL.saturation, lightness: newHSL.lightness)
 
-		return saturatedColor
+		return UIColor(red: rgb.red, green: rgb.green, blue: rgb.blue, alpha: 1.0)
+	}
+
+	func saturation(delta: CGFloat) -> UIColor {
+		let newSaturation = min(1.0, hsl.saturation + delta)
+		return with(saturation: newSaturation)
 	}
 
 	private func add(_ value: CGFloat, toComponent: CGFloat) -> CGFloat {
 		max(0, min(1, toComponent + value))
 	}
 
-	private func makeColor(componentDelta: CGFloat) -> UIColor {
+	private func uiColor(delta componentDelta: CGFloat) -> UIColor {
 		var red: CGFloat = 0
 		var blue: CGFloat = 0
 		var green: CGFloat = 0
@@ -107,8 +117,7 @@ extension UIColor {
 		)
 	}
 
-	// swiftlint:disable:next large_tuple
-	private func getHSL() -> (hue: CGFloat, saturation: CGFloat, lightness: CGFloat) {
+	private func with(saturation: CGFloat) -> UIColor {
 		var hue: CGFloat = 0
 		var saturation: CGFloat = 0
 		var brightness: CGFloat = 0
@@ -116,22 +125,57 @@ extension UIColor {
 
 		self.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
 
-		let lightness = (2 - saturation) * brightness / 2
-		let sat = lightness == 0 || lightness == 1 ? 0 : saturation * brightness / (1 - abs(2 * lightness - 1))
-
-		return (hue, sat, lightness)
-	}
-
-	private func withSaturation(_ newSaturation: CGFloat) -> UIColor {
-		var hue: CGFloat = 0
-		var saturation: CGFloat = 0
-		var brightness: CGFloat = 0
-		var alpha: CGFloat = 0
-
-		self.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
-
-		let newColor = UIColor(hue: hue, saturation: min(newSaturation, 1.0), brightness: brightness, alpha: alpha)
+		let newColor = UIColor(hue: hue, saturation: min(saturation, 1.0), brightness: brightness, alpha: alpha)
 
 		return newColor
+	}
+
+	private func hslToRgb(
+		hue: CGFloat,
+		saturation: CGFloat,
+		lightness: CGFloat
+	) -> (red: CGFloat, green: CGFloat, blue: CGFloat) {
+		let h = hue
+		let s = saturation
+		let l = lightness
+
+		let r: CGFloat
+		let g: CGFloat
+		let b: CGFloat
+
+		if s == 0 {
+			// Achromatic (gray)
+			r = l
+			g = l
+			b = l
+		}
+		else {
+			let q = l < 0.5 ? (l * (1 + s)) : (l + s - l * s)
+			let p = 2 * l - q
+
+			r = hueToRgb(p: p, q: q, t: h + 1 / 3)
+			g = hueToRgb(p: p, q: q, t: h)
+			b = hueToRgb(p: p, q: q, t: h - 1 / 3)
+		}
+
+		return (red: r, green: g, blue: b)
+	}
+
+	private func hueToRgb(p: CGFloat, q: CGFloat, t: CGFloat) -> CGFloat {
+		var t = t
+
+		if t < 0 { t += 1 }
+		if t > 1 { t -= 1 }
+		if t < 1 / 6 {
+			return p + (q - p) * 6 * t
+		}
+		if t < 1 / 2 {
+			return q
+		}
+		if t < 2 / 3 {
+			return p + (q - p) * (2 / 3 - t) * 6
+		}
+
+		return p
 	}
 }
