@@ -199,7 +199,11 @@ extension BLEManager: CBPeripheralDelegate {
 					peripheralId: device.id,
 					context: context
 				) {
-					UserDefaults.preferredPeripheralNum = Int(myInfo.myNodeNum)
+					let nodeNumInt = Int(myInfo.myNodeNum)
+					UserDefaults.preferredPeripheralNumList.removeAll(where: { num in
+						num == nodeNumInt
+					})
+					UserDefaults.preferredPeripheralNumList.insert(nodeNumInt, at: 0)
 
 					device.num = myInfo.myNodeNum
 					device.name = myInfo.bleName ?? "Unknown node"

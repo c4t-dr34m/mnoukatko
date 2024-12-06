@@ -433,7 +433,7 @@ struct Connect: View {
 						}
 					}
 
-					if UserDefaults.preferredPeripheralId == device.peripheral.identifier.uuidString {
+					if UserDefaults.preferredPeripheralIdList.contains(device.peripheral.identifier.uuidString) {
 						Spacer()
 
 						Image(systemName: "star.fill")

@@ -28,8 +28,8 @@ struct MessageContentView: View {
 	let isCurrentUser: Bool
 	let onReply: () -> Void
 
-	private let statusFontSize: CGFloat = 14
-	private let statusIconSize: CGFloat = 12
+	private let statusFontSize: CGFloat = 12
+	private let statusIconSize: CGFloat = 10
 
 	@Environment(\.managedObjectContext)
 	private var context
@@ -161,47 +161,23 @@ struct MessageContentView: View {
 						Divider()
 							.foregroundColor(.gray)
 
-						HStack(alignment: .center) {
+						HStack(alignment: .center, spacing: 4) {
 							Spacer()
 
 							if isCurrentUser {
 								messageStatus
-									.padding(.leading, 4)
-									.padding(.bottom, 4)
 									.id(message.messageId)
 							}
 							else {
 								messageTime
-									.padding(.leading, 4)
-									.padding(.bottom, 4)
 									.id(message.messageId)
 							}
 
-							if !isCurrentUser, message.toUser != nil {
-								Divider()
-									.frame(height: 10)
-									.foregroundColor(.gray)
-
-								if message.pkiEncrypted, let key = message.publicKey, !key.isEmpty {
-									Image(systemName: "key")
-										.font(.caption)
-										.foregroundColor(.gray)
-										.padding(.trailing, 8)
-										.padding(.bottom, 4)
-								}
-								else {
-									Image(systemName: "key.slash")
-										.font(.caption)
-										.foregroundColor(.gray)
-										.padding(.trailing, 8)
-										.padding(.bottom, 4)
-								}
-							}
-							else {
-								Spacer()
-									.frame(width: 8)
-							}
+							recipient
+							encryptionInfo
 						}
+						.padding(.bottom, 4)
+						.padding(.trailing, 8)
 					}
 				}
 				.background(getBackgroundColor(for: message, isCurrentUser: isCurrentUser))
@@ -230,6 +206,28 @@ struct MessageContentView: View {
 
 					Button("Cancel", role: .cancel) { }
 				}
+			}
+		}
+	}
+
+	@ViewBuilder
+	private var recipient: some View {
+		let nodeUsed = isCurrentUser ? message.fromUser?.shortName : message.toUser?.shortName
+		if !UserDefaults.preferredPeripheralIdList.isEmpty, let nodeUsed {
+			HStack(spacing: 4) {
+				Divider()
+					.frame(height: 12)
+					.foregroundColor(.gray)
+
+				Image(systemName: isCurrentUser ? "tray.and.arrow.up" : "tray.and.arrow.down")
+					.font(.system(size: statusIconSize))
+					.foregroundColor(getForegroundColor(for: message).opacity(0.5))
+
+				Text(nodeUsed)
+					.font(.system(size: statusFontSize))
+					.lineLimit(1)
+					.foregroundColor(getForegroundColor(for: message).opacity(0.5))
+					.fixedSize(horizontal: true, vertical: false)
 			}
 		}
 	}
@@ -293,6 +291,28 @@ struct MessageContentView: View {
 					.font(.system(size: statusFontSize))
 					.lineLimit(1)
 					.foregroundColor(getForegroundColor(for: message).opacity(0.5))
+			}
+		}
+	}
+
+	@ViewBuilder
+	private var encryptionInfo: some View {
+		if !isCurrentUser, message.toUser != nil {
+			HStack(spacing: 4) {
+				Divider()
+					.frame(height: 12)
+					.foregroundColor(.gray)
+
+				if message.pkiEncrypted, let key = message.publicKey, !key.isEmpty {
+					Image(systemName: "key")
+						.font(.caption)
+						.foregroundColor(.gray)
+				}
+				else {
+					Image(systemName: "key.slash")
+						.font(.caption)
+						.foregroundColor(.gray)
+				}
 			}
 		}
 	}

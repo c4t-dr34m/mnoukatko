@@ -27,10 +27,11 @@ struct UserDefault<T: Decodable> {
 	var wrappedValue: T {
 		get {
 			if defaultValue as? any RawRepresentable != nil {
-				guard let storedValue = UserDefaults.standard.object(forKey: key.rawValue),
-					  let jsonString = storedValue as? String != nil ? "\"\(storedValue)\"" : "\(storedValue)",
-					  let data = jsonString.data(using: .utf8),
-					  let value = try? JSONDecoder().decode(T.self, from: data)
+				guard
+					let storedValue = UserDefaults.standard.object(forKey: key.rawValue),
+					let jsonString = storedValue as? String != nil ? "\"\(storedValue)\"" : "\(storedValue)",
+					let data = jsonString.data(using: .utf8),
+					let value = try? JSONDecoder().decode(T.self, from: data)
 				else {
 					return defaultValue
 				}
@@ -60,8 +61,10 @@ extension UserDefaults {
 		case onboardingDone
 		case locationAuthSkipped
 		case wantConfigNonce
-		case preferredPeripheralId
-		case preferredPeripheralNum
+		case preferredPeripheralId // deprecated
+		case preferredPeripheralIdList
+		case preferredPeripheralNum // deprecated
+		case preferredPeripheralNumList
 		case enableAdministration
 		case provideLocation
 		case provideLocationInterval
@@ -90,10 +93,16 @@ extension UserDefaults {
 	static var wantConfigNonce: Int
 
 	@UserDefault(.preferredPeripheralId, defaultValue: "")
-	static var preferredPeripheralId: String
+	private static var preferredPeripheralId: String
+
+	@UserDefault(.preferredPeripheralIdList, defaultValue: [])
+	static var preferredPeripheralIdList: [String]
 
 	@UserDefault(.preferredPeripheralNum, defaultValue: 0)
-	static var preferredPeripheralNum: Int
+	private static var preferredPeripheralNum: Int
+
+	@UserDefault(.preferredPeripheralNumList, defaultValue: [])
+	static var preferredPeripheralNumList: [Int]
 
 	@UserDefault(.enableAdministration, defaultValue: false)
 	static var enableAdministration: Bool
@@ -142,6 +151,22 @@ extension UserDefaults {
 
 	@UserDefault(.lastConnectionEventCount, defaultValue: 0)
 	static var lastConnectionEventCount: Int
+
+	static func migrate() {
+		if
+			!Self.preferredPeripheralId.isEmpty,
+			Self.preferredPeripheralIdList.isEmpty
+		{
+			Self.preferredPeripheralIdList = [ Self.preferredPeripheralId ]
+		}
+
+		if
+			Self.preferredPeripheralNum != 0,
+			Self.preferredPeripheralNumList.isEmpty
+		{
+			Self.preferredPeripheralNumList = [ Self.preferredPeripheralNum ]
+		}
+	}
 
 	static func disableAllNotifications() {
 		Self.directMessageNotifications = false

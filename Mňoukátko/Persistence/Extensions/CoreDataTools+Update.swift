@@ -132,7 +132,7 @@ extension CoreDataTools {
 				newNode.rssi = packet.rxRssi
 				newNode.viaMqtt = packet.viaMqtt
 
-				if packet.to == Constants.maximumNodeNum || packet.to == UserDefaults.preferredPeripheralNum {
+				if packet.to == Constants.maximumNodeNum || packet.to == UserDefaults.preferredPeripheralNumList[0] {
 					newNode.channel = Int32(packet.channel)
 				}
 				if let nodeInfoMessage = try? NodeInfo(serializedData: packet.decoded.payload) {
@@ -223,7 +223,7 @@ extension CoreDataTools {
 				fetchedNode[0].snr = packet.rxSnr
 				fetchedNode[0].rssi = packet.rxRssi
 				fetchedNode[0].viaMqtt = packet.viaMqtt
-				if packet.to == Constants.maximumNodeNum || packet.to == UserDefaults.preferredPeripheralNum {
+				if packet.to == Constants.maximumNodeNum || packet.to == UserDefaults.preferredPeripheralNumList[0] {
 					fetchedNode[0].channel = Int32(packet.channel)
 				}
 

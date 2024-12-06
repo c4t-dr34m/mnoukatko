@@ -176,14 +176,20 @@ final class BLEManager: NSObject, ObservableObject {
 	func onDevicesChange() {
 		devicesDelegate?.onChange(devices: devices)
 
-		if
-			automaticallyReconnect,
-			getConnectedDevice() == nil,
-			let preferredDevice = devices.first(where: { device in
-				device.peripheral.identifier.uuidString == UserDefaults.preferredPeripheralId
-			})
-		{
-			connectTo(peripheral: preferredDevice.peripheral)
+		guard automaticallyReconnect, getConnectedDevice() == nil else {
+			return
+		}
+
+		for preferred in UserDefaults.preferredPeripheralIdList {
+			if
+				let device = devices.first(where: { device in
+					device.peripheral.identifier.uuidString == preferred
+				})
+			{
+				// connect to first preferred device visible
+				connectTo(peripheral: device.peripheral)
+				break
+			}
 		}
 	}
 

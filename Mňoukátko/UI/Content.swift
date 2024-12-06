@@ -47,7 +47,7 @@ struct Content: View {
 	private var nodes: FetchedResults<NodeInfoEntity>
 	private var nodeConnected: NodeInfoEntity? {
 		nodes.first(where: { node in
-			node.num == UserDefaults.preferredPeripheralNum
+			node.num == UserDefaults.preferredPeripheralNumList[0]
 		})
 	}
 	private var nodeOnlineCount: Int {

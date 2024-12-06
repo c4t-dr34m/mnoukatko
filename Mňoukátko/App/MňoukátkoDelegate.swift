@@ -26,13 +26,12 @@ final class MňoukátkoDelegate: UIResponder, UIApplicationDelegate, UNUserNotif
 		_ application: UIApplication,
 		didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
 	) -> Bool {
+		UserDefaults.migrate()
+
 		FirebaseApp.configure()
 
 		Analytics.setAnalyticsCollectionEnabled(true)
 		Analytics.logEvent(AnalyticEvents.appLaunch.id, parameters: nil)
-
-		// Default User Default Values
-		UserDefaults.standard.register(defaults: ["meshMapShowNodeHistory": true])
 
 		UNUserNotificationCenter.current().delegate = self
 

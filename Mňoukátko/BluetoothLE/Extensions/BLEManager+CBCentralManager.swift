@@ -82,7 +82,10 @@ extension BLEManager: CBCentralManagerDelegate {
 		_ central: CBCentralManager,
 		didConnect peripheral: CBPeripheral
 	) {
-		UserDefaults.preferredPeripheralId = peripheral.identifier.uuidString
+		UserDefaults.preferredPeripheralIdList.removeAll(where: { id in
+			id == peripheral.identifier.uuidString
+		})
+		UserDefaults.preferredPeripheralIdList.insert(peripheral.identifier.uuidString, at: 0)
 
 		isConnecting = false
 		isConnected = true
@@ -150,7 +153,7 @@ extension BLEManager: CBCentralManagerDelegate {
 				lastConnectionError = "Connection timed out. Will connect back soon."
 
 			case 7:
-				if UserDefaults.preferredPeripheralId == peripheral.identifier.uuidString {
+				if UserDefaults.preferredPeripheralIdList[0] == peripheral.identifier.uuidString {
 					notificationManager.queue(
 						notification: Notification(
 							id: peripheral.identifier.uuidString,
@@ -168,7 +171,7 @@ extension BLEManager: CBCentralManagerDelegate {
 				lastConnectionError = "Pairing was cancelled. Please try to pair the node again."
 
 			default:
-				if UserDefaults.preferredPeripheralId == peripheral.identifier.uuidString {
+				if UserDefaults.preferredPeripheralIdList[0] == peripheral.identifier.uuidString {
 					notificationManager.queue(
 						notification: Notification(
 							id: (peripheral.identifier.uuidString),
