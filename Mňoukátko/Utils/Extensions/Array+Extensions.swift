@@ -19,9 +19,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import Foundation
 
 extension Array where Element == Device {
-	func sortedByPreference() -> [Device] {
+	func sortedByPreference(keepAll: Bool = false) -> [Device] {
 		let preferredDevices = UserDefaults.preferredPeripheralIdList
-		return self.sorted(by: { first, second in
+		var sortedDevices = self.sorted(by: { first, second in
 			let preferredIndexFirst = preferredDevices.firstIndex(where: { id in
 				first.peripheral.identifier.uuidString == id
 			})
@@ -41,5 +41,13 @@ extension Array where Element == Device {
 
 			return first.name < second.name
 		})
+
+		if !keepAll {
+			sortedDevices.removeAll(where: { device in
+				!preferredDevices.contains(device.peripheral.identifier.uuidString)
+			})
+		}
+
+		return sortedDevices
 	}
 }

@@ -180,8 +180,10 @@ final class BLEManager: NSObject, ObservableObject {
 			return
 		}
 
-		// connect to first preferred device visible
-		connectTo(peripheral: devices.sortedByPreference()[0].peripheral)
+		if let first = devices.sortedByPreference().first {
+			// connect to first preferred device visible
+			connectTo(peripheral: first.peripheral)
+		}
 	}
 
 	func connectTo(peripheral: CBPeripheral) {

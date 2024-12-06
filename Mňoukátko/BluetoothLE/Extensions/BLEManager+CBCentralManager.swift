@@ -45,34 +45,31 @@ extension BLEManager: CBCentralManagerDelegate {
 		rssi RSSI: NSNumber
 	) {
 		let id = peripheral.identifier.uuidString
-		if !devices.contains(where: { device in
-			device.id == id
-		}) {
-			Logger.services.info("New peripheral discovered: \(peripheral.name ?? peripheral.identifier.uuidString)")
-		}
-
 		let name = advertisementData[CBAdvertisementDataLocalNameKey] as? String
-		let device = Device(
+		let newDevice = Device(
 			peripheral: peripheral,
-			id: peripheral.identifier.uuidString,
+			id: id,
 			num: 0,
 			name: name ?? "Unknown node",
 			shortName: "?",
 			longName: name ?? "Unknown node",
 			firmwareVersion: "Unknown",
 			rssi: RSSI.intValue,
-			lastUpdate: Date.now
+			lastUpdate: .now
 		)
-		let index = devices.map { device in
-			device.peripheral
-		}
-			.firstIndex(of: peripheral)
+		let index = devices.firstIndex(where: { device in
+			device.peripheral.identifier.uuidString == id
+		})
 
-		if let peripheralIndex = index {
-			devices[peripheralIndex] = device
+		if let index {
+			devices[index] = newDevice
+
+			Logger.services.info("Peripheral updated: \(peripheral.name ?? peripheral.identifier.uuidString)")
 		}
 		else {
-			devices.append(device)
+			devices.append(newDevice)
+
+			Logger.services.info("New peripheral discovered: \(peripheral.name ?? peripheral.identifier.uuidString)")
 		}
 
 		onDevicesChange()

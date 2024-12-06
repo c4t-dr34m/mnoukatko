@@ -60,10 +60,11 @@ struct NodeDetail: View {
 	)
 
 	private var connectedNode: NodeInfoEntity? {
-		coreDataTools.getNodeInfo(
-			id: connectedDevice.device?.num ?? -1,
-			context: context
-		)
+		guard let num = connectedDevice.device?.num else {
+			return nil
+		}
+
+		return coreDataTools.getNodeInfo(id: num, context: context)
 	}
 	private var nodePosition: PositionEntity? {
 		node.positions?.lastObject as? PositionEntity
@@ -180,6 +181,7 @@ struct NodeDetail: View {
 
 					if
 						let connectedNode,
+						connectedNode.num == node.num,
 						let nodeMetadata = node.metadata
 					{
 						Section(

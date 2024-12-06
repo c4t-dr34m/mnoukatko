@@ -410,10 +410,10 @@ struct Connect: View {
 	@ViewBuilder
 	private var visible: some View {
 		ForEach(visibleDevices) { device in
-			Button {
-				bleManager.connectTo(peripheral: device.peripheral)
-			} label: {
-				HStack(alignment: .center, spacing: 16) {
+			HStack(alignment: .center, spacing: 0) {
+				Button {
+					bleManager.connectTo(peripheral: device.peripheral)
+				} label: {
 					HStack(spacing: 16) {
 						SignalStrengthIndicator(
 							signalStrength: device.getSignalStrength(),
@@ -432,14 +432,20 @@ struct Connect: View {
 								.foregroundColor(.primary)
 						}
 					}
+				}
 
-					if UserDefaults.preferredPeripheralIdList.contains(device.peripheral.identifier.uuidString) {
-						Spacer()
+				Spacer()
 
-						Image(systemName: "star.fill")
-							.font(deviceFont)
-							.foregroundColor(.yellow)
-					}
+				Button {
+					toggleFavorite(deviceId: device.peripheral.identifier.uuidString)
+				} label: {
+					let preferred = UserDefaults.preferredPeripheralIdList.contains(
+						device.peripheral.identifier.uuidString
+					)
+
+					Image(systemName: preferred ? "star.fill" : "star.slash")
+						.font(deviceFont)
+						.foregroundColor(preferred ? .yellow : .gray)
 				}
 			}
 		}
@@ -527,12 +533,12 @@ struct Connect: View {
 
 	private func loadPeripherals() async {
 		// swiftlint:disable:next force_unwrapping
-		let visibleDuration = Calendar.current.date(byAdding: .second, value: -5, to: .now)!
+		let visibleDuration = Calendar.current.date(byAdding: .second, value: -30, to: .now)!
 		let devices = bleManager.devices.filter { device in
 			device.lastUpdate >= visibleDuration
 		}
 
-		visibleDevices = devices.sortedByPreference()
+		visibleDevices = devices.sortedByPreference(keepAll: true)
 	}
 
 	private func fetchNodeInfo() async {
@@ -543,6 +549,22 @@ struct Connect: View {
 		)
 
 		node = try? context.fetch(fetchNodeInfoRequest).first
+	}
+
+	private func toggleFavorite(deviceId: String) {
+		var preferredDevices = UserDefaults.preferredPeripheralIdList
+		let index = preferredDevices.firstIndex(where: { id in
+			id == deviceId
+		})
+
+		if let index {
+			preferredDevices.remove(at: index)
+		}
+		else {
+			preferredDevices.insert(deviceId, at: 0)
+		}
+
+		UserDefaults.preferredPeripheralIdList = preferredDevices
 	}
 
 	private func didDismissSheet() {
