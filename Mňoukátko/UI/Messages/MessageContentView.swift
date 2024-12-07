@@ -176,7 +176,7 @@ struct MessageContentView: View {
 							recipient
 							encryptionInfo
 						}
-						.padding(.bottom, 4)
+						.padding(.bottom, 8)
 						.padding(.trailing, 8)
 					}
 				}

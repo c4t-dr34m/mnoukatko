@@ -86,7 +86,8 @@ struct AvatarAbstract: View {
 					.foregroundColor(foregroundColor)
 					.lineLimit(1)
 					.minimumScaleFactor(0.01)
-					.padding(.all, size / 8)
+					.padding(.vertical, size / 8)
+					.padding(.horizontal, size / 14)
 					.frame(width: size, height: size)
 			}
 			else {
@@ -94,7 +95,8 @@ struct AvatarAbstract: View {
 					.resizable()
 					.scaledToFit()
 					.foregroundColor(foregroundColor)
-					.padding(.all, size / 8)
+					.padding(.vertical, size / 8)
+					.padding(.horizontal, size / 14)
 					.frame(width: size, height: size)
 			}
 		}
