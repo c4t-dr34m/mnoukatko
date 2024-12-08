@@ -153,8 +153,11 @@ struct AvatarNode: View {
 					lastHeard.timeIntervalSince1970 > 0
 				{
 					HStack(alignment: .center, spacing: 2) {
-						let diff = lastHeard.distance(to: .now) // seconds
+						Image(systemName: "clock")
+							.font(.system(size: size / 8, weight: .semibold, design: .rounded))
+							.foregroundColor(backgroundColor.opacity(0.8))
 
+						let diff = lastHeard.distance(to: .now) // seconds
 						if diff < 10 { // about right now
 							Text("now")
 								.font(.system(size: size / 6, weight: .semibold, design: .rounded))
@@ -190,10 +193,6 @@ struct AvatarNode: View {
 								.lineLimit(1)
 								.minimumScaleFactor(0.2)
 						}
-
-						Image(systemName: "clock")
-							.font(.system(size: size / 8, weight: .semibold, design: .rounded))
-							.foregroundColor(backgroundColor.opacity(0.8))
 					}
 					.padding(.leading, size / 16)
 					.padding(.trailing, size / 8)
@@ -210,8 +209,7 @@ struct AvatarNode: View {
 					Image(systemName: "antenna.radiowaves.left.and.right.slash")
 						.font(.system(size: size / 8, weight: .semibold, design: .rounded))
 						.foregroundColor(backgroundColor.opacity(0.8))
-						.padding(.leading, size / 16)
-						.padding(.trailing, size / 8)
+						.padding(.horizontal, size / 8)
 						.padding(.vertical, size / 36)
 						.background(foregroundColor.opacity(0.8))
 						.clipShape(
@@ -230,17 +228,16 @@ struct AvatarNode: View {
 				let tempFormatted = String(format: "%.0f", temperature)
 
 				HStack(alignment: .center, spacing: 2) {
+					Image(systemName: "thermometer.variable")
+						.font(.system(size: size / 8, weight: .semibold, design: .rounded))
+						.foregroundColor(backgroundColor.opacity(0.8))
+
 					Text(tempFormatted)
 						.font(.system(size: size / 6, weight: .bold, design: .rounded))
 						.foregroundColor(backgroundColor.opacity(0.8))
 						.lineLimit(1)
-
-					Image(systemName: "thermometer.variable")
-						.font(.system(size: size / 8, weight: .semibold, design: .rounded))
-						.foregroundColor(backgroundColor.opacity(0.8))
 				}
-				.padding(.leading, size / 16)
-				.padding(.trailing, size / 8)
+				.padding(.horizontal, size / 8)
 				.padding(.vertical, size / 36)
 				.background(foregroundColor.opacity(0.8))
 				.clipShape(
