@@ -153,24 +153,38 @@ struct AvatarNode: View {
 					lastHeard.timeIntervalSince1970 > 0
 				{
 					HStack(alignment: .center, spacing: 2) {
-						let diff = lastHeard.distance(to: .now) / 60
+						let diff = lastHeard.distance(to: .now) // seconds
 
-						if diff < 1 {
+						if diff < 10 { // about right now
 							Text("now")
 								.font(.system(size: size / 6, weight: .semibold, design: .rounded))
 								.foregroundColor(backgroundColor.opacity(0.8))
 								.lineLimit(1)
 								.minimumScaleFactor(0.2)
 						}
-						else if diff < 60 {
-							Text(String(format: "%.0f", diff) + "\"")
+						else if diff < 60 { // less than a minute
+							Text(String(format: "%.0f", diff) + "s")
+								.font(.system(size: size / 6, weight: .bold, design: .rounded))
+								.foregroundColor(backgroundColor.opacity(0.8))
+								.lineLimit(1)
+								.minimumScaleFactor(0.2)
+						}
+						else if diff < (60 * 90) { // less than 90 minutes
+							Text(String(format: "%.0f", diff / 60) + "m")
+								.font(.system(size: size / 6, weight: .bold, design: .rounded))
+								.foregroundColor(backgroundColor.opacity(0.8))
+								.lineLimit(1)
+								.minimumScaleFactor(0.2)
+						}
+						else if diff < (24 * 60 * 90) { // less than a day
+							Text(String(format: "%.0f", diff / (60 * 60)) + "h")
 								.font(.system(size: size / 6, weight: .bold, design: .rounded))
 								.foregroundColor(backgroundColor.opacity(0.8))
 								.lineLimit(1)
 								.minimumScaleFactor(0.2)
 						}
 						else {
-							Text(String(format: "%.0f", diff / 60) + "'")
+							Text(String(format: "%.0f", diff / (24 * 60 * 60)) + "d")
 								.font(.system(size: size / 6, weight: .bold, design: .rounded))
 								.foregroundColor(backgroundColor.opacity(0.8))
 								.lineLimit(1)

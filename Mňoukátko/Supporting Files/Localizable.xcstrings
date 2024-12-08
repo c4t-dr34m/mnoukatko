@@ -6973,9 +6973,6 @@
     "Long name" : {
 
     },
-    "Look & Feel" : {
-
-    },
     "lora" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -9720,9 +9717,6 @@
 
     },
     "Mňoukátko would like to use your current location to determine where you are on the map, how far are other Meshtastic® nodes, and, optionally, feed your node with location updates." : {
-
-    },
-    "More Colors" : {
 
     },
     "mqtt" : {

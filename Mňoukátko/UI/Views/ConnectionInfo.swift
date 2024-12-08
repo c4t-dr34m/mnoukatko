@@ -141,7 +141,7 @@ struct ConnectionInfo: View {
 									.frame(width: 16, height: 16)
 									.foregroundColor(infoColor)
 
-								Text(String(format: "%.0f", diff) + "\"")
+								Text(String(format: "%.0f", diff) + "s")
 									.font(
 										.system(size: 12, weight: .bold, design: .rounded)
 										.monospaced()
@@ -158,7 +158,7 @@ struct ConnectionInfo: View {
 									.frame(width: 16, height: 16)
 									.foregroundColor(infoColor)
 
-								Text(String(format: "%.0f", diff / 60) + "'")
+								Text(String(format: "%.0f", diff / 60) + "m")
 									.font(
 										.system(size: 12, weight: .bold, design: .rounded)
 										.monospaced()
