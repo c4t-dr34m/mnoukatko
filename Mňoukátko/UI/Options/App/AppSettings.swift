@@ -48,8 +48,6 @@ struct AppSettings: View {
 	private var newNodeNotifications = UserDefaults.newNodeNotifications
 	@State
 	private var bcgNotification = UserDefaults.bcgNotification
-	@State
-	private var moreColors = UserDefaults.moreColors
 
 	var body: some View {
 		Form {
@@ -148,16 +146,6 @@ struct AppSettings: View {
 			}
 			.onAppear {
 				checkAuthorizations()
-			}
-
-			Section(header: Text("Look & Feel")) {
-				Toggle(isOn: $moreColors) {
-					Text("More Colors")
-				}
-				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
-				.onChange(of: moreColors) {
-					UserDefaults.moreColors = moreColors
-				}
 			}
 
 			Section(header: Text("Settings")) {

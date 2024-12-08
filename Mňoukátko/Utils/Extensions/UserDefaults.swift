@@ -79,7 +79,6 @@ extension UserDefaults {
 		case firmwareVersion
 		case powerSavingMode
 		case bcgNotification
-		case moreColors
 		case lastConnectionEventCount
 	}
 
@@ -145,9 +144,6 @@ extension UserDefaults {
 
 	@UserDefault(.bcgNotification, defaultValue: false)
 	static var bcgNotification: Bool
-
-	@UserDefault(.moreColors, defaultValue: false)
-	static var moreColors: Bool
 
 	@UserDefault(.lastConnectionEventCount, defaultValue: 0)
 	static var lastConnectionEventCount: Int

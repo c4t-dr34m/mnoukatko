@@ -324,33 +324,11 @@ struct MessageContentView: View {
 		for message: MessageEntity,
 		isCurrentUser: Bool
 	) -> Color {
-		if UserDefaults.moreColors {
-			if let num = message.fromUser?.num {
-				return Color(
-					UIColor(hex: UInt32(num))
-				)
-			}
-			else {
-				if isCurrentUser {
-					return Color.accentColor
-				}
-				else {
-					if colorScheme == .dark {
-						return Color(white: 0.1)
-					}
-					else {
-						return Color(white: 0.9)
-					}
-				}
-			}
+		if colorScheme == .dark {
+			return Color(white: 0.1)
 		}
 		else {
-			if colorScheme == .dark {
-				return Color(white: 0.1)
-			}
-			else {
-				return Color(white: 0.9)
-			}
+			return Color(white: 0.9)
 		}
 	}
 
@@ -360,21 +338,11 @@ struct MessageContentView: View {
 	) -> Color {
 		let background = getBackgroundColor(for: message, isCurrentUser: isCurrentUser)
 
-		if UserDefaults.moreColors {
-			if background.isLight() {
-				return Color.black
-			}
-			else {
-				return Color.white
-			}
+		if background.isLight() {
+			return Color.black
 		}
 		else {
-			if background.isLight() {
-				return Color.black
-			}
-			else {
-				return Color.white
-			}
+			return Color.white
 		}
 	}
 }

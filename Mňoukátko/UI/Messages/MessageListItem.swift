@@ -73,14 +73,16 @@ struct MessageListItem: View {
 						ignoreOffline: true,
 						showLastHeard: true,
 						size: 64,
-						corners: isCurrentUser ? (true, true, false, true) : nil
+						corners: isCurrentUser ? (true, true, false, true) : nil,
+						light: .topLeading
 					)
 				}
 				else {
 					AvatarAbstract(
 						color: .gray,
 						size: 64,
-						corners: isCurrentUser ? (true, true, false, true) : nil
+						corners: isCurrentUser ? (true, true, false, true) : nil,
+						light: .topLeading
 					)
 				}
 			}
@@ -102,12 +104,14 @@ struct MessageListItem: View {
 				AvatarNode(
 					node,
 					ignoreOffline: true,
-					size: 64
+					size: 64,
+					light: .topTrailing
 				)
 			}
 			else {
 				AvatarAbstract(
-					size: 64
+					size: 64,
+					light: .topTrailing
 				)
 			}
 		}

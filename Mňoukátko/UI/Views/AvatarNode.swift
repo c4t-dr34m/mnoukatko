@@ -23,9 +23,9 @@ struct AvatarNode: View {
 	private let ignoreOffline: Bool
 	private let showTemperature: Bool
 	private let showLastHeard: Bool
-
 	// swiftlint:disable:next large_tuple
 	private let corners: (Bool, Bool, Bool, Bool)?
+	private let light: UnitPoint
 
 	@ObservedObject
 	private var node: NodeInfoEntity
@@ -83,7 +83,7 @@ struct AvatarNode: View {
 
 		return RadialGradient(
 			colors: gradientColors,
-			center: .top,
+			center: light,
 			startRadius: size / 4,
 			endRadius: size
 		)
@@ -250,7 +250,8 @@ struct AvatarNode: View {
 		showLastHeard: Bool = false,
 		size: CGFloat = 45,
 		// swiftlint:disable:next large_tuple
-		corners: (Bool, Bool, Bool, Bool)? = nil
+		corners: (Bool, Bool, Bool, Bool)? = nil,
+		light: UnitPoint = .top
 	) {
 		self.node = node
 		self.ignoreOffline = ignoreOffline
@@ -258,5 +259,6 @@ struct AvatarNode: View {
 		self.showLastHeard = showLastHeard
 		self.size = size
 		self.corners = corners
+		self.light = light
 	}
 }

@@ -23,9 +23,9 @@ struct AvatarAbstract: View {
 	private let icon: String
 	private let color: Color?
 	private let size: CGFloat
-
 	// swiftlint:disable:next large_tuple
 	private let corners: (Bool, Bool, Bool, Bool)?
+	private let light: UnitPoint
 
 	private var foregroundColor: Color {
 		backgroundColor.isLight() ? .black : .white
@@ -51,7 +51,7 @@ struct AvatarAbstract: View {
 						.saturation(delta: +0.3)
 				)
 			],
-			center: .top,
+			center: light,
 			startRadius: size / 4,
 			endRadius: size
 		)
@@ -112,12 +112,14 @@ struct AvatarAbstract: View {
 		color: Color? = nil,
 		size: CGFloat = 45,
 		// swiftlint:disable:next large_tuple
-		corners: (Bool, Bool, Bool, Bool)? = nil
+		corners: (Bool, Bool, Bool, Bool)? = nil,
+		light: UnitPoint = .top
 	) {
 		self.name = name
 		self.icon = icon
 		self.color = color
 		self.size = size
 		self.corners = corners
+		self.light = light
 	}
 }
