@@ -212,7 +212,8 @@ struct AvatarNode: View {
 					Image(systemName: "antenna.radiowaves.left.and.right.slash")
 						.font(.system(size: size / 8, weight: .semibold, design: .rounded))
 						.foregroundColor(backgroundColor.opacity(0.8))
-						.padding(.horizontal, size / 8)
+						.padding(.leading, size / 16)
+						.padding(.trailing, 4)
 						.padding(.vertical, size / 36)
 						.background(foregroundColor.opacity(0.8))
 						.clipShape(
