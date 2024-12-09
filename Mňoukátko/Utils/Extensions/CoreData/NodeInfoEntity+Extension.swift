@@ -71,18 +71,11 @@ extension NodeInfoEntity {
 	}
 
 	var isOnline: Bool {
-		// swiftlint:disable force_unwrapping
+		// swiftlint:disable:next force_unwrapping
 		let fifteenMinutesAgo = Calendar.current.date(byAdding: .minute, value: -15, to: .now)!
-		let fortyFiveMinutes = Calendar.current.date(byAdding: .minute, value: -45, to: .now)!
-		// swiftlint:enable force_unwrapping
 
-		if let lastHeard {
-			if viaMqtt, lastHeard.compare(fortyFiveMinutes) == .orderedDescending {
-				return true
-			}
-			else if lastHeard.compare(fifteenMinutesAgo) == .orderedDescending {
-				return true
-			}
+		if let lastHeard, lastHeard.compare(fifteenMinutesAgo) == .orderedDescending {
+			return true
 		}
 
 		return false
