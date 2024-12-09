@@ -108,7 +108,7 @@ struct MessageContentView: View {
 						.overlay(
 							RoundedRectangle(cornerRadius: 8)
 								.stroke(
-									colorScheme == .dark ? .black : .white,
+									Color(.systemGroupedBackground),
 									lineWidth: 3
 								)
 						)
