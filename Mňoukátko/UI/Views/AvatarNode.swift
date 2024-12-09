@@ -42,6 +42,9 @@ struct AvatarNode: View {
 	private var name: String? {
 		node.user?.shortName
 	}
+	private var hasAdditionalInfo: Bool {
+		showLastHeard || (showTemperature && node.isOnline && temperature != nil)
+	}
 	private var foregroundColor: Color {
 		backgroundColor.isLight() ? .black : .white
 	}
@@ -110,7 +113,7 @@ struct AvatarNode: View {
 			return RectangleCornerRadii(
 				topLeading: corners.0 ? radius : 0,
 				bottomLeading: corners.1 ? radius : 0,
-				bottomTrailing: corners.2 ? radius : 0,
+				bottomTrailing: corners.2 ? (hasAdditionalInfo ? 4 : radius) : 0,
 				topTrailing: corners.3 ? radius : 0
 			)
 		}
@@ -118,7 +121,7 @@ struct AvatarNode: View {
 			return RectangleCornerRadii(
 				topLeading: radius,
 				bottomLeading: radius,
-				bottomTrailing: radius,
+				bottomTrailing: hasAdditionalInfo ? 4 : radius,
 				topTrailing: radius
 			)
 		}
@@ -195,7 +198,7 @@ struct AvatarNode: View {
 						}
 					}
 					.padding(.leading, size / 16)
-					.padding(.trailing, size / 8)
+					.padding(.trailing, 4)
 					.padding(.vertical, size / 36)
 					.background(foregroundColor.opacity(0.8))
 					.clipShape(
@@ -237,7 +240,8 @@ struct AvatarNode: View {
 						.foregroundColor(backgroundColor.opacity(0.8))
 						.lineLimit(1)
 				}
-				.padding(.horizontal, size / 8)
+				.padding(.leading, size / 16)
+				.padding(.trailing, 4)
 				.padding(.vertical, size / 36)
 				.background(foregroundColor.opacity(0.8))
 				.clipShape(
