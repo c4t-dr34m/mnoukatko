@@ -40,6 +40,14 @@ struct MessageContentView: View {
 	private var isDetectionSensorMessage: Bool {
 		message.portNum == Int32(PortNum.detectionSensorApp.rawValue)
 	}
+	private var foregroundColor: Color {
+		backgroundColor.isLight ? .black : .white
+	}
+	private var backgroundColor: Color {
+		Color(
+			UIColor.secondarySystemGroupedBackground
+		)
+	}
 	private var linkColor: Color {
 		if colorScheme == .dark {
 			.white
@@ -86,26 +94,17 @@ struct MessageContentView: View {
 								.font(.system(size: 14))
 								.symbolRenderingMode(.monochrome)
 								.foregroundColor(
-									getForegroundColor(
-										for: originalMessage,
-										isCurrentUser: isCurrentUser
-									)
-									.opacity(0.8)
+									foregroundColor.opacity(0.8)
 								)
 
 							Text(payload)
 								.font(.system(size: 14))
-								.foregroundColor(
-									getForegroundColor(
-										for: originalMessage,
-										isCurrentUser: isCurrentUser
-									)
-								)
+								.foregroundColor(foregroundColor)
 								.opacity(0.8)
 						}
 						.padding(.vertical, 4)
 						.padding(.horizontal, 8)
-						.background(getBackgroundColor(for: originalMessage, isCurrentUser: isCurrentUser))
+						.background(backgroundColor)
 						.overlay(
 							RoundedRectangle(cornerRadius: 8)
 								.stroke(
@@ -145,12 +144,7 @@ struct MessageContentView: View {
 					VStack(alignment: .leading, spacing: 8) {
 						Text(markdownText)
 							.font(.body)
-							.foregroundColor(
-								getForegroundColor(
-									for: message,
-									isCurrentUser: isCurrentUser
-								)
-							)
+							.foregroundColor(foregroundColor)
 							.tint(linkColor)
 							.strikethrough(message.ackError > 0)
 							.padding(.top, 16)
@@ -180,7 +174,7 @@ struct MessageContentView: View {
 						.padding(.trailing, 8)
 					}
 				}
-				.background(getBackgroundColor(for: message, isCurrentUser: isCurrentUser))
+				.background(backgroundColor)
 				.clipShape(
 					UnevenRoundedRectangle(cornerRadii: corners, style: .continuous)
 				)
@@ -224,12 +218,12 @@ struct MessageContentView: View {
 
 				Image(systemName: "tray.and.arrow.down")
 					.font(.system(size: statusIconSize))
-					.foregroundColor(getForegroundColor(for: message).opacity(0.5))
+					.foregroundColor(foregroundColor.opacity(0.5))
 
 				Text(nodeUsed)
 					.font(.system(size: statusFontSize))
 					.lineLimit(1)
-					.foregroundColor(getForegroundColor(for: message).opacity(0.5))
+					.foregroundColor(foregroundColor.opacity(0.5))
 					.fixedSize(horizontal: true, vertical: false)
 			}
 		}
@@ -240,12 +234,12 @@ struct MessageContentView: View {
 		HStack(spacing: 4) {
 			Image(systemName: "clock")
 				.font(.system(size: statusIconSize))
-				.foregroundColor(getForegroundColor(for: message).opacity(0.5))
+				.foregroundColor(foregroundColor.opacity(0.5))
 
 			Text(message.timestamp.relative())
 				.font(.system(size: statusFontSize))
 				.lineLimit(1)
-				.foregroundColor(getForegroundColor(for: message).opacity(0.5))
+				.foregroundColor(foregroundColor.opacity(0.5))
 				.fixedSize(horizontal: true, vertical: false)
 		}
 	}
@@ -258,42 +252,42 @@ struct MessageContentView: View {
 			HStack(spacing: 4) {
 				Image(systemName: "checkmark.circle.fill")
 					.font(.system(size: statusFontSize))
-					.foregroundColor(getForegroundColor(for: message).opacity(0.5))
+					.foregroundColor(foregroundColor.opacity(0.5))
 
 				Text(ackAt.relative())
 					.font(.system(size: statusFontSize))
 					.lineLimit(1)
-					.foregroundColor(getForegroundColor(for: message).opacity(0.5))
+					.foregroundColor(foregroundColor.opacity(0.5))
 			}
 		}
 		else if message.ackError == 0 {
 			HStack(spacing: 4) {
 				Image(systemName: "checkmark.circle.badge.questionmark")
 					.font(.system(size: statusFontSize))
-					.foregroundColor(getForegroundColor(for: message).opacity(0.5))
+					.foregroundColor(foregroundColor.opacity(0.5))
 
 				Text(message.timestamp.relative())
 					.font(.system(size: statusFontSize))
 					.lineLimit(1)
-					.foregroundColor(getForegroundColor(for: message).opacity(0.5))
+					.foregroundColor(foregroundColor.opacity(0.5))
 			}
 		}
 		else if message.ackError > 0 {
 			Image(systemName: "checkmark.circle.trianglebadge.exclamationmark")
 				.font(.system(size: statusFontSize))
-				.foregroundColor(getForegroundColor(for: message).opacity(0.5))
+				.foregroundColor(foregroundColor.opacity(0.5))
 
 			if let ackError = RoutingError(rawValue: Int(message.ackError)) {
 				Text(ackError.display)
 					.font(.system(size: statusFontSize))
 					.lineLimit(1)
-					.foregroundColor(getForegroundColor(for: message).opacity(0.5))
+					.foregroundColor(foregroundColor.opacity(0.5))
 			}
 			else {
 				Text("Unknown ACK error")
 					.font(.system(size: statusFontSize))
 					.lineLimit(1)
-					.foregroundColor(getForegroundColor(for: message).opacity(0.5))
+					.foregroundColor(foregroundColor.opacity(0.5))
 			}
 		}
 	}
@@ -317,32 +311,6 @@ struct MessageContentView: View {
 						.foregroundColor(.gray)
 				}
 			}
-		}
-	}
-
-	private func getBackgroundColor(
-		for message: MessageEntity,
-		isCurrentUser: Bool
-	) -> Color {
-		if colorScheme == .dark {
-			return Color(white: 0.1)
-		}
-		else {
-			return Color(white: 0.9)
-		}
-	}
-
-	private func getForegroundColor(
-		for message: MessageEntity,
-		isCurrentUser: Bool = false
-	) -> Color {
-		let background = getBackgroundColor(for: message, isCurrentUser: isCurrentUser)
-
-		if background.isLight() {
-			return Color.black
-		}
-		else {
-			return Color.white
 		}
 	}
 }

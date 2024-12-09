@@ -46,7 +46,7 @@ struct AvatarNode: View {
 		showLastHeard || (showTemperature && node.isOnline && temperature != nil)
 	}
 	private var foregroundColor: Color {
-		backgroundColor.isLight() ? .black : .white
+		backgroundColor.isLight ? .black : .white
 	}
 	private var backgroundColor: Color {
 		if node.isOnline || ignoreOffline {

@@ -48,18 +48,23 @@ extension UIColor {
 		return value
 	}
 
+	// swiftlint:disable:next large_tuple
 	var hsl: (hue: CGFloat, saturation: CGFloat, lightness: CGFloat) {
 		var hue: CGFloat = 0
 		var saturation: CGFloat = 0
 		var brightness: CGFloat = 0
 		var alpha: CGFloat = 0
 
-		self.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
+		getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
 
 		let lightness = (2 - saturation) * brightness / 2
 		let sat = lightness == 0 || lightness == 1 ? 0 : saturation * brightness / (1 - abs(2 * lightness - 1))
 
 		return (hue, sat, lightness)
+	}
+
+	var isLight: Bool {
+		hsl.lightness >= 0.55
 	}
 
 	convenience init(hex: UInt32) {
@@ -73,16 +78,6 @@ extension UIColor {
 			blue: blue / 255.0,
 			alpha: 1.0
 		)
-	}
-
-	func isLight() -> Bool {
-		guard let components = cgColor.components, components.count > 2 else {
-			return false
-		}
-
-		let brightness = ((components[0] * 299) + (components[1] * 587) + (components[2] * 114)) / 1000
-
-		return brightness > 0.5
 	}
 
 	func lightness(delta: CGFloat) -> UIColor {
@@ -144,7 +139,6 @@ extension UIColor {
 		let b: CGFloat
 
 		if s == 0 {
-			// Achromatic (gray)
 			r = l
 			g = l
 			b = l
@@ -164,8 +158,12 @@ extension UIColor {
 	private func hueToRgb(p: CGFloat, q: CGFloat, t: CGFloat) -> CGFloat {
 		var t = t
 
-		if t < 0 { t += 1 }
-		if t > 1 { t -= 1 }
+		if t < 0 {
+			t += 1
+		}
+		if t > 1 {
+			t -= 1
+		}
 		if t < 1 / 6 {
 			return p + (q - p) * 6 * t
 		}

@@ -489,7 +489,7 @@ struct Connect: View {
 						.foregroundColor(nodeColor)
 						.background(
 							Circle()
-								.foregroundColor(nodeColor.isLight() ? .black : .white)
+								.foregroundColor(nodeColor.isLight ? .black : .white)
 						)
 				}
 			}

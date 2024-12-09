@@ -91,7 +91,7 @@ struct MeshMapContent: MapContent {
 						Image(systemName: visible ? "eye.circle.fill" : "\(node.hopsAway).circle.fill")
 							.font(.system(size: 20))
 							.background(node.color)
-							.foregroundColor(node.color.isLight() ? .black.opacity(0.5) : .white.opacity(0.5))
+							.foregroundColor(node.color.isLight ? .black.opacity(0.5) : .white.opacity(0.5))
 							.clipShape(Circle())
 					}
 				}

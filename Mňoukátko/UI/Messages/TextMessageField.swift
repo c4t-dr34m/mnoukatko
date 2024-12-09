@@ -46,9 +46,6 @@ struct TextMessageField: View {
 	private var remainingCharacters: Int {
 		maxBytes - totalBytes
 	}
-	private var backgroundColor: Color {
-		colorScheme == .dark ? .black : .white
-	}
 
 	var body: some View {
 		HStack(alignment: .bottom, spacing: 8) {
@@ -104,7 +101,9 @@ struct TextMessageField: View {
 			.disabled(typingMessage.isEmpty || remainingCharacters <= 0)
 		}
 		.padding(.all, 2)
-		.background(backgroundColor)
+		.background(
+			colorScheme == .dark ? Color(.systemGroupedBackground) : Color(.secondarySystemGroupedBackground)
+		)
 		.onTapGesture {
 			isFocused = true
 		}

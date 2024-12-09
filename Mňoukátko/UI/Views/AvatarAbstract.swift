@@ -28,7 +28,7 @@ struct AvatarAbstract: View {
 	private let light: UnitPoint
 
 	private var foregroundColor: Color {
-		backgroundColor.isLight() ? .black : .white
+		backgroundColor.isLight ? .black : .white
 	}
 	private var backgroundColor: Color {
 		if let color {
