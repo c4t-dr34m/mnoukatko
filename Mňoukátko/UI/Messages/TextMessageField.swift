@@ -50,13 +50,14 @@ struct TextMessageField: View {
 	var body: some View {
 		HStack(alignment: .bottom, spacing: 8) {
 			ZStack(alignment: .bottom) {
-				TextField("", text: $typingMessage, axis: .vertical)
+				TextField("New message, perhaps?", text: $typingMessage, axis: .vertical)
 					.font(.body)
 					.multilineTextAlignment(.leading)
 					.keyboardType(.default)
 					.keyboardShortcut(.defaultAction)
 					.padding(.horizontal, 16)
 					.padding(.vertical, 8)
+					.background(colorScheme == .dark ? .black : .white)
 					.overlay(
 						RoundedRectangle(cornerRadius: 16)
 							.stroke(.tertiary, lineWidth: 2)
@@ -101,9 +102,6 @@ struct TextMessageField: View {
 			.disabled(typingMessage.isEmpty || remainingCharacters <= 0)
 		}
 		.padding(.all, 2)
-		.background(
-			colorScheme == .dark ? Color(.systemGroupedBackground) : Color(.secondarySystemGroupedBackground)
-		)
 		.onTapGesture {
 			isFocused = true
 		}

@@ -39,8 +39,6 @@ struct MessageList: View {
 	private var preferredPeripheralNum = -1
 	@EnvironmentObject
 	private var connectedDevice: CurrentDevice
-	@Environment(\.colorScheme)
-	private var colorScheme: ColorScheme
 	@StateObject
 	private var appState = AppState.shared
 	@FocusState
@@ -88,7 +86,7 @@ struct MessageList: View {
 	}
 
 	var body: some View {
-		VStack(spacing: 4) {
+		VStack(spacing: 0) {
 			ScrollViewReader { scrollView in
 				if !messages.isEmpty {
 					messageList
@@ -142,7 +140,10 @@ struct MessageList: View {
 				)
 				.frame(alignment: .bottom)
 				.padding(.horizontal, 16)
-				.padding(.bottom, 8)
+				.padding(.vertical, 8)
+				.background(
+					Color(.systemGroupedBackground)
+				)
 			}
 			else {
 				EmptyView()

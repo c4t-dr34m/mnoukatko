@@ -144,9 +144,9 @@ struct MessageContentView: View {
 					VStack(alignment: .leading, spacing: 8) {
 						Text(markdownText)
 							.font(.body)
-							.foregroundColor(foregroundColor)
+							.foregroundColor(message.ackError > 0 ? foregroundColor.opacity(0.6) : foregroundColor)
 							.tint(linkColor)
-							.strikethrough(message.ackError > 0)
+							.strikethrough(message.ackError > 0, color: .red)
 							.padding(.top, 16)
 							.padding(.bottom, 8)
 							.padding(.leading, showSensor ? 0 : 16)
@@ -264,7 +264,7 @@ struct MessageContentView: View {
 			HStack(spacing: 4) {
 				Image(systemName: "checkmark.circle.badge.questionmark")
 					.font(.system(size: statusFontSize))
-					.foregroundColor(foregroundColor.opacity(0.5))
+					.foregroundColor(.orange)
 
 				Text(message.timestamp.relative())
 					.font(.system(size: statusFontSize))
@@ -275,7 +275,7 @@ struct MessageContentView: View {
 		else if message.ackError > 0 {
 			Image(systemName: "checkmark.circle.trianglebadge.exclamationmark")
 				.font(.system(size: statusFontSize))
-				.foregroundColor(foregroundColor.opacity(0.5))
+				.foregroundColor(.red)
 
 			if let ackError = RoutingError(rawValue: Int(message.ackError)) {
 				Text(ackError.display)

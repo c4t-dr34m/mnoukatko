@@ -113,7 +113,7 @@
 		B2E8CE4A2CC94BF400407417 /* ConfigType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E8CE492CC94BF000407417 /* ConfigType.swift */; };
 		B2E8CE4C2CC94C0600407417 /* CommDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E8CE4B2CC94C0200407417 /* CommDelegate.swift */; };
 		B2E8CE4E2CC94C3300407417 /* BLEManager+CommDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E8CE4D2CC94C2B00407417 /* BLEManager+CommDelegate.swift */; };
-		B399E8A42B6F486400E4488E /* RetryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B399E8A32B6F486400E4488E /* RetryButton.swift */; };
+		B399E8A42B6F486400E4488E /* RetryModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B399E8A32B6F486400E4488E /* RetryModifier.swift */; };
 		B3E905B12B71F7F300654D07 /* TextMessageField.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E905B02B71F7F300654D07 /* TextMessageField.swift */; };
 		C9697FA527933B8C00250207 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = C9697FA427933B8C00250207 /* SQLite */; };
 		D93068D32B8129510066FBC8 /* MessageContextMenuItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = D93068D22B8129510066FBC8 /* MessageContextMenuItems.swift */; };
@@ -184,19 +184,6 @@
 		DDF45C372BC46A5A005ED5F2 /* TimeZone.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDF45C362BC46A5A005ED5F2 /* TimeZone.swift */; };
 		DDF924CA26FBB953009FE055 /* ConnectionInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDF924C926FBB953009FE055 /* ConnectionInfo.swift */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		DDDE5A0829AF163F00490C6C /* Embed Foundation Extensions */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 13;
-			files = (
-			);
-			name = "Embed Foundation Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		080092A22CCECFEA00A1309D /* Data_v42.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Data_v42.xcdatamodel; sourceTree = "<group>"; };
@@ -299,7 +286,7 @@
 		B2E8CE492CC94BF000407417 /* ConfigType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigType.swift; sourceTree = "<group>"; };
 		B2E8CE4B2CC94C0200407417 /* CommDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommDelegate.swift; sourceTree = "<group>"; };
 		B2E8CE4D2CC94C2B00407417 /* BLEManager+CommDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BLEManager+CommDelegate.swift"; sourceTree = "<group>"; };
-		B399E8A32B6F486400E4488E /* RetryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetryButton.swift; sourceTree = "<group>"; };
+		B399E8A32B6F486400E4488E /* RetryModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetryModifier.swift; sourceTree = "<group>"; };
 		B3E905B02B71F7F300654D07 /* TextMessageField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMessageField.swift; sourceTree = "<group>"; };
 		D93068D22B8129510066FBC8 /* MessageContextMenuItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageContextMenuItems.swift; sourceTree = "<group>"; };
 		D93068D42B812B700066FBC8 /* MessageDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDestination.swift; sourceTree = "<group>"; };
@@ -837,7 +824,7 @@
 				B3E905B02B71F7F300654D07 /* TextMessageField.swift */,
 				DD798B062915928D005217CD /* MessageList.swift */,
 				DDB8F40F2A9EE5B400230ECE /* Messages.swift */,
-				B399E8A32B6F486400E4488E /* RetryButton.swift */,
+				B399E8A32B6F486400E4488E /* RetryModifier.swift */,
 				D93068D62B8146690066FBC8 /* MessageContentView.swift */,
 				D93068D22B8129510066FBC8 /* MessageContextMenuItems.swift */,
 			);
@@ -917,7 +904,6 @@
 				DDC2E15026CE248E0042C5E4 /* Sources */,
 				DDC2E15126CE248E0042C5E4 /* Frameworks */,
 				DDC2E15226CE248E0042C5E4 /* Resources */,
-				DDDE5A0829AF163F00490C6C /* Embed Foundation Extensions */,
 				088B45E12CF13123001766D1 /* Upload dSYMs */,
 			);
 			buildRules = (
@@ -1093,7 +1079,7 @@
 				B2E8CE4C2CC94C0600407417 /* CommDelegate.swift in Sources */,
 				B284A42D2C6F87B200D5122B /* BLEManager+CBCentralManager.swift in Sources */,
 				DDA0B6B2294CDC55001356EC /* Channels.swift in Sources */,
-				B399E8A42B6F486400E4488E /* RetryButton.swift in Sources */,
+				B399E8A42B6F486400E4488E /* RetryModifier.swift in Sources */,
 				DDB8F4102A9EE5B400230ECE /* Messages.swift in Sources */,
 				B2AF95DA2CAC306700EAD056 /* PositionPrecision.swift in Sources */,
 				B21E1F752CF9FBE100B3D29E /* Int64.swift in Sources */,

@@ -156,7 +156,7 @@ struct MessageListItem: View {
 			}
 
 			if let destination {
-				HStack(spacing: 0) {
+				if isCurrentUser, message.canRetry {
 					MessageContentView(
 						message: message,
 						originalMessage: originalMessage,
@@ -166,9 +166,17 @@ struct MessageListItem: View {
 						replyMessageId = message.messageId
 						onReply()
 					}
-
-					if isCurrentUser && message.canRetry {
-						RetryButton(message: message, destination: destination)
+					.withRetry(message: message, destination: destination)
+				}
+				else {
+					MessageContentView(
+						message: message,
+						originalMessage: originalMessage,
+						tapBackDestination: destination,
+						isCurrentUser: isCurrentUser
+					) {
+						replyMessageId = message.messageId
+						onReply()
 					}
 				}
 			}
