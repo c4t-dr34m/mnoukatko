@@ -188,6 +188,9 @@ struct NodeListConnectedItem: View {
 			if let connectedNode {
 				AvatarNode(
 					connectedNode,
+					ignoreOffline: true,
+					showTemperature: false,
+					showLastHeard: false,
 					size: 64
 				)
 				.padding([.top, .bottom, .trailing], 10)
