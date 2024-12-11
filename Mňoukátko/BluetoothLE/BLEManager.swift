@@ -71,6 +71,7 @@ final class BLEManager: NSObject, ObservableObject {
 	var nodeNames = [Int64: String]()
 	var infoLastChanged: Date?
 	var devicesDelegate: DevicesDelegate?
+	var deviceWatchingTimer: Timer?
 	var mqttManager: MQTTManager?
 	var connectedVersion: String
 	var isConnecting = false
@@ -161,6 +162,10 @@ final class BLEManager: NSObject, ObservableObject {
 		if !devices.isEmpty {
 			onDevicesChange() // Check devices we got before scanning started
 		}
+
+		deviceWatchingTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+			self?.onDevicesChange()
+		}
 	}
 
 	func stopScanning() {
@@ -171,6 +176,7 @@ final class BLEManager: NSObject, ObservableObject {
 		Logger.services.debug("Device scanning stopped")
 
 		centralManager.stopScan()
+		deviceWatchingTimer?.invalidate()
 	}
 
 	func onDevicesChange() {
