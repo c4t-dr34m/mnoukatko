@@ -78,6 +78,8 @@ struct UserConfig: OptionsScreen {
 						TextField("", text: $longName)
 							.optionsStyle()
 							.onChange(of: longName) {
+								longName = longName.trimmingCharacters(in: .whitespacesAndNewlines)
+
 								if longName.utf8.count > (isLicensed ? 6 : 36) {
 									longName = String(longName.dropLast())
 								}
@@ -108,6 +110,8 @@ struct UserConfig: OptionsScreen {
 						TextField("", text: $shortName)
 							.optionsStyle()
 							.onChange(of: shortName) {
+								shortName = shortName.trimmingCharacters(in: .whitespacesAndNewlines)
+
 								if shortName.utf8.count > 4 {
 									shortName = String(shortName.dropLast())
 								}

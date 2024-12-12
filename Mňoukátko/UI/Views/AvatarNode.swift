@@ -130,7 +130,7 @@ struct AvatarNode: View {
 	var body: some View {
 		ZStack(alignment: .center) {
 			if let name = name, !name.isEmpty {
-				Text(name)
+				Text(name.trimmingCharacters(in: .whitespacesAndNewlines))
 					.font(Font.custom("Iosevka-Fixed-Heavy", size: 128))
 					.foregroundColor(foregroundColor)
 					.lineLimit(1)
