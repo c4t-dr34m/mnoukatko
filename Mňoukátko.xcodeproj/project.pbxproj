@@ -190,6 +190,8 @@
 		080092A32CCECFEA00A1309D /* Data_v43.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Data_v43.xcdatamodel; sourceTree = "<group>"; };
 		080488AA2CE3CF0B00CD35F4 /* TextFieldModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldModifier.swift; sourceTree = "<group>"; };
 		08094DF02D03B96C0069EBD0 /* IosevkaFixed-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IosevkaFixed-Light.ttf"; sourceTree = "<group>"; };
+		081A0F7C2D0C9C8700B6F1E4 /* Data_v46.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Data_v46.xcdatamodel; sourceTree = "<group>"; };
+		081A0F7D2D0CA5E800B6F1E4 /* Data_v47.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Data_v47.xcdatamodel; sourceTree = "<group>"; };
 		081C3AEA2C971E1600F93C46 /* BackgroundWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundWatcher.swift; sourceTree = "<group>"; };
 		081C3AEC2C97493900F93C46 /* CBManagerState+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CBManagerState+Extension.swift"; sourceTree = "<group>"; };
 		081C3AEE2C989B8C00F93C46 /* TelemetryConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryConfig.swift; sourceTree = "<group>"; };
@@ -1514,8 +1516,10 @@
 				080092A32CCECFEA00A1309D /* Data_v43.xcdatamodel */,
 				B27508972CE1D97E0067E65D /* Data_v44.xcdatamodel */,
 				B2A5355A2CF4A8D6006FBE1D /* Data_v45.xcdatamodel */,
+				081A0F7C2D0C9C8700B6F1E4 /* Data_v46.xcdatamodel */,
+				081A0F7D2D0CA5E800B6F1E4 /* Data_v47.xcdatamodel */,
 			);
-			currentVersion = B2A5355A2CF4A8D6006FBE1D /* Data_v45.xcdatamodel */;
+			currentVersion = 081A0F7D2D0CA5E800B6F1E4 /* Data_v47.xcdatamodel */;
 			name = "Mňoukátko.xcdatamodeld";
 			path = "Mňoukátko.xcdatamodeld";
 			sourceTree = "<group>";

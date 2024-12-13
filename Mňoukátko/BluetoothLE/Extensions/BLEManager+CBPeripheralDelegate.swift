@@ -307,7 +307,11 @@ extension BLEManager: CBPeripheralDelegate {
 			)
 
 		case .positionApp:
-			coreDataTools.upsertPositionPacket(packet: info.packet, context: context)
+			coreDataTools.upsertPositionPacket(
+				packet: info.packet,
+				connectedDevice: getConnectedDevice(),
+				context: context
+			)
 
 		case .waypointApp:
 			waypointPacket(packet: info.packet, context: context)
@@ -317,7 +321,11 @@ extension BLEManager: CBPeripheralDelegate {
 				break
 			}
 
-			coreDataTools.upsertNodeInfoPacket(packet: info.packet, context: context)
+			coreDataTools.upsertNodeInfoPacket(
+				packet: info.packet,
+				connectedDevice: getConnectedDevice(),
+				context: context
+			)
 			onInfoReceived(num: Int64(info.packet.from))
 
 		case .routingApp:
@@ -433,6 +441,8 @@ extension BLEManager: CBPeripheralDelegate {
 						hopNode.lastHeard = Date(
 							timeIntervalSince1970: TimeInterval(Int64(info.packet.rxTime))
 						)
+						hopNode.lastHeardBy = getConnectedDevice()?.nodeInfo
+						hopNode.setLastHeardAt()
 					}
 
 					hopNodes.append(traceRouteHop)

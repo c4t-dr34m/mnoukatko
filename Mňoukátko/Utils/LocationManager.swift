@@ -36,16 +36,18 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
 	}
 
 	private let locationManager: CLLocationManager
+	private let distanceFormatter = MKDistanceFormatter()
 
 	private var hasPermission: Bool {
 		[
-			.authorizedWhenInUse
+			.authorizedWhenInUse,
+			.authorizedAlways
 		].contains(authorizationStatus)
 	}
 
 	override init() {
 		locationManager = CLLocationManager()
-		locationManager.desiredAccuracy = kCLLocationAccuracyBest
+		locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
 		locationManager.pausesLocationUpdatesAutomatically = false
 		locationManager.activityType = .other
 
@@ -56,6 +58,37 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
 
 	func getLocation() -> CLLocation? {
 		lastKnownLocation
+	}
+
+	func getDistanceFormatted(latitude: Double?, longitude: Double?) -> String? {
+		guard let latitude, let longitude else {
+			return nil
+		}
+
+		return getDistanceFormatted(
+			from: CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+		)
+	}
+
+	func getDistanceFormatted(from coordinate: CLLocationCoordinate2D?) -> String?{
+		guard
+			let currentCoordinate = lastKnownLocation?.coordinate,
+			let placeCoordinate = coordinate
+		else {
+			return nil
+		}
+
+		let me = CLLocation(
+			latitude: currentCoordinate.latitude,
+			longitude: currentCoordinate.longitude
+		)
+		let place = CLLocation(
+			latitude: placeCoordinate.latitude,
+			longitude: placeCoordinate.longitude
+		)
+		let distance = place.distance(from: me)
+
+		return distanceFormatter.string(fromDistance: Double(distance))
 	}
 
 	func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
@@ -75,7 +108,9 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
 			return
 		}
 
+		lastKnownLocation = locationManager.location
+
 		locationManager.delegate = self
-		locationManager.requestLocation()
+		locationManager.startUpdatingLocation()
 	}
 }

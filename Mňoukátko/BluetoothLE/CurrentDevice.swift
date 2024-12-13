@@ -34,6 +34,9 @@ public final class CurrentDevice: ObservableObject, Equatable {
 	}
 
 	public func set(device: Device) {
+		var device = device
+		device.nodeInfo = getNodeInfo(for: device)
+
 		self.device = device
 	}
 
@@ -42,6 +45,9 @@ public final class CurrentDevice: ObservableObject, Equatable {
 		guard let device, device.peripheral.state == .connected else {
 			return false
 		}
+
+		var newDevice = newDevice
+		newDevice.nodeInfo = getNodeInfo(for: newDevice)
 
 		self.device = newDevice
 
@@ -59,5 +65,12 @@ public final class CurrentDevice: ObservableObject, Equatable {
 		}
 
 		return device
+	}
+
+	private func getNodeInfo(for device: Device) -> NodeInfoEntity? {
+		let request = NodeInfoEntity.fetchRequest()
+		request.predicate = NSPredicate(format: "num == %lld", device.num)
+
+		return try? context.fetch(request).first
 	}
 }

@@ -279,26 +279,16 @@ struct NodeDetail: View {
 		if let position = nodePosition {
 			HStack(alignment: .center, spacing: 8) {
 				if
-					let currentCoordinate = locationManager.getLocation()?.coordinate,
-					let lastCoordinate = (node.positions?.lastObject as? PositionEntity)?.coordinate
+					let distance = locationManager.getDistanceFormatted(
+						from: (node.positions?.lastObject as? PositionEntity)?.coordinate
+					)
 				{
-					let myLocation = CLLocation(
-						latitude: currentCoordinate.latitude,
-						longitude: currentCoordinate.longitude
-					)
-					let location = CLLocation(
-						latitude: lastCoordinate.latitude,
-						longitude: lastCoordinate.longitude
-					)
-					let distance = location.distance(from: myLocation)
-					let distanceFormatted = distanceFormatter.string(fromDistance: Double(distance))
-
 					Image(systemName: "mappin.and.ellipse")
 						.font(detailInfoIconFont)
 						.foregroundColor(.primary)
 						.frame(width: detailIconSize)
 
-					Text(distanceFormatted)
+					Text(distance)
 						.font(detailInfoTextFont)
 						.lineLimit(1)
 						.minimumScaleFactor(0.5)
@@ -930,8 +920,12 @@ struct NodeDetail: View {
 
 				Spacer()
 
-				Text(lastHeard.relative())
-					.textSelection(.enabled)
+				VStack(alignment: .trailing, spacing: 4) {
+					Text(lastHeard.relative())
+						.textSelection(.enabled)
+
+					lastHeardBy
+				}
 			}
 		}
 
@@ -1029,6 +1023,42 @@ struct NodeDetail: View {
 				}
 			}
 			.headerProminence(.increased)
+		}
+	}
+
+	@ViewBuilder
+	private var lastHeardBy: some View {
+		if let shortName = node.lastHeardBy?.user?.shortName {
+			HStack(alignment: .center, spacing: 4) {
+				Image(systemName: "flipphone")
+					.font(.system(size: 10, weight: .bold))
+					.foregroundColor(.gray)
+
+				Text(shortName)
+					.font(.system(size: 10, weight: .light))
+					.foregroundColor(.gray)
+
+				if
+					let distance = locationManager.getDistanceFormatted(
+						latitude: node.lastHeardAtLatitude,
+						longitude: node.lastHeardAtLongitude
+					)
+				{
+					Spacer()
+						.frame(width: 4)
+
+					Image(systemName: "mappin.and.ellipse")
+						.font(.system(size: 10, weight: .light))
+						.foregroundColor(.gray)
+
+					Text("\(distance) away")
+						.font(.system(size: 10, weight: .light))
+						.foregroundColor(.gray)
+				}
+			}
+		}
+		else {
+			EmptyView()
 		}
 	}
 

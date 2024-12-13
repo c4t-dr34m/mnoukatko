@@ -110,7 +110,11 @@ extension CoreDataTools {
 		}
 	}
 
-	func upsertNodeInfoPacket(packet: MeshPacket, context: NSManagedObjectContext) {
+	func upsertNodeInfoPacket(
+		packet: MeshPacket,
+		connectedDevice: Device?,
+		context: NSManagedObjectContext
+	) {
 		guard packet.from > 0 else {
 			return
 		}
@@ -127,6 +131,8 @@ extension CoreDataTools {
 				if packet.rxTime > 0 {
 					newNode.firstHeard = Date(timeIntervalSince1970: TimeInterval(Int64(packet.rxTime)))
 					newNode.lastHeard = Date(timeIntervalSince1970: TimeInterval(Int64(packet.rxTime)))
+					newNode.lastHeardBy = connectedDevice?.nodeInfo
+					newNode.setLastHeardAt()
 				}
 				newNode.snr = packet.rxSnr
 				newNode.rssi = packet.rxRssi
@@ -219,6 +225,8 @@ extension CoreDataTools {
 					if fetchedNode[0].firstHeard == nil {
 						fetchedNode[0].lastHeard = Date(timeIntervalSince1970: TimeInterval(Int64(packet.rxTime)))
 					}
+					fetchedNode[0].lastHeardBy = connectedDevice?.nodeInfo
+					fetchedNode[0].setLastHeardAt()
 				}
 				fetchedNode[0].snr = packet.rxSnr
 				fetchedNode[0].rssi = packet.rxRssi
@@ -281,7 +289,7 @@ extension CoreDataTools {
 		}
 	}
 
-	func upsertPositionPacket(packet: MeshPacket, context: NSManagedObjectContext) {
+	func upsertPositionPacket(packet: MeshPacket, connectedDevice: Device?, context: NSManagedObjectContext) {
 		let fetchNodePositionRequest = NodeInfoEntity.fetchRequest()
 		fetchNodePositionRequest.predicate = NSPredicate(format: "num == %lld", Int64(packet.from))
 
@@ -330,7 +338,8 @@ extension CoreDataTools {
 						guard let mutablePositions = fetchedNode[0].positions!.mutableCopy() as? NSMutableOrderedSet else {
 							return
 						}
-						/// Don't save nearly the same position over and over. If the next position is less than 10 meters from the new position, delete the previous position and save the new one.
+						/// Don't save nearly the same position over and over. If the next position is
+						/// less than 10 meters from the new position, delete the previous position and save the new one.
 						if mutablePositions.count > 0 && (position.precisionBits == 32 || position.precisionBits == 0) {
 							if let mostRecent = mutablePositions.lastObject as? PositionEntity, mostRecent.coordinate.distance(from: position.coordinate) < 15.0 {
 								mutablePositions.remove(mostRecent)
@@ -344,9 +353,12 @@ extension CoreDataTools {
 						fetchedNode[0].num = Int64(packet.from)
 						if positionMessage.time > 0 {
 							fetchedNode[0].lastHeard = Date(timeIntervalSince1970: TimeInterval(Int64(positionMessage.time)))
-						} else if packet.rxTime > 0 {
+						}
+						else if packet.rxTime > 0 {
 							fetchedNode[0].lastHeard = Date(timeIntervalSince1970: TimeInterval(Int64(packet.rxTime)))
 						}
+						fetchedNode[0].lastHeardBy = connectedDevice?.nodeInfo
+						fetchedNode[0].setLastHeardAt()
 						fetchedNode[0].snr = packet.rxSnr
 						fetchedNode[0].rssi = packet.rxRssi
 						fetchedNode[0].viaMqtt = packet.viaMqtt
@@ -360,7 +372,7 @@ extension CoreDataTools {
 				}
 				else {
 					if (try? NodeInfo(serializedData: packet.decoded.payload)) != nil {
-						upsertNodeInfoPacket(packet: packet, context: context)
+						upsertNodeInfoPacket(packet: packet, connectedDevice: connectedDevice, context: context)
 					}
 					else {
 						Logger.data.error("💥 Empty POSITION_APP Packet: \((try? packet.jsonString()) ?? "JSON Decode Failure", privacy: .public)")

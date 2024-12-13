@@ -456,6 +456,7 @@ final class BLEManager: NSObject, ObservableObject {
 		let newMessage = MessageEntity(context: context)
 		newMessage.messageId = Int64(UInt32.random(in: UInt32(UInt8.max)..<UInt32.max))
 		newMessage.messageTimestamp = Int32(Date.now.timeIntervalSince1970)
+		newMessage.receivedBy = nil
 		newMessage.receivedACK = false
 		newMessage.read = true
 		if toUserNum > 0 {

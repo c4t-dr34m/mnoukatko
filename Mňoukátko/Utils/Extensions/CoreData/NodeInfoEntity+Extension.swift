@@ -18,6 +18,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 import CoreData
+import CoreLocation
 import Foundation
 import SwiftUI
 
@@ -43,15 +44,15 @@ extension NodeInfoEntity {
 	}
 
 	var hasDeviceMetrics: Bool {
-		telemetries?.first(where: { telemetry in
+		telemetries?.contains(where: { telemetry in
 			(telemetry as AnyObject).metricsType == 0
-		}) != nil
+		}) == true
 	}
 
 	var hasEnvironmentMetrics: Bool {
-		telemetries?.first(where: { telemetry in
+		telemetries?.contains(where: { telemetry in
 			(telemetry as AnyObject).metricsType == 1
-		}) != nil
+		}) == true
 	}
 
 	var hasDetectionSensorMetrics: Bool {
@@ -79,6 +80,19 @@ extension NodeInfoEntity {
 		}
 
 		return false
+	}
+
+	func setLastHeardAt() {
+		guard
+			let location = LocationManager.shared.getLocation(),
+			isOnline
+		else {
+			return
+		}
+
+		lastHeardAtLatitude = location.coordinate.latitude
+		lastHeardAtLongitude = location.coordinate.longitude
+		lastHeardAtPrecision = location.horizontalAccuracy
 	}
 }
 

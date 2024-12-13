@@ -22,6 +22,7 @@ import Foundation
 
 public struct Device: Identifiable, Equatable {
 	public var peripheral: CBPeripheral
+	public var nodeInfo: NodeInfoEntity?
 
 	public var id: String
 	public var num: Int64

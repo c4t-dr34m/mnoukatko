@@ -328,6 +328,8 @@ extension BLEManager {
 			newNode.hopsAway = Int32(nodeInfo.hopsAway)
 			newNode.firstHeard = Date(timeIntervalSince1970: TimeInterval(Int64(nodeInfo.lastHeard)))
 			newNode.lastHeard = Date(timeIntervalSince1970: TimeInterval(Int64(nodeInfo.lastHeard)))
+			newNode.lastHeardBy = getConnectedDevice()?.nodeInfo
+			newNode.setLastHeardAt()
 			newNode.snr = nodeInfo.snr
 
 			if nodeInfo.hasDeviceMetrics {
@@ -419,6 +421,8 @@ extension BLEManager {
 			fetchedNode[0].id = Int64(nodeInfo.num)
 			fetchedNode[0].num = Int64(nodeInfo.num)
 			fetchedNode[0].lastHeard = Date(timeIntervalSince1970: TimeInterval(Int64(nodeInfo.lastHeard)))
+			fetchedNode[0].lastHeardBy = getConnectedDevice()?.nodeInfo
+			fetchedNode[0].setLastHeardAt()
 			fetchedNode[0].snr = nodeInfo.snr
 			fetchedNode[0].channel = Int32(nodeInfo.channel)
 			fetchedNode[0].favorite = nodeInfo.isFavorite
@@ -879,6 +883,8 @@ extension BLEManager {
 		fetchedNode[0].lastHeard = Date(
 			timeIntervalSince1970: TimeInterval(Int64(truncatingIfNeeded: packet.rxTime))
 		)
+		fetchedNode[0].lastHeardBy = getConnectedDevice()?.nodeInfo
+		fetchedNode[0].setLastHeardAt()
 		fetchedNode[0].telemetries = mutableTelemetries.copy() as? NSOrderedSet
 
 		dataDebounce.emit { [weak self] in
@@ -934,13 +940,13 @@ extension BLEManager {
 			}
 		}
 
-		let request = UserEntity.fetchRequest()
-		request.predicate = NSPredicate(format: "num IN %@", [packet.to, packet.from])
+		let userRequest = UserEntity.fetchRequest()
+		userRequest.predicate = NSPredicate(format: "num IN %@", [packet.to, packet.from])
 
 		guard
 			let messageText,
 			!messageText.isEmpty,
-			let fetchedUsers = try? context.fetch(request)
+			let fetchedUsers = try? context.fetch(userRequest)
 		else {
 			return
 		}
@@ -953,6 +959,7 @@ extension BLEManager {
 		else {
 			newMessage.messageTimestamp = Int32(packet.rxTime)
 		}
+		newMessage.receivedBy = getConnectedDevice()?.nodeInfo
 		newMessage.receivedACK = false
 		newMessage.snr = packet.rxSnr
 		newMessage.rssi = packet.rxRssi
@@ -1011,6 +1018,8 @@ extension BLEManager {
 				newMessage.fromUser?.userNode?.lastHeard = Date(
 					timeIntervalSince1970: TimeInterval(Int64(packet.rxTime))
 				)
+				newMessage.fromUser?.userNode?.lastHeardBy = getConnectedDevice()?.nodeInfo
+				newMessage.fromUser?.userNode?.setLastHeardAt()
 			}
 		}
 

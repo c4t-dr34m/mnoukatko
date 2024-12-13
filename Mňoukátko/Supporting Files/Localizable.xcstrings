@@ -7,6 +7,9 @@
     "(%@)" : {
 
     },
+    "%@ away" : {
+
+    },
     "%@ can be up to %@ bytes long." : {
       "localizations" : {
         "en" : {
