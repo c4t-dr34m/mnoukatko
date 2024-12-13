@@ -234,17 +234,20 @@ struct Connect: View {
 						if let hwModel = node?.user?.hwModel {
 							Text(hwModel)
 								.font(detailInfoFont)
+								.lineLimit(1)
 								.foregroundColor(.gray)
 						}
 						else {
 							Text("Unknown hardware")
 								.font(detailInfoFont)
+								.lineLimit(1)
 								.foregroundColor(.gray)
 						}
 
 						if let version = node?.metadata?.firmwareVersion {
 							Text("v\(version)")
 								.font(detailInfoFont)
+								.lineLimit(1)
 								.foregroundColor(.gray)
 						}
 					}

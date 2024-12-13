@@ -895,6 +895,13 @@ extension BLEManager {
 		context: NSManagedObjectContext,
 		appState: AppState
 	) {
+		let messageRequest = MessageEntity.fetchRequest()
+		messageRequest.predicate = NSPredicate(format: "messageId == %lld", Int64(packet.id))
+		if (try? context.fetch(messageRequest)) != nil {
+			Logger.mesh.warning("Message #\(packet.id) already processed")
+			return
+		}
+
 		let rangeRef = Reference(Int.self)
 		let rangeTestRegex = Regex {
 			"seq "

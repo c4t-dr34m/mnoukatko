@@ -159,13 +159,12 @@ final class BLEManager: NSObject, ObservableObject {
 
 		Logger.services.debug("Device scanning started")
 
-		if !devices.isEmpty {
-			onDevicesChange() // Check devices we got before scanning started
-		}
-
 		deviceWatchingTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
 			self?.onDevicesChange()
 		}
+
+		devices.removeAll()
+		onDevicesChange()
 	}
 
 	func stopScanning() {

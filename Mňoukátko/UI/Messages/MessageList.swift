@@ -93,14 +93,10 @@ struct MessageList: View {
 						.scrollDismissesKeyboard(.interactively)
 						.scrollIndicators(.hidden)
 						.onChange(of: messages.last?.messageId, initial: true) {
-							Task {
-								if let firstUnreadMessage {
-									scrollView.scrollTo(firstUnreadMessage.messageId, anchor: .bottom)
-								}
-								else if let lastMessage {
-									scrollView.scrollTo(lastMessage.messageId, anchor: .bottom)
-								}
-							}
+							scrollToEnd(scrollView)
+						}
+						.onChange(of: messageFieldFocused) {
+							scrollToEnd(scrollView)
 						}
 				}
 				else {
@@ -149,6 +145,7 @@ struct MessageList: View {
 				EmptyView()
 			}
 		}
+		.toolbar(.hidden, for: .tabBar)
 		.navigationTitle(screenTitle)
 		.navigationBarTitleDisplayMode(.large)
 		.navigationBarItems(
@@ -251,6 +248,17 @@ struct MessageList: View {
 		)
 
 		self._messages = .init(fetchRequest: request)
+	}
+
+	private func scrollToEnd(_ scrollView: ScrollViewProxy) {
+		Task {
+			if let firstUnreadMessage {
+				scrollView.scrollTo(firstUnreadMessage.messageId, anchor: .bottom)
+			}
+			else if let lastMessage {
+				scrollView.scrollTo(lastMessage.messageId, anchor: .bottom)
+			}
+		}
 	}
 
 	private func getOriginalMessage(for message: MessageEntity) -> MessageEntity? {
