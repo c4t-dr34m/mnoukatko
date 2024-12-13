@@ -202,21 +202,17 @@ struct NodeIconsView: View {
 				let distance = location.distance(from: myLocation) / 1000 // km
 				let distanceFormatted = String(format: "%.0f", distance) + "km"
 
-				Image(systemName: "mappin.and.ellipse")
-					.font(detailInfoIconFont)
-					.foregroundColor(.gray)
-
-				Text(distanceFormatted)
-					.font(detailInfoTextFont)
-					.lineLimit(1)
-					.foregroundColor(.gray)
-
-				Image(systemName: "location.north.circle.fill")
+				Image(systemName: "location.north.circle")
 					.font(detailInfoIconFont)
 					.foregroundColor(.gray)
 					.rotationEffect(
 						Angle(degrees: bearing)
 					)
+
+				Text(distanceFormatted)
+					.font(detailInfoTextFont)
+					.lineLimit(1)
+					.foregroundColor(.gray)
 			}
 			else {
 				Image(systemName: "mappin.and.ellipse")

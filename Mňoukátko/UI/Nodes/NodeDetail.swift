@@ -1042,14 +1042,21 @@ struct NodeDetail: View {
 					let distance = locationManager.getDistanceFormatted(
 						latitude: node.lastHeardAtLatitude,
 						longitude: node.lastHeardAtLongitude
+					),
+					let bearing = locationManager.getBearing(
+						latitude: node.lastHeardAtLatitude,
+						longitude: node.lastHeardAtLongitude
 					)
 				{
 					Spacer()
 						.frame(width: 4)
 
-					Image(systemName: "mappin.and.ellipse")
-						.font(.system(size: 10, weight: .light))
+					Image(systemName: "location.north.circle")
+						.font(.system(size: 10, weight: .bold))
 						.foregroundColor(.gray)
+						.rotationEffect(
+							Angle(degrees: bearing)
+						)
 
 					Text("\(distance) away")
 						.font(.system(size: 10, weight: .light))

@@ -60,6 +60,27 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
 		lastKnownLocation
 	}
 
+	func getBearing(latitude: Double?, longitude: Double?) -> Double? {
+		guard let latitude, let longitude else {
+			return nil
+		}
+
+		return getBearing(
+			to: CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+		)
+	}
+
+	func getBearing(to coordinate: CLLocationCoordinate2D?) -> Double? {
+		guard
+			let currentCoordinate = lastKnownLocation?.coordinate,
+			let placeCoordinate = coordinate
+		else {
+			return nil
+		}
+
+		return currentCoordinate.bearing(to: placeCoordinate)
+	}
+
 	func getDistanceFormatted(latitude: Double?, longitude: Double?) -> String? {
 		guard let latitude, let longitude else {
 			return nil

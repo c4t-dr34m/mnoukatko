@@ -174,7 +174,7 @@
 		DDDB444029F79AB000EE2349 /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDDB443F29F79AB000EE2349 /* UserDefaults.swift */; };
 		DDDB444629F8A96500EE2349 /* Character.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDDB444529F8A96500EE2349 /* Character.swift */; };
 		DDDB444829F8A9C900EE2349 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDDB444729F8A9C900EE2349 /* String.swift */; };
-		DDDB444A29F8AA3A00EE2349 /* CLLocationCoordinate2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDDB444929F8AA3A00EE2349 /* CLLocationCoordinate2D.swift */; };
+		DDDB444A29F8AA3A00EE2349 /* CLLocationCoordinate2D+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDDB444929F8AA3A00EE2349 /* CLLocationCoordinate2D+Extensions.swift */; };
 		DDDB444C29F8AAA600EE2349 /* Color+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDDB444B29F8AAA600EE2349 /* Color+Extension.swift */; };
 		DDDB444E29F8AB0E00EE2349 /* UInt32.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDDB444D29F8AB0E00EE2349 /* UInt32.swift */; };
 		DDDB445229F8ACF900EE2349 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDDB445129F8ACF900EE2349 /* Date.swift */; };
@@ -355,7 +355,7 @@
 		DDDB443F29F79AB000EE2349 /* UserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
 		DDDB444529F8A96500EE2349 /* Character.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Character.swift; sourceTree = "<group>"; };
 		DDDB444729F8A9C900EE2349 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
-		DDDB444929F8AA3A00EE2349 /* CLLocationCoordinate2D.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLLocationCoordinate2D.swift; sourceTree = "<group>"; };
+		DDDB444929F8AA3A00EE2349 /* CLLocationCoordinate2D+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CLLocationCoordinate2D+Extensions.swift"; sourceTree = "<group>"; };
 		DDDB444B29F8AAA600EE2349 /* Color+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Extension.swift"; sourceTree = "<group>"; };
 		DDDB444D29F8AB0E00EE2349 /* UInt32.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UInt32.swift; sourceTree = "<group>"; };
 		DDDB445129F8ACF900EE2349 /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
@@ -877,7 +877,7 @@
 				B2A5F2E12C5668FD009457AB /* BLEManager+Extensions.swift */,
 				DDDB444529F8A96500EE2349 /* Character.swift */,
 				B203D7A32CE4F3F2006B024F /* CLLocation+Extensions.swift */,
-				DDDB444929F8AA3A00EE2349 /* CLLocationCoordinate2D.swift */,
+				DDDB444929F8AA3A00EE2349 /* CLLocationCoordinate2D+Extensions.swift */,
 				DDDB444B29F8AAA600EE2349 /* Color+Extension.swift */,
 				B266DA8F2C53CEFB0067D317 /* Constants.swift */,
 				DDDB445129F8ACF900EE2349 /* Date.swift */,
@@ -1103,7 +1103,7 @@
 				B284A4332C6F8AE400D5122B /* BluetoothUUID.swift in Sources */,
 				B2A5F3032C5668FD009457AB /* NodeDetail.swift in Sources */,
 				DD3CC6BE28E4CD9800FA9159 /* BatteryView.swift in Sources */,
-				DDDB444A29F8AA3A00EE2349 /* CLLocationCoordinate2D.swift in Sources */,
+				DDDB444A29F8AA3A00EE2349 /* CLLocationCoordinate2D+Extensions.swift in Sources */,
 				DD41582628582E9B009B0E59 /* DeviceConfig.swift in Sources */,
 				B2D8488A2CFDDD6B00F59761 /* Spline.swift in Sources */,
 				B266A7552C5921BB00DFC723 /* Releases.swift in Sources */,
