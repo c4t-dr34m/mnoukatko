@@ -21,6 +21,7 @@ import OSLog
 
 extension Logger {
 	static let app = Logger(subsystem: subsystem, category: "App")
+	static let location = Logger(subsystem: subsystem, category: "Location")
 	static let admin = Logger(subsystem: subsystem, category: "Admin")
 	static let data = Logger(subsystem: subsystem, category: "Data")
 	static let mesh = Logger(subsystem: subsystem, category: "Mesh")

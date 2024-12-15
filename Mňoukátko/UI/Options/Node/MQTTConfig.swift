@@ -190,9 +190,11 @@ struct MQTTConfig: OptionsScreen {
 								Image(systemName: "plus")
 							}
 
-							Text(PositionPrecision(rawValue: Int(mapPositionPrecision))?.description ?? "")
-								.foregroundColor(.gray)
-								.font(.callout)
+							if let precision = PositionPrecision(rawValue: Int(mapPositionPrecision)) {
+								Text("\(precision.precisionMeters)m")
+									.foregroundColor(.gray)
+									.font(.callout)
+							}
 						}
 					}
 				}

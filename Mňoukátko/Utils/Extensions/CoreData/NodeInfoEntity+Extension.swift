@@ -20,6 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import CoreData
 import CoreLocation
 import Foundation
+import OSLog
 import SwiftUI
 
 extension NodeInfoEntity {
@@ -82,35 +83,92 @@ extension NodeInfoEntity {
 		return false
 	}
 
-	func setLastHeardAt() {
-		guard
-			let location = LocationManager.shared.getLocation(),
-			isOnline
-		else {
+	static func create(for num: Int64, with context: NSManagedObjectContext) -> NodeInfoEntity {
+		let userId = String(format: "%2X", num)
+		let last4 = String(userId.suffix(4))
+
+		let newUser = UserEntity(context: context)
+		newUser.num = Int64(num)
+		newUser.userId = "!\(userId)"
+		newUser.longName = "#\(last4)"
+		newUser.shortName = last4
+		newUser.hwModel = "UNSET"
+
+		let newNode = NodeInfoEntity(context: context)
+		newNode.id = Int64(num)
+		newNode.num = Int64(num)
+		newNode.user = newUser
+
+		return newNode
+	}
+
+	func setLastHeard(at timestamp: UInt32, by device: Device?) {
+		guard timestamp > 0 else {
 			return
 		}
 
-		lastHeardAtLatitude = location.coordinate.latitude
-		lastHeardAtLongitude = location.coordinate.longitude
-		lastHeardAtPrecision = location.horizontalAccuracy
+		let timeInterval = TimeInterval(Int64(timestamp))
+		let date = Date(timeIntervalSince1970: timeInterval)
+
+		// swiftlint:disable:next force_unwrapping
+		if firstHeard == nil || date < firstHeard! {
+			firstHeard = date
+		}
+
+		// swiftlint:disable:next force_unwrapping
+		if lastHeard == nil || date > lastHeard! {
+			lastHeard = date
+			lastHeardBy = device?.nodeInfo
+			setLastHeardAt(when: date, connectedDevice: device)
+		}
 	}
-}
 
-public func createNodeInfo(num: Int64, context: NSManagedObjectContext) -> NodeInfoEntity {
-	let userId = String(format: "%2X", num)
-	let last4 = String(userId.suffix(4))
+	private func setLastHeardAt(when date: Date, connectedDevice device: Device?) {
+		if
+			let position = getClosestPosition(to: date, connectedDevice: device),
+			position.latitudeI != 0, position.longitudeI != 0
+		{
+			lastHeardAtLatitude = position.latitude
+			lastHeardAtLongitude = position.longitude
 
-	let newUser = UserEntity(context: context)
-	newUser.num = Int64(num)
-	newUser.userId = "!\(userId)"
-	newUser.longName = "Meshtastic \(last4)"
-	newUser.shortName = last4
-	newUser.hwModel = "UNSET"
+			if let precision = PositionPrecision(rawValue: Int(position.precisionBits)) {
+				lastHeardAtPrecision = precision.precisionMeters
+			}
 
-	let newNode = NodeInfoEntity(context: context)
-	newNode.id = Int64(num)
-	newNode.num = Int64(num)
-	newNode.user = newUser
+			Logger.location.debug("Last heard at updated for \(self.user?.longName ?? "#\(self.num)") (node)")
+		}
+		else if let location = LocationManager.shared.getLocation() {
+			lastHeardAtLatitude = location.coordinate.latitude
+			lastHeardAtLongitude = location.coordinate.longitude
+			lastHeardAtPrecision = location.horizontalAccuracy
 
-	return newNode
+			Logger.location.debug("Last heard at updated for \(self.user?.longName ?? "#\(self.num)") (device)")
+		}
+	}
+
+	private func getClosestPosition(to date: Date, connectedDevice device: Device?) -> PositionEntity? {
+		guard
+			let positions = device?.nodeInfo?.positions?.array as? [PositionEntity],
+			positions.count > 0
+		else {
+			return nil
+		}
+
+		var delta = Double.greatestFiniteMagnitude
+		var closest: PositionEntity?
+
+		for position in positions {
+			guard let time = position.time else {
+				continue
+			}
+
+			let currentDelta = date.distance(to: time)
+			if currentDelta < delta {
+				delta = currentDelta
+				closest = position
+			}
+		}
+
+		return closest
+	}
 }

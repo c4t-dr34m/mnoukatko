@@ -290,7 +290,7 @@ extension BLEManager {
 		}
 		else {
 			if fromNum > 0 {
-				let newNode = createNodeInfo(num: Int64(fromNum), context: context)
+				let newNode = NodeInfoEntity.create(for: Int64(fromNum), with: context)
 				newNode.metadata = newMetadata
 			}
 		}
@@ -326,10 +326,7 @@ extension BLEManager {
 			newNode.channel = Int32(nodeInfo.channel)
 			newNode.favorite = nodeInfo.isFavorite
 			newNode.hopsAway = Int32(nodeInfo.hopsAway)
-			newNode.firstHeard = Date(timeIntervalSince1970: TimeInterval(Int64(nodeInfo.lastHeard)))
-			newNode.lastHeard = Date(timeIntervalSince1970: TimeInterval(Int64(nodeInfo.lastHeard)))
-			newNode.lastHeardBy = getConnectedDevice()?.nodeInfo
-			newNode.setLastHeardAt()
+			newNode.setLastHeard(at: nodeInfo.lastHeard, by: getConnectedDevice())
 			newNode.snr = nodeInfo.snr
 
 			if nodeInfo.hasDeviceMetrics {
@@ -420,9 +417,7 @@ extension BLEManager {
 		else if nodeInfo.num > 0 {
 			fetchedNode[0].id = Int64(nodeInfo.num)
 			fetchedNode[0].num = Int64(nodeInfo.num)
-			fetchedNode[0].lastHeard = Date(timeIntervalSince1970: TimeInterval(Int64(nodeInfo.lastHeard)))
-			fetchedNode[0].lastHeardBy = getConnectedDevice()?.nodeInfo
-			fetchedNode[0].setLastHeardAt()
+			fetchedNode[0].setLastHeard(at: nodeInfo.lastHeard, by: getConnectedDevice())
 			fetchedNode[0].snr = nodeInfo.snr
 			fetchedNode[0].channel = Int32(nodeInfo.channel)
 			fetchedNode[0].favorite = nodeInfo.isFavorite
@@ -880,11 +875,7 @@ extension BLEManager {
 		}
 		mutableTelemetries.add(telemetry)
 
-		fetchedNode[0].lastHeard = Date(
-			timeIntervalSince1970: TimeInterval(Int64(truncatingIfNeeded: packet.rxTime))
-		)
-		fetchedNode[0].lastHeardBy = getConnectedDevice()?.nodeInfo
-		fetchedNode[0].setLastHeardAt()
+		fetchedNode[0].setLastHeard(at: packet.rxTime, by: getConnectedDevice())
 		fetchedNode[0].telemetries = mutableTelemetries.copy() as? NSOrderedSet
 
 		dataDebounce.emit { [weak self] in
@@ -901,13 +892,6 @@ extension BLEManager {
 		context: NSManagedObjectContext,
 		appState: AppState
 	) {
-		let messageRequest = MessageEntity.fetchRequest()
-		messageRequest.predicate = NSPredicate(format: "messageId == %lld", Int64(packet.id))
-		if (try? context.fetch(messageRequest)) != nil {
-			Logger.mesh.warning("Message #\(packet.id) already processed")
-			return
-		}
-
 		let rangeRef = Reference(Int.self)
 		let rangeTestRegex = Regex {
 			"seq "
@@ -951,6 +935,17 @@ extension BLEManager {
 			return
 		}
 
+		var alreadyProcessed = false
+
+		let messageRequest = MessageEntity.fetchRequest()
+		messageRequest.predicate = NSPredicate(format: "messageId == %lld", Int64(packet.id))
+		if
+			let fetchedMessage = try? context.fetch(messageRequest),
+			!fetchedMessage.isEmpty
+		{
+			alreadyProcessed = true
+		}
+
 		let newMessage = MessageEntity(context: context)
 		newMessage.messageId = Int64(packet.id)
 		if packet.rxTime == 0 {
@@ -971,6 +966,10 @@ extension BLEManager {
 
 		if packet.decoded.replyID > 0 {
 			newMessage.replyID = Int64(packet.decoded.replyID)
+		}
+
+		if alreadyProcessed {
+			newMessage.read = true
 		}
 
 		if
@@ -1014,13 +1013,7 @@ extension BLEManager {
 				}
 			}
 
-			if packet.rxTime > 0 {
-				newMessage.fromUser?.userNode?.lastHeard = Date(
-					timeIntervalSince1970: TimeInterval(Int64(packet.rxTime))
-				)
-				newMessage.fromUser?.userNode?.lastHeardBy = getConnectedDevice()?.nodeInfo
-				newMessage.fromUser?.userNode?.setLastHeardAt()
-			}
+			newMessage.fromUser?.userNode?.setLastHeard(at: packet.rxTime, by: getConnectedDevice())
 		}
 
 		if

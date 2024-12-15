@@ -61,7 +61,7 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
 	}
 
 	func getBearing(latitude: Double?, longitude: Double?) -> Double? {
-		guard let latitude, let longitude else {
+		guard let latitude, let longitude, latitude != 0.0, longitude != 0.0 else {
 			return nil
 		}
 
@@ -82,7 +82,7 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
 	}
 
 	func getDistanceFormatted(latitude: Double?, longitude: Double?) -> String? {
-		guard let latitude, let longitude else {
+		guard let latitude, let longitude, latitude != 0.0, longitude != 0.0 else {
 			return nil
 		}
 
@@ -117,7 +117,13 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
 	}
 
 	func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-		lastKnownLocation = locations.last
+		guard let location = locations.last else {
+			return
+		}
+
+		Logger.location.debug("New location received: \(location.coordinate.latitude),\(location.coordinate.longitude)")
+
+		lastKnownLocation = location
 	}
 
 	func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {

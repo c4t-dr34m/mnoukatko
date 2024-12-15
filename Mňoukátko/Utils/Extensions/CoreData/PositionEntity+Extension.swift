@@ -23,7 +23,7 @@ import MapKit
 import MeshtasticProtobufs
 
 extension PositionEntity {
-	var latitude: Double? {
+	var latitude: Double {
 		let d = Double(latitudeI)
 		if d == 0 {
 			return 0
@@ -32,7 +32,7 @@ extension PositionEntity {
 		return d / 1e7
 	}
 
-	var longitude: Double? {
+	var longitude: Double {
 		let d = Double(longitudeI)
 		if d == 0 {
 			return 0
@@ -42,7 +42,7 @@ extension PositionEntity {
 	}
 
 	var nodeCoordinate: CLLocationCoordinate2D? {
-		if let latitude, let longitude, latitudeI != 0, longitudeI != 0 {
+		if latitudeI != 0, longitudeI != 0 {
 			return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
 		}
 
@@ -50,7 +50,7 @@ extension PositionEntity {
 	}
 
 	var nodeLocation: CLLocation? {
-		if let latitude, let longitude, latitudeI != 0, longitudeI != 0 {
+		if latitudeI != 0, longitudeI != 0 {
 			return CLLocation(latitude: latitude, longitude: longitude)
 		}
 

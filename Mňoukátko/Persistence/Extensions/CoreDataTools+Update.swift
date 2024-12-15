@@ -128,12 +128,7 @@ extension CoreDataTools {
 				let newNode = NodeInfoEntity(context: context)
 				newNode.id = Int64(packet.from)
 				newNode.num = Int64(packet.from)
-				if packet.rxTime > 0 {
-					newNode.firstHeard = Date(timeIntervalSince1970: TimeInterval(Int64(packet.rxTime)))
-					newNode.lastHeard = Date(timeIntervalSince1970: TimeInterval(Int64(packet.rxTime)))
-					newNode.lastHeardBy = connectedDevice?.nodeInfo
-					newNode.setLastHeardAt()
-				}
+				newNode.setLastHeard(at: packet.rxTime, by: connectedDevice)
 				newNode.snr = packet.rxSnr
 				newNode.rssi = packet.rxRssi
 				newNode.viaMqtt = packet.viaMqtt
@@ -220,14 +215,7 @@ extension CoreDataTools {
 				// Update an existing node
 				fetchedNode[0].id = Int64(packet.from)
 				fetchedNode[0].num = Int64(packet.from)
-				if packet.rxTime > 0 {
-					fetchedNode[0].lastHeard = Date(timeIntervalSince1970: TimeInterval(Int64(packet.rxTime)))
-					if fetchedNode[0].firstHeard == nil {
-						fetchedNode[0].lastHeard = Date(timeIntervalSince1970: TimeInterval(Int64(packet.rxTime)))
-					}
-					fetchedNode[0].lastHeardBy = connectedDevice?.nodeInfo
-					fetchedNode[0].setLastHeardAt()
-				}
+				fetchedNode[0].setLastHeard(at: packet.rxTime, by: connectedDevice)
 				fetchedNode[0].snr = packet.rxSnr
 				fetchedNode[0].rssi = packet.rxRssi
 				fetchedNode[0].viaMqtt = packet.viaMqtt
@@ -352,13 +340,11 @@ extension CoreDataTools {
 						fetchedNode[0].id = Int64(packet.from)
 						fetchedNode[0].num = Int64(packet.from)
 						if positionMessage.time > 0 {
-							fetchedNode[0].lastHeard = Date(timeIntervalSince1970: TimeInterval(Int64(positionMessage.time)))
+							fetchedNode[0].setLastHeard(at: positionMessage.time, by: connectedDevice)
 						}
 						else if packet.rxTime > 0 {
-							fetchedNode[0].lastHeard = Date(timeIntervalSince1970: TimeInterval(Int64(packet.rxTime)))
+							fetchedNode[0].setLastHeard(at: packet.rxTime, by: connectedDevice)
 						}
-						fetchedNode[0].lastHeardBy = connectedDevice?.nodeInfo
-						fetchedNode[0].setLastHeardAt()
 						fetchedNode[0].snr = packet.rxSnr
 						fetchedNode[0].rssi = packet.rxRssi
 						fetchedNode[0].viaMqtt = packet.viaMqtt

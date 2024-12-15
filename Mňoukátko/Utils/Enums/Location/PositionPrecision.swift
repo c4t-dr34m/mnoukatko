@@ -18,7 +18,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 import MapKit
-
 enum PositionPrecision: Int, CaseIterable, Identifiable {
 	case two = 2
 	case three = 3
@@ -120,10 +119,5 @@ enum PositionPrecision: Int, CaseIterable, Identifiable {
 		case .twentyfour:
 			return 1.413763999910884
 		}
-	}
-
-	var description: String {
-			"Within " + String(MKDistanceFormatter().string(fromDistance: precisionMeters)
-		)
 	}
 }

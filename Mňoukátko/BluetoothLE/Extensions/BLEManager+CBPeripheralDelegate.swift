@@ -410,7 +410,7 @@ extension BLEManager: CBPeripheralDelegate {
 			for node in routingMessage.route {
 				var hopNode = coreDataTools.getNodeInfo(id: Int64(node), context: context)
 				if hopNode == nil, node != 4294967295 {
-					hopNode = createNodeInfo(num: Int64(node), context: context)
+					hopNode = NodeInfoEntity.create(for: Int64(node), with: context)
 				}
 
 				let traceRouteHop = TraceRouteHopEntity(context: context)
@@ -437,13 +437,7 @@ extension BLEManager: CBPeripheralDelegate {
 					traceRouteHop.num = hopNode.num
 					traceRouteHop.name = hopNode.user?.longName ?? "Unknown node"
 
-					if info.packet.rxTime > 0 {
-						hopNode.lastHeard = Date(
-							timeIntervalSince1970: TimeInterval(Int64(info.packet.rxTime))
-						)
-						hopNode.lastHeardBy = getConnectedDevice()?.nodeInfo
-						hopNode.setLastHeardAt()
-					}
+					hopNode.setLastHeard(at: info.packet.rxTime, by: getConnectedDevice())
 
 					hopNodes.append(traceRouteHop)
 				}

@@ -26,6 +26,9 @@
     "%d hops" : {
 
     },
+    "%lfm" : {
+
+    },
     "%lld" : {
 
     },
@@ -13825,6 +13828,9 @@
     "Unknown hardware" : {
 
     },
+    "Unknown time of update" : {
+
+    },
     "unset" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -13950,6 +13956,9 @@
           }
         }
       }
+    },
+    "Updated: %@" : {
+
     },
     "Uplink" : {
 

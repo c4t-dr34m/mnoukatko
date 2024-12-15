@@ -184,9 +184,11 @@ struct ChannelForm: View {
 									Image(systemName: "plus")
 								}
 
-								Text(PositionPrecision(rawValue: Int(positionPrecision))?.description ?? "")
-									.foregroundColor(.gray)
-									.font(.callout)
+								if let precision = PositionPrecision(rawValue: Int(positionPrecision)) {
+									Text("\(precision.precisionMeters)m")
+										.foregroundColor(.gray)
+										.font(.callout)
+								}
 							}
 						}
 					}

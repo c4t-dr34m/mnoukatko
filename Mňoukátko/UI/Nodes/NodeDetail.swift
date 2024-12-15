@@ -132,7 +132,6 @@ struct NodeDetail: View {
 								SimpleNodeMap(node: node)
 									.frame(width: .infinity, height: 120)
 									.cornerRadius(8)
-									.padding(.top, 8)
 									.disabled(true)
 									.toolbar(.hidden)
 							}
@@ -145,12 +144,29 @@ struct NodeDetail: View {
 									SimpleNodeMap(node: node)
 										.frame(height: 200)
 										.cornerRadius(8)
-										.padding(.top, 8)
 										.disabled(true)
 								}
 							}
 						}
+
+						if let position = nodePosition {
+							HStack(alignment: .center, spacing: 0) {
+								Spacer()
+
+								if let time = position.time, time.distance(to: Date(timeIntervalSince1970: 0)) != 0 {
+									Text("Updated: \(time.relative())")
+										.font(.system(size: 10, weight: .light))
+										.foregroundColor(.gray)
+								}
+								else {
+									Text("Unknown time of update")
+										.font(.system(size: 10, weight: .light))
+										.foregroundColor(.gray)
+								}
+							}
+						}
 					}
+					.listRowSeparator(.hidden)
 					.headerProminence(.increased)
 				}
 
@@ -298,7 +314,45 @@ struct NodeDetail: View {
 						.frame(width: 4)
 				}
 
-				if position.speed > 0 {
+				let altitudeFormatted = distanceFormatter.string(
+					fromDistance: Double(position.altitude)
+				)
+
+				Image(systemName: "mountain.2")
+					.font(detailInfoIconFont)
+					.foregroundColor(.primary)
+					.frame(width: detailIconSize)
+
+				Text(altitudeFormatted)
+					.font(detailInfoTextFont)
+					.lineLimit(1)
+					.minimumScaleFactor(0.5)
+					.foregroundColor(.primary)
+
+				let precision = PositionPrecision(rawValue: Int(position.precisionBits))?.precisionMeters
+				if let precision {
+					let precisionFormatted = distanceFormatter.string(
+						fromDistance: Double(precision)
+					)
+
+					Spacer()
+						.frame(width: 4)
+
+					Image(systemName: "scope")
+						.font(detailInfoIconFont)
+						.foregroundColor(.primary)
+						.frame(width: detailIconSize)
+
+					Text(precisionFormatted)
+						.font(detailInfoTextFont)
+						.lineLimit(1)
+						.minimumScaleFactor(0.5)
+						.foregroundColor(.primary)
+				}
+			}
+
+			if position.speed > 0 {
+				HStack(alignment: .center, spacing: 8) {
 					let speed = Measurement(
 						value: Double(position.speed),
 						unit: UnitSpeed.kilometersPerHour
@@ -351,43 +405,6 @@ struct NodeDetail: View {
 					Spacer()
 						.frame(width: 4)
 				}
-
-				let altitudeFormatted = distanceFormatter.string(
-					fromDistance: Double(position.altitude)
-				)
-
-				Image(systemName: "mountain.2")
-					.font(detailInfoIconFont)
-					.foregroundColor(.primary)
-					.frame(width: detailIconSize)
-
-				Text(altitudeFormatted)
-					.font(detailInfoTextFont)
-					.lineLimit(1)
-					.minimumScaleFactor(0.5)
-					.foregroundColor(.primary)
-
-				let precision = PositionPrecision(rawValue: Int(position.precisionBits))?.precisionMeters
-				if let precision {
-					let precisionFormatted = distanceFormatter.string(
-						fromDistance: Double(precision)
-					)
-
-					Spacer()
-						.frame(width: 4)
-
-					Image(systemName: "scope")
-						.font(detailInfoIconFont)
-						.foregroundColor(.primary)
-						.frame(width: detailIconSize)
-
-					Text(precisionFormatted)
-						.font(detailInfoTextFont)
-						.lineLimit(1)
-						.minimumScaleFactor(0.5)
-						.foregroundColor(.primary)
-				}
-
 			}
 		}
 		else {
