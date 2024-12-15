@@ -294,7 +294,10 @@ extension CoreDataTools {
 					if fetchedNode.count == 1 {
 						// Unset the current latest position for this node
 						let fetchCurrentLatestPositionsRequest = PositionEntity.fetchRequest()
-						fetchCurrentLatestPositionsRequest.predicate = NSPredicate(format: "nodePosition.num == %lld && latest = true", Int64(packet.from))
+						fetchCurrentLatestPositionsRequest.predicate = NSPredicate(
+							format: "nodePosition.num == %lld && latest = true",
+							Int64(packet.from)
+						)
 
 						let fetchedPositions = try context.fetch(fetchCurrentLatestPositionsRequest)
 						if fetchedPositions.count > 0 {
@@ -302,6 +305,7 @@ extension CoreDataTools {
 								position.latest = false
 							}
 						}
+
 						let position = PositionEntity(context: context)
 						position.latest = true
 						position.snr = packet.rxSnr
@@ -313,30 +317,35 @@ extension CoreDataTools {
 						position.satsInView = Int32(positionMessage.satsInView)
 						position.speed = Int32(positionMessage.groundSpeed)
 						let heading = Int32(positionMessage.groundTrack)
-						// Throw out bad haeadings from the device
-						if heading >= 0 && heading <= 360 {
+
+						if heading >= 0, heading <= 360 {
 							position.heading = Int32(positionMessage.groundTrack)
 						}
 						position.precisionBits = Int32(positionMessage.precisionBits)
+
 						if positionMessage.timestamp != 0 {
 							position.time = Date(timeIntervalSince1970: TimeInterval(Int64(positionMessage.timestamp)))
-						} else {
+						}
+						else {
 							position.time = Date(timeIntervalSince1970: TimeInterval(Int64(positionMessage.time)))
 						}
-						guard let mutablePositions = fetchedNode[0].positions!.mutableCopy() as? NSMutableOrderedSet else {
+
+						guard
+							let mutablePositions = fetchedNode[0].positions!.mutableCopy() as? NSMutableOrderedSet
+						else {
 							return
 						}
-						/// Don't save nearly the same position over and over. If the next position is
-						/// less than 10 meters from the new position, delete the previous position and save the new one.
-						if mutablePositions.count > 0 && (position.precisionBits == 32 || position.precisionBits == 0) {
-							if let mostRecent = mutablePositions.lastObject as? PositionEntity, mostRecent.coordinate.distance(from: position.coordinate) < 15.0 {
+
+						if mutablePositions.count > 0 {
+							if
+								let mostRecent = mutablePositions.lastObject as? PositionEntity,
+								mostRecent.coordinate.distance(from: position.coordinate) < 15.0
+							{
 								mutablePositions.remove(mostRecent)
 							}
-						} else if mutablePositions.count > 0 {
-							/// Don't store any history for reduced accuracy positions, we will just show a circle
-							mutablePositions.removeAllObjects()
 						}
 						mutablePositions.add(position)
+
 						fetchedNode[0].id = Int64(packet.from)
 						fetchedNode[0].num = Int64(packet.from)
 						if positionMessage.time > 0 {

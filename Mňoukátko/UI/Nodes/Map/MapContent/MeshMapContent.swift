@@ -67,7 +67,7 @@ struct MeshMapContent: MapContent {
 				.tag(position.time)
 				.annotationTitles(.automatic)
 				.annotationSubtitles(.automatic)
-				.mapOverlayLevel(level: .aboveLabels)
+				.mapOverlayLevel(level: node.isOnline ? .aboveLabels : .aboveRoads)
 			}
 		}
 	}

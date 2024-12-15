@@ -29,10 +29,10 @@ struct MeshMap: View {
 
 	@Environment(\.managedObjectContext)
 	private var context
-	@StateObject
-	private var appState = AppState.shared
 	@Namespace
 	private var mapScope
+	@StateObject
+	private var appState = AppState.shared
 	@State
 	private var mapStyle = MapStyle.standard(
 		elevation: .realistic,
@@ -67,6 +67,7 @@ struct MeshMap: View {
 						),
 						scope: mapScope
 					) {
+						UserHistory()
 						UserAnnotation()
 						MeshMapContent(
 							selectedPosition: $selectedPosition,
@@ -136,7 +137,7 @@ struct MeshMap: View {
 			Analytics.logEvent(
 				AnalyticEvents.meshMap.id,
 				parameters: [
-					"nodes_count": positions
+					"nodes_count": positions.count
 				]
 			)
 		}
