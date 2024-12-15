@@ -28,37 +28,74 @@ struct UserHistory: MapContent {
 		let bearingToNext: Double?
 	}
 
-	private let minimalDelta = 500.0 // meters
+	private let minimalDelta = 150.0 // meters
+	private let distanceThreshold = 1_000.0 // meters
 
+	@Environment(\.colorScheme)
+	private var colorScheme: ColorScheme
 	@EnvironmentObject
 	private var connectedDevice: CurrentDevice
 
-	private var entries: [Entry] {
+	private var positionsFiltered: [PositionEntity] {
 		guard let positions = connectedDevice.device?.nodeInfo?.positions?.array as? [PositionEntity] else {
 			return []
 		}
 
-		var entries = [Entry]()
+		var filtered = [PositionEntity]()
 		for i in 0...(positions.count - 1) {
-			let previous = i > 0 ? positions[i - 1] : nil
 			let current = positions[i]
+			let next = i < (positions.count - 1) ? positions[i + 1] : nil
 
-			// swiftlint:disable:next force_unwrapping
-			if previous == nil || current.coordinate.distance(from: previous!.coordinate) > minimalDelta {
-				var bearing: Double?
-				if i < positions.count - 1 {
-					bearing = current.coordinate.bearing(to: positions[i + 1].coordinate)
-				}
-				let newEntry = Entry(
-					index: i,
-					coordinate: current.coordinate,
-					bearingToNext: bearing
-				)
-				entries.append(newEntry)
+			if let next, current.coordinate.distance(from: next.coordinate) < minimalDelta {
+				continue
 			}
+
+			filtered.append(current)
 		}
 
-		return entries
+		return filtered
+	}
+	private var entries: [Entry] {
+		guard !positionsFiltered.isEmpty else {
+			return []
+		}
+
+		var entries = [Entry]()
+		var totalDistance = 0.0
+
+		for i in 0...(positionsFiltered.count - 1) {
+			let current = positionsFiltered[i]
+			let prev = i > 0 ? positionsFiltered[i - 1] : nil
+			let next = i < (positionsFiltered.count - 1) ? positionsFiltered[i + 1] : nil
+
+			var bearing: Double?
+			if let next {
+				if current.coordinate.distance(from: next.coordinate) < minimalDelta {
+					continue
+				}
+
+				bearing = current.coordinate.bearing(to: next.coordinate)
+			}
+
+			if let prev {
+				totalDistance += current.coordinate.distance(from: prev.coordinate)
+			}
+
+			let newEntry = Entry(
+				index: i,
+				coordinate: current.coordinate,
+				bearingToNext: bearing
+			)
+
+			entries.append(newEntry)
+		}
+
+		if totalDistance < distanceThreshold {
+			return []
+		}
+		else {
+			return entries
+		}
 	}
 
 	@MapContentBuilder
@@ -86,11 +123,21 @@ struct UserHistory: MapContent {
 						.rotationEffect(
 							Angle(degrees: bearing)
 						)
+						.background(colorScheme == .dark ? .black : .white)
+						.clipShape(Circle())
+						.padding(.all, 2)
+						.background(colorScheme == .dark ? .black.opacity(0.5) : .white.opacity(0.5))
+						.clipShape(Circle())
 				}
 				else {
 					Image(systemName: "record.circle.fill")
 						.font(.system(size: 14))
 						.foregroundColor(.red)
+						.background(colorScheme == .dark ? .black : .white)
+						.clipShape(Circle())
+						.padding(.all, 2)
+						.background(colorScheme == .dark ? .black.opacity(0.5) : .white.opacity(0.5))
+						.clipShape(Circle())
 				}
 			} label: {
 				// no label
