@@ -160,6 +160,10 @@ public enum TelemetrySensorType: SwiftProtobuf.Enum, Swift.CaseIterable {
   ///
   /// ClimateGuard RadSens, radiation, Geiger-Muller Tube
   case radsens // = 33
+
+  ///
+  /// High accuracy current and voltage
+  case ina226 // = 34
   case UNRECOGNIZED(Int)
 
   public init() {
@@ -202,6 +206,7 @@ public enum TelemetrySensorType: SwiftProtobuf.Enum, Swift.CaseIterable {
     case 31: self = .mlx90614
     case 32: self = .scd4X
     case 33: self = .radsens
+    case 34: self = .ina226
     default: self = .UNRECOGNIZED(rawValue)
     }
   }
@@ -242,6 +247,7 @@ public enum TelemetrySensorType: SwiftProtobuf.Enum, Swift.CaseIterable {
     case .mlx90614: return 31
     case .scd4X: return 32
     case .radsens: return 33
+    case .ina226: return 34
     case .UNRECOGNIZED(let i): return i
     }
   }
@@ -282,6 +288,7 @@ public enum TelemetrySensorType: SwiftProtobuf.Enum, Swift.CaseIterable {
     .mlx90614,
     .scd4X,
     .radsens,
+    .ina226,
   ]
 
 }
@@ -1094,6 +1101,7 @@ extension TelemetrySensorType: SwiftProtobuf._ProtoNameProviding {
     31: .same(proto: "MLX90614"),
     32: .same(proto: "SCD4X"),
     33: .same(proto: "RADSENS"),
+    34: .same(proto: "INA226"),
   ]
 }
 

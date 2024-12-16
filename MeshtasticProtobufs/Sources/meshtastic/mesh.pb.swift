@@ -387,6 +387,18 @@ public enum HardwareModel: SwiftProtobuf.Enum, Swift.CaseIterable {
   case wismeshTap // = 84
 
   ///
+  /// Similar to PORTDUINO but used by Routastic devices, this is not any
+  /// particular device and does not run Meshtastic's code but supports
+  /// the same frame format.
+  /// Runs on linux, see https://github.com/Jorropo/routastic
+  case routastic // = 85
+
+  ///
+  /// Mesh-Tab, esp32 based
+  /// https://github.com/valzzu/Mesh-Tab
+  case meshTab // = 86
+
+  ///
   /// ------------------------------------------------------------------------------------------------------------------------------------------
   /// Reserved ID For developing private Ports. These will show up in live traffic sparsely, so we can use a high number. Keep it within 8 bits.
   /// ------------------------------------------------------------------------------------------------------------------------------------------
@@ -484,6 +496,8 @@ public enum HardwareModel: SwiftProtobuf.Enum, Swift.CaseIterable {
     case 82: self = .ms24Sf1
     case 83: self = .tloraC6
     case 84: self = .wismeshTap
+    case 85: self = .routastic
+    case 86: self = .meshTab
     case 255: self = .privateHw
     default: self = .UNRECOGNIZED(rawValue)
     }
@@ -576,6 +590,8 @@ public enum HardwareModel: SwiftProtobuf.Enum, Swift.CaseIterable {
     case .ms24Sf1: return 82
     case .tloraC6: return 83
     case .wismeshTap: return 84
+    case .routastic: return 85
+    case .meshTab: return 86
     case .privateHw: return 255
     case .UNRECOGNIZED(let i): return i
     }
@@ -668,6 +684,8 @@ public enum HardwareModel: SwiftProtobuf.Enum, Swift.CaseIterable {
     .ms24Sf1,
     .tloraC6,
     .wismeshTap,
+    .routastic,
+    .meshTab,
     .privateHw,
   ]
 
@@ -2072,6 +2090,10 @@ public struct MeshPacket: @unchecked Sendable {
     case high // = 100
 
     ///
+    /// Higher priority alert message used for critical alerts which take priority over other reliable packets.
+    case alert // = 110
+
+    ///
     /// Ack/naks are sent with very high priority to ensure that retransmission
     /// stops as soon as possible
     case ack // = 120
@@ -2094,6 +2116,7 @@ public struct MeshPacket: @unchecked Sendable {
       case 70: self = .reliable
       case 80: self = .response
       case 100: self = .high
+      case 110: self = .alert
       case 120: self = .ack
       case 127: self = .max
       default: self = .UNRECOGNIZED(rawValue)
@@ -2109,6 +2132,7 @@ public struct MeshPacket: @unchecked Sendable {
       case .reliable: return 70
       case .response: return 80
       case .high: return 100
+      case .alert: return 110
       case .ack: return 120
       case .max: return 127
       case .UNRECOGNIZED(let i): return i
@@ -2124,6 +2148,7 @@ public struct MeshPacket: @unchecked Sendable {
       .reliable,
       .response,
       .high,
+      .alert,
       .ack,
       .max,
     ]
@@ -3280,6 +3305,8 @@ extension HardwareModel: SwiftProtobuf._ProtoNameProviding {
     82: .same(proto: "MS24SF1"),
     83: .same(proto: "TLORA_C6"),
     84: .same(proto: "WISMESH_TAP"),
+    85: .same(proto: "ROUTASTIC"),
+    86: .same(proto: "MESH_TAB"),
     255: .same(proto: "PRIVATE_HW"),
   ]
 }
@@ -4312,6 +4339,7 @@ extension MeshPacket.Priority: SwiftProtobuf._ProtoNameProviding {
     70: .same(proto: "RELIABLE"),
     80: .same(proto: "RESPONSE"),
     100: .same(proto: "HIGH"),
+    110: .same(proto: "ALERT"),
     120: .same(proto: "ACK"),
     127: .same(proto: "MAX"),
   ]
