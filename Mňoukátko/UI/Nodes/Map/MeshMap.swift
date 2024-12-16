@@ -29,6 +29,8 @@ struct MeshMap: View {
 
 	@Environment(\.managedObjectContext)
 	private var context
+	@EnvironmentObject
+	private var connectedDevice: CurrentDevice
 	@Namespace
 	private var mapScope
 	@StateObject
@@ -46,12 +48,13 @@ struct MeshMap: View {
 	private var selectedPosition: PositionEntity?
 	@State
 	private var visibleAnnotations = 0
-	@State
-	private var showLabelsForOffline = false
 	@FetchRequest(
 		fetchRequest: PositionEntity.allPositionsFetchRequest()
 	)
 	private var positions: FetchedResults<PositionEntity>
+	private var userPositions: [PositionEntity]? {
+		connectedDevice.device?.nodeInfo?.positions?.array as? [PositionEntity]
+	}
 
 	var body: some View {
 		NavigationStack {
@@ -67,11 +70,13 @@ struct MeshMap: View {
 						),
 						scope: mapScope
 					) {
-						UserHistory()
+						UserHistory(userPositions: userPositions)
 						UserAnnotation()
 						MeshMapContent(
+							positions: positions.compactMap { position in
+								position
+							},
 							selectedPosition: $selectedPosition,
-							showLabelsForOffline: $showLabelsForOffline,
 							onAppear: { _ in
 								visibleAnnotations += 1
 							},
@@ -112,9 +117,6 @@ struct MeshMap: View {
 						else {
 							cameraPosition = .automatic
 						}
-					}
-					.onChange(of: visibleAnnotations, initial: true) {
-						showLabelsForOffline = visibleAnnotations < 100 && positions.count > 100
 					}
 				}
 			}

@@ -34,17 +34,6 @@ struct SimpleNodeMap: View {
 	private var position = MapCameraPosition.automatic
 	private var node: NodeInfoEntity
 
-	@FetchRequest(
-		sortDescriptors: [
-			NSSortDescriptor(key: "name", ascending: false)
-		],
-		predicate: NSPredicate(
-			format: "expire == nil || expire >= %@", Date() as NSDate
-		),
-		animation: .none
-	)
-	private var waypoints: FetchedResults<WaypointEntity>
-
 	var body: some View {
 		if node.hasPositions {
 			map

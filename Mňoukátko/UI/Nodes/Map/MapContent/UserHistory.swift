@@ -28,45 +28,24 @@ struct UserHistory: MapContent {
 		let bearingToNext: Double?
 	}
 
+	private let userPositions: [PositionEntity]?
 	private let minimalDelta = 150.0 // meters
 	private let distanceThreshold = 1_000.0 // meters
 
 	@Environment(\.colorScheme)
 	private var colorScheme: ColorScheme
-	@EnvironmentObject
-	private var connectedDevice: CurrentDevice
-
-	private var positionsFiltered: [PositionEntity] {
-		guard let positions = connectedDevice.device?.nodeInfo?.positions?.array as? [PositionEntity] else {
-			return []
-		}
-
-		var filtered = [PositionEntity]()
-		for i in 0...(positions.count - 1) {
-			let current = positions[i]
-			let next = i < (positions.count - 1) ? positions[i + 1] : nil
-
-			if let next, current.coordinate.distance(from: next.coordinate) < minimalDelta {
-				continue
-			}
-
-			filtered.append(current)
-		}
-
-		return filtered
-	}
 	private var entries: [Entry] {
-		guard !positionsFiltered.isEmpty else {
+		guard let positions = userPositions else {
 			return []
 		}
 
 		var entries = [Entry]()
 		var totalDistance = 0.0
 
-		for i in 0...(positionsFiltered.count - 1) {
-			let current = positionsFiltered[i]
-			let prev = i > 0 ? positionsFiltered[i - 1] : nil
-			let next = i < (positionsFiltered.count - 1) ? positionsFiltered[i + 1] : nil
+		for i in 0...(positions.count - 1) {
+			let prev = i > 0 ? positions[i - 1] : nil
+			let current = positions[i]
+			let next = i < (positions.count - 1) ? positions[i + 1] : nil
 
 			var bearing: Double?
 			if let next {
@@ -76,7 +55,6 @@ struct UserHistory: MapContent {
 
 				bearing = current.coordinate.bearing(to: next.coordinate)
 			}
-
 			if let prev {
 				totalDistance += current.coordinate.distance(from: prev.coordinate)
 			}
@@ -146,5 +124,9 @@ struct UserHistory: MapContent {
 			.annotationSubtitles(.hidden)
 			.mapOverlayLevel(level: .aboveRoads)
 		}
+	}
+
+	init(userPositions: [PositionEntity]?) {
+		self.userPositions = userPositions
 	}
 }
