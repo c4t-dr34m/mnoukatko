@@ -86,7 +86,7 @@ struct UserHistory: MapContent {
 				contourStyle: .geodesic
 			)
 			.stroke(
-				.red,
+				.red.lightness(delta: colorScheme == .dark ? -0.2 : +0.2).opacity(0.8),
 				style: StrokeStyle(lineWidth: 1, lineJoin: .round)
 			)
 

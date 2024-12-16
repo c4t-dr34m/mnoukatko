@@ -41,4 +41,8 @@ extension Color {
 			return .white
 		}
 	}
+
+	func lightness(delta: CGFloat) -> Color {
+		Color(uiColor: uiColor.lightness(delta: delta))
+	}
 }

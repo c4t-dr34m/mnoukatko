@@ -36,7 +36,7 @@ struct Controls: View {
 	private var nodeHistory: Bool?
 	private var buttonBackground: Color {
 		if colorScheme == .dark {
-			return .black.opacity(0.85)
+			return .black.opacity(0.65)
 		}
 		else {
 			return .white.opacity(0.85)
@@ -106,7 +106,7 @@ struct Controls: View {
 						.frame(width: iconSize, height: iconSize)
 
 					Text(headingFormatted)
-						.font(.system(size: 14, weight: .light))
+						.font(.system(size: 12, weight: .light))
 						.foregroundStyle(.gray)
 						.lineLimit(1)
 				}
