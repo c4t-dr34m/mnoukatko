@@ -33,7 +33,11 @@ struct NodeMap: View {
 	@State
 	private var positions: [PositionEntity] = []
 	@State
-	private var position = MapCameraPosition.automatic
+	private var cameraPosition = MapCameraPosition.automatic
+	@State
+	private var cameraDistance: Double?
+	@State
+	private var cameraHeading: Double?
 	@State
 	private var isMeshMap = false
 	@State
@@ -81,48 +85,46 @@ struct NodeMap: View {
 	private var map: some View {
 		var mostRecent = node.positions?.lastObject as? PositionEntity
 
-		MapReader { _ in
-			Map(
-				position: $position,
-				bounds: MapCameraBounds(minimumDistance: 100, maximumDistance: .infinity),
-				scope: mapScope
-			) {
-				UserAnnotation()
-				NodeMapContent(node: node)
-			}
-			.mapScope(mapScope)
-			.mapStyle(mapStyle)
-			.mapControls {
-				MapScaleView(scope: mapScope)
-					.mapControlVisibility(.visible)
+		ZStack(alignment: .topTrailing) {
+			MapReader { _ in
+				Map(
+					position: $cameraPosition,
+					bounds: MapCameraBounds(minimumDistance: 100, maximumDistance: .infinity),
+					scope: mapScope
+				) {
+					UserAnnotation()
+					NodeMapContent(node: node)
+				}
+				.mapScope(mapScope)
+				.mapStyle(mapStyle)
+				.mapControls {
+					MapCompass(scope: mapScope).mapControlVisibility(.hidden)
+					MapPitchToggle(scope: mapScope).mapControlVisibility(.hidden)
+				}
+				.onMapCameraChange(frequency: .continuous) { map in
+					cameraDistance = map.camera.distance
+					cameraHeading = map.camera.heading
+				}
+				.onChange(of: node, initial: true) {
+					mostRecent = node.positions?.lastObject as? PositionEntity
 
-				MapUserLocationButton(scope: mapScope)
-					.mapControlVisibility(.visible)
-
-				MapPitchToggle(scope: mapScope)
-					.mapControlVisibility(.visible)
-
-				MapCompass(scope: mapScope)
-					.mapControlVisibility(.visible)
-			}
-			.controlSize(.regular)
-			.onChange(of: node, initial: true) {
-				mostRecent = node.positions?.lastObject as? PositionEntity
-
-				if let mostRecent, mostRecent.coordinate.isValid {
-					position = .camera(
-						MapCamera(
-							centerCoordinate: mostRecent.coordinate,
-							distance: 8000,
-							heading: 0,
-							pitch: 40
+					if let mostRecent, mostRecent.coordinate.isValid {
+						cameraPosition = .camera(
+							MapCamera(
+								centerCoordinate: mostRecent.coordinate,
+								distance: 8000,
+								heading: 0,
+								pitch: 40
+							)
 						)
-					)
-				}
-				else {
-					position = .automatic
+					}
+					else {
+						cameraPosition = .automatic
+					}
 				}
 			}
+
+			Controls(position: $cameraPosition, distance: $cameraDistance, heading: $cameraHeading)
 		}
 	}
 

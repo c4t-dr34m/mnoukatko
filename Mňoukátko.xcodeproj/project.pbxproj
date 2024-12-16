@@ -102,6 +102,7 @@
 		B2AF95D22CAAE92D00EAD056 /* MessageListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2AF95D12CAAE92600EAD056 /* MessageListItem.swift */; };
 		B2AF95D82CABE8E000EAD056 /* SaveButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2AF95D52CABE8E000EAD056 /* SaveButton.swift */; };
 		B2AF95DA2CAC306700EAD056 /* PositionPrecision.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2AF95D92CAC306300EAD056 /* PositionPrecision.swift */; };
+		B2B1AC592D1074AC00114A66 /* Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2B1AC582D1074A800114A66 /* Controls.swift */; };
 		B2BDCD7A2C6CB6440040D7ED /* AnalyticEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2BDCD792C6CB6440040D7ED /* AnalyticEvents.swift */; };
 		B2CC14B22C66280000588C16 /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2CC14B12C66280000588C16 /* UIColor+Extension.swift */; };
 		B2CC552C2C7374EC003FB487 /* CBPeripheral+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2CC552B2C7374EC003FB487 /* CBPeripheral+Extensions.swift */; };
@@ -278,6 +279,7 @@
 		B2AF95D12CAAE92600EAD056 /* MessageListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageListItem.swift; sourceTree = "<group>"; };
 		B2AF95D52CABE8E000EAD056 /* SaveButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveButton.swift; sourceTree = "<group>"; };
 		B2AF95D92CAC306300EAD056 /* PositionPrecision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionPrecision.swift; sourceTree = "<group>"; };
+		B2B1AC582D1074A800114A66 /* Controls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controls.swift; sourceTree = "<group>"; };
 		B2BDCD792C6CB6440040D7ED /* AnalyticEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticEvents.swift; sourceTree = "<group>"; };
 		B2CC14B12C66280000588C16 /* UIColor+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extension.swift"; sourceTree = "<group>"; };
 		B2CC552B2C7374EC003FB487 /* CBPeripheral+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CBPeripheral+Extensions.swift"; sourceTree = "<group>"; };
@@ -592,10 +594,11 @@
 		B2A5F2F12C5668FD009457AB /* Map */ = {
 			isa = PBXGroup;
 			children = (
-				B2A5F2EC2C5668FD009457AB /* MapContent */,
-				B2A5F2EF2C5668FD009457AB /* NodeMap.swift */,
+				B2B1AC582D1074A800114A66 /* Controls.swift */,
 				B2A5F2F52C5668FD009457AB /* MeshMap.swift */,
+				B2A5F2EF2C5668FD009457AB /* NodeMap.swift */,
 				B2A5F2F02C5668FD009457AB /* SimpleNodeMap.swift */,
+				B2A5F2EC2C5668FD009457AB /* MapContent */,
 			);
 			path = Map;
 			sourceTree = "<group>";
@@ -1114,6 +1117,7 @@
 				DDF45C372BC46A5A005ED5F2 /* TimeZone.swift in Sources */,
 				08933D342C81BE80006D57EA /* MQTTManager+CocoaMQTTDelegate.swift in Sources */,
 				B2A5F2FD2C5668FD009457AB /* DeleteNodeButton.swift in Sources */,
+				B2B1AC592D1074AC00114A66 /* Controls.swift in Sources */,
 				B28DC0E52C7107C4007990B3 /* NodeConfig.swift in Sources */,
 				B266A7512C59218D00DFC723 /* DeviceHardware.swift in Sources */,
 				B29C39182C92E6660082A3FC /* DevicesDelegate.swift in Sources */,

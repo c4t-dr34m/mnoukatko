@@ -69,6 +69,7 @@ extension UserDefaults {
 		case provideLocation
 		case provideLocationInterval
 		case mapLayer
+		case mapNodeHistory
 		case enableDetectionNotifications
 		case newNodeNotifications
 		case lowBatteryNotifications
@@ -114,6 +115,9 @@ extension UserDefaults {
 
 	@UserDefault(.mapLayer, defaultValue: .standard)
 	static var mapLayer: MapLayer
+
+	@UserDefault(.mapNodeHistory, defaultValue: true)
+	static var mapNodeHistory: Bool
 
 	@UserDefault(.enableDetectionNotifications, defaultValue: false)
 	static var enableDetectionNotifications: Bool

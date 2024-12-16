@@ -45,6 +45,10 @@ struct MeshMap: View {
 	@State
 	private var cameraDistance: Double?
 	@State
+	private var cameraHeading: Double?
+	@State
+	private var showNodeHistory: Bool? = UserDefaults.mapNodeHistory
+	@State
 	private var selectedPosition: PositionEntity?
 	@State
 	private var visibleAnnotations = 0
@@ -58,10 +62,10 @@ struct MeshMap: View {
 
 	var body: some View {
 		NavigationStack {
-			ZStack {
-				var mostRecent = node?.positions?.lastObject as? PositionEntity
-
+			ZStack(alignment: .topTrailing) {
 				MapReader { _ in
+					var mostRecent = node?.positions?.lastObject as? PositionEntity
+
 					Map(
 						position: $cameraPosition,
 						bounds: MapCameraBounds(
@@ -70,8 +74,12 @@ struct MeshMap: View {
 						),
 						scope: mapScope
 					) {
-						UserHistory(userPositions: userPositions)
+						if showNodeHistory == true {
+							UserHistory(userPositions: userPositions)
+						}
+
 						UserAnnotation()
+
 						MeshMapContent(
 							positions: positions.compactMap { position in
 								position
@@ -88,19 +96,13 @@ struct MeshMap: View {
 					.mapScope(mapScope)
 					.mapStyle(mapStyle)
 					.mapControls {
-						MapScaleView(scope: mapScope)
-							.mapControlVisibility(.visible)
-
-						MapUserLocationButton(scope: mapScope)
-							.mapControlVisibility(.visible)
-
-						MapPitchToggle(scope: mapScope)
-							.mapControlVisibility(.automatic)
-
-						MapCompass(scope: mapScope)
-							.mapControlVisibility(.automatic)
+						MapCompass(scope: mapScope).mapControlVisibility(.hidden)
+						MapPitchToggle(scope: mapScope).mapControlVisibility(.hidden)
 					}
-					.controlSize(.regular)
+					.onMapCameraChange(frequency: .continuous) { map in
+						cameraDistance = map.camera.distance
+						cameraHeading = map.camera.heading
+					}
 					.onChange(of: node, initial: true) {
 						mostRecent = node?.positions?.lastObject as? PositionEntity
 
@@ -119,6 +121,13 @@ struct MeshMap: View {
 						}
 					}
 				}
+
+				Controls(
+					position: $cameraPosition,
+					distance: $cameraDistance,
+					heading: $cameraHeading,
+					nodeHistory: $showNodeHistory
+				)
 			}
 			.popover(item: $selectedPosition) { position in
 				if let node = position.nodePosition {
