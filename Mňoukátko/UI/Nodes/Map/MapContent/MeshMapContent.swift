@@ -25,6 +25,10 @@ struct MeshMapContent: MapContent {
 	var appState = AppState.shared
 	@State
 	var positions: [PositionEntity]?
+	@State
+	var nodes: [NodeInfoEntity]?
+	@State
+	var showAll: Bool = false
 	@Binding
 	var selectedPosition: PositionEntity?
 	var onAppear: ((_ nodeName: String) -> Void)?
@@ -65,6 +69,33 @@ struct MeshMapContent: MapContent {
 				}
 			}
 		}
+		if let nodes {
+			ForEach(nodes, id: \.num) { node in
+				Annotation(
+					coordinate: CLLocationCoordinate2D(
+						latitude: node.lastHeardAtLatitude,
+						longitude: node.lastHeardAtLongitude
+					),
+					anchor: .center
+				) {
+					if let longName = node.user?.longName {
+						avatar(for: node, name: longName)
+							.onAppear {
+								onAppear?(longName)
+							}
+							.onDisappear {
+								onDisappear?(longName)
+							}
+					}
+					// TODO: whatever
+				} label: {
+					// no label
+				}
+				.annotationTitles(.automatic)
+				.annotationSubtitles(.automatic)
+				.mapOverlayLevel(level: node.isOnline ? .aboveLabels : .aboveRoads)
+			}
+		}
 		else {
 			EmptyMapContent()
 		}
@@ -72,7 +103,7 @@ struct MeshMapContent: MapContent {
 
 	@ViewBuilder
 	private func avatar(for node: NodeInfoEntity, name: String) -> some View {
-		if node.isOnline {
+		if node.isOnline || showAll {
 			ZStack(alignment: .top) {
 				AvatarNode(
 					node,

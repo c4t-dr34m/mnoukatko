@@ -73,7 +73,7 @@ extension PositionEntity {
 
 		let request: NSFetchRequest<PositionEntity> = PositionEntity.fetchRequest()
 		request.predicate = positionPredicate
-		request.fetchLimit = 1800
+		// request.fetchLimit = 1800
 		request.returnsObjectsAsFaults = false
 		request.includesSubentities = true
 		request.returnsDistinctResults = true

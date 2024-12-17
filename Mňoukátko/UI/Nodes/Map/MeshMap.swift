@@ -26,6 +26,7 @@ import SwiftUI
 
 struct MeshMap: View {
 	private let node: NodeInfoEntity?
+	private let heardOfDistance: Double = 250
 
 	@Environment(\.managedObjectContext)
 	private var context
@@ -51,11 +52,34 @@ struct MeshMap: View {
 	@State
 	private var selectedPosition: PositionEntity?
 	@State
-	private var visibleAnnotations = 0
+	private var selectedCoordinate: CLLocationCoordinate2D?
 	@FetchRequest(
 		fetchRequest: PositionEntity.allPositionsFetchRequest()
 	)
-	private var positions: FetchedResults<PositionEntity>
+	private var nodePositions: FetchedResults<PositionEntity>
+	private var nodePositionsHeard: [NodeInfoEntity]? {
+		guard let selectedCoordinate else {
+			return nil
+		}
+
+		let request = NodeInfoEntity.fetchRequest()
+		if let nodes = try? context.fetch(request) {
+			return nodes.compactMap { node in
+				let coordinate = CLLocationCoordinate2D(
+					latitude: node.lastHeardAtLatitude,
+					longitude: node.lastHeardAtLongitude
+				)
+
+				if coordinate.distance(from: selectedCoordinate) <= heardOfDistance {
+					return node
+				}
+
+				return nil
+			}
+		}
+
+		return nil
+	}
 	private var userPositions: [PositionEntity]? {
 		connectedDevice.device?.nodeInfo?.positions?.array as? [PositionEntity]
 	}
@@ -75,23 +99,33 @@ struct MeshMap: View {
 						scope: mapScope
 					) {
 						if showNodeHistory == true {
-							UserHistory(userPositions: userPositions)
+							UserHistory(
+								userPositions: userPositions,
+								selectedCoordinate: $selectedCoordinate
+							)
 						}
 
 						UserAnnotation()
 
-						MeshMapContent(
-							positions: positions.compactMap { position in
-								position
-							},
-							selectedPosition: $selectedPosition,
-							onAppear: { _ in
-								visibleAnnotations += 1
-							},
-							onDisappear: { _ in
-								visibleAnnotations -= 1
-							}
-						)
+						if
+							showNodeHistory == true,
+							let nodePositionsHeard,
+							nodePositionsHeard.count > 0
+						{
+							MeshMapContent(
+								nodes: nodePositionsHeard,
+								showAll: true,
+								selectedPosition: $selectedPosition
+							)
+						}
+						else {
+							MeshMapContent(
+								positions: nodePositions.compactMap { position in
+									position
+								},
+								selectedPosition: $selectedPosition
+							)
+						}
 					}
 					.mapScope(mapScope)
 					.mapStyle(mapStyle)
@@ -148,7 +182,7 @@ struct MeshMap: View {
 			Analytics.logEvent(
 				AnalyticEvents.meshMap.id,
 				parameters: [
-					"nodes_count": positions.count
+					"nodes_count": nodePositions.count
 				]
 			)
 		}

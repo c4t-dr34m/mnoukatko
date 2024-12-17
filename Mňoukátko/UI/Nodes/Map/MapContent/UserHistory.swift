@@ -34,6 +34,8 @@ struct UserHistory: MapContent {
 
 	@Environment(\.colorScheme)
 	private var colorScheme: ColorScheme
+	@Binding
+	private var selectedLocation: CLLocationCoordinate2D?
 	private var entries: [Entry] {
 		guard let positions = userPositions else {
 			return []
@@ -106,6 +108,9 @@ struct UserHistory: MapContent {
 						.padding(.all, 2)
 						.background(colorScheme == .dark ? .black.opacity(0.5) : .white.opacity(0.5))
 						.clipShape(Circle())
+						.onTapGesture {
+							select(coordinate: entry.coordinate)
+						}
 				}
 				else {
 					Image(systemName: "record.circle.fill")
@@ -116,6 +121,9 @@ struct UserHistory: MapContent {
 						.padding(.all, 2)
 						.background(colorScheme == .dark ? .black.opacity(0.5) : .white.opacity(0.5))
 						.clipShape(Circle())
+						.onTapGesture {
+							select(coordinate: entry.coordinate)
+						}
 				}
 			} label: {
 				// no label
@@ -126,7 +134,15 @@ struct UserHistory: MapContent {
 		}
 	}
 
-	init(userPositions: [PositionEntity]?) {
+	init(
+		userPositions: [PositionEntity]?,
+		selectedCoordinate: Binding<CLLocationCoordinate2D?>
+	) {
 		self.userPositions = userPositions
+		self._selectedLocation = selectedCoordinate
+	}
+
+	private func select(coordinate: CLLocationCoordinate2D) {
+		selectedLocation = coordinate
 	}
 }
