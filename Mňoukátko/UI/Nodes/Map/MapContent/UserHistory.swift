@@ -29,13 +29,16 @@ struct UserHistory: MapContent {
 	}
 
 	private let userPositions: [PositionEntity]?
+	private let heardOfDistance: Double = 250
 	private let minimalDelta = 150.0 // meters
 	private let distanceThreshold = 1_000.0 // meters
 
 	@Environment(\.colorScheme)
 	private var colorScheme: ColorScheme
+	@FetchRequest(sortDescriptors: [])
+	private var nodes: FetchedResults<NodeInfoEntity>
 	@Binding
-	private var selectedLocation: CLLocationCoordinate2D?
+	private var selectedCoordinate: CLLocationCoordinate2D?
 	private var entries: [Entry] {
 		guard let positions = userPositions else {
 			return []
@@ -77,6 +80,26 @@ struct UserHistory: MapContent {
 			return entries
 		}
 	}
+	private var clipInternal: UnevenRoundedRectangle {
+		let corners = RectangleCornerRadii(
+			topLeading: 7,
+			bottomLeading: 2,
+			bottomTrailing: 7,
+			topTrailing: 7
+		)
+
+		return UnevenRoundedRectangle(cornerRadii: corners, style: .continuous)
+	}
+	private var clipExternal: UnevenRoundedRectangle {
+		let corners = RectangleCornerRadii(
+			topLeading: 8,
+			bottomLeading: 3,
+			bottomTrailing: 8,
+			topTrailing: 8
+		)
+
+		return UnevenRoundedRectangle(cornerRadii: corners, style: .continuous)
+	}
 
 	@MapContentBuilder
 	var body: some MapContent {
@@ -84,8 +107,7 @@ struct UserHistory: MapContent {
 			MapPolyline(
 				coordinates: entries.map { entry in
 					entry.coordinate
-				},
-				contourStyle: .geodesic
+				}
 			)
 			.stroke(
 				.red.lightness(delta: colorScheme == .dark ? -0.2 : +0.2).opacity(0.8),
@@ -94,36 +116,45 @@ struct UserHistory: MapContent {
 
 			Annotation(
 				coordinate: entry.coordinate,
-				anchor: .center
+				anchor: .bottomLeading
 			) {
-				if let bearing = entry.bearingToNext {
-					Image(systemName: "location.north.circle.fill")
-						.font(.system(size: 14))
-						.foregroundColor(.red)
-						.rotationEffect(
-							Angle(degrees: bearing)
-						)
-						.background(colorScheme == .dark ? .black : .white)
-						.clipShape(Circle())
-						.padding(.all, 2)
-						.background(colorScheme == .dark ? .black.opacity(0.5) : .white.opacity(0.5))
-						.clipShape(Circle())
-						.onTapGesture {
-							select(coordinate: entry.coordinate)
-						}
+				let nodes = getLastHeardAt(coordinate: entry.coordinate)
+
+				HStack(alignment: .center, spacing: 0) {
+					if let bearing = entry.bearingToNext {
+						Image(systemName: "location.north.fill")
+							.font(.system(size: 8))
+							.frame(width: 14, height: 14, alignment: .center)
+							.foregroundColor(colorScheme == .dark ? .black : .white)
+							.rotationEffect(
+								Angle(degrees: bearing)
+							)
+					}
+					else {
+						Circle()
+							.padding(.all, 4)
+							.frame(width: 14, height: 14, alignment: .center)
+							.foregroundColor(colorScheme == .dark ? .black : .white)
+					}
+
+					if !nodes.isEmpty {
+						Text("\(nodes.count)")
+							.font(.system(size: 10, weight: .medium))
+							.foregroundColor(colorScheme == .dark ? .black : .white)
+							.padding(.trailing, 4)
+					}
 				}
-				else {
-					Image(systemName: "record.circle.fill")
-						.font(.system(size: 14))
-						.foregroundColor(.red)
-						.background(colorScheme == .dark ? .black : .white)
-						.clipShape(Circle())
-						.padding(.all, 2)
-						.background(colorScheme == .dark ? .black.opacity(0.5) : .white.opacity(0.5))
-						.clipShape(Circle())
-						.onTapGesture {
-							select(coordinate: entry.coordinate)
-						}
+				.background(isSelected(coordinate: entry.coordinate) ? .green : .red)
+				.clipShape(clipInternal)
+				.padding(.all, 2)
+				.background(colorScheme == .dark ? .black.opacity(0.5) : .white.opacity(0.5))
+				.clipShape(clipExternal)
+				.onTapGesture {
+					guard !nodes.isEmpty else {
+						return
+					}
+
+					selectedCoordinate = entry.coordinate
 				}
 			} label: {
 				// no label
@@ -139,10 +170,30 @@ struct UserHistory: MapContent {
 		selectedCoordinate: Binding<CLLocationCoordinate2D?>
 	) {
 		self.userPositions = userPositions
-		self._selectedLocation = selectedCoordinate
+		self._selectedCoordinate = selectedCoordinate
 	}
 
-	private func select(coordinate: CLLocationCoordinate2D) {
-		selectedLocation = coordinate
+	private func isSelected(coordinate: CLLocationCoordinate2D) -> Bool {
+		guard let selectedCoordinate else {
+			return false
+		}
+
+		return selectedCoordinate.distance(from: coordinate) <= heardOfDistance
+	}
+
+	private func getLastHeardAt(coordinate: CLLocationCoordinate2D) -> [PositionEntity] {
+		nodes.compactMap { node in
+			let nodeCoordinate = CLLocationCoordinate2D(
+				latitude: node.lastHeardAtLatitude,
+				longitude: node.lastHeardAtLongitude
+			)
+
+			if nodeCoordinate.distance(from: coordinate) <= heardOfDistance {
+				return node.latestPosition
+			}
+			else {
+				return nil
+			}
+		}
 	}
 }

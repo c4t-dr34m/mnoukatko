@@ -20,6 +20,7 @@ import MapKit
 import SwiftUI
 
 struct Controls: View {
+	private let allowNodeHistory: Bool
 	private let defaultDistance: Double = 200
 	private let iconSize: CGFloat = 20
 	private let iconPadding: CGFloat = 8
@@ -33,7 +34,7 @@ struct Controls: View {
 	@Binding
 	private var heading: Double?
 	@Binding
-	private var nodeHistory: Bool?
+	private var nodeHistory: Bool
 	private var buttonBackground: Color {
 		if colorScheme == .dark {
 			return .black.opacity(0.65)
@@ -123,7 +124,7 @@ struct Controls: View {
 				.padding(.horizontal, 8)
 			}
 
-			if nodeHistory != nil {
+			if allowNodeHistory {
 				Spacer()
 
 				Button {
@@ -161,11 +162,13 @@ struct Controls: View {
 		position: Binding<MapCameraPosition>,
 		distance: Binding<Double?>,
 		heading: Binding<Double?>,
-		nodeHistory: Binding<Bool?> = .constant(nil)
+		nodeHistory: Binding<Bool> = .constant(true),
+		allowNodeHistory: Bool = false
 	) {
 		self._position = position
 		self._distance = distance
 		self._heading = heading
 		self._nodeHistory = nodeHistory
+		self.allowNodeHistory = allowNodeHistory
 	}
 }

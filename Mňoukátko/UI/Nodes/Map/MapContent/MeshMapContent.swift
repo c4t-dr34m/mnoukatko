@@ -23,14 +23,12 @@ import SwiftUI
 struct MeshMapContent: MapContent {
 	@StateObject
 	var appState = AppState.shared
-	@State
-	var positions: [PositionEntity]?
-	@State
-	var nodes: [NodeInfoEntity]?
-	@State
-	var showAll: Bool = false
 	@Binding
 	var selectedPosition: PositionEntity?
+	@State
+	var positions: [PositionEntity]
+	@State
+	var collapseAll = false
 	var onAppear: ((_ nodeName: String) -> Void)?
 	var onDisappear: ((_ nodeName: String) -> Void)?
 
@@ -39,71 +37,39 @@ struct MeshMapContent: MapContent {
 
 	@MapContentBuilder
 	var body: some MapContent {
-		if let positions {
-			ForEach(positions, id: \.nodePosition?.num) { position in
-				if
-					let node = position.nodePosition,
-					let nodeName = node.user?.shortName
-				{
-					Annotation(
-						coordinate: position.coordinate,
-						anchor: .center
-					) {
-						avatar(for: node, name: nodeName)
-							.onAppear {
-								onAppear?(nodeName)
-							}
-							.onDisappear {
-								onDisappear?(nodeName)
-							}
-							.onTapGesture {
-								selectedPosition = selectedPosition == position ? nil : position
-							}
-					} label: {
-						// no label
-					}
-					.tag(position.time)
-					.annotationTitles(.automatic)
-					.annotationSubtitles(.automatic)
-					.mapOverlayLevel(level: node.isOnline ? .aboveLabels : .aboveRoads)
-				}
-			}
-		}
-		if let nodes {
-			ForEach(nodes, id: \.num) { node in
+		ForEach(positions, id: \.nodePosition?.num) { position in
+			if
+				let node = position.nodePosition,
+				let nodeName = node.user?.shortName
+			{
 				Annotation(
-					coordinate: CLLocationCoordinate2D(
-						latitude: node.lastHeardAtLatitude,
-						longitude: node.lastHeardAtLongitude
-					),
+					coordinate: position.coordinate,
 					anchor: .center
 				) {
-					if let longName = node.user?.longName {
-						avatar(for: node, name: longName)
-							.onAppear {
-								onAppear?(longName)
-							}
-							.onDisappear {
-								onDisappear?(longName)
-							}
-					}
-					// TODO: whatever
+					avatar(for: node, name: nodeName)
+						.onAppear {
+							onAppear?(nodeName)
+						}
+						.onDisappear {
+							onDisappear?(nodeName)
+						}
+						.onTapGesture {
+							selectedPosition = selectedPosition == position ? nil : position
+						}
 				} label: {
 					// no label
 				}
+				.tag(position.time)
 				.annotationTitles(.automatic)
 				.annotationSubtitles(.automatic)
 				.mapOverlayLevel(level: node.isOnline ? .aboveLabels : .aboveRoads)
 			}
 		}
-		else {
-			EmptyMapContent()
-		}
 	}
 
 	@ViewBuilder
 	private func avatar(for node: NodeInfoEntity, name: String) -> some View {
-		if node.isOnline || showAll {
+		if node.isOnline, !collapseAll {
 			ZStack(alignment: .top) {
 				AvatarNode(
 					node,

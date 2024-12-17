@@ -48,7 +48,7 @@ struct MeshMap: View {
 	@State
 	private var cameraHeading: Double?
 	@State
-	private var showNodeHistory: Bool? = UserDefaults.mapNodeHistory
+	private var showNodeHistory = UserDefaults.mapNodeHistory
 	@State
 	private var selectedPosition: PositionEntity?
 	@State
@@ -57,28 +57,8 @@ struct MeshMap: View {
 		fetchRequest: PositionEntity.allPositionsFetchRequest()
 	)
 	private var nodePositions: FetchedResults<PositionEntity>
-	private var nodePositionsHeard: [NodeInfoEntity]? {
-		guard let selectedCoordinate else {
-			return nil
-		}
-
-		let request = NodeInfoEntity.fetchRequest()
-		if let nodes = try? context.fetch(request) {
-			return nodes.compactMap { node in
-				let coordinate = CLLocationCoordinate2D(
-					latitude: node.lastHeardAtLatitude,
-					longitude: node.lastHeardAtLongitude
-				)
-
-				if coordinate.distance(from: selectedCoordinate) <= heardOfDistance {
-					return node
-				}
-
-				return nil
-			}
-		}
-
-		return nil
+	private var showFiltered: Bool {
+		showNodeHistory && selectedCoordinate != nil
 	}
 	private var userPositions: [PositionEntity]? {
 		connectedDevice.device?.nodeInfo?.positions?.array as? [PositionEntity]
@@ -98,34 +78,40 @@ struct MeshMap: View {
 						),
 						scope: mapScope
 					) {
-						if showNodeHistory == true {
+						if showNodeHistory {
 							UserHistory(
 								userPositions: userPositions,
 								selectedCoordinate: $selectedCoordinate
 							)
 						}
 
-						UserAnnotation()
+						let positions = nodePositions.compactMap { $0 }
 
-						if
-							showNodeHistory == true,
-							let nodePositionsHeard,
-							nodePositionsHeard.count > 0
-						{
-							MeshMapContent(
-								nodes: nodePositionsHeard,
-								showAll: true,
-								selectedPosition: $selectedPosition
-							)
+						if showFiltered, let selectedCoordinate {
+							ForEach(positions, id: \.nodePosition?.num) { position in
+								if
+									let nodeCoordinate = position.nodeCoordinate,
+									let lastHeardAt = position.nodePosition?.lastHeardAt,
+									selectedCoordinate.distance(from: lastHeardAt) < heardOfDistance
+								{
+									MapPolyline(
+										coordinates: [ selectedCoordinate, nodeCoordinate ]
+									)
+									.stroke(
+										.gray.opacity(0.8),
+										style: StrokeStyle(lineWidth: 1, lineJoin: .round)
+									)
+								}
+							}
 						}
-						else {
-							MeshMapContent(
-								positions: nodePositions.compactMap { position in
-									position
-								},
-								selectedPosition: $selectedPosition
-							)
-						}
+
+						MeshMapContent(
+							selectedPosition: $selectedPosition,
+							positions: positions,
+							collapseAll: showFiltered
+						)
+
+						UserAnnotation()
 					}
 					.mapScope(mapScope)
 					.mapStyle(mapStyle)
@@ -144,7 +130,7 @@ struct MeshMap: View {
 							cameraPosition = .camera(
 								MapCamera(
 									centerCoordinate: mostRecent.coordinate,
-									distance: cameraPosition.camera?.distance ?? 64_000,
+									distance: cameraPosition.camera?.distance ?? 16_000,
 									heading: 0,
 									pitch: 40
 								)
@@ -154,13 +140,17 @@ struct MeshMap: View {
 							cameraPosition = .automatic
 						}
 					}
+					.onChange(of: showNodeHistory) {
+						selectedCoordinate = nil
+					}
 				}
 
 				Controls(
 					position: $cameraPosition,
 					distance: $cameraDistance,
 					heading: $cameraHeading,
-					nodeHistory: $showNodeHistory
+					nodeHistory: $showNodeHistory,
+					allowNodeHistory: true
 				)
 			}
 			.popover(item: $selectedPosition) { position in

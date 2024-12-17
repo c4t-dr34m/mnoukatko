@@ -31,7 +31,6 @@ extension PositionEntity {
 
 		return d / 1e7
 	}
-
 	var longitude: Double {
 		let d = Double(longitudeI)
 		if d == 0 {
@@ -40,7 +39,6 @@ extension PositionEntity {
 
 		return d / 1e7
 	}
-
 	var nodeCoordinate: CLLocationCoordinate2D? {
 		if latitudeI != 0, longitudeI != 0 {
 			return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
@@ -48,7 +46,6 @@ extension PositionEntity {
 
 		return nil
 	}
-
 	var nodeLocation: CLLocation? {
 		if latitudeI != 0, longitudeI != 0 {
 			return CLLocation(latitude: latitude, longitude: longitude)
@@ -56,7 +53,6 @@ extension PositionEntity {
 
 		return nil
 	}
-
 	var annotaton: MKPointAnnotation {
 		let annotation = MKPointAnnotation()
 		if let nodeCoordinate {

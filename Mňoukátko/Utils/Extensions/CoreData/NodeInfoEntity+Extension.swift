@@ -44,6 +44,10 @@ extension NodeInfoEntity {
 		positions?.lastObject as? PositionEntity
 	}
 
+	var lastHeardAt: CLLocationCoordinate2D {
+		CLLocationCoordinate2D(latitude: lastHeardAtLatitude, longitude: lastHeardAtLongitude)
+	}
+
 	var hasDeviceMetrics: Bool {
 		telemetries?.contains(where: { telemetry in
 			(telemetry as AnyObject).metricsType == 0
