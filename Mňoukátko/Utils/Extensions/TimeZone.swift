@@ -21,7 +21,10 @@ import Foundation
 
 extension TimeZone {
 	var posixDescription: String {
-		if let nextDate = nextDaylightSavingTimeTransition, let afterDate = nextDaylightSavingTimeTransition(after: nextDate) {
+		if
+			let nextDate = nextDaylightSavingTimeTransition,
+			let afterDate = nextDaylightSavingTimeTransition(after: nextDate)
+		{
 			// This timezone observes DST
 			// Get the transition dates to/from standard/DST
 			let stdDate: Date

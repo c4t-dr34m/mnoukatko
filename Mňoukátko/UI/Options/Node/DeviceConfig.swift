@@ -194,6 +194,78 @@ struct DeviceConfig: OptionsScreen {
 		}
 	}
 
+	@ViewBuilder
+	private var resetDatabasButton: some View {
+		if
+			let device = connectedDevice.device,
+			let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context),
+			let fromUser = connectedNode.user,
+			let toUser = node.user
+		{
+			Button("Reset NodeDB", role: .destructive) {
+				isPresentingNodeDBResetConfirm = true
+			}
+			.disabled(node.user == nil)
+			.buttonStyle(.bordered)
+			.buttonBorderShape(.capsule)
+			.controlSize(.large)
+			.padding(.leading)
+			.confirmationDialog(
+				"Are you sure?",
+				isPresented: $isPresentingNodeDBResetConfirm,
+				titleVisibility: .visible
+			) {
+				Button("Erase all device and app data?", role: .destructive) {
+					if nodeConfig.sendNodeDBReset(fromUser: fromUser, toUser: toUser) {
+						DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+							bleManager.disconnectDevice()
+							coreDataTools.clearCoreDataDatabase(context: context, includeRoutes: false)
+						}
+					}
+					else {
+						Logger.mesh.error("NodeDB Reset Failed")
+					}
+				}
+			}
+		}
+	}
+
+	@ViewBuilder
+	private var factoryResetButton: some View {
+		if
+			let device = connectedDevice.device,
+			let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context),
+			let fromUser = connectedNode.user,
+			let toUser = node.user
+		{
+			Button("Factory Reset", role: .destructive) {
+				isPresentingFactoryResetConfirm = true
+			}
+			.disabled(node.user == nil)
+			.buttonStyle(.bordered)
+			.buttonBorderShape(.capsule)
+			.controlSize(.large)
+			.padding(.trailing)
+			.confirmationDialog(
+				"Are you sure?",
+				isPresented: $isPresentingFactoryResetConfirm,
+				titleVisibility: .visible
+			) {
+				Button("Factory reset your device and app?", role: .destructive) {
+					if nodeConfig.sendFactoryReset(fromUser: fromUser, toUser: toUser) {
+						DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+							bleManager.disconnectDevice()
+							coreDataTools.clearCoreDataDatabase(context: context, includeRoutes: false)
+						}
+					}
+					else {
+						Logger.mesh.error("Factory Reset Failed")
+					}
+				}
+			}
+		}
+	}
+
 	func setInitialValues() {
 		if
 			let device = connectedDevice.device,
@@ -276,78 +348,6 @@ struct DeviceConfig: OptionsScreen {
 		{
 			hasChanges = false
 			goBack()
-		}
-	}
-
-	@ViewBuilder
-	private var resetDatabasButton: some View {
-		if
-			let device = connectedDevice.device,
-			let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context),
-			let fromUser = connectedNode.user,
-			let toUser = node.user
-		{
-			Button("Reset NodeDB", role: .destructive) {
-				isPresentingNodeDBResetConfirm = true
-			}
-			.disabled(node.user == nil)
-			.buttonStyle(.bordered)
-			.buttonBorderShape(.capsule)
-			.controlSize(.large)
-			.padding(.leading)
-			.confirmationDialog(
-				"Are you sure?",
-				isPresented: $isPresentingNodeDBResetConfirm,
-				titleVisibility: .visible
-			) {
-				Button("Erase all device and app data?", role: .destructive) {
-					if nodeConfig.sendNodeDBReset(fromUser: fromUser, toUser: toUser) {
-						DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-							bleManager.disconnectDevice()
-							coreDataTools.clearCoreDataDatabase(context: context, includeRoutes: false)
-						}
-					}
-					else {
-						Logger.mesh.error("NodeDB Reset Failed")
-					}
-				}
-			}
-		}
-	}
-
-	@ViewBuilder
-	private var factoryResetButton: some View {
-		if
-			let device = connectedDevice.device,
-			let connectedNode = coreDataTools.getNodeInfo(id: device.num, context: context),
-			let fromUser = connectedNode.user,
-			let toUser = node.user
-		{
-			Button("Factory Reset", role: .destructive) {
-				isPresentingFactoryResetConfirm = true
-			}
-			.disabled(node.user == nil)
-			.buttonStyle(.bordered)
-			.buttonBorderShape(.capsule)
-			.controlSize(.large)
-			.padding(.trailing)
-			.confirmationDialog(
-				"Are you sure?",
-				isPresented: $isPresentingFactoryResetConfirm,
-				titleVisibility: .visible
-			) {
-				Button("Factory reset your device and app?", role: .destructive) {
-					if nodeConfig.sendFactoryReset(fromUser: fromUser, toUser: toUser) {
-						DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-							bleManager.disconnectDevice()
-							coreDataTools.clearCoreDataDatabase(context: context, includeRoutes: false)
-						}
-					}
-					else {
-						Logger.mesh.error("Factory Reset Failed")
-					}
-				}
-			}
 		}
 	}
 }
