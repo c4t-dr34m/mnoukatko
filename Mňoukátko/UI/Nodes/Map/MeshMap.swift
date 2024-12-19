@@ -28,6 +28,8 @@ struct MeshMap: View {
 	private let node: NodeInfoEntity?
 	private let heardOfDistance: Double = 250
 
+	@Environment(\.colorScheme)
+	private var colorScheme: ColorScheme
 	@Environment(\.managedObjectContext)
 	private var context
 	@EnvironmentObject
@@ -48,20 +50,19 @@ struct MeshMap: View {
 	@State
 	private var cameraHeading: Double?
 	@State
+	private var nodePositions: [PositionEntity] = []
+	@State
 	private var showNodeHistory = UserDefaults.mapNodeHistory
 	@State
 	private var selectedPosition: PositionEntity?
 	@State
-	private var selectedCoordinate: CLLocationCoordinate2D?
-	@FetchRequest(
-		fetchRequest: PositionEntity.allPositionsFetchRequest()
-	)
-	private var nodePositions: FetchedResults<PositionEntity>
-	private var showFiltered: Bool {
-		showNodeHistory && selectedCoordinate != nil
-	}
+	private var showSpiderFor: CLLocationCoordinate2D?
 	private var userPositions: [PositionEntity]? {
-		connectedDevice.device?.nodeInfo?.positions?.array as? [PositionEntity]
+		guard showNodeHistory else {
+			return nil
+		}
+
+		return connectedDevice.device?.nodeInfo?.positions?.array as? [PositionEntity]
 	}
 
 	var body: some View {
@@ -81,44 +82,50 @@ struct MeshMap: View {
 						if showNodeHistory {
 							UserHistory(
 								userPositions: userPositions,
-								selectedCoordinate: $selectedCoordinate
+								selectedCoordinate: $showSpiderFor
 							)
 						}
 
-						let positions = nodePositions.compactMap { $0 }
-
-						if showFiltered, let selectedCoordinate {
-							ForEach(positions, id: \.nodePosition?.num) { position in
+						ForEach(nodePositions, id: \.nodePosition?.num) { position in
+							if
+								let node = position.nodePosition,
+								let nodeName = node.user?.shortName
+							{
 								if
-									let nodeCoordinate = position.nodeCoordinate,
-									let lastHeardAt = position.nodePosition?.lastHeardAt,
-									selectedCoordinate.distance(from: lastHeardAt) < heardOfDistance
+									let showSpiderFor,
+									showSpiderFor.distance(from: node.lastHeardAt) < heardOfDistance
 								{
 									MapPolyline(
-										coordinates: [ selectedCoordinate, nodeCoordinate ]
+										coordinates: [ showSpiderFor, position.coordinate ]
 									)
 									.stroke(
-										.gray.opacity(0.8),
+										.gray,
 										style: StrokeStyle(lineWidth: 1, lineJoin: .round)
 									)
+									.tag("\(nodeName)_spider")
 								}
+
+								Annotation(
+									coordinate: position.coordinate,
+									anchor: .center
+								) {
+									avatar(for: node, name: nodeName)
+										.onTapGesture {
+											selectedPosition = selectedPosition == position ? nil : position
+										}
+								} label: {
+									// no label
+								}
+								.tag("\(nodeName)_annotation")
+								.mapOverlayLevel(level: node.isOnline ? .aboveLabels : .aboveRoads)
 							}
 						}
-
-						MeshMapContent(
-							selectedPosition: $selectedPosition,
-							positions: positions,
-							collapseAll: showFiltered
-						)
 
 						UserAnnotation()
 					}
 					.mapScope(mapScope)
 					.mapStyle(mapStyle)
-					.mapControls {
-						MapCompass(scope: mapScope).mapControlVisibility(.hidden)
-						MapPitchToggle(scope: mapScope).mapControlVisibility(.hidden)
-					}
+					.mapControlVisibility(.hidden)
 					.onMapCameraChange(frequency: .continuous) { map in
 						cameraDistance = map.camera.distance
 						cameraHeading = map.camera.heading
@@ -131,8 +138,7 @@ struct MeshMap: View {
 								MapCamera(
 									centerCoordinate: mostRecent.coordinate,
 									distance: cameraPosition.camera?.distance ?? 16_000,
-									heading: 0,
-									pitch: 40
+									heading: 0
 								)
 							)
 						}
@@ -140,8 +146,12 @@ struct MeshMap: View {
 							cameraPosition = .automatic
 						}
 					}
+					.onChange(of: showSpiderFor, initial: true) {
+						loadNodePositions()
+					}
 					.onChange(of: showNodeHistory) {
-						selectedCoordinate = nil
+						showSpiderFor = nil
+						loadNodePositions()
 					}
 				}
 
@@ -180,5 +190,84 @@ struct MeshMap: View {
 
 	init(node: NodeInfoEntity? = nil) {
 		self.node = node
+	}
+
+	@ViewBuilder
+	private func avatar(for node: NodeInfoEntity, name: String) -> some View {
+		if node.isOnline, showSpiderFor == nil {
+			ZStack(alignment: .top) {
+				AvatarNode(
+					node,
+					showTemperature: true,
+					size: 48
+				)
+				.padding(.all, 8)
+
+				if node.hopsAway >= 0 {
+					let visible = node.hopsAway == 0
+
+					HStack(spacing: 0) {
+						Spacer()
+						Image(systemName: visible ? "eye.circle.fill" : "\(node.hopsAway).circle.fill")
+							.font(.system(size: 20))
+							.background(node.color)
+							.foregroundColor(node.color.isLight ? .black.opacity(0.5) : .white.opacity(0.5))
+							.clipShape(Circle())
+					}
+				}
+			}
+			.frame(width: 64, height: 64)
+		}
+		else {
+			offlineNodeDot(for: node)
+		}
+	}
+
+	@ViewBuilder
+	private func offlineNodeDot(for node: NodeInfoEntity) -> some View {
+		ZStack(alignment: .center) {
+			RoundedRectangle(cornerRadius: 4)
+				.frame(width: 12, height: 12)
+				.foregroundColor(colorScheme == .dark ? .black : .white)
+			RoundedRectangle(cornerRadius: 2)
+				.frame(width: 8, height: 8)
+				.foregroundColor(node.color)
+		}
+	}
+
+	private func loadNodePositions() {
+		if showNodeHistory, showSpiderFor == nil {
+			nodePositions = []
+
+			return
+		}
+
+		let request = PositionEntity.fetchRequest()
+		request.predicate = NSPredicate(
+			format: "nodePosition != nil && nodePosition.user.shortName != nil && nodePosition.user.shortName != '' && latest == true"
+		)
+		request.includesSubentities = true
+		request.returnsDistinctResults = true
+
+		if let positions = try? context.fetch(request) {
+			nodePositions = positions.compactMap { position in
+				guard let showSpiderFor else {
+					return position
+				}
+
+				if
+					let lastHeardAt = position.nodePosition?.lastHeardAt,
+					showSpiderFor.distance(from: lastHeardAt) < heardOfDistance
+				{
+					return position
+				}
+				else {
+					return nil
+				}
+			}
+		}
+		else {
+			nodePositions = []
+		}
 	}
 }

@@ -20,9 +20,17 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import Foundation
 import MapKit
 
-extension CLLocationCoordinate2D {
+extension CLLocationCoordinate2D: @retroactive Equatable, @retroactive CustomStringConvertible {
+	public var description: String {
+		"\(latitude),\(longitude)"
+	}
+
 	var isValid: Bool {
 		-90...90 ~= latitude && -180...180 ~= longitude
+	}
+
+	public static func == (lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
+		lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
 	}
 
 	func distance(from: CLLocationCoordinate2D) -> CLLocationDistance {

@@ -44,6 +44,16 @@ struct UserHistory: MapContent {
 			return []
 		}
 
+		if let selectedCoordinate {
+			return [
+				Entry(
+					index: 0,
+					coordinate: selectedCoordinate,
+					bearingToNext: nil
+				)
+			]
+		}
+
 		var entries = [Entry]()
 		var totalDistance = 0.0
 
@@ -104,15 +114,17 @@ struct UserHistory: MapContent {
 	@MapContentBuilder
 	var body: some MapContent {
 		ForEach(entries, id: \.index) { entry in
-			MapPolyline(
-				coordinates: entries.map { entry in
-					entry.coordinate
-				}
-			)
-			.stroke(
-				.red.lightness(delta: colorScheme == .dark ? -0.2 : +0.2).opacity(0.8),
-				style: StrokeStyle(lineWidth: 1, lineJoin: .round)
-			)
+			if selectedCoordinate == nil {
+				MapPolyline(
+					coordinates: entries.map { entry in
+						entry.coordinate
+					}
+				)
+				.stroke(
+					.red.lightness(delta: colorScheme == .dark ? -0.2 : +0.2).opacity(0.8),
+					style: StrokeStyle(lineWidth: 1, lineJoin: .round)
+				)
+			}
 
 			Annotation(
 				coordinate: entry.coordinate,
@@ -154,7 +166,12 @@ struct UserHistory: MapContent {
 						return
 					}
 
-					selectedCoordinate = entry.coordinate
+					if entry.coordinate == selectedCoordinate {
+						selectedCoordinate = nil
+					}
+					else {
+						selectedCoordinate = entry.coordinate
+					}
 				}
 			} label: {
 				// no label

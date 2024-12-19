@@ -56,6 +56,7 @@ struct SimpleNodeMap: View {
 			}
 			.mapScope(mapScope)
 			.mapStyle(mapStyle)
+			.mapControlVisibility(.hidden)
 			.onAppear {
 				if
 					let lastCoordinate = (node.positions?.lastObject as? PositionEntity)?.coordinate,

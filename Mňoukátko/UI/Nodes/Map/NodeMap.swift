@@ -97,10 +97,7 @@ struct NodeMap: View {
 				}
 				.mapScope(mapScope)
 				.mapStyle(mapStyle)
-				.mapControls {
-					MapCompass(scope: mapScope).mapControlVisibility(.hidden)
-					MapPitchToggle(scope: mapScope).mapControlVisibility(.hidden)
-				}
+				.mapControlVisibility(.hidden)
 				.onMapCameraChange(frequency: .continuous) { map in
 					cameraDistance = map.camera.distance
 					cameraHeading = map.camera.heading

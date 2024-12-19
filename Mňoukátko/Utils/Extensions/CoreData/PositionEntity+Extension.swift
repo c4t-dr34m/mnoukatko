@@ -61,24 +61,6 @@ extension PositionEntity {
 
 		return annotation
 	}
-
-	static func allPositionsFetchRequest() -> NSFetchRequest<PositionEntity> {
-		let positionPredicate = NSPredicate(
-			format: "nodePosition != nil && (nodePosition.user.shortName != nil || nodePosition.user.shortName != '') && latest == true"
-		)
-
-		let request: NSFetchRequest<PositionEntity> = PositionEntity.fetchRequest()
-		request.predicate = positionPredicate
-		// request.fetchLimit = 1800
-		request.returnsObjectsAsFaults = false
-		request.includesSubentities = true
-		request.returnsDistinctResults = true
-		request.sortDescriptors = [
-			NSSortDescriptor(key: "time", ascending: false)
-		]
-
-		return request
-	}
 }
 
 extension PositionEntity: MKAnnotation {

@@ -116,7 +116,7 @@ extension UserDefaults {
 	@UserDefault(.mapLayer, defaultValue: .standard)
 	static var mapLayer: MapLayer
 
-	@UserDefault(.mapNodeHistory, defaultValue: true)
+	@UserDefault(.mapNodeHistory, defaultValue: false)
 	static var mapNodeHistory: Bool
 
 	@UserDefault(.enableDetectionNotifications, defaultValue: false)

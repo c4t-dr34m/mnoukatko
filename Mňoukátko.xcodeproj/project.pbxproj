@@ -92,7 +92,6 @@
 		B2A5F3042C5668FD009457AB /* NodeIconsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2E32C5668FD009457AB /* NodeIconsView.swift */; };
 		B2A5F3072C5668FD009457AB /* NodeInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2E62C5668FD009457AB /* NodeInfoView.swift */; };
 		B2A5F3092C5668FD009457AB /* NodeListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2E82C5668FD009457AB /* NodeListItem.swift */; };
-		B2A5F30A2C5668FD009457AB /* MeshMapContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2EA2C5668FD009457AB /* MeshMapContent.swift */; };
 		B2A5F30B2C5668FD009457AB /* NodeMapContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2EB2C5668FD009457AB /* NodeMapContent.swift */; };
 		B2A5F30E2C5668FD009457AB /* NodeMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2EF2C5668FD009457AB /* NodeMap.swift */; };
 		B2A5F30F2C5668FD009457AB /* SimpleNodeMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2F02C5668FD009457AB /* SimpleNodeMap.swift */; };
@@ -269,7 +268,6 @@
 		B2A5F2E32C5668FD009457AB /* NodeIconsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeIconsView.swift; sourceTree = "<group>"; };
 		B2A5F2E62C5668FD009457AB /* NodeInfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeInfoView.swift; sourceTree = "<group>"; };
 		B2A5F2E82C5668FD009457AB /* NodeListItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeListItem.swift; sourceTree = "<group>"; };
-		B2A5F2EA2C5668FD009457AB /* MeshMapContent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeshMapContent.swift; sourceTree = "<group>"; };
 		B2A5F2EB2C5668FD009457AB /* NodeMapContent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeMapContent.swift; sourceTree = "<group>"; };
 		B2A5F2EF2C5668FD009457AB /* NodeMap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeMap.swift; sourceTree = "<group>"; };
 		B2A5F2F02C5668FD009457AB /* SimpleNodeMap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleNodeMap.swift; sourceTree = "<group>"; };
@@ -585,7 +583,6 @@
 			isa = PBXGroup;
 			children = (
 				081A0F7E2D0F027500B6F1E4 /* UserHistory.swift */,
-				B2A5F2EA2C5668FD009457AB /* MeshMapContent.swift */,
 				B2A5F2EB2C5668FD009457AB /* NodeMapContent.swift */,
 			);
 			path = MapContent;
@@ -1188,7 +1185,6 @@
 				B266DA902C53CEFB0067D317 /* Constants.swift in Sources */,
 				B2A5F30E2C5668FD009457AB /* NodeMap.swift in Sources */,
 				084DCFFA2CA9BEF40032EF46 /* NodeIconsCompactView.swift in Sources */,
-				B2A5F30A2C5668FD009457AB /* MeshMapContent.swift in Sources */,
 				B266A75B2C59262E00DFC723 /* ScreenCarouselIntervals.swift in Sources */,
 				08933D382C81D03A006D57EA /* CoreDataTools.swift in Sources */,
 				B266A7612C59275000DFC723 /* Units.swift in Sources */,
