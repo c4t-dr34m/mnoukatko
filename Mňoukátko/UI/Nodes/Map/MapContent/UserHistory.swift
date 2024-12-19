@@ -205,7 +205,7 @@ struct UserHistory: MapContent {
 				longitude: node.lastHeardAtLongitude
 			)
 
-			if nodeCoordinate.distance(from: coordinate) <= heardOfDistance {
+			if nodeCoordinate.distance(from: coordinate) <= (minimalDelta - 10) {
 				return node.latestPosition
 			}
 			else {

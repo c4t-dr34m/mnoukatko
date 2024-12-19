@@ -29,6 +29,7 @@ struct NodeDetail: View {
 	private let coreDataTools = CoreDataTools()
 	private let node: NodeInfoEntity
 	private let isInSheet: Bool
+	private let telemetryDelta: TimeInterval = 30 * 60 // 30 min
 	private let distanceFormatter = MKDistanceFormatter()
 	private let detailInfoTextFont = Font.system(size: 14, weight: .regular, design: .rounded)
 	private let detailInfoIconFont = Font.system(size: 16, weight: .regular, design: .rounded)
@@ -94,14 +95,34 @@ struct NodeDetail: View {
 			return nil
 		}
 
-		return history.filter { measurement in
-			if let time = measurement.time, time >= chartHistory {
-				return true
-			}
-			else {
-				return false
+		let historyArray = history.map { $0 }
+		var measurements: [TelemetryEntity] = []
+
+		if historyArray.count > 1 {
+			for i in 0...(historyArray.count - 1) {
+				let current = historyArray[i]
+				let next = i < (historyArray.count - 1) ? historyArray[i + 1] : nil
+
+				if let next {
+					if
+						let currentTime = current.time,
+						currentTime > chartHistory,
+						let nextTime = next.time,
+						currentTime.distance(to: nextTime) >= telemetryDelta
+					{
+						measurements.append(current)
+					}
+				}
+				else {
+					measurements.append(current)
+				}
 			}
 		}
+		else {
+			measurements.append(contentsOf: historyArray)
+		}
+
+		return measurements
 	}
 	private var nodePressureHistory: [TelemetryEntity]? {
 		nodeEnvironmentHistory?.filter { measurement in
