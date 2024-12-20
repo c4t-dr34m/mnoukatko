@@ -34,12 +34,10 @@ struct SimpleNodeMap: View {
 	private var position = MapCameraPosition.automatic
 	private var node: NodeInfoEntity
 
+	@ViewBuilder
 	var body: some View {
 		if node.hasPositions {
 			map
-		}
-		else {
-			EmptyView()
 		}
 	}
 
@@ -51,7 +49,6 @@ struct SimpleNodeMap: View {
 				bounds: MapCameraBounds(minimumDistance: 100, maximumDistance: .infinity),
 				scope: mapScope
 			) {
-				UserAnnotation()
 				NodeMapContent(node: node, showHistory: false)
 			}
 			.mapScope(mapScope)
@@ -59,8 +56,7 @@ struct SimpleNodeMap: View {
 			.mapControlVisibility(.hidden)
 			.onAppear {
 				if
-					let lastCoordinate = (node.positions?.lastObject as? PositionEntity)?.coordinate,
-					lastCoordinate.isValid
+					let lastCoordinate = (node.positions?.lastObject as? PositionEntity)?.coordinate
 				{
 					position = .camera(
 						MapCamera(

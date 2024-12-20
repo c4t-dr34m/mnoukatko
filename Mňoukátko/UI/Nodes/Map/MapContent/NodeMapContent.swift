@@ -64,7 +64,8 @@ struct NodeMapContent: MapContent {
 				return positionArray
 			}
 			else {
-				return Array(positionArray[..<mapHistoryLimit])
+				let start = positionArray.count - mapHistoryLimit
+				return Array(positionArray[start...])
 			}
 		}
 		else {
@@ -75,34 +76,29 @@ struct NodeMapContent: MapContent {
 	@MapContentBuilder
 	var body: some MapContent {
 		if !positions.isEmpty {
-			nodeMap
-		}
-	}
+			if showHistory {
+				history
+			}
 
-	@MapContentBuilder
-	var nodeMap: some MapContent {
-		if showHistory {
-			history
+			latest
 		}
-
-		latest
 	}
 
 	@MapContentBuilder
 	private var latest: some MapContent {
-		let latest = positions.first(where: { position in
-			position.latest
-		})
-
-		if let latest = latest {
-			let precision = PositionPrecision(rawValue: Int(latest.precisionBits))
-			let radius: CLLocationDistance = precision?.precisionMeters ?? 0.0
-
-			MapCircle(center: latest.coordinate, radius: max(66.6, radius))
-				.foregroundStyle(
-					Color(nodeColor).opacity(0.25)
-				)
-				.stroke(nodeColor.opacity(0.5), lineWidth: 2)
+		if
+			let latest = positions.first(where: { $0.latest })
+		{
+			if
+				let radius = PositionPrecision(rawValue: Int(latest.precisionBits))?.precisionMeters,
+				radius > 10.0
+			{
+				MapCircle(center: latest.coordinate, radius: radius)
+					.foregroundStyle(
+						Color(nodeColor).opacity(0.25)
+					)
+					.stroke(nodeColor.opacity(0.5), lineWidth: 2)
+			}
 
 			Annotation(
 				coordinate: latest.coordinate,
@@ -115,11 +111,6 @@ struct NodeMapContent: MapContent {
 				// nothing
 			}
 			.tag(latest.time)
-			.annotationTitles(.automatic)
-			.annotationSubtitles(.automatic)
-		}
-		else {
-			EmptyMapContent()
 		}
 	}
 
