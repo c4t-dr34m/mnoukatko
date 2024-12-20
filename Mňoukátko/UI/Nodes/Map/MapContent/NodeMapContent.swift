@@ -57,7 +57,6 @@ struct NodeMapContent: MapContent {
 			.black
 		}
 	}
-
 	private var positions: [PositionEntity] {
 		if let positionArray = node?.positions?.array as? [PositionEntity] {
 			if positionArray.count <= mapHistoryLimit {
@@ -86,9 +85,7 @@ struct NodeMapContent: MapContent {
 
 	@MapContentBuilder
 	private var latest: some MapContent {
-		if
-			let latest = positions.first(where: { $0.latest })
-		{
+		if let latest = positions.first(where: { $0.latest }) {
 			if
 				let radius = PositionPrecision(rawValue: Int(latest.precisionBits))?.precisionMeters,
 				radius > 10.0
