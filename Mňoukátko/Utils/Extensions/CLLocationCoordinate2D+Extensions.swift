@@ -29,6 +29,10 @@ extension CLLocationCoordinate2D: @retroactive Equatable, @retroactive CustomStr
 		-90...90 ~= latitude && -180...180 ~= longitude
 	}
 
+	var isLikelyEmpty: Bool {
+		latitude == 0 && longitude == 0.0
+	}
+
 	public static func == (lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
 		lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
 	}

@@ -123,6 +123,7 @@ extension NodeInfoEntity {
 		if lastHeard == nil || date > lastHeard! {
 			lastHeard = date
 			lastHeardBy = device?.nodeInfo
+
 			setLastHeardAt(when: date, connectedDevice: device)
 		}
 	}
@@ -140,6 +141,9 @@ extension NodeInfoEntity {
 			}
 
 			Logger.location.debug("Last heard at updated for \(self.user?.longName ?? "#\(self.num)") (node)")
+			Logger.location.debug(
+				"↑ \(self.lastHeardAtLatitude),\(self.lastHeardAtLongitude) from \(position.time?.relative() ?? "N/A")"
+			)
 		}
 		else if let location = LocationManager.shared.getLocation() {
 			lastHeardAtLatitude = location.coordinate.latitude
@@ -166,7 +170,7 @@ extension NodeInfoEntity {
 				continue
 			}
 
-			let currentDelta = date.distance(to: time)
+			let currentDelta = abs(time.distance(to: date))
 			if currentDelta < delta {
 				delta = currentDelta
 				closest = position

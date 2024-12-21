@@ -121,8 +121,8 @@ struct UserHistory: MapContent {
 					}
 				)
 				.stroke(
-					.red.lightness(delta: colorScheme == .dark ? -0.2 : +0.2).opacity(0.8),
-					style: StrokeStyle(lineWidth: 1, lineJoin: .round)
+					.red.lightness(delta: colorScheme == .dark ? -0.2 : +0.2),
+					style: StrokeStyle(lineWidth: 1)
 				)
 			}
 
@@ -204,6 +204,10 @@ struct UserHistory: MapContent {
 				latitude: node.lastHeardAtLatitude,
 				longitude: node.lastHeardAtLongitude
 			)
+
+			guard !coordinate.isLikelyEmpty, !nodeCoordinate.isLikelyEmpty else {
+				return nil
+			}
 
 			if nodeCoordinate.distance(from: coordinate) <= (minimalDelta - 10) {
 				return node.latestPosition
