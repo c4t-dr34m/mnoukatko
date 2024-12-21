@@ -26,7 +26,6 @@ import SwiftUI
 
 struct MeshMap: View {
 	private let node: NodeInfoEntity?
-	private let heardOfDistance: Double = 250
 
 	@Environment(\.colorScheme)
 	private var colorScheme: ColorScheme
@@ -93,7 +92,7 @@ struct MeshMap: View {
 							{
 								if
 									let showSpiderFor,
-									showSpiderFor.distance(from: node.lastHeardAt) < heardOfDistance
+									showSpiderFor.distance(from: node.lastHeardAt) < MapConstants.heardOfRadius
 								{
 									MapPolyline(
 										coordinates: [ showSpiderFor, position.coordinate ]
@@ -257,7 +256,7 @@ struct MeshMap: View {
 
 				if
 					let lastHeardAt = position.nodePosition?.lastHeardAt,
-					showSpiderFor.distance(from: lastHeardAt) < heardOfDistance
+					showSpiderFor.distance(from: lastHeardAt) < MapConstants.heardOfRadius
 				{
 					return position
 				}

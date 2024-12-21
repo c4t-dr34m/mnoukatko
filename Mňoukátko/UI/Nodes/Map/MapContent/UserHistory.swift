@@ -29,9 +29,6 @@ struct UserHistory: MapContent {
 	}
 
 	private let userPositions: [PositionEntity]?
-	private let heardOfDistance: Double = 250
-	private let minimalDelta = 150.0 // meters
-	private let distanceThreshold = 1_000.0 // meters
 
 	@Environment(\.colorScheme)
 	private var colorScheme: ColorScheme
@@ -64,7 +61,7 @@ struct UserHistory: MapContent {
 
 			var bearing: Double?
 			if let next {
-				if current.coordinate.distance(from: next.coordinate) < minimalDelta {
+				if current.coordinate.distance(from: next.coordinate) < MapConstants.minimalHistoryEntrySeparation {
 					continue
 				}
 
@@ -83,7 +80,7 @@ struct UserHistory: MapContent {
 			entries.append(newEntry)
 		}
 
-		if totalDistance < distanceThreshold {
+		if totalDistance < MapConstants.distanceSumThresholdForHistory {
 			return []
 		}
 		else {
@@ -114,6 +111,7 @@ struct UserHistory: MapContent {
 	@MapContentBuilder
 	var body: some MapContent {
 		ForEach(entries, id: \.index) { entry in
+			/* TODO: disabled due to mapkit performance issues with drawing lines
 			if selectedCoordinate == nil {
 				MapPolyline(
 					coordinates: entries.map { entry in
@@ -125,6 +123,7 @@ struct UserHistory: MapContent {
 					style: StrokeStyle(lineWidth: 1)
 				)
 			}
+			*/
 
 			Annotation(
 				coordinate: entry.coordinate,
@@ -195,7 +194,7 @@ struct UserHistory: MapContent {
 			return false
 		}
 
-		return selectedCoordinate.distance(from: coordinate) <= heardOfDistance
+		return selectedCoordinate.distance(from: coordinate) <= MapConstants.heardOfRadius
 	}
 
 	private func getLastHeardAt(coordinate: CLLocationCoordinate2D) -> [PositionEntity] {
@@ -209,7 +208,7 @@ struct UserHistory: MapContent {
 				return nil
 			}
 
-			if nodeCoordinate.distance(from: coordinate) <= (minimalDelta - 10) {
+			if nodeCoordinate.distance(from: coordinate) <= (MapConstants.minimalHistoryEntrySeparation - 10) {
 				return node.latestPosition
 			}
 			else {

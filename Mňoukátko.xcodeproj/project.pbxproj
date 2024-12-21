@@ -15,6 +15,7 @@
 		081C3AED2C97494000F93C46 /* CBManagerState+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 081C3AEC2C97493900F93C46 /* CBManagerState+Extension.swift */; };
 		081C3AEF2C989B8F00F93C46 /* TelemetryConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 081C3AEE2C989B8C00F93C46 /* TelemetryConfig.swift */; };
 		081F26922D03854C0086FF50 /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 081F26912D0385470086FF50 /* Array+Extensions.swift */; };
+		083EC6CB2D1762F1003F57C4 /* MapConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 083EC6CA2D1762EE003F57C4 /* MapConstants.swift */; };
 		084A3D422C7651EC0026433E /* StateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084A3D412C7651E70026433E /* StateMachine.swift */; };
 		084A3D442C76520A0026433E /* SafeStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084A3D432C7652080026433E /* SafeStorage.swift */; };
 		084A3D462C76522A0026433E /* Debounce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084A3D452C7652280026433E /* Debounce.swift */; };
@@ -198,6 +199,7 @@
 		081C3AEC2C97493900F93C46 /* CBManagerState+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CBManagerState+Extension.swift"; sourceTree = "<group>"; };
 		081C3AEE2C989B8C00F93C46 /* TelemetryConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryConfig.swift; sourceTree = "<group>"; };
 		081F26912D0385470086FF50 /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
+		083EC6CA2D1762EE003F57C4 /* MapConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapConstants.swift; sourceTree = "<group>"; };
 		084A3D412C7651E70026433E /* StateMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateMachine.swift; sourceTree = "<group>"; };
 		084A3D432C7652080026433E /* SafeStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeStorage.swift; sourceTree = "<group>"; };
 		084A3D452C7652280026433E /* Debounce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debounce.swift; sourceTree = "<group>"; };
@@ -591,6 +593,7 @@
 		B2A5F2F12C5668FD009457AB /* Map */ = {
 			isa = PBXGroup;
 			children = (
+				083EC6CA2D1762EE003F57C4 /* MapConstants.swift */,
 				B2B1AC582D1074A800114A66 /* Controls.swift */,
 				B2A5F2F52C5668FD009457AB /* MeshMap.swift */,
 				B2A5F2EF2C5668FD009457AB /* NodeMap.swift */,
@@ -1194,6 +1197,7 @@
 				B3E905B12B71F7F300654D07 /* TextMessageField.swift in Sources */,
 				086C1CE52CD7DE0B00486505 /* Foundation.Notification.Name+Extensions.swift in Sources */,
 				0891A0CD2CCEA6A40030B392 /* URL+Extensions.swift in Sources */,
+				083EC6CB2D1762F1003F57C4 /* MapConstants.swift in Sources */,
 				D93068D72B8146690066FBC8 /* MessageContentView.swift in Sources */,
 				084A3D422C7651EC0026433E /* StateMachine.swift in Sources */,
 				081F26922D03854C0086FF50 /* Array+Extensions.swift in Sources */,
