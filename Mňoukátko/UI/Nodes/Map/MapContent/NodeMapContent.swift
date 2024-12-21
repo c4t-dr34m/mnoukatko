@@ -25,7 +25,7 @@ struct NodeMapContent: MapContent {
 	@Namespace
 	var mapScope
 	@State
-	var mapStyle = MapStyle.standard(elevation: .realistic)
+	var mapStyle = MapStyle.standard(elevation: .flat)
 	@State
 	var mapCamera = MapCameraPosition.automatic
 	@State

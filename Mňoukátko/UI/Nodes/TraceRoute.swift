@@ -48,7 +48,7 @@ struct TraceRoute: View {
 	private var selectedRoute: TraceRouteEntity?
 	@State
 	private var mapStyle = MapStyle.standard(
-		elevation: .realistic,
+		elevation: .flat,
 		emphasis: MapStyle.StandardEmphasis.muted
 	)
 	@State

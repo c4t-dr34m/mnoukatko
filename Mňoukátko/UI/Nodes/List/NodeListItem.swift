@@ -51,6 +51,13 @@ struct NodeListItem: View {
 
 					name
 
+					if node.favorite {
+						BatteryView(
+							node: node,
+							withLabels: true
+						)
+					}
+
 					if node.isOnline, let device = connectedDevice.device {
 						NodeIconsView(connectedNode: device.num, node: node)
 					}

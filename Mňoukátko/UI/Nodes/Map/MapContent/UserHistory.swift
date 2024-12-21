@@ -51,11 +51,28 @@ struct UserHistory: MapContent {
 			]
 		}
 
-		var entries = [Entry]()
+		// total distance travelled
 		var totalDistance = 0.0
-
 		for i in 0...(positions.count - 1) {
 			let prev = i > 0 ? positions[i - 1] : nil
+			let current = positions[i]
+
+			guard let prev else {
+				continue
+			}
+
+			totalDistance += current.coordinate.distance(from: prev.coordinate)
+		}
+
+		Logger.location.debug("Total distance travelled by: \(round(totalDistance / 1000.0))km")
+
+		if totalDistance < MapConstants.distanceSumThresholdForHistory {
+			return []
+		}
+
+		// usable history points
+		var entries = [Entry]()
+		for i in 0...(positions.count - 1) {
 			let current = positions[i]
 			let next = i < (positions.count - 1) ? positions[i + 1] : nil
 
@@ -67,9 +84,6 @@ struct UserHistory: MapContent {
 
 				bearing = current.coordinate.bearing(to: next.coordinate)
 			}
-			if let prev {
-				totalDistance += current.coordinate.distance(from: prev.coordinate)
-			}
 
 			let newEntry = Entry(
 				index: i,
@@ -80,12 +94,7 @@ struct UserHistory: MapContent {
 			entries.append(newEntry)
 		}
 
-		if totalDistance < MapConstants.distanceSumThresholdForHistory {
-			return []
-		}
-		else {
-			return entries
-		}
+		return entries
 	}
 	private var clipInternal: UnevenRoundedRectangle {
 		let corners = RectangleCornerRadii(
@@ -133,18 +142,18 @@ struct UserHistory: MapContent {
 
 				HStack(alignment: .center, spacing: 0) {
 					if let bearing = entry.bearingToNext {
-						Image(systemName: "location.north.fill")
-							.font(.system(size: 8))
-							.frame(width: 14, height: 14, alignment: .center)
+						Image(systemName: "arrow.up")
+							.font(.system(size: 10, weight: .bold))
+							.frame(width: 16, height: 16, alignment: .center)
 							.foregroundColor(colorScheme == .dark ? .black : .white)
 							.rotationEffect(
 								Angle(degrees: bearing)
 							)
 					}
 					else {
-						Circle()
-							.padding(.all, 4)
-							.frame(width: 14, height: 14, alignment: .center)
+						Image(systemName: "staroflife.fill")
+							.font(.system(size: 10, weight: .bold))
+							.frame(width: 16, height: 16, alignment: .center)
 							.foregroundColor(colorScheme == .dark ? .black : .white)
 					}
 
@@ -204,7 +213,12 @@ struct UserHistory: MapContent {
 				longitude: node.lastHeardAtLongitude
 			)
 
-			guard !coordinate.isLikelyEmpty, !nodeCoordinate.isLikelyEmpty else {
+			guard
+				node.hopsAway == 0,
+				!node.viaMqtt,
+				!coordinate.isLikelyEmpty,
+				!nodeCoordinate.isLikelyEmpty
+			else {
 				return nil
 			}
 
