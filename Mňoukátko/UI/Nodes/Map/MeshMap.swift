@@ -40,7 +40,7 @@ struct MeshMap: View {
 	@State
 	private var mapStyle = MapStyle.standard(
 		elevation: .flat,
-		emphasis: MapStyle.StandardEmphasis.automatic
+		emphasis: MapStyle.StandardEmphasis.muted
 	)
 	@State
 	private var cameraPosition = MapCameraPosition.automatic
@@ -89,8 +89,7 @@ struct MeshMap: View {
 							if
 								let node = position.nodePosition,
 								let nodeName = node.user?.shortName,
-								!node.viaMqtt,
-								node.hopsAway == 0
+								showSpiderFor == nil || (!node.viaMqtt && node.hopsAway == 0)
 							{
 								if
 									let showSpiderFor,
