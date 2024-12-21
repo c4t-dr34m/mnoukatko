@@ -48,6 +48,7 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
 	override init() {
 		locationManager = CLLocationManager()
 		locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+		locationManager.distanceFilter = 100
 		locationManager.pausesLocationUpdatesAutomatically = false
 		locationManager.activityType = .other
 
