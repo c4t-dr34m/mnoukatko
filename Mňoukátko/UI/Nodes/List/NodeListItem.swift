@@ -51,7 +51,7 @@ struct NodeListItem: View {
 
 					name
 
-					if node.favorite {
+					if node.isOnline, node.favorite {
 						BatteryView(
 							node: node,
 							withLabels: true
