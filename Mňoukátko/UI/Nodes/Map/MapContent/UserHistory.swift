@@ -208,7 +208,7 @@ struct UserHistory: MapContent {
 				return nil
 			}
 
-			if nodeCoordinate.distance(from: coordinate) <= (MapConstants.minimalHistoryEntrySeparation - 10) {
+			if nodeCoordinate.distance(from: coordinate) <= MapConstants.heardOfRadius {
 				return node.latestPosition
 			}
 			else {
