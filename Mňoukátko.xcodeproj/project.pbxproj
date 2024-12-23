@@ -173,7 +173,7 @@
 		DDCE4E2C2869F92900BE9F8F /* UserConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDCE4E2B2869F92900BE9F8F /* UserConfig.swift */; };
 		DDD43FE32A78C8900083A3E9 /* MQTTManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDD43FE22A78C8900083A3E9 /* MQTTManager.swift */; };
 		DDD9E4E4284B208E003777C5 /* UserEntity+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDD9E4E3284B208E003777C5 /* UserEntity+Extension.swift */; };
-		DDDB444029F79AB000EE2349 /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDDB443F29F79AB000EE2349 /* UserDefaults.swift */; };
+		DDDB444029F79AB000EE2349 /* UserDefaults+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDDB443F29F79AB000EE2349 /* UserDefaults+Extensions.swift */; };
 		DDDB444629F8A96500EE2349 /* Character.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDDB444529F8A96500EE2349 /* Character.swift */; };
 		DDDB444829F8A9C900EE2349 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDDB444729F8A9C900EE2349 /* String.swift */; };
 		DDDB444A29F8AA3A00EE2349 /* CLLocationCoordinate2D+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDDB444929F8AA3A00EE2349 /* CLLocationCoordinate2D+Extensions.swift */; };
@@ -356,7 +356,7 @@
 		DDD43FE22A78C8900083A3E9 /* MQTTManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MQTTManager.swift; sourceTree = "<group>"; };
 		DDD5BB0C2C285F00007E03CA /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		DDD9E4E3284B208E003777C5 /* UserEntity+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserEntity+Extension.swift"; sourceTree = "<group>"; };
-		DDDB443F29F79AB000EE2349 /* UserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
+		DDDB443F29F79AB000EE2349 /* UserDefaults+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Extensions.swift"; sourceTree = "<group>"; };
 		DDDB444529F8A96500EE2349 /* Character.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Character.swift; sourceTree = "<group>"; };
 		DDDB444729F8A9C900EE2349 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		DDDB444929F8AA3A00EE2349 /* CLLocationCoordinate2D+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CLLocationCoordinate2D+Extensions.swift"; sourceTree = "<group>"; };
@@ -895,7 +895,7 @@
 				B2CC14B12C66280000588C16 /* UIColor+Extension.swift */,
 				DDDB444D29F8AB0E00EE2349 /* UInt32.swift */,
 				0891A0CC2CCEA69F0030B392 /* URL+Extensions.swift */,
-				DDDB443F29F79AB000EE2349 /* UserDefaults.swift */,
+				DDDB443F29F79AB000EE2349 /* UserDefaults+Extensions.swift */,
 				DD007BB12AA59B9A00F5FA12 /* CoreData */,
 			);
 			path = Extensions;
@@ -1154,7 +1154,7 @@
 				DD2553592855B52700E55709 /* PositionConfig.swift in Sources */,
 				DD97E96828EFE9A00056DDA4 /* About.swift in Sources */,
 				084A3D442C76520A0026433E /* SafeStorage.swift in Sources */,
-				DDDB444029F79AB000EE2349 /* UserDefaults.swift in Sources */,
+				DDDB444029F79AB000EE2349 /* UserDefaults+Extensions.swift in Sources */,
 				DDB6ABE028B13AC700384BA1 /* DeviceRoles.swift in Sources */,
 				084A3D462C76522A0026433E /* Debounce.swift in Sources */,
 				B2A5F3132C5668FD009457AB /* MeshMap.swift in Sources */,

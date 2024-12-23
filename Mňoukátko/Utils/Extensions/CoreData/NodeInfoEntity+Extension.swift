@@ -128,7 +128,7 @@ extension NodeInfoEntity {
 		}
 	}
 
-	private func setLastHeardAt(when date: Date, connectedDevice device: Device?) {
+	private func setLastHeardAt(when date: Date, connectedDevice device: Device?, useDeviceLocation: Bool = true) {
 		if
 			let position = getClosestPosition(to: date, connectedDevice: device),
 			position.latitudeI != 0, position.longitudeI != 0
@@ -145,7 +145,7 @@ extension NodeInfoEntity {
 				"↑ \(self.lastHeardAtLatitude),\(self.lastHeardAtLongitude) from \(position.time?.relative() ?? "N/A")"
 			)
 		}
-		else if let location = LocationManager.shared.getLocation() {
+		else if useDeviceLocation, let location = LocationManager.shared.getLocation() {
 			lastHeardAtLatitude = location.coordinate.latitude
 			lastHeardAtLongitude = location.coordinate.longitude
 			lastHeardAtPrecision = location.horizontalAccuracy
