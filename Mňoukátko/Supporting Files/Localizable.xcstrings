@@ -1712,6 +1712,9 @@
     "Channels" : {
 
     },
+    "CocoaMQTT" : {
+
+    },
     "Coding rate" : {
 
     },
@@ -3613,6 +3616,9 @@
 
     },
     "Feature roadmap" : {
+
+    },
+    "Firebase" : {
 
     },
     "Firmware" : {
@@ -6864,6 +6870,9 @@
     "Legacy administration" : {
 
     },
+    "Libraries" : {
+
+    },
     "Licensed operator" : {
 
     },
@@ -7536,6 +7545,9 @@
           }
         }
       }
+    },
+    "Mapbox" : {
+
     },
     "mesh.log.ambientlighting.config %@" : {
       "extractionState" : "manual",
@@ -9700,6 +9712,9 @@
           }
         }
       }
+    },
+    "Meshtastic Protobufs" : {
+
     },
     "Meshtastic® is a registered trademark of Meshtastic LLC. Meshtastic LLC is not associated with Mňoukátko." : {
 
@@ -12974,6 +12989,9 @@
     "Spread factor" : {
 
     },
+    "SQLite for Swift" : {
+
+    },
     "ssid" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -13158,6 +13176,9 @@
 
     },
     "Supported I2C Connected sensors will be detected automatically, sensors are BMP280, BME280, BME680, MCP9808, INA219, INA260, LPS22 and SHTC3." : {
+
+    },
+    "Swift Protobuf" : {
 
     },
     "tapback.exclamation" : {
@@ -14057,9 +14078,6 @@
       }
     },
     "Version 1.2 End of life (EOL) Info" : {
-
-    },
-    "Version: %@" : {
 
     },
     "Visible Devices" : {

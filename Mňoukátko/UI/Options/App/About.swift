@@ -44,10 +44,6 @@ struct About: View {
 					// swiftlint:enable force_unwrapping
 				)
 				.font(.body)
-
-				if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
-					Text("Version: \(version)")
-				}
 			}
 
 			Section(header: Text("Licensing & Trademarks")) {
@@ -73,6 +69,50 @@ struct About: View {
 					)
 					.font(.footnote)
 				}
+			}
+
+			Section(header: Text("Libraries")) {
+				Link(
+					"CocoaMQTT",
+					// swiftlint:disable:next force_unwrapping
+					destination: URL(string: "https://github.com/emqx/CocoaMQTT")!
+				)
+				.font(.body)
+
+				Link(
+					"Firebase",
+					// swiftlint:disable:next force_unwrapping
+					destination: URL(string: "https://github.com/firebase/firebase-ios-sdk")!
+				)
+				.font(.body)
+
+				Link(
+					"Mapbox",
+					// swiftlint:disable:next force_unwrapping
+					destination: URL(string: "https://github.com/mapbox/mapbox-maps-ios.git")!
+				)
+				.font(.body)
+
+				Link(
+					"Meshtastic Protobufs",
+					// swiftlint:disable:next force_unwrapping
+					destination: URL(string: "https://github.com/meshtastic/protobufs")!
+				)
+				.font(.body)
+
+				Link(
+					"SQLite for Swift",
+					// swiftlint:disable:next force_unwrapping
+					destination: URL(string: "https://github.com/stephencelis/SQLite.swift.git")!
+				)
+				.font(.body)
+
+				Link(
+					"Swift Protobuf",
+					// swiftlint:disable:next force_unwrapping
+					destination: URL(string: "https://github.com/apple/swift-protobuf.git")!
+				)
+				.font(.body)
 			}
 		}
 		.navigationTitle("About")
