@@ -29,6 +29,13 @@ struct About: View {
 		List {
 			Section(header: Text("Mňoukátko")) {
 				Link(
+					"Source code",
+					// swiftlint:disable:next force_unwrapping
+					destination: URL(string: "https://github.com/c4t-dr34m/mnoukatko")!
+				)
+				.font(.body)
+
+				Link(
 					"Feature roadmap",
 					// swiftlint:disable force_unwrapping
 					destination: URL(
@@ -38,36 +45,26 @@ struct About: View {
 				)
 				.font(.body)
 
-				Link(
-					"Source code",
-					// swiftlint:disable:next force_unwrapping
-					destination: URL(string: "https://github.com/c4t-dr34m/mnoukatko")!
-				)
-				.font(.body)
-
-				if
-					let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
-					let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
-				{
-					Text("Version: \(version):\(build)")
+				if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+					Text("Version: \(version)")
 				}
 			}
 
-			Section {
+			Section(header: Text("Licensing & Trademarks")) {
 				VStack(alignment: .leading, spacing: 8) {
 					Text("Mňoukátko — the Meshtastic® client")
 						.font(.body)
 						.padding(.bottom, 8)
 
 					Text("Copyright © 2021-2024 Garth Vander Houwen")
-						.font(.body)
+						.font(.footnote)
 
 					Text("Copyright © 2024 Radovan Paška")
-						.font(.body)
+						.font(.footnote)
 						.padding(.bottom, 8)
 
 					Text("This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions; visit GitHub repository (see \"Source code\" above) to learn more.")
-						.font(.body)
+						.font(.footnote)
 				}
 
 				VStack(alignment: .leading, spacing: 8) {

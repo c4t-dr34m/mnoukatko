@@ -6867,6 +6867,9 @@
     "Licensed operator" : {
 
     },
+    "Licensing & Trademarks" : {
+
+    },
     "Location" : {
 
     },
@@ -14056,15 +14059,8 @@
     "Version 1.2 End of life (EOL) Info" : {
 
     },
-    "Version: %@:%@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Version: %1$@:%2$@"
-          }
-        }
-      }
+    "Version: %@" : {
+
     },
     "Visible Devices" : {
 
