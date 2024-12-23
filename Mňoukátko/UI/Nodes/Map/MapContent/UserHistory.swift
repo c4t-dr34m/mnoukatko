@@ -29,6 +29,7 @@ struct UserHistory: MapContent {
 	}
 
 	private let userPositions: [PositionEntity]?
+	private let showVisibleNodes: Bool
 
 	@Environment(\.colorScheme)
 	private var colorScheme: ColorScheme
@@ -155,7 +156,7 @@ struct UserHistory: MapContent {
 							.foregroundColor(colorScheme == .dark ? .black : .white)
 					}
 
-					if !nodes.isEmpty {
+					if showVisibleNodes, !nodes.isEmpty {
 						Text("\(nodes.count)")
 							.font(.system(size: 10, weight: .medium))
 							.foregroundColor(colorScheme == .dark ? .black : .white)
@@ -168,7 +169,7 @@ struct UserHistory: MapContent {
 				.background(colorScheme == .dark ? .black.opacity(0.5) : .white.opacity(0.5))
 				.clipShape(clipExternal)
 				.onTapGesture {
-					guard !nodes.isEmpty else {
+					guard showVisibleNodes, !nodes.isEmpty else {
 						return
 					}
 
@@ -190,9 +191,11 @@ struct UserHistory: MapContent {
 
 	init(
 		userPositions: [PositionEntity]?,
+		showVisibleNodes: Bool = true,
 		selectedCoordinate: Binding<CLLocationCoordinate2D?>
 	) {
 		self.userPositions = userPositions
+		self.showVisibleNodes = showVisibleNodes
 		self._selectedCoordinate = selectedCoordinate
 	}
 
