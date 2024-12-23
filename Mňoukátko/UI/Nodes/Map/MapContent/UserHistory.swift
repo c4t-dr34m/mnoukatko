@@ -119,21 +119,19 @@ struct UserHistory: MapContent {
 
 	@MapContentBuilder
 	var body: some MapContent {
-		ForEach(entries, id: \.index) { entry in
-			/* TODO: disabled due to mapkit performance issues with drawing lines
-			if selectedCoordinate == nil {
-				MapPolyline(
-					coordinates: entries.map { entry in
-						entry.coordinate
-					}
-				)
-				.stroke(
-					.red.lightness(delta: colorScheme == .dark ? -0.2 : +0.2),
-					style: StrokeStyle(lineWidth: 1)
-				)
-			}
-			*/
+		if selectedCoordinate == nil {
+			MapPolyline(
+				coordinates: entries.map { entry in
+					entry.coordinate
+				}
+			)
+			.stroke(
+				.red.lightness(delta: colorScheme == .dark ? -0.2 : +0.2),
+				style: StrokeStyle(lineWidth: 1)
+			)
+		}
 
+		ForEach(entries, id: \.index) { entry in
 			Annotation(
 				coordinate: entry.coordinate,
 				anchor: .bottomLeading
