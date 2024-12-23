@@ -3612,6 +3612,9 @@
     "Favorite" : {
 
     },
+    "Feature roadmap" : {
+
+    },
     "Firmware" : {
 
     },
@@ -9713,6 +9716,9 @@
     "Minimum distance" : {
 
     },
+    "Mňoukátko" : {
+
+    },
     "Mňoukátko — the Meshtastic® client" : {
 
     },
@@ -10946,9 +10952,6 @@
         }
       }
     },
-    "Rate Mňoukátko" : {
-
-    },
     "Reboot" : {
 
     },
@@ -11189,9 +11192,6 @@
           }
         }
       }
-    },
-    "Roadmap" : {
-
     },
     "Role" : {
 
@@ -13645,9 +13645,6 @@
 
     },
     "The Meshtastic Apple apps support firmware version %@ and above." : {
-
-    },
-    "This Application" : {
 
     },
     "This determines the actual frequency you are transmitting on in the band. If set to 0 this value will be calculated automatically based on the primary channel name." : {

@@ -60,6 +60,8 @@ extension UserDefaults {
 	enum Keys: String, CaseIterable {
 		case onboardingDone
 		case buildNumber
+		case launchCount
+		case askedToReviewAt
 		case locationAuthSkipped
 		case wantConfigNonce
 		case preferredPeripheralId // deprecated
@@ -89,6 +91,12 @@ extension UserDefaults {
 
 	@UserDefault(.buildNumber, defaultValue: -1)
 	static var buildNumber: Int
+
+	@UserDefault(.launchCount, defaultValue: 0)
+	static var launchCount: Int
+
+	@UserDefault(.askedToReviewAt, defaultValue: Date.distantPast)
+	static var askedToReviewAt: Date
 
 	@UserDefault(.locationAuthSkipped, defaultValue: false)
 	static var locationAuthSkipped: Bool

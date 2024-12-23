@@ -20,6 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import CoreData
 import FirebaseAnalytics
 import OSLog
+import StoreKit
 import SwiftUI
 
 struct NodeList: View {
@@ -33,6 +34,8 @@ struct NodeList: View {
 	private var context
 	@Environment(\.colorScheme)
 	private var colorScheme: ColorScheme
+	@Environment(\.requestReview)
+	private var requestReview
 	@EnvironmentObject
 	private var connectedDevice: CurrentDevice
 	@EnvironmentObject
@@ -135,6 +138,8 @@ struct NodeList: View {
 			)
 		}
 		.onAppear {
+			askForReview()
+
 			Analytics.logEvent(
 				AnalyticEvents.nodeList.id,
 				parameters: [
@@ -284,6 +289,20 @@ struct NodeList: View {
 				connectedNode: connectedNode,
 				context: context
 			)
+		}
+	}
+
+	private func askForReview() {
+		let reviewRequested = UserDefaults.askedToReviewAt
+		let delta = reviewRequested.distance(to: .now)
+
+		if
+			UserDefaults.launchCount > Int.random(in: 10...30),
+			reviewRequested == .distantPast || delta > AppConstants.appRatingThreshold
+		{
+			requestReview()
+
+			UserDefaults.askedToReviewAt = .now
 		}
 	}
 }

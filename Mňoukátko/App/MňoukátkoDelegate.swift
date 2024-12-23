@@ -27,6 +27,9 @@ final class MňoukátkoDelegate: UIResponder, UIApplicationDelegate, UNUserNotif
 		didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
 	) -> Bool {
 		UserDefaults.migrate()
+		UserDefaults.launchCount += 1
+
+		Logger.app.debug("Launch count: \(UserDefaults.launchCount)")
 
 		FirebaseApp.configure()
 

@@ -24,5 +24,7 @@ public enum AppConstants {
 	static let nodeOnlineThreshold: Double = 15 * 60 // 15 mins
 	static let nodeTelemetryThreshold: Double = 45 * 60 // 45 mins
 
+	static let appRatingThreshold: TimeInterval = 5 * 30.25 * 24 * 60 * 60 // ~5 months; apple's minimum is 4mo
+
 	static let scheme = "mnoukatko"
 }
