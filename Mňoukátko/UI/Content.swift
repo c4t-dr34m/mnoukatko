@@ -76,27 +76,27 @@ struct Content: View {
 		TabView(selection: $appState.tabSelection) {
 			Messages()
 				.tabItem {
-					Label("Messages", systemImage: "message")
+					Image(systemName: "message")
 				}
 				.tag(ContentTab.messages)
 				.badge(unreadMessagesCount)
 
 			NodeList()
 				.tabItem {
-					Label("Nodes", systemImage: "flipphone")
+					Image(systemName: "flipphone")
 				}
 				.tag(ContentTab.nodes)
 				.badge(nodeOnlineCount)
 
 			MeshMap(node: nodeConnected)
 				.tabItem {
-					Label("Mesh", systemImage: "map")
+					Image(systemName: "map")
 				}
 				.tag(ContentTab.map)
 
 			Options()
 				.tabItem {
-					Label("Options", systemImage: "gearshape")
+					Image(systemName: "gearshape")
 				}
 				.tag(ContentTab.options)
 		}

@@ -172,8 +172,6 @@ struct MeshMap: View {
 					.presentationDetents([.medium])
 				}
 			}
-			.navigationTitle("Mesh")
-			.navigationBarTitleDisplayMode(.large)
 			.navigationBarItems(
 				trailing: ConnectionInfo()
 			)

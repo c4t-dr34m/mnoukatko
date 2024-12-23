@@ -134,7 +134,6 @@ struct Messages: View {
 			.listStyle(.automatic)
 			.disableAutocorrection(true)
 			.scrollDismissesKeyboard(.immediately)
-			.navigationTitle("Messages")
 			.navigationBarItems(
 				trailing: ConnectionInfo()
 			)

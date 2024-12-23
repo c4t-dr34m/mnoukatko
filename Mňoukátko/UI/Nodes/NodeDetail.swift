@@ -532,7 +532,7 @@ struct NodeDetail: View {
 
 	@ViewBuilder
 	private var temperatureHistory: some View {
-		if let nodeEnvironmentHistory, nodeEnvironmentHistory.count > 1 {
+		if let nodeEnvironmentHistory, !nodeEnvironmentHistory.isEmpty {
 			let tempMinMax = findTemperatureMinMax()
 			let tempOvershoot = (tempMinMax.max - tempMinMax.min) / 3
 			let chartMin = tempMinMax.min - tempOvershoot
@@ -609,7 +609,7 @@ struct NodeDetail: View {
 
 	@ViewBuilder
 	private var pressureHistory: some View {
-		if let nodePressureHistory, nodePressureHistory.count > 1 {
+		if let nodePressureHistory, !nodePressureHistory.isEmpty {
 			let pressMinMax = findPresureMinMax()
 			let pressOvershoot = (pressMinMax.max - pressMinMax.min) / 3
 			let chartMin = pressMinMax.min - pressOvershoot

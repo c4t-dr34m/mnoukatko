@@ -7531,9 +7531,6 @@
         }
       }
     },
-    "Mesh" : {
-
-    },
     "mesh.log.ambientlighting.config %@" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -10150,9 +10147,6 @@
           }
         }
       }
-    },
-    "Nodes" : {
-
     },
     "nodes %@" : {
       "extractionState" : "manual",

@@ -97,7 +97,6 @@ struct Options: View {
 					connectedNodeNum = Int(connectedDevice.getConnectedDevice() != nil ? preferredNodeNum : 0)
 				}
 			}
-			.navigationTitle("Options")
 			.navigationBarItems(
 				trailing: ConnectionInfo()
 			)

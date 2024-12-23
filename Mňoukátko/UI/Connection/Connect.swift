@@ -81,8 +81,6 @@ struct Connect: View {
 				}
 				.headerProminence(.increased)
 			}
-			.navigationTitle("Connection")
-			.navigationBarTitleDisplayMode(.large)
 			.navigationBarItems(
 				trailing: ConnectionInfo()
 			)

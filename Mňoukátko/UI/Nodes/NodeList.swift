@@ -120,7 +120,6 @@ struct NodeList: View {
 			.listStyle(.insetGrouped)
 			.disableAutocorrection(true)
 			.scrollDismissesKeyboard(.interactively)
-			.navigationTitle("Nodes")
 			.navigationBarItems(
 				trailing: ConnectionInfo()
 			)
