@@ -86,7 +86,7 @@ struct Options: View {
 			}
 			.listStyle(.insetGrouped)
 			.onChange(of: UserDefaults.preferredPeripheralNumList, initial: true) {
-				preferredNodeNum = UserDefaults.preferredPeripheralNumList[0]
+				preferredNodeNum = UserDefaults.preferredPeripheralNumListFirst
 
 				if !nodes.isEmpty {
 					if connectedNodeNum == 0 {

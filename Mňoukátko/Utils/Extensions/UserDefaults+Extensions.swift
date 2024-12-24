@@ -109,12 +109,28 @@ extension UserDefaults {
 
 	@UserDefault(.preferredPeripheralIdList, defaultValue: [])
 	static var preferredPeripheralIdList: [String]
+	static var preferredPeripheralIdListFirst: String {
+		if let first = preferredPeripheralIdList.first {
+			return first
+		}
+		else {
+			return ""
+		}
+	}
 
 	@UserDefault(.preferredPeripheralNum, defaultValue: 0)
 	private static var preferredPeripheralNum: Int
 
 	@UserDefault(.preferredPeripheralNumList, defaultValue: [])
 	static var preferredPeripheralNumList: [Int]
+	static var preferredPeripheralNumListFirst: Int {
+		if let first = preferredPeripheralNumList.first {
+			return first
+		}
+		else {
+			return 0
+		}
+	}
 
 	@UserDefault(.enableAdministration, defaultValue: false)
 	static var enableAdministration: Bool

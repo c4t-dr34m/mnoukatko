@@ -57,7 +57,7 @@ struct Messages: View {
 	@FetchRequest(
 		sortDescriptors: [],
 		predicate: NSPredicate(
-			format: "num == %lld", Int64(UserDefaults.preferredPeripheralNumList[0])
+			format: "num == %lld", Int64(UserDefaults.preferredPeripheralNumListFirst)
 		)
 	)
 	private var nodes: FetchedResults<NodeInfoEntity>

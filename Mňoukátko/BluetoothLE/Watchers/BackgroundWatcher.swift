@@ -52,7 +52,15 @@ final class BackgroundWatcher: DevicesDelegate {
 		// let's try to force connection without waiting for discovery
 		if
 			let preferredDevice = bleManager.devices.first(where: { device in
-				device.peripheral.identifier.uuidString == UserDefaults.preferredPeripheralIdList[0]
+				if
+					let preferred = UserDefaults.preferredPeripheralIdList.first,
+					preferred == device.peripheral.identifier.uuidString
+				{
+					return true
+				}
+				else {
+					return false
+				}
 			})
 		{
 			bleManager.connectTo(peripheral: preferredDevice.peripheral)
@@ -88,7 +96,15 @@ final class BackgroundWatcher: DevicesDelegate {
 		Logger.app.debug("Background: devices \(devices)")
 
 		let device = devices.last(where: { device in
-			device.peripheral.identifier.uuidString == UserDefaults.preferredPeripheralIdList[0]
+			if
+				let preferred = UserDefaults.preferredPeripheralIdList.first,
+				preferred == device.peripheral.identifier.uuidString
+			{
+				return true
+			}
+			else {
+				return false
+			}
 		})
 
 		guard let device else {
@@ -147,7 +163,7 @@ final class BackgroundWatcher: DevicesDelegate {
 		if let nodes = try? bleManager.context.fetch(request) {
 			if
 				let connectedNode = nodes.first(where: { node in
-					node.num == UserDefaults.preferredPeripheralNumList[0]
+					node.num == UserDefaults.preferredPeripheralNumListFirst
 				})
 			{
 				nodeCount = nodes.count - 1
