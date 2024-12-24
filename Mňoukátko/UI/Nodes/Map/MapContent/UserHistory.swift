@@ -54,15 +54,17 @@ struct UserHistory: MapContent {
 
 		// total distance travelled
 		var totalDistance = 0.0
-		for i in 0...(positions.count - 1) {
-			let prev = i > 0 ? positions[i - 1] : nil
-			let current = positions[i]
+		if !positions.isEmpty {
+			for i in 0...(positions.count - 1) {
+				let prev = i > 0 ? positions[i - 1] : nil
+				let current = positions[i]
 
-			guard let prev else {
-				continue
+				guard let prev else {
+					continue
+				}
+
+				totalDistance += current.coordinate.distance(from: prev.coordinate)
 			}
-
-			totalDistance += current.coordinate.distance(from: prev.coordinate)
 		}
 
 		Logger.location.debug("Total distance travelled by: \(round(totalDistance / 1000.0))km")
