@@ -1,7 +1,7 @@
 /*
 Mňoukátko - a Meshtastic® client
 
-Copyright © 2021-2024 Garth Vander Houwen
+Copyright © 2021 Garth Vander Houwen
 Copyright © 2024 Radovan Paška
 
 This program is free software: you can redistribute it and/or modify

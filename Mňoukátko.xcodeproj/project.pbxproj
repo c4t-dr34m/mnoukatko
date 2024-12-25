@@ -476,17 +476,17 @@
 		B266A74C2C591E9500DFC723 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				086054792D1CA3610006C5C2 /* HistoryStepsView.swift */,
-				B2A5F2E02C5668FD009457AB /* Buttons */,
+				B25D5CB32C5BC3840007F90F /* AvatarAbstract.swift */,
 				DD47E3D526F17ED900029299 /* AvatarNode.swift */,
 				DD3CC6BD28E4CD9800FA9159 /* BatteryView.swift */,
 				DDF924C926FBB953009FE055 /* ConnectionInfo.swift */,
+				086054792D1CA3610006C5C2 /* HistoryStepsView.swift */,
 				DDB75A202A12B954006ED576 /* LoraSignalView.swift */,
-				08DD7E622C42D8B300548159 /* MQTTConnectionIcon.swift */,
 				DDF45C332BC1A48E005ED5F2 /* MQTTChannelIcon.swift */,
-				DD457187293C7E63000C49FB /* SignalStrengthIndicator.swift */,
-				B25D5CB32C5BC3840007F90F /* AvatarAbstract.swift */,
+				08DD7E622C42D8B300548159 /* MQTTConnectionIcon.swift */,
 				B2A064CD2C64D16E00B7E9F2 /* NavigationLazyView.swift */,
+				DD457187293C7E63000C49FB /* SignalStrengthIndicator.swift */,
+				B2A5F2E02C5668FD009457AB /* Buttons */,
 			);
 			path = Views;
 			sourceTree = "<group>";

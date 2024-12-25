@@ -26,15 +26,15 @@ final class MňoukátkoDelegate: UIResponder, UIApplicationDelegate, UNUserNotif
 		_ application: UIApplication,
 		didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
 	) -> Bool {
-		UserDefaults.migrate()
-		UserDefaults.launchCount += 1
-
-		Logger.app.debug("Launch count: \(UserDefaults.launchCount)")
-
 		FirebaseApp.configure()
 
 		Analytics.setAnalyticsCollectionEnabled(true)
 		Analytics.logEvent(AnalyticEvents.appLaunch.id, parameters: nil)
+
+		UserDefaults.migrate()
+		UserDefaults.launchCount += 1
+
+		Logger.app.debug("Launch count: \(UserDefaults.launchCount)")
 
 		UNUserNotificationCenter.current().delegate = self
 
