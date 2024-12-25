@@ -21,11 +21,13 @@ import CoreData
 import CoreLocation
 import FirebaseAnalytics
 import MapKit
+import MeshtasticProtobufs
 import OSLog
 import SwiftUI
 
 struct MeshMap: View {
 	private let node: NodeInfoEntity?
+	private let nodeDetail: NodeInfoEntity?
 
 	@Environment(\.colorScheme)
 	private var colorScheme: ColorScheme
@@ -49,27 +51,29 @@ struct MeshMap: View {
 	@State
 	private var cameraHeading: Double?
 	@State
-	private var nodePositions: [PositionEntity] = []
-	@State
 	private var showNodeHistory = UserDefaults.mapNodeHistory
 	@State
 	private var selectedPosition: PositionEntity?
 	@State
 	private var showSpiderFor: CLLocationCoordinate2D?
-	private var userPositions: [PositionEntity]? {
-		guard showNodeHistory else {
-			return nil
+	@State
+	private var nodePositions: [PositionEntity] = []
+	private var nodeHistoryPositions: [PositionEntity]? {
+		if let nodeDetail {
+			return nodeDetail.positions?.array as? [PositionEntity]
 		}
-
-		return connectedDevice.device?.nodeInfo?.positions?.array as? [PositionEntity]
+		else {
+			return connectedDevice.device?.nodeInfo?.positions?.array as? [PositionEntity]
+		}
+	}
+	private var isNodeDetail: Bool {
+		nodeDetail != nil
 	}
 
 	var body: some View {
 		NavigationStack {
 			ZStack(alignment: .topTrailing) {
 				MapReader { _ in
-					var mostRecent = node?.positions?.lastObject as? PositionEntity
-
 					Map(
 						position: $cameraPosition,
 						bounds: MapCameraBounds(
@@ -78,9 +82,10 @@ struct MeshMap: View {
 						),
 						scope: mapScope
 					) {
-						if showNodeHistory {
+						if showNodeHistory || isNodeDetail {
 							UserHistory(
-								userPositions: userPositions,
+								positions: nodeHistoryPositions,
+								showVisibleNodes: !isNodeDetail,
 								selectedCoordinate: $showSpiderFor
 							)
 						}
@@ -111,6 +116,8 @@ struct MeshMap: View {
 								) {
 									avatar(for: node, name: nodeName)
 										.onTapGesture {
+											guard !isNodeDetail else { return }
+
 											selectedPosition = selectedPosition == position ? nil : position
 										}
 								} label: {
@@ -131,9 +138,10 @@ struct MeshMap: View {
 						cameraHeading = map.camera.heading
 					}
 					.onChange(of: node, initial: true) {
-						mostRecent = node?.positions?.lastObject as? PositionEntity
-
-						if let mostRecent, mostRecent.coordinate.isValid {
+						if
+							let mostRecent = nodeHistoryPositions?.last,
+							mostRecent.coordinate.isValid
+						{
 							cameraPosition = .camera(
 								MapCamera(
 									centerCoordinate: mostRecent.coordinate,
@@ -160,7 +168,7 @@ struct MeshMap: View {
 					distance: $cameraDistance,
 					heading: $cameraHeading,
 					nodeHistory: $showNodeHistory,
-					allowNodeHistory: true
+					allowNodeHistory: !isNodeDetail
 				)
 			}
 			.popover(item: $selectedPosition) { position in
@@ -186,13 +194,14 @@ struct MeshMap: View {
 		}
 	}
 
-	init(node: NodeInfoEntity? = nil) {
+	init(node: NodeInfoEntity? = nil, detail: NodeInfoEntity? = nil) {
 		self.node = node
+		self.nodeDetail = detail
 	}
 
 	@ViewBuilder
 	private func avatar(for node: NodeInfoEntity, name: String) -> some View {
-		if node.isOnline, showSpiderFor == nil {
+		if (node.isOnline && showSpiderFor == nil) || isNodeDetail {
 			ZStack(alignment: .top) {
 				AvatarNode(
 					node,
@@ -236,6 +245,17 @@ struct MeshMap: View {
 	private func loadNodePositions() {
 		if showNodeHistory, showSpiderFor == nil {
 			nodePositions = []
+
+			return
+		}
+
+		if isNodeDetail {
+			if let last = nodeHistoryPositions?.last  {
+				nodePositions = [ last ]
+			}
+			else {
+				nodePositions = []
+			}
 
 			return
 		}

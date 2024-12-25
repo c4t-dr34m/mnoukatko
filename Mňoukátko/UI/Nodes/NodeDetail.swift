@@ -155,7 +155,7 @@ struct NodeDetail: View {
 							else {
 								NavigationLink {
 									NavigationLazyView(
-										NodeMap(node: node)
+										MeshMap(detail: node)
 									)
 								} label: {
 									VStack {

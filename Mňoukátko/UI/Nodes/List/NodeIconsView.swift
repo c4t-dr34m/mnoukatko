@@ -46,6 +46,24 @@ struct NodeIconsView: View {
 	private var nodePosition: PositionEntity? {
 		node.positions?.lastObject as? PositionEntity
 	}
+	private var nodeHasHistory: Bool {
+		guard let positions = node.positions?.array as? [PositionEntity], positions.count > 1 else {
+			return false
+		}
+
+		var totalDistance: Double = 0.0
+		var previousCoord: CLLocationCoordinate2D?
+
+		for position in positions {
+			if let previousCoord {
+				totalDistance += position.coordinate.distance(from: previousCoord)
+			}
+
+			previousCoord = position.coordinate
+		}
+
+		return totalDistance >= MapConstants.distanceSumThresholdForHistory
+	}
 	private var nodeEnvironment: TelemetryEntity? {
 		guard
 			let history = node
@@ -94,7 +112,11 @@ struct NodeIconsView: View {
 
 						if
 							!node.viaMqtt,
-							let signal = LoRaSignal.getSignalStrength(snr: node.snr, rssi: node.rssi, preset: modemPreset)
+							let signal = LoRaSignal.getSignalStrength(
+								snr: node.snr,
+								rssi: node.rssi,
+								preset: modemPreset
+							)
 						{
 							ZStack(alignment: .center) {
 								SignalStrengthIndicator(
@@ -188,7 +210,8 @@ struct NodeIconsView: View {
 		if node.hasPositions {
 			if
 				let currentCoordinate = locationManager.getLocation()?.coordinate,
-				let lastCoordinate = (node.positions?.lastObject as? PositionEntity)?.coordinate
+				let nodePositions = node.positions,
+				let lastCoordinate = (nodePositions.lastObject as? PositionEntity)?.coordinate
 			{
 				let myLocation = CLLocation(
 					latitude: currentCoordinate.latitude,
@@ -213,6 +236,25 @@ struct NodeIconsView: View {
 					.font(detailInfoTextFont)
 					.lineLimit(1)
 					.foregroundColor(.gray)
+
+				if nodeHasHistory {
+					HStack(spacing: 2) {
+						let angle = Angle(degrees: 80)
+
+						Image(systemName: "shoeprints.fill")
+							.font(.system(size: 14))
+							.foregroundColor(.gray)
+							.rotationEffect(angle)
+						Image(systemName: "shoeprints.fill")
+							.font(.system(size: 10))
+							.foregroundColor(.gray.opacity(0.7))
+							.rotationEffect(angle)
+						Image(systemName: "shoeprints.fill")
+							.font(.system(size: 7))
+							.foregroundColor(.gray.opacity(0.4))
+							.rotationEffect(angle)
+					}
+				}
 			}
 			else {
 				Image(systemName: "mappin.and.ellipse")

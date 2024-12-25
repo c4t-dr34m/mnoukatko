@@ -28,7 +28,7 @@ struct UserHistory: MapContent {
 		let bearingToNext: Double?
 	}
 
-	private let userPositions: [PositionEntity]?
+	private let positions: [PositionEntity]?
 	private let showVisibleNodes: Bool
 
 	@Environment(\.colorScheme)
@@ -38,7 +38,7 @@ struct UserHistory: MapContent {
 	@Binding
 	private var selectedCoordinate: CLLocationCoordinate2D?
 	private var entries: [Entry] {
-		guard let positions = userPositions else {
+		guard let positions else {
 			return []
 		}
 
@@ -192,11 +192,11 @@ struct UserHistory: MapContent {
 	}
 
 	init(
-		userPositions: [PositionEntity]?,
+		positions: [PositionEntity]?,
 		showVisibleNodes: Bool = true,
 		selectedCoordinate: Binding<CLLocationCoordinate2D?>
 	) {
-		self.userPositions = userPositions
+		self.positions = positions
 		self.showVisibleNodes = showVisibleNodes
 		self._selectedCoordinate = selectedCoordinate
 	}

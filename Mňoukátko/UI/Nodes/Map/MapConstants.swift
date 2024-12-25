@@ -21,5 +21,5 @@ import Foundation
 enum MapConstants {
 	static let heardOfRadius = 550.0 // m
 	static let minimalHistoryEntrySeparation = 500.0 // m
-	static let distanceSumThresholdForHistory = 1_500.0 // m
+	static let distanceSumThresholdForHistory = 250.0 // m
 }

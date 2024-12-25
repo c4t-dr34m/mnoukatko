@@ -24,15 +24,26 @@ import SwiftUI
 struct SimpleNodeMap: View {
 	private let mapStyle = MapStyle.standard(elevation: .flat)
 
+	@Environment(\.colorScheme)
+	private var colorScheme: ColorScheme
 	@Environment(\.managedObjectContext)
 	private var context
 	@Namespace
 	private var mapScope
 	@State
-	private var positions: [PositionEntity] = []
-	@State
 	private var position = MapCameraPosition.automatic
 	private var node: NodeInfoEntity
+	private var positions: [PositionEntity]? {
+		node.positions?.array as? [PositionEntity]
+	}
+	private var nodeColor: Color {
+		if colorScheme == .dark {
+			.white
+		}
+		else {
+			.black
+		}
+	}
 
 	@ViewBuilder
 	var body: some View {
@@ -49,7 +60,30 @@ struct SimpleNodeMap: View {
 				bounds: MapCameraBounds(minimumDistance: 100, maximumDistance: .infinity),
 				scope: mapScope
 			) {
-				NodeMapContent(node: node, showHistory: false)
+				if let latest = positions?.first(where: { $0.latest }) {
+					if
+						let radius = PositionPrecision(rawValue: Int(latest.precisionBits))?.precisionMeters,
+						radius > 10.0
+					{
+						MapCircle(center: latest.coordinate, radius: radius)
+							.foregroundStyle(
+								Color(nodeColor).opacity(0.25)
+							)
+							.stroke(nodeColor.opacity(0.5), lineWidth: 2)
+					}
+
+					Annotation(
+						coordinate: latest.coordinate,
+						anchor: .center
+					) {
+						Image(systemName: "flipphone")
+							.font(.system(size: 32))
+							.foregroundColor(nodeColor)
+					} label: {
+						// nothing
+					}
+					.tag(latest.time)
+				}
 			}
 			.mapScope(mapScope)
 			.mapStyle(mapStyle)

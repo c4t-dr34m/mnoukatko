@@ -93,8 +93,6 @@
 		B2A5F3042C5668FD009457AB /* NodeIconsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2E32C5668FD009457AB /* NodeIconsView.swift */; };
 		B2A5F3072C5668FD009457AB /* NodeInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2E62C5668FD009457AB /* NodeInfoView.swift */; };
 		B2A5F3092C5668FD009457AB /* NodeListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2E82C5668FD009457AB /* NodeListItem.swift */; };
-		B2A5F30B2C5668FD009457AB /* NodeMapContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2EB2C5668FD009457AB /* NodeMapContent.swift */; };
-		B2A5F30E2C5668FD009457AB /* NodeMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2EF2C5668FD009457AB /* NodeMap.swift */; };
 		B2A5F30F2C5668FD009457AB /* SimpleNodeMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2F02C5668FD009457AB /* SimpleNodeMap.swift */; };
 		B2A5F3132C5668FD009457AB /* MeshMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2F52C5668FD009457AB /* MeshMap.swift */; };
 		B2A5F3142C5668FD009457AB /* NodeList.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A5F2F62C5668FD009457AB /* NodeList.swift */; };
@@ -270,8 +268,6 @@
 		B2A5F2E32C5668FD009457AB /* NodeIconsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeIconsView.swift; sourceTree = "<group>"; };
 		B2A5F2E62C5668FD009457AB /* NodeInfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeInfoView.swift; sourceTree = "<group>"; };
 		B2A5F2E82C5668FD009457AB /* NodeListItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeListItem.swift; sourceTree = "<group>"; };
-		B2A5F2EB2C5668FD009457AB /* NodeMapContent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeMapContent.swift; sourceTree = "<group>"; };
-		B2A5F2EF2C5668FD009457AB /* NodeMap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeMap.swift; sourceTree = "<group>"; };
 		B2A5F2F02C5668FD009457AB /* SimpleNodeMap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleNodeMap.swift; sourceTree = "<group>"; };
 		B2A5F2F52C5668FD009457AB /* MeshMap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeshMap.swift; sourceTree = "<group>"; };
 		B2A5F2F62C5668FD009457AB /* NodeList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeList.swift; sourceTree = "<group>"; };
@@ -581,24 +577,14 @@
 			path = Buttons;
 			sourceTree = "<group>";
 		};
-		B2A5F2EC2C5668FD009457AB /* MapContent */ = {
-			isa = PBXGroup;
-			children = (
-				081A0F7E2D0F027500B6F1E4 /* UserHistory.swift */,
-				B2A5F2EB2C5668FD009457AB /* NodeMapContent.swift */,
-			);
-			path = MapContent;
-			sourceTree = "<group>";
-		};
 		B2A5F2F12C5668FD009457AB /* Map */ = {
 			isa = PBXGroup;
 			children = (
-				083EC6CA2D1762EE003F57C4 /* MapConstants.swift */,
 				B2B1AC582D1074A800114A66 /* Controls.swift */,
+				083EC6CA2D1762EE003F57C4 /* MapConstants.swift */,
 				B2A5F2F52C5668FD009457AB /* MeshMap.swift */,
-				B2A5F2EF2C5668FD009457AB /* NodeMap.swift */,
 				B2A5F2F02C5668FD009457AB /* SimpleNodeMap.swift */,
-				B2A5F2EC2C5668FD009457AB /* MapContent */,
+				081A0F7E2D0F027500B6F1E4 /* UserHistory.swift */,
 			);
 			path = Map;
 			sourceTree = "<group>";
@@ -1180,13 +1166,11 @@
 				081C3AED2C97494000F93C46 /* CBManagerState+Extension.swift in Sources */,
 				B266A76C2C59298900DFC723 /* GPSUpdateIntervals.swift in Sources */,
 				DD3CC6C028E7A60700FA9159 /* Tapbacks.swift in Sources */,
-				B2A5F30B2C5668FD009457AB /* NodeMapContent.swift in Sources */,
 				D93068D52B812B700066FBC8 /* MessageDestination.swift in Sources */,
 				B266A7532C59219E00DFC723 /* Architecture.swift in Sources */,
 				B2AF95D82CABE8E000EAD056 /* SaveButton.swift in Sources */,
 				DDDB444E29F8AB0E00EE2349 /* UInt32.swift in Sources */,
 				B266DA902C53CEFB0067D317 /* Constants.swift in Sources */,
-				B2A5F30E2C5668FD009457AB /* NodeMap.swift in Sources */,
 				084DCFFA2CA9BEF40032EF46 /* NodeIconsCompactView.swift in Sources */,
 				B266A75B2C59262E00DFC723 /* ScreenCarouselIntervals.swift in Sources */,
 				08933D382C81D03A006D57EA /* CoreDataTools.swift in Sources */,
