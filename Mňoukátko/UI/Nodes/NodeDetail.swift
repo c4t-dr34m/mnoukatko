@@ -1202,19 +1202,27 @@ struct NodeDetail: View {
 
 	// TODO: consolidate next four funcs
 	private func findTemperatureMinMax() -> (min: Float, max: Float) {
+		let lowerBound: Float = -50.0
+		let upperBound: Float = 150.0
+
 		guard let nodeEnvironmentHistory, !nodeEnvironmentHistory.isEmpty else {
-			return (min: -20, max: 50)
+			return (min: lowerBound, max: upperBound)
 		}
 
 		var min = Float.greatestFiniteMagnitude
 		var max = Float.leastNormalMagnitude
 
-		for measurement in nodeEnvironmentHistory {
-			if measurement.temperature < min {
-				min = measurement.temperature
-			}
-			if measurement.temperature > max {
-				max = measurement.temperature
+		if nodeEnvironmentHistory.count == 1 {
+			min = nodeEnvironmentHistory[0].temperature
+			max = nodeEnvironmentHistory[0].temperature
+		} else {
+			for measurement in nodeEnvironmentHistory {
+				if measurement.temperature < min {
+					min = measurement.temperature
+				}
+				if measurement.temperature > max {
+					max = measurement.temperature
+				}
 			}
 		}
 
@@ -1222,19 +1230,28 @@ struct NodeDetail: View {
 	}
 
 	private func findPresureMinMax() -> (min: Float, max: Float) {
-		guard let nodeEnvironmentHistory else {
-			return (min: 960, max: 1070)
+		let lowerBound: Float = 960.0
+		let upperBound: Float = 1070.0
+
+		guard let nodeEnvironmentHistory, !nodeEnvironmentHistory.isEmpty else {
+			return (min: lowerBound, max: upperBound)
 		}
 
-		var min = Float.greatestFiniteMagnitude
-		var max = Float.leastNormalMagnitude
+		var min = upperBound
+		var max = lowerBound
 
-		for measurement in nodeEnvironmentHistory {
-			if measurement.barometricPressure < min {
-				min = measurement.barometricPressure
-			}
-			if measurement.barometricPressure > max {
-				max = measurement.barometricPressure
+		if nodeEnvironmentHistory.count == 1 {
+			min = nodeEnvironmentHistory[0].temperature
+			max = nodeEnvironmentHistory[0].temperature
+		}
+		else {
+			for measurement in nodeEnvironmentHistory {
+				if measurement.barometricPressure < min {
+					min = measurement.barometricPressure
+				}
+				if measurement.barometricPressure > max {
+					max = measurement.barometricPressure
+				}
 			}
 		}
 
