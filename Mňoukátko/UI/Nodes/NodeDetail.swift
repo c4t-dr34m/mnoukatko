@@ -75,51 +75,43 @@ struct NodeDetail: View {
 		&& nodePosition?.time?.isStale(threshold: AppConstants.nodeTelemetryThreshold) ?? true
 		&& nodePosition?.speed ?? 0 > 0
 	}
-	private var nodeTelemetry: TelemetryEntity? {
-		node
-			.telemetries?
-			.filtered(
-				using: NSPredicate(format: "metricsType == 0")
-			)
-			.lastObject as? TelemetryEntity
+	private var nodeTelemetries: [TelemetryEntity]? {
+		node.telemetries?.array as? [TelemetryEntity]
+	}
+	private var nodeTelemetryLast: TelemetryEntity? {
+		nodeTelemetries?.last(where: { telemetry in
+			telemetry.metricsType == 0
+		})
 	}
 	private var nodeEnvironmentHistory: [TelemetryEntity]? {
-		guard
-			let history = node
-				.telemetries?
-				.filtered(
-					using: NSPredicate(format: "metricsType == 1")
-				)
-				.array as? [TelemetryEntity]
-		else {
+		let telemetries = nodeTelemetries?.filter { telemetry in
+			telemetry.metricsType == 1
+		}
+
+		guard let telemetries, !telemetries.isEmpty else {
 			return nil
 		}
 
-		let historyArray = history.map { $0 }
+		let historyLength = telemetries.count
 		var measurements: [TelemetryEntity] = []
 
-		if historyArray.count > 1 {
-			for i in 0...(historyArray.count - 1) {
-				let current = historyArray[i]
-				let next = i < (historyArray.count - 1) ? historyArray[i + 1] : nil
+		for i in 0...(historyLength - 1) {
+			let current = telemetries[i]
+			let next = i < (historyLength - 1) ? telemetries[i + 1] : nil
 
-				if let next {
-					if
-						let currentTime = current.time,
-						currentTime > chartHistory,
-						let nextTime = next.time,
-						currentTime.distance(to: nextTime) >= telemetryDelta
-					{
-						measurements.append(current)
-					}
-				}
-				else {
+			if let next {
+				if
+					let currentTime = current.time,
+					currentTime > chartHistory,
+					let nextTime = next.time,
+					currentTime.distance(to: nextTime) >= telemetryDelta
+				{
 					measurements.append(current)
 				}
 			}
-		}
-		else {
-			measurements.append(contentsOf: historyArray)
+			else {
+				measurements.append(current)
+			}
 		}
 
 		return measurements
@@ -190,11 +182,13 @@ struct NodeDetail: View {
 						environmentInfo
 
 						temperatureHistory
-							.padding(.vertical, 4)
+							.padding(.vertical, 8)
 
 						pressureHistory
-							.padding(.vertical, 4)
+							.padding(.vertical, 8)
 					}
+					.listRowSeparator(.hidden)
+					.listRowSpacing(0)
 					.headerProminence(.increased)
 				}
 
@@ -533,17 +527,9 @@ struct NodeDetail: View {
 	@ViewBuilder
 	private var temperatureHistory: some View {
 		if let nodeEnvironmentHistory, !nodeEnvironmentHistory.isEmpty {
-			let tempMinMax = findTemperatureMinMax()
-			let tempOvershoot = (tempMinMax.max - tempMinMax.min) / 3
-			let chartMin = tempMinMax.min - tempOvershoot
-			let chartMax = tempMinMax.max + tempOvershoot
-			let yValues = [
-				Int(tempMinMax.min.rounded()),
-				Int((tempMinMax.min + (tempMinMax.max - tempMinMax.min) / 2).rounded()),
-				Int(tempMinMax.max.rounded())
-			]
+			let yValues = getTemperatureY()
 
-			Chart(nodeEnvironmentHistory, id: \.time) { measurement in
+			Chart(nodeEnvironmentHistory) { measurement in
 				if let time = measurement.time {
 					LineMark(
 						x: .value("Date", time),
@@ -582,12 +568,12 @@ struct NodeDetail: View {
 					}
 				}
 			}
-			.chartYScale(domain: [chartMin, chartMax])
+			.chartYScale(domain: [yValues.min - yValues.margin, yValues.max + yValues.margin])
 			.chartYAxis {
 				AxisMarks(
 					preset: .extended,
 					position: .trailing,
-					values: yValues
+					values: [yValues.min, yValues.center, yValues.max]
 				) { value in
 					AxisTick()
 					AxisGridLine()
@@ -610,17 +596,9 @@ struct NodeDetail: View {
 	@ViewBuilder
 	private var pressureHistory: some View {
 		if let nodePressureHistory, !nodePressureHistory.isEmpty {
-			let pressMinMax = findPresureMinMax()
-			let pressOvershoot = (pressMinMax.max - pressMinMax.min) / 3
-			let chartMin = pressMinMax.min - pressOvershoot
-			let chartMax = pressMinMax.max + pressOvershoot
-			let yValues = [
-				Int(pressMinMax.min.rounded()),
-				Int((pressMinMax.min + (pressMinMax.max - pressMinMax.min) / 2).rounded()),
-				Int(pressMinMax.max.rounded())
-			]
+			let yValues = getPressureY()
 
-			Chart(nodePressureHistory, id: \.time) { measurement in
+			Chart(nodePressureHistory) { measurement in
 				if let time = measurement.time {
 					LineMark(
 						x: .value("Date", time),
@@ -659,12 +637,12 @@ struct NodeDetail: View {
 					}
 				}
 			}
-			.chartYScale(domain: [chartMin, chartMax])
+			.chartYScale(domain: [yValues.min - yValues.margin, yValues.max + yValues.margin])
 			.chartYAxis {
 				AxisMarks(
 					preset: .extended,
 					position: .trailing,
-					values: yValues
+					values: [yValues.min, yValues.center, yValues.max]
 				) { value in
 					AxisTick()
 					AxisGridLine()
@@ -784,7 +762,7 @@ struct NodeDetail: View {
 			}
 		}
 
-		if let channelUtil = nodeTelemetry?.channelUtilization {
+		if let channelUtil = nodeTelemetryLast?.channelUtilization {
 			HStack {
 				Label {
 					Text("Channel")
@@ -800,7 +778,7 @@ struct NodeDetail: View {
 			}
 		}
 
-		if let airUtil = nodeTelemetry?.airUtilTx {
+		if let airUtil = nodeTelemetryLast?.airUtilTx {
 			HStack {
 				Label {
 					Text("Air Time")
@@ -1034,9 +1012,9 @@ struct NodeDetail: View {
 			}
 		}
 
-		if let nodeTelemetry, nodeTelemetry.uptimeSeconds > 0 {
+		if let nodeTelemetryLast, nodeTelemetryLast.uptimeSeconds > 0 {
 			let now = Date.now
-			let later = now + TimeInterval(nodeTelemetry.uptimeSeconds)
+			let later = now + TimeInterval(nodeTelemetryLast.uptimeSeconds)
 			let uptimeFormatted = (now..<later).formatted(.components(style: .narrow))
 
 			HStack {
@@ -1222,8 +1200,9 @@ struct NodeDetail: View {
 		}
 	}
 
+	// TODO: consolidate next four funcs
 	private func findTemperatureMinMax() -> (min: Float, max: Float) {
-		guard let nodeEnvironmentHistory else {
+		guard let nodeEnvironmentHistory, !nodeEnvironmentHistory.isEmpty else {
 			return (min: -20, max: 50)
 		}
 
@@ -1260,6 +1239,56 @@ struct NodeDetail: View {
 		}
 
 		return (min: min, max: max)
+	}
+
+	// swiftlint:disable:next large_tuple
+	private func getTemperatureY() -> (min: Int, center: Int, max: Int, margin: Int) {
+		let overshootMin: Float = 1.0
+		let extrema = findTemperatureMinMax()
+
+		let overshoot = min(overshootMin, (extrema.max - extrema.min) / 3.0)
+		let overshootInt = Int(ceil(overshoot))
+
+		var chartMin = Int(floor(extrema.min - overshoot))
+		let chartCenter = Int((extrema.min + (extrema.max - extrema.min) / 2.0).rounded())
+		var chartMax = Int(ceil(extrema.max + overshoot))
+
+		let deltaMin = chartCenter - chartMin
+		let deltaMax = chartMax - chartCenter
+		if deltaMin > deltaMax {
+			chartMax = chartCenter + deltaMin
+		}
+		else {
+			chartMin = chartCenter - deltaMax
+		}
+
+		// TODO: make it struct
+		return (min: chartMin, center: chartCenter, max: chartMax, margin: overshootInt)
+	}
+
+	// swiftlint:disable:next large_tuple
+	private func getPressureY() -> (min: Int, center: Int, max: Int, margin: Int) {
+		let overshootMin: Float = 2.0
+		let extrema = findPresureMinMax()
+
+		let overshoot = min(overshootMin, (extrema.max - extrema.min) / 3.0)
+		let overshootInt = Int(ceil(overshoot))
+
+		var chartMin = Int(floor(extrema.min - overshoot))
+		let chartCenter = Int((extrema.min + (extrema.max - extrema.min) / 2.0).rounded())
+		var chartMax = Int(ceil(extrema.max + overshoot))
+
+		let deltaMin = chartCenter - chartMin
+		let deltaMax = chartMax - chartCenter
+		if deltaMin > deltaMax {
+			chartMax = chartCenter + deltaMin
+		}
+		else {
+			chartMin = chartCenter - deltaMax
+		}
+
+		// TODO: make it struct
+		return (min: chartMin, center: chartCenter, max: chartMax, margin: overshootInt)
 	}
 }
 // swiftlint:enable file_length
