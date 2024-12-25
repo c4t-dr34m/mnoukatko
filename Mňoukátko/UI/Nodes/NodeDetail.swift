@@ -1205,18 +1205,26 @@ struct NodeDetail: View {
 		let lowerBound: Float = -50.0
 		let upperBound: Float = 150.0
 
-		guard let nodeEnvironmentHistory, !nodeEnvironmentHistory.isEmpty else {
+		guard let nodeEnvironmentHistory else {
 			return (min: lowerBound, max: upperBound)
 		}
 
-		var min = Float.greatestFiniteMagnitude
-		var max = Float.leastNormalMagnitude
+		var min = upperBound
+		var max = lowerBound
 
-		if nodeEnvironmentHistory.count == 1 {
-			min = nodeEnvironmentHistory[0].temperature
-			max = nodeEnvironmentHistory[0].temperature
-		} else {
-			for measurement in nodeEnvironmentHistory {
+		let history = nodeEnvironmentHistory.filter { measurement in
+			lowerBound...upperBound ~= measurement.temperature
+		}
+
+		if history.isEmpty {
+			return (min: lowerBound, max: upperBound)
+		}
+		else if history.count == 1 {
+			min = history[0].temperature
+			max = history[0].temperature
+		}
+		else {
+			for measurement in history {
 				if measurement.temperature < min {
 					min = measurement.temperature
 				}
@@ -1233,19 +1241,26 @@ struct NodeDetail: View {
 		let lowerBound: Float = 960.0
 		let upperBound: Float = 1070.0
 
-		guard let nodeEnvironmentHistory, !nodeEnvironmentHistory.isEmpty else {
+		guard let nodeEnvironmentHistory else {
 			return (min: lowerBound, max: upperBound)
 		}
 
 		var min = upperBound
 		var max = lowerBound
 
-		if nodeEnvironmentHistory.count == 1 {
-			min = nodeEnvironmentHistory[0].temperature
-			max = nodeEnvironmentHistory[0].temperature
+		let history = nodeEnvironmentHistory.filter { measurement in
+			lowerBound...upperBound ~= measurement.barometricPressure
+		}
+
+		if history.isEmpty {
+			return (min: lowerBound, max: upperBound)
+		}
+		else if history.count == 1 {
+			min = history[0].temperature
+			max = history[0].temperature
 		}
 		else {
-			for measurement in nodeEnvironmentHistory {
+			for measurement in history {
 				if measurement.barometricPressure < min {
 					min = measurement.barometricPressure
 				}
