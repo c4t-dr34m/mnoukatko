@@ -67,8 +67,11 @@ struct NodeDetail: View {
 
 		return coreDataTools.getNodeInfo(id: num, context: context)
 	}
+	private var nodePositions: [PositionEntity]? {
+		node.positions?.array as? [PositionEntity]
+	}
 	private var nodePosition: PositionEntity? {
-		node.positions?.lastObject as? PositionEntity
+		nodePositions?.last
 	}
 	private var nodePositionStale: Bool {
 		nodePosition != nil
@@ -351,6 +354,19 @@ struct NodeDetail: View {
 						.frame(width: detailIconSize)
 
 					Text(precisionFormatted)
+						.font(detailInfoTextFont)
+						.lineLimit(1)
+						.minimumScaleFactor(0.5)
+						.foregroundColor(.primary)
+				}
+
+				if let nodePositions, nodePositions.totalDistance() >= MapConstants.distanceSumThresholdForHistory {
+					let kmsTotal = nodePositions.totalDistance() / 1000.0
+					let distanceFormatted = String(format: "%.0f", kmsTotal) + " km"
+
+					HistoryStepsView(size: detailIconSize, foregroundColor: .primary)
+
+					Text(distanceFormatted)
 						.font(detailInfoTextFont)
 						.lineLimit(1)
 						.minimumScaleFactor(0.5)
@@ -747,12 +763,12 @@ struct NodeDetail: View {
 							HStack(spacing: 8) {
 								if node.rssi != 0 {
 									Text("RSSI: \(node.rssi)dBm")
-										.font(.system(size: 10, weight: .light))
+										.font(.system(size: 10, weight: .regular))
 										.foregroundColor(.gray)
 								}
 								if node.snr != 0 {
 									Text("SNR: \(String(format: "%.1f", node.snr))dB")
-										.font(.system(size: 10, weight: .light))
+										.font(.system(size: 10, weight: .regular))
 										.foregroundColor(.gray)
 								}
 							}

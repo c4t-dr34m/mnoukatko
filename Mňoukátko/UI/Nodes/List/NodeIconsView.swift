@@ -47,22 +47,11 @@ struct NodeIconsView: View {
 		node.positions?.lastObject as? PositionEntity
 	}
 	private var nodeHasHistory: Bool {
-		guard let positions = node.positions?.array as? [PositionEntity], positions.count > 1 else {
+		guard let positions = node.positions?.array as? [PositionEntity] else {
 			return false
 		}
 
-		var totalDistance: Double = 0.0
-		var previousCoord: CLLocationCoordinate2D?
-
-		for position in positions {
-			if let previousCoord {
-				totalDistance += position.coordinate.distance(from: previousCoord)
-			}
-
-			previousCoord = position.coordinate
-		}
-
-		return totalDistance >= MapConstants.distanceSumThresholdForHistory
+		return positions.totalDistance() >= MapConstants.distanceSumThresholdForHistory
 	}
 	private var nodeEnvironment: TelemetryEntity? {
 		guard
@@ -238,22 +227,7 @@ struct NodeIconsView: View {
 					.foregroundColor(.gray)
 
 				if nodeHasHistory {
-					HStack(spacing: 2) {
-						let angle = Angle(degrees: 80)
-
-						Image(systemName: "shoeprints.fill")
-							.font(.system(size: 14))
-							.foregroundColor(.gray)
-							.rotationEffect(angle)
-						Image(systemName: "shoeprints.fill")
-							.font(.system(size: 10))
-							.foregroundColor(.gray.opacity(0.7))
-							.rotationEffect(angle)
-						Image(systemName: "shoeprints.fill")
-							.font(.system(size: 7))
-							.foregroundColor(.gray.opacity(0.4))
-							.rotationEffect(angle)
-					}
+					HistoryStepsView(size: 14, foregroundColor: .gray)
 				}
 			}
 			else {

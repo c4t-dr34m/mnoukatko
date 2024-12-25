@@ -16,10 +16,29 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-import Foundation
+import SwiftUI
 
-enum MapConstants {
-	static let heardOfRadius = 550.0 // m
-	static let minimalHistoryEntrySeparation = 500.0 // m
-	static let distanceSumThresholdForHistory = 750.0 // m
+struct HistoryStepsView: View {
+	var size: CGFloat
+	var foregroundColor: Color
+
+	@ViewBuilder
+	var body: some View {
+		HStack(spacing: 0) {
+			let angle = Angle(degrees: 80)
+
+			Image(systemName: "shoeprints.fill")
+				.font(.system(size: size))
+				.foregroundColor(foregroundColor)
+				.rotationEffect(angle)
+			Image(systemName: "shoeprints.fill")
+				.font(.system(size: size * 0.9))
+				.foregroundColor(foregroundColor.opacity(0.7))
+				.rotationEffect(angle)
+			Image(systemName: "shoeprints.fill")
+				.font(.system(size: size * 0.7))
+				.foregroundColor(foregroundColor.opacity(0.4))
+				.rotationEffect(angle)
+		}
+	}
 }

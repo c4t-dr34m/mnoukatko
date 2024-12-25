@@ -76,3 +76,24 @@ extension PositionEntity: MKAnnotation {
 		time?.formatted()
 	}
 }
+
+extension Array where Element == PositionEntity {
+	func totalDistance() -> Double {
+		guard count > 1 else {
+			return 0.0
+		}
+
+		var totalDistance: Double = 0.0
+		var previousCoord: CLLocationCoordinate2D?
+
+		for position in self {
+			if let previousCoord {
+				totalDistance += position.coordinate.distance(from: previousCoord)
+			}
+
+			previousCoord = position.coordinate
+		}
+
+		return totalDistance
+	}
+}
