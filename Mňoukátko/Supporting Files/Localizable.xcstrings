@@ -278,6 +278,9 @@
     "Allow incoming device control over the insecure legacy admin channel." : {
 
     },
+    "Allow other nodes to upload your packets to MQTT" : {
+
+    },
     "Allow Position Requests" : {
 
     },
@@ -3452,9 +3455,6 @@
     "Double tap = USER button" : {
 
     },
-    "Downlink" : {
-
-    },
     "email.address" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3696,6 +3696,9 @@
 
     },
     "Flip screen" : {
+
+    },
+    "Forward packets from MQTT to local mesh network" : {
 
     },
     "Frequency" : {
@@ -4543,9 +4546,6 @@
           }
         }
       }
-    },
-    "Ignore MQTT" : {
-
     },
     "incomplete" : {
       "extractionState" : "manual",
@@ -7054,6 +7054,9 @@
       }
     },
     "LoRa" : {
+
+    },
+    "LoRA → MQTT" : {
 
     },
     "LoRa Config" : {
@@ -9806,6 +9809,9 @@
       }
     },
     "MQTT" : {
+
+    },
+    "MQTT → LoRA" : {
 
     },
     "MQTT Config" : {
@@ -13970,9 +13976,6 @@
       }
     },
     "Updated: %@" : {
-
-    },
-    "Uplink" : {
 
     },
     "Uptime" : {

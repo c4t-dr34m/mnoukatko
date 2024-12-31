@@ -77,7 +77,9 @@ struct LoRaConfig: OptionsScreen {
 	@State
 	private var overrideFrequency: Float = 0.0
 	@State
-	private var ignoreMqtt = false
+	private var mqttToLora = false
+	@State
+	private var loraToMqtt = false
 
 	let floatFormatter: NumberFormatter = {
 		let formatter = NumberFormatter()
@@ -89,6 +91,7 @@ struct LoRaConfig: OptionsScreen {
 	var body: some View {
 		Form {
 			sectionOptions
+			sectionMQTT
 			sectionAdvanced
 		}
 		.disabled(connectedDevice.device == nil || node.loRaConfig == nil)
@@ -138,7 +141,10 @@ struct LoRaConfig: OptionsScreen {
 		.onChange(of: txEnabled) {
 			hasChanges = true
 		}
-		.onChange(of: ignoreMqtt) {
+		.onChange(of: mqttToLora) {
+			hasChanges = true
+		}
+		.onChange(of: loraToMqtt) {
 			hasChanges = true
 		}
 	}
@@ -170,14 +176,37 @@ struct LoRaConfig: OptionsScreen {
 	}
 
 	@ViewBuilder
+	private var sectionMQTT: some View {
+		Section(header: Text("MQTT")) {
+			VStack {
+				Toggle(isOn: $mqttToLora) {
+					Text("MQTT → LoRA")
+						.font(.body)
+				}
+				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+
+				Text("Forward packets from MQTT to local mesh network")
+					.font(.footnote)
+					.foregroundStyle(.gray)
+			}
+
+			VStack {
+				Toggle(isOn: $loraToMqtt) {
+					Text("LoRA → MQTT")
+						.font(.body)
+				}
+				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+
+				Text("Allow other nodes to upload your packets to MQTT")
+					.font(.footnote)
+					.foregroundStyle(.gray)
+			}
+		}
+	}
+
+	@ViewBuilder
 	private var sectionAdvanced: some View {
 		Section(header: Text("Advanced")) {
-			Toggle(isOn: $ignoreMqtt) {
-				Text("Ignore MQTT")
-					.font(.body)
-			}
-			.toggleStyle(SwitchToggleStyle(tint: .accentColor))
-
 			Toggle(isOn: $txEnabled) {
 				Text("Transmit")
 					.font(.body)
@@ -229,8 +258,8 @@ struct LoRaConfig: OptionsScreen {
 				}
 
 				Text("This determines the actual frequency you are transmitting on in the band. If set to 0 this value will be calculated automatically based on the primary channel name.")
+					.font(.footnote)
 					.foregroundColor(.gray)
-					.font(.callout)
 			}
 
 			Toggle(isOn: $rxBoostedGain) {
@@ -289,7 +318,8 @@ struct LoRaConfig: OptionsScreen {
 			spreadFactor = Int(config.spreadFactor)
 			rxBoostedGain = config.sx126xRxBoostedGain
 			overrideFrequency = config.overrideFrequency
-			ignoreMqtt = config.ignoreMqtt
+			mqttToLora = !config.ignoreMqtt
+			loraToMqtt = config.okToMqtt
 		}
 		else {
 			hopLimit = 3
@@ -304,7 +334,8 @@ struct LoRaConfig: OptionsScreen {
 			spreadFactor = 0
 			rxBoostedGain = false
 			overrideFrequency = 0.0
-			ignoreMqtt = false
+			mqttToLora = false
+			loraToMqtt = false
 		}
 
 		hasChanges = false
@@ -334,7 +365,8 @@ struct LoRaConfig: OptionsScreen {
 		config.spreadFactor = UInt32(spreadFactor)
 		config.sx126XRxBoostedGain = rxBoostedGain
 		config.overrideFrequency = overrideFrequency
-		config.ignoreMqtt = ignoreMqtt
+		config.ignoreMqtt = !mqttToLora
+		config.configOkToMqtt = loraToMqtt
 		// swiftlint:enable force_unwrapping
 
 		let adminIndex = connectedNode.myInfo?.adminIndex ?? 0

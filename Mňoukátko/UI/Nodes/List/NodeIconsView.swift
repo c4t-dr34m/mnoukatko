@@ -23,7 +23,7 @@ import SwiftUI
 
 struct NodeIconsView: View {
 	private let detailIconSize: CGFloat = 18
-	private let detailIconSpacing: CGFloat = 12
+	private let detailIconSpacing: CGFloat = 8
 	private let detailInfoTextFont = Font.system(size: 14, weight: .regular, design: .rounded)
 	private let detailInfoIconFont = Font.system(size: 16, weight: .regular, design: .rounded)
 	private let detailHopsIconFont = Font.system(size: 10, weight: .semibold, design: .rounded)

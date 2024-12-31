@@ -204,6 +204,7 @@
 		084A3D452C7652280026433E /* Debounce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debounce.swift; sourceTree = "<group>"; };
 		084DCFF92CA9BEE00032EF46 /* NodeIconsCompactView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeIconsCompactView.swift; sourceTree = "<group>"; };
 		086054792D1CA3610006C5C2 /* HistoryStepsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryStepsView.swift; sourceTree = "<group>"; };
+		086054842D2433130006C5C2 /* Data_v48.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Data_v48.xcdatamodel; sourceTree = "<group>"; };
 		086C1CE22CD7C88100486505 /* Onboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Onboarding.swift; sourceTree = "<group>"; };
 		086C1CE42CD7DE0800486505 /* Foundation.Notification.Name+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Foundation.Notification.Name+Extensions.swift"; sourceTree = "<group>"; };
 		0877C2C02D03C14A00695F66 /* IosevkaFixed-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IosevkaFixed-Bold.ttf"; sourceTree = "<group>"; };
@@ -1514,8 +1515,9 @@
 				B2A5355A2CF4A8D6006FBE1D /* Data_v45.xcdatamodel */,
 				081A0F7C2D0C9C8700B6F1E4 /* Data_v46.xcdatamodel */,
 				081A0F7D2D0CA5E800B6F1E4 /* Data_v47.xcdatamodel */,
+				086054842D2433130006C5C2 /* Data_v48.xcdatamodel */,
 			);
-			currentVersion = 081A0F7D2D0CA5E800B6F1E4 /* Data_v47.xcdatamodel */;
+			currentVersion = 086054842D2433130006C5C2 /* Data_v48.xcdatamodel */;
 			name = "Mňoukátko.xcdatamodeld";
 			path = "Mňoukátko.xcdatamodeld";
 			sourceTree = "<group>";

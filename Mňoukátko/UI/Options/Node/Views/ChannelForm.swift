@@ -196,14 +196,14 @@ struct ChannelForm: View {
 				.headerProminence(.increased)
 
 				Section(header: Text("MQTT")) {
-					Toggle(isOn: $uplink) {
-						Text("Uplink")
+					Toggle(isOn: $downlink) {
+						Text("MQTT → LoRA")
 							.font(.body)
 					}
 					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 
-					Toggle(isOn: $downlink) {
-						Text("Downlink")
+					Toggle(isOn: $uplink) {
+						Text("LoRA → MQTT")
 							.font(.body)
 					}
 					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
