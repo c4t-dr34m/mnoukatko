@@ -80,9 +80,6 @@
     "Additional help" : {
 
     },
-    "Address" : {
-
-    },
     "admin" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -362,9 +359,6 @@
 
     },
     "Approximate" : {
-
-    },
-    "Approximate location" : {
 
     },
     "appsettings.newNodeNotifications" : {
@@ -1713,9 +1707,6 @@
       }
     },
     "Channels" : {
-
-    },
-    "CocoaMQTT" : {
 
     },
     "Coding rate" : {
@@ -3585,9 +3576,6 @@
     "Encrypted" : {
 
     },
-    "Encryption" : {
-
-    },
     "Environment" : {
 
     },
@@ -3696,9 +3684,6 @@
 
     },
     "Flip screen" : {
-
-    },
-    "Forward packets from MQTT to local mesh network" : {
 
     },
     "Frequency" : {
@@ -6793,9 +6778,6 @@
         }
       }
     },
-    "JSON" : {
-
-    },
     "Key" : {
 
     },
@@ -7069,12 +7051,6 @@
 
     },
     "Managed device" : {
-
-    },
-    "Map report" : {
-
-    },
-    "Map Report" : {
 
     },
     "map.centering" : {
@@ -9811,12 +9787,6 @@
     "MQTT" : {
 
     },
-    "MQTT → LoRA" : {
-
-    },
-    "MQTT Config" : {
-
-    },
     "mqtt.connect" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -10831,9 +10801,6 @@
     "Precise" : {
 
     },
-    "Precise location" : {
-
-    },
     "preferred.radio" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -10909,9 +10876,6 @@
 
     },
     "Public" : {
-
-    },
-    "Publish interval" : {
 
     },
     "range.test.blocked" : {
@@ -11215,12 +11179,6 @@
       }
     },
     "Role" : {
-
-    },
-    "Root topic" : {
-
-    },
-    "Root Topic" : {
 
     },
     "routes.activitytype.biking" : {
@@ -12882,9 +12840,6 @@
         }
       }
     },
-    "Server" : {
-
-    },
     "Set" : {
 
     },
@@ -13757,9 +13712,6 @@
     "Timing & Format" : {
 
     },
-    "TLS" : {
-
-    },
     "Total: %lld nodes" : {
 
     },
@@ -13984,9 +13936,6 @@
     "Use HDOP/VDOP instead of PDOP" : {
 
     },
-    "Use mobile data" : {
-
-    },
     "Use preset" : {
 
     },
@@ -14061,9 +14010,6 @@
         }
       }
     },
-    "Username" : {
-
-    },
     "v%@" : {
 
     },
@@ -14093,9 +14039,6 @@
 
     },
     "Your position has been sent with a request for a response with their position." : {
-
-    },
-    "Your region has a %lld%% duty cycle. MQTT is not advised when your duty cycle is restricted as the extra traffic may quickly overwhelm your LoRa mesh." : {
 
     }
   },

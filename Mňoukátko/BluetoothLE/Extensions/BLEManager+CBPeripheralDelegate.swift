@@ -17,7 +17,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-import CocoaMQTT
 import CoreBluetooth
 import CoreData
 import MeshtasticProtobufs
@@ -95,10 +94,6 @@ extension BLEManager: CBPeripheralDelegate {
 			}
 		}
 
-		if mqttConnected {
-			mqttManager?.client?.disconnect()
-		}
-
 		let nodeConfig = NodeConfig(bleManager: self, context: context)
 		lastConfigNonce = nodeConfig.sendWantConfig()
 	}
@@ -168,20 +163,6 @@ extension BLEManager: CBPeripheralDelegate {
 	func processRadioData(value: Data) {
 		guard let info = try? FromRadio(serializedData: value) else {
 			return
-		}
-
-		// Publish mqttClientProxyMessages received on the from radio
-		if info.payloadVariant == FromRadio.OneOf_PayloadVariant.mqttClientProxyMessage(
-			info.mqttClientProxyMessage
-		)
-		{
-			let message = CocoaMQTTMessage(
-				topic: info.mqttClientProxyMessage.topic,
-				payload: [UInt8](info.mqttClientProxyMessage.data),
-				retained: info.mqttClientProxyMessage.retained
-			)
-
-			mqttManager?.client?.publish(message)
 		}
 
 		let num = getConnectedDevice()?.num ?? -1
@@ -487,17 +468,6 @@ extension BLEManager: CBPeripheralDelegate {
 					!fetchedNodeInfo.isEmpty
 				{
 					let node = fetchedNodeInfo[0]
-
-					if
-						let mqttConfig = node.mqttConfig,
-						mqttConfig.enabled,
-						mqttConfig.proxyToClientEnabled
-					{
-						connectMQTT(config: mqttConfig)
-					}
-					else if mqttConnected {
-						disconnectMQTT()
-					}
 
 					// Set initial unread message badge states
 					appState.unreadChannelMessages = node.myInfo?.unreadMessages ?? 0

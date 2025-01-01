@@ -37,7 +37,6 @@ enum AnalyticEvents: String {
 	case optionsAppSettings
 	case optionsChannels
 	case optionsUser
-	case optionsMQTT
 	case optionsBluetooth
 	case optionsDevice
 	case optionsDisplay
@@ -60,10 +59,6 @@ enum AnalyticEvents: String {
 	case bleConnect
 	case bleDisconnect
 	case bleTraceRoute
-	case mqttConnect
-	case mqttDisconnect
-	case mqttMessage
-	case mqttError
 
 	enum BLERequest: String {
 		case bluetoothConfig
@@ -85,8 +80,6 @@ enum AnalyticEvents: String {
 		case loraConfig
 		case loraConfigSave
 		case message
-		case mqttConfig
-		case mqttConfigSave
 		case nodeRemove
 		case networkConfig
 		case networkConfigSave
@@ -102,6 +95,8 @@ enum AnalyticEvents: String {
 		case securityConfigSave
 		case shutdown
 		case userSave
+		case telemetryConfig
+		case telemetryConfigSave
 		case wantConfig
 		case wantConfigComplete
 	}

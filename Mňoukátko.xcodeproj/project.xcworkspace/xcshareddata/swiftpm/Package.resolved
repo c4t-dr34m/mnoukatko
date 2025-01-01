@@ -1,5 +1,5 @@
 {
-  "originHash" : "9a8a5ecc962dd8631c6faef93c4d7a802cc500be9ee9e324bb5417f3ef888c34",
+  "originHash" : "403f6550f478296d1dfacfe94c16102b0c872614d21c2c1d44aed862c933ee29",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -17,15 +17,6 @@
       "state" : {
         "revision" : "61b85103a1aeed8218f17c794687781505fbbef5",
         "version" : "11.2.0"
-      }
-    },
-    {
-      "identity" : "cocoamqtt",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/emqx/CocoaMQTT",
-      "state" : {
-        "revision" : "aff43422925cc30b9af319f4c4dce4f52859baf4",
-        "version" : "2.1.8"
       }
     },
     {
@@ -128,15 +119,6 @@
       }
     },
     {
-      "identity" : "mqttcocoaasyncsocket",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/leeway1208/MqttCocoaAsyncSocket",
-      "state" : {
-        "revision" : "ce3e18607fd01079495f86ff6195d8a3ca469f73",
-        "version" : "1.0.8"
-      }
-    },
-    {
       "identity" : "nanopb",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/firebase/nanopb.git",
@@ -161,15 +143,6 @@
       "state" : {
         "revision" : "a95fc6df17d108bd99210db5e8a9bac90fe984b8",
         "version" : "0.15.3"
-      }
-    },
-    {
-      "identity" : "starscream",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/daltoniam/Starscream.git",
-      "state" : {
-        "revision" : "c6bfd1af48efcc9a9ad203665db12375ba6b145a",
-        "version" : "4.0.8"
       }
     },
     {

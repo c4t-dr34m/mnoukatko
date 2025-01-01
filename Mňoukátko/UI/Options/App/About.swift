@@ -73,13 +73,6 @@ struct About: View {
 
 			Section(header: Text("Libraries")) {
 				Link(
-					"CocoaMQTT",
-					// swiftlint:disable:next force_unwrapping
-					destination: URL(string: "https://github.com/emqx/CocoaMQTT")!
-				)
-				.font(.body)
-
-				Link(
 					"Firebase",
 					// swiftlint:disable:next force_unwrapping
 					destination: URL(string: "https://github.com/firebase/firebase-ios-sdk")!

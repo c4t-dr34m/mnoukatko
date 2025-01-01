@@ -978,39 +978,6 @@ extension CoreDataTools {
 		}
 	}
 
-	func upsertPaxCounterModuleConfigPacket(config: ModuleConfig.PaxcounterConfig, nodeNum: Int64, context: NSManagedObjectContext) {
-		let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
-		fetchNodeInfoRequest.predicate = NSPredicate(format: "num == %lld", Int64(nodeNum))
-
-		do {
-			let fetchedNode = try context.fetch(fetchNodeInfoRequest)
-			// Found a node, save PAX Counter Config
-			if !fetchedNode.isEmpty {
-				if fetchedNode[0].paxCounterConfig == nil {
-					let newPaxCounterConfig = PaxCounterConfigEntity(context: context)
-					newPaxCounterConfig.enabled = config.enabled
-					newPaxCounterConfig.updateInterval = Int32(config.paxcounterUpdateInterval)
-					fetchedNode[0].paxCounterConfig = newPaxCounterConfig
-				}
-				else {
-					fetchedNode[0].paxCounterConfig?.enabled = config.enabled
-					fetchedNode[0].paxCounterConfig?.updateInterval = Int32(config.paxcounterUpdateInterval)
-				}
-
-				debounce.emit { [weak self] in
-					await self?.saveData(with: context)
-				}
-			}
-			else {
-				Logger.data.error("💥 [PaxCounterConfigEntity] No Nodes found in local database matching node number \(nodeNum.toHex(), privacy: .public) unable to save PAX Counter Module Config")
-			}
-		}
-		catch {
-			let nsError = error as NSError
-			Logger.data.error("💥 [PaxCounterConfigEntity] Fetching node for core data failed: \(nsError, privacy: .public)")
-		}
-	}
-
 	func upsertRtttlConfigPacket(ringtone: String, nodeNum: Int64, context: NSManagedObjectContext) {
 		let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
 		fetchNodeInfoRequest.predicate = NSPredicate(format: "num == %lld", Int64(nodeNum))
@@ -1038,98 +1005,6 @@ extension CoreDataTools {
 		catch {
 			let nsError = error as NSError
 			Logger.data.error("💥 [RtttlConfigEntity] Fetching node for core data failed: \(nsError, privacy: .public)")
-		}
-	}
-
-	func upsertMqttModuleConfigPacket(config: ModuleConfig.MQTTConfig, nodeNum: Int64, context: NSManagedObjectContext) {
-		let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
-		fetchNodeInfoRequest.predicate = NSPredicate(format: "num == %lld", Int64(nodeNum))
-
-		do {
-			let fetchedNode = try context.fetch(fetchNodeInfoRequest)
-			// Found a node, save MQTT Config
-			if !fetchedNode.isEmpty {
-				if fetchedNode[0].mqttConfig == nil {
-					let newMQTTConfig = MQTTConfigEntity(context: context)
-					newMQTTConfig.enabled = config.enabled
-					newMQTTConfig.proxyToClientEnabled = config.proxyToClientEnabled
-					newMQTTConfig.address = config.address
-					newMQTTConfig.username = config.username
-					newMQTTConfig.password = config.password
-					newMQTTConfig.root = config.root
-					newMQTTConfig.encryptionEnabled = config.encryptionEnabled
-					newMQTTConfig.jsonEnabled = config.jsonEnabled
-					newMQTTConfig.tlsEnabled = config.tlsEnabled
-					newMQTTConfig.mapReportingEnabled = config.mapReportingEnabled
-					newMQTTConfig.mapPositionPrecision = Int32(config.mapReportSettings.positionPrecision)
-					newMQTTConfig.mapPublishIntervalSecs = Int32(config.mapReportSettings.publishIntervalSecs)
-					fetchedNode[0].mqttConfig = newMQTTConfig
-				}
-				else {
-					fetchedNode[0].mqttConfig?.enabled = config.enabled
-					fetchedNode[0].mqttConfig?.proxyToClientEnabled = config.proxyToClientEnabled
-					fetchedNode[0].mqttConfig?.address = config.address
-					fetchedNode[0].mqttConfig?.username = config.username
-					fetchedNode[0].mqttConfig?.password = config.password
-					fetchedNode[0].mqttConfig?.root = config.root
-					fetchedNode[0].mqttConfig?.encryptionEnabled = config.encryptionEnabled
-					fetchedNode[0].mqttConfig?.jsonEnabled = config.jsonEnabled
-					fetchedNode[0].mqttConfig?.tlsEnabled = config.tlsEnabled
-					fetchedNode[0].mqttConfig?.mapReportingEnabled = config.mapReportingEnabled
-					fetchedNode[0].mqttConfig?.mapPositionPrecision = Int32(config.mapReportSettings.positionPrecision)
-					fetchedNode[0].mqttConfig?.mapPublishIntervalSecs = Int32(config.mapReportSettings.publishIntervalSecs)
-				}
-
-				debounce.emit { [weak self] in
-					await self?.saveData(with: context)
-				}
-			}
-			else {
-				Logger.data.error("💥 [MQTTConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save MQTT Module Config")
-			}
-		}
-		catch {
-			let nsError = error as NSError
-			Logger.data.error("💥 [MQTTConfigEntity] Fetching node for core data failed: \(nsError, privacy: .public)")
-		}
-	}
-
-	func upsertRangeTestModuleConfigPacket(
-		config: ModuleConfig.RangeTestConfig,
-		nodeNum: Int64,
-		context: NSManagedObjectContext
-	) {
-		let fetchNodeInfoRequest = NodeInfoEntity.fetchRequest()
-		fetchNodeInfoRequest.predicate = NSPredicate(format: "num == %lld", Int64(nodeNum))
-
-		do {
-			let fetchedNode = try context.fetch(fetchNodeInfoRequest)
-			// Found a node, save Device Config
-			if !fetchedNode.isEmpty {
-				if fetchedNode[0].rangeTestConfig == nil {
-					let newRangeTestConfig = RangeTestConfigEntity(context: context)
-					newRangeTestConfig.sender = Int32(config.sender)
-					newRangeTestConfig.enabled = config.enabled
-					newRangeTestConfig.save = config.save
-					fetchedNode[0].rangeTestConfig = newRangeTestConfig
-				}
-				else {
-					fetchedNode[0].rangeTestConfig?.sender = Int32(config.sender)
-					fetchedNode[0].rangeTestConfig?.enabled = config.enabled
-					fetchedNode[0].rangeTestConfig?.save = config.save
-				}
-
-				debounce.emit { [weak self] in
-					await self?.saveData(with: context)
-				}
-			}
-			else {
-				Logger.data.error("💥 [RangeTestConfigEntity] No Nodes found in local database matching node \(nodeNum.toHex(), privacy: .public) unable to save Range Test Module Config")
-			}
-		}
-		catch {
-			let nsError = error as NSError
-			Logger.data.error("💥 [RangeTestConfigEntity] Fetching node for core data failed: \(nsError, privacy: .public)")
 		}
 	}
 

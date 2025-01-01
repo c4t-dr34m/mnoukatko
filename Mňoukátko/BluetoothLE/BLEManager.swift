@@ -17,7 +17,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-import CocoaMQTT
 import CoreBluetooth
 import CoreData
 import FirebaseAnalytics
@@ -62,17 +61,12 @@ final class BLEManager: NSObject, ObservableObject {
 			Logger.app.debug("BLE manager auto-reconnect changed: \(self.automaticallyReconnect)")
 		}
 	}
-	@Published
-	var mqttConnected = false
-	@Published
-	var mqttError = ""
 
 	var centralManager: CBCentralManager?
 	var nodeNames = [Int64: String]()
 	var infoLastChanged: Date?
 	var devicesDelegate: DevicesDelegate?
 	var deviceWatchingTimer: Timer?
-	var mqttManager: MQTTManager?
 	var connectedVersion: String
 	var isConnecting = false
 	var isConnected = false {
@@ -103,7 +97,6 @@ final class BLEManager: NSObject, ObservableObject {
 	) {
 		self.appState = appState
 		self.context = context
-		self.mqttManager = MQTTManager()
 		self.currentDevice = CurrentDevice(context: context)
 
 		self.lastConnectionError = ""
@@ -258,10 +251,6 @@ final class BLEManager: NSObject, ObservableObject {
 	}
 
 	func cancelPeripheralConnection() {
-		if let mqttClientProxy = mqttManager?.client, mqttConnected {
-			mqttClientProxy.disconnect()
-		}
-
 		currentDevice.clear()
 
 		isConnecting = false
@@ -281,10 +270,6 @@ final class BLEManager: NSObject, ObservableObject {
 			return
 		}
 
-		if let mqttClientProxy = mqttManager?.client, mqttConnected {
-			mqttClientProxy.disconnect()
-		}
-
 		centralManager?.cancelPeripheralConnection(device.peripheral)
 		currentDevice.clear()
 
@@ -296,29 +281,6 @@ final class BLEManager: NSObject, ObservableObject {
 		automaticallyReconnect = reconnect
 
 		Analytics.logEvent(AnalyticEvents.bleDisconnect.id, parameters: nil)
-	}
-
-	func connectMQTT(config: MQTTConfigEntity? = nil) {
-		if let config, config.enabled {
-			let manager = MQTTManager()
-			manager.delegate = self
-			manager.connect(config: config)
-
-			mqttManager = manager
-		}
-		else if canHaveDemo() {
-			let manager = MQTTManager()
-			manager.delegate = self
-			manager.connectDefaults()
-
-			mqttManager = manager
-		}
-	}
-
-	func disconnectMQTT() {
-		mqttManager?.disconnect()
-		mqttManager?.delegate = nil
-		mqttManager = nil
 	}
 
 	func canHaveDemo() -> Bool {

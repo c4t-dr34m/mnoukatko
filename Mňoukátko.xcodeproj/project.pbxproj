@@ -30,8 +30,6 @@
 		0889940C2D00CBA000EE2613 /* MapboxMaps in Frameworks */ = {isa = PBXBuildFile; productRef = 0889940B2D00CBA000EE2613 /* MapboxMaps */; };
 		0891A0CB2CCEA6600030B392 /* Navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0891A0CA2CCEA6570030B392 /* Navigation.swift */; };
 		0891A0CD2CCEA6A40030B392 /* URL+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0891A0CC2CCEA69F0030B392 /* URL+Extensions.swift */; };
-		08933D342C81BE80006D57EA /* MQTTManager+CocoaMQTTDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08933D332C81BE7C006D57EA /* MQTTManager+CocoaMQTTDelegate.swift */; };
-		08933D362C81CAA5006D57EA /* MQTTManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08933D352C81CA9F006D57EA /* MQTTManagerDelegate.swift */; };
 		08933D382C81D03A006D57EA /* CoreDataTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08933D372C81D035006D57EA /* CoreDataTools.swift */; };
 		08933D3B2C821901006D57EA /* NSManagedObjectContext+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08933D3A2C8218FD006D57EA /* NSManagedObjectContext+Extensions.swift */; };
 		08DD7E512C41B0BA00548159 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08DD7E502C41B0BA00548159 /* AppState.swift */; };
@@ -76,7 +74,6 @@
 		B27A4B9C2CA6B8D200F813C3 /* NodeListConnectedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27A4B9B2CA6B8CC00F813C3 /* NodeListConnectedItem.swift */; };
 		B284A42D2C6F87B200D5122B /* BLEManager+CBCentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B284A42C2C6F87B200D5122B /* BLEManager+CBCentralManager.swift */; };
 		B284A42F2C6F889000D5122B /* BLEManager+CBPeripheralDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B284A42E2C6F889000D5122B /* BLEManager+CBPeripheralDelegate.swift */; };
-		B284A4312C6F88F400D5122B /* BLEManager+MQTTManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B284A4302C6F88F400D5122B /* BLEManager+MQTTManagerDelegate.swift */; };
 		B284A4332C6F8AE400D5122B /* BluetoothUUID.swift in Sources */ = {isa = PBXBuildFile; fileRef = B284A4322C6F8AE400D5122B /* BluetoothUUID.swift */; };
 		B28CFF842C5E0F360012DCB4 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B28CFF832C5E0F360012DCB4 /* FirebaseAnalyticsWithoutAdIdSupport */; };
 		B28CFF862C5E0F360012DCB4 /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = B28CFF852C5E0F360012DCB4 /* FirebaseAppCheck */; };
@@ -123,9 +120,7 @@
 		D93068DB2B81C85E0066FBC8 /* PowerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = D93068DA2B81C85E0066FBC8 /* PowerConfig.swift */; };
 		DD007BAE2AA4E91200F5FA12 /* MyInfoEntity+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD007BAD2AA4E91200F5FA12 /* MyInfoEntity+Extension.swift */; };
 		DD007BB02AA5981000F5FA12 /* NodeInfoEntity+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD007BAF2AA5981000F5FA12 /* NodeInfoEntity+Extension.swift */; };
-		DD0D3D222A55CEB10066DB71 /* CocoaMQTT in Frameworks */ = {isa = PBXBuildFile; productRef = DD0D3D212A55CEB10066DB71 /* CocoaMQTT */; };
 		DD0E21012B8A6F1300F2D100 /* DeviceHardware.json in Resources */ = {isa = PBXBuildFile; fileRef = DD0E21002B8A6BC500F2D100 /* DeviceHardware.json */; };
-		DD2160AF28C5552500C17253 /* MQTTConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2160AE28C5552500C17253 /* MQTTConfig.swift */; };
 		DD23A50F26FD1B4400D9B90C /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD23A50E26FD1B4400D9B90C /* Device.swift */; };
 		DD2553572855B02500E55709 /* LoRaConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2553562855B02500E55709 /* LoRaConfig.swift */; };
 		DD2553592855B52700E55709 /* PositionConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2553582855B52700E55709 /* PositionConfig.swift */; };
@@ -170,7 +165,6 @@
 		DDC2E1A726CEB3400042C5E4 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC2E1A626CEB3400042C5E4 /* LocationManager.swift */; };
 		DDC4D568275499A500A4208E /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC4D567275499A500A4208E /* Persistence.swift */; };
 		DDCE4E2C2869F92900BE9F8F /* UserConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDCE4E2B2869F92900BE9F8F /* UserConfig.swift */; };
-		DDD43FE32A78C8900083A3E9 /* MQTTManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDD43FE22A78C8900083A3E9 /* MQTTManager.swift */; };
 		DDD9E4E4284B208E003777C5 /* UserEntity+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDD9E4E3284B208E003777C5 /* UserEntity+Extension.swift */; };
 		DDDB444029F79AB000EE2349 /* UserDefaults+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDDB443F29F79AB000EE2349 /* UserDefaults+Extensions.swift */; };
 		DDDB444629F8A96500EE2349 /* Character.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDDB444529F8A96500EE2349 /* Character.swift */; };
@@ -213,8 +207,6 @@
 		0877C2C42D03C17200695F66 /* IosevkaFixed-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IosevkaFixed-Thin.ttf"; sourceTree = "<group>"; };
 		0891A0CA2CCEA6570030B392 /* Navigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigation.swift; sourceTree = "<group>"; };
 		0891A0CC2CCEA69F0030B392 /* URL+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Extensions.swift"; sourceTree = "<group>"; };
-		08933D332C81BE7C006D57EA /* MQTTManager+CocoaMQTTDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MQTTManager+CocoaMQTTDelegate.swift"; sourceTree = "<group>"; };
-		08933D352C81CA9F006D57EA /* MQTTManagerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MQTTManagerDelegate.swift; sourceTree = "<group>"; };
 		08933D372C81D035006D57EA /* CoreDataTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataTools.swift; sourceTree = "<group>"; };
 		08933D3A2C8218FD006D57EA /* NSManagedObjectContext+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+Extensions.swift"; sourceTree = "<group>"; };
 		08DD7E502C41B0BA00548159 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
@@ -255,7 +247,6 @@
 		B27A4B9B2CA6B8CC00F813C3 /* NodeListConnectedItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeListConnectedItem.swift; sourceTree = "<group>"; };
 		B284A42C2C6F87B200D5122B /* BLEManager+CBCentralManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BLEManager+CBCentralManager.swift"; sourceTree = "<group>"; };
 		B284A42E2C6F889000D5122B /* BLEManager+CBPeripheralDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BLEManager+CBPeripheralDelegate.swift"; sourceTree = "<group>"; };
-		B284A4302C6F88F400D5122B /* BLEManager+MQTTManagerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BLEManager+MQTTManagerDelegate.swift"; sourceTree = "<group>"; };
 		B284A4322C6F8AE400D5122B /* BluetoothUUID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothUUID.swift; sourceTree = "<group>"; };
 		B28DC0E22C710318007990B3 /* Data+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extensions.swift"; sourceTree = "<group>"; };
 		B28DC0E42C7107C4007990B3 /* NodeConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeConfig.swift; sourceTree = "<group>"; };
@@ -300,7 +291,6 @@
 		DD007BAD2AA4E91200F5FA12 /* MyInfoEntity+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MyInfoEntity+Extension.swift"; sourceTree = "<group>"; };
 		DD007BAF2AA5981000F5FA12 /* NodeInfoEntity+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NodeInfoEntity+Extension.swift"; sourceTree = "<group>"; };
 		DD0E21002B8A6BC500F2D100 /* DeviceHardware.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = DeviceHardware.json; sourceTree = "<group>"; };
-		DD2160AE28C5552500C17253 /* MQTTConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MQTTConfig.swift; sourceTree = "<group>"; };
 		DD23A50E26FD1B4400D9B90C /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		DD2553562855B02500E55709 /* LoRaConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoRaConfig.swift; sourceTree = "<group>"; };
 		DD2553582855B52700E55709 /* PositionConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionConfig.swift; sourceTree = "<group>"; };
@@ -352,7 +342,6 @@
 		DDC2E1A626CEB3400042C5E4 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		DDC4D567275499A500A4208E /* Persistence.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		DDCE4E2B2869F92900BE9F8F /* UserConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConfig.swift; sourceTree = "<group>"; };
-		DDD43FE22A78C8900083A3E9 /* MQTTManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MQTTManager.swift; sourceTree = "<group>"; };
 		DDD5BB0C2C285F00007E03CA /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		DDD9E4E3284B208E003777C5 /* UserEntity+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserEntity+Extension.swift"; sourceTree = "<group>"; };
 		DDDB443F29F79AB000EE2349 /* UserDefaults+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Extensions.swift"; sourceTree = "<group>"; };
@@ -377,7 +366,6 @@
 			files = (
 				25A978BA2C13F8ED0003AAE7 /* MeshtasticProtobufs in Frameworks */,
 				C9697FA527933B8C00250207 /* SQLite in Frameworks */,
-				DD0D3D222A55CEB10066DB71 /* CocoaMQTT in Frameworks */,
 				B28CFF862C5E0F360012DCB4 /* FirebaseAppCheck in Frameworks */,
 				B28CFF842C5E0F360012DCB4 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
 				0889940C2D00CBA000EE2613 /* MapboxMaps in Frameworks */,
@@ -424,14 +412,6 @@
 				0877C2C42D03C17200695F66 /* IosevkaFixed-Thin.ttf */,
 			);
 			path = Iosevka_32.2.0;
-			sourceTree = "<group>";
-		};
-		08933D322C81BE72006D57EA /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-				08933D332C81BE7C006D57EA /* MQTTManager+CocoaMQTTDelegate.swift */,
-			);
-			path = Extensions;
 			sourceTree = "<group>";
 		};
 		08933D392C81D1BE006D57EA /* Extensions */ = {
@@ -562,7 +542,6 @@
 				B284A42C2C6F87B200D5122B /* BLEManager+CBCentralManager.swift */,
 				B284A42E2C6F889000D5122B /* BLEManager+CBPeripheralDelegate.swift */,
 				DDA6B2E828419CF2003E8C16 /* BLEManager+MeshPackets.swift */,
-				B284A4302C6F88F400D5122B /* BLEManager+MQTTManagerDelegate.swift */,
 				081C3AEC2C97493900F93C46 /* CBManagerState+Extension.swift */,
 				B2CC552B2C7374EC003FB487 /* CBPeripheral+Extensions.swift */,
 				B28DC0E22C710318007990B3 /* Data+Extensions.swift */,
@@ -723,7 +702,6 @@
 				DD8EBF42285058FA00426DCA /* DisplayConfig.swift */,
 				DDA0B6B1294CDC55001356EC /* Channels.swift */,
 				DD2553562855B02500E55709 /* LoRaConfig.swift */,
-				DD2160AE28C5552500C17253 /* MQTTConfig.swift */,
 				DD8ED9C42898D51F00B3B0AB /* NetworkConfig.swift */,
 				DD2553582855B52700E55709 /* PositionConfig.swift */,
 				D93068DA2B81C85E0066FBC8 /* PowerConfig.swift */,
@@ -790,7 +768,6 @@
 				DDC4D5662754996200A4208E /* Persistence */,
 				B25AF8A42C6F6B3200A2BA85 /* BluetoothLE */,
 				B25A0B522C5F9A16004288DC /* GoogleService-Info.plist */,
-				DDD43FE12A78C86B0083A3E9 /* MQTT */,
 				08DD7E4D2C41AC8F00548159 /* Supporting Files */,
 				DDC2E18726CE24E40042C5E4 /* UI */,
 				DDC2E1A526CEB32B0042C5E4 /* Utils */,
@@ -856,16 +833,6 @@
 			path = Persistence;
 			sourceTree = "<group>";
 		};
-		DDD43FE12A78C86B0083A3E9 /* MQTT */ = {
-			isa = PBXGroup;
-			children = (
-				08933D322C81BE72006D57EA /* Extensions */,
-				DDD43FE22A78C8900083A3E9 /* MQTTManager.swift */,
-				08933D352C81CA9F006D57EA /* MQTTManagerDelegate.swift */,
-			);
-			path = MQTT;
-			sourceTree = "<group>";
-		};
 		DDDB443E29F79A9400EE2349 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -911,7 +878,6 @@
 			name = "Mňoukátko";
 			packageProductDependencies = (
 				C9697FA427933B8C00250207 /* SQLite */,
-				DD0D3D212A55CEB10066DB71 /* CocoaMQTT */,
 				25A978B92C13F8ED0003AAE7 /* MeshtasticProtobufs */,
 				B28CFF832C5E0F360012DCB4 /* FirebaseAnalyticsWithoutAdIdSupport */,
 				B28CFF852C5E0F360012DCB4 /* FirebaseAppCheck */,
@@ -949,7 +915,6 @@
 			mainGroup = DDC2E14B26CE248E0042C5E4;
 			packageReferences = (
 				C9697FA327933B8C00250207 /* XCRemoteSwiftPackageReference "SQLite.swift" */,
-				DD0D3D202A55CEB10066DB71 /* XCRemoteSwiftPackageReference "CocoaMQTT" */,
 				25A978B82C13F8ED0003AAE7 /* XCLocalSwiftPackageReference "MeshtasticProtobufs" */,
 				259792242C2F10B600AD1659 /* XCRemoteSwiftPackageReference "swift-protobuf" */,
 				B28CFF822C5E0F360012DCB4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
@@ -1050,7 +1015,6 @@
 				DD836AE726F6B38600ABCC23 /* Connect.swift in Sources */,
 				B266A7592C59258100DFC723 /* RebroadcastModes.swift in Sources */,
 				B266A7652C5927D100DFC723 /* Bandwidths.swift in Sources */,
-				08933D362C81CAA5006D57EA /* MQTTManagerDelegate.swift in Sources */,
 				DD3501892852FC3B000FC853 /* Options.swift in Sources */,
 				08DD7E5F2C4283A100548159 /* LoRaSignal.swift in Sources */,
 				DD5D0A9C2931B9F200F7EA61 /* EthernetModes.swift in Sources */,
@@ -1088,7 +1052,6 @@
 				B275089D2CE22FCC0067E65D /* KeyField.swift in Sources */,
 				B2D848922CFDE35E00F59761 /* SplineChart.java in Sources */,
 				B27508992CE20AE90067E65D /* SecurityConfig.swift in Sources */,
-				DD2160AF28C5552500C17253 /* MQTTConfig.swift in Sources */,
 				6DEDA55C2A9592F900321D2E /* MessageEntity+Extension.swift in Sources */,
 				DDF45C342BC1A48E005ED5F2 /* MQTTChannelIcon.swift in Sources */,
 				B2D8488E2CFDE2CE00F59761 /* DeltaPoint.swift in Sources */,
@@ -1106,7 +1069,6 @@
 				B266A7552C5921BB00DFC723 /* Releases.swift in Sources */,
 				080092A42CCECFEA00A1309D /* Mňoukátko.xcdatamodeld in Sources */,
 				DDF45C372BC46A5A005ED5F2 /* TimeZone.swift in Sources */,
-				08933D342C81BE80006D57EA /* MQTTManager+CocoaMQTTDelegate.swift in Sources */,
 				B2A5F2FD2C5668FD009457AB /* DeleteNodeButton.swift in Sources */,
 				B2B1AC592D1074AC00114A66 /* Controls.swift in Sources */,
 				B28DC0E52C7107C4007990B3 /* NodeConfig.swift in Sources */,
@@ -1123,7 +1085,6 @@
 				DDE0F7C5295F77B700B8AAB3 /* MapLayer.swift in Sources */,
 				B28DC0E32C710318007990B3 /* Data+Extensions.swift in Sources */,
 				DDB6ABE628B1406100384BA1 /* RegionCodes.swift in Sources */,
-				DDD43FE32A78C8900083A3E9 /* MQTTManager.swift in Sources */,
 				DD007BB02AA5981000F5FA12 /* NodeInfoEntity+Extension.swift in Sources */,
 				DDDB444629F8A96500EE2349 /* Character.swift in Sources */,
 				DD23A50F26FD1B4400D9B90C /* Device.swift in Sources */,
@@ -1152,7 +1113,6 @@
 				DDA1C48E28DB49D3009933EC /* ChannelRoles.swift in Sources */,
 				B27A4B9C2CA6B8D200F813C3 /* NodeListConnectedItem.swift in Sources */,
 				B2D848902CFDE34100F59761 /* SplinePath.java in Sources */,
-				B284A4312C6F88F400D5122B /* BLEManager+MQTTManagerDelegate.swift in Sources */,
 				DD8ED9C8289CE4B900B3B0AB /* RoutingError.swift in Sources */,
 				DD964FC62975DBFD007C176F /* CoreDataTools+Query.swift in Sources */,
 				DD8ED9C52898D51F00B3B0AB /* NetworkConfig.swift in Sources */,
@@ -1458,14 +1418,6 @@
 				minimumVersion = 0.9.2;
 			};
 		};
-		DD0D3D202A55CEB10066DB71 /* XCRemoteSwiftPackageReference "CocoaMQTT" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/emqx/CocoaMQTT";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1497,11 +1449,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C9697FA327933B8C00250207 /* XCRemoteSwiftPackageReference "SQLite.swift" */;
 			productName = SQLite;
-		};
-		DD0D3D212A55CEB10066DB71 /* CocoaMQTT */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DD0D3D202A55CEB10066DB71 /* XCRemoteSwiftPackageReference "CocoaMQTT" */;
-			productName = CocoaMQTT;
 		};
 /* End XCSwiftPackageProductDependency section */
 

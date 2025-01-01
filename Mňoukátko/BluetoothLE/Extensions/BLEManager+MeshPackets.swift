@@ -102,30 +102,6 @@ extension BLEManager {
 			)
 			onNodeModuleConfigReceived(.externalNotification, num: nodeNum)
 		}
-		else if config.payloadVariant == ModuleConfig.OneOf_PayloadVariant.mqtt(config.mqtt) {
-			coreDataTools.upsertMqttModuleConfigPacket(
-				config: config.mqtt,
-				nodeNum: nodeNum,
-				context: context
-			)
-			onNodeModuleConfigReceived(.mqtt, num: nodeNum)
-		}
-		else if config.payloadVariant == ModuleConfig.OneOf_PayloadVariant.paxcounter(config.paxcounter) {
-			coreDataTools.upsertPaxCounterModuleConfigPacket(
-				config: config.paxcounter,
-				nodeNum: nodeNum,
-				context: context
-			)
-			onNodeModuleConfigReceived(.paxCounter, num: nodeNum)
-		}
-		else if config.payloadVariant == ModuleConfig.OneOf_PayloadVariant.rangeTest(config.rangeTest) {
-			coreDataTools.upsertRangeTestModuleConfigPacket(
-				config: config.rangeTest,
-				nodeNum: nodeNum,
-				context: context
-			)
-			onNodeModuleConfigReceived(.rangeTest, num: nodeNum)
-		}
 		else if config.payloadVariant == ModuleConfig.OneOf_PayloadVariant.serial(config.serial) {
 			coreDataTools.upsertSerialModuleConfigPacket(
 				config: config.serial,
@@ -664,20 +640,6 @@ extension BLEManager {
 			case ModuleConfig.OneOf_PayloadVariant.externalNotification(moduleConfig.externalNotification):
 				coreDataTools.upsertExternalNotificationModuleConfigPacket(
 					config: moduleConfig.externalNotification,
-					nodeNum: Int64(packet.from),
-					context: context
-				)
-
-			case ModuleConfig.OneOf_PayloadVariant.mqtt(moduleConfig.mqtt):
-				coreDataTools.upsertMqttModuleConfigPacket(
-					config: moduleConfig.mqtt,
-					nodeNum: Int64(packet.from),
-					context: context
-				)
-
-			case ModuleConfig.OneOf_PayloadVariant.rangeTest(moduleConfig.rangeTest):
-				coreDataTools.upsertRangeTestModuleConfigPacket(
-					config: moduleConfig.rangeTest,
 					nodeNum: Int64(packet.from),
 					context: context
 				)

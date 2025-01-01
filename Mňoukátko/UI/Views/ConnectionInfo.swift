@@ -19,10 +19,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import SwiftUI
 
 struct ConnectionInfo: View {
-	private var mqttChannelInfo = false
-	private var mqttUplinkEnabled = false
-	private var mqttDownlinkEnabled = false
-
 	@EnvironmentObject
 	private var bleManager: BLEManager
 	@State
@@ -68,28 +64,6 @@ struct ConnectionInfo: View {
 
 		return UnevenRoundedRectangle(cornerRadii: corners, style: .continuous)
 	}
-	private var centerClip: UnevenRoundedRectangle {
-		if bleManager.getConnectedDevice() == nil {
-			let corners = RectangleCornerRadii(
-				topLeading: 2,
-				bottomLeading: 2,
-				bottomTrailing: 12,
-				topTrailing: 12
-			)
-
-			return UnevenRoundedRectangle(cornerRadii: corners, style: .continuous)
-		}
-		else {
-			let corners = RectangleCornerRadii(
-				topLeading: 2,
-				bottomLeading: 2,
-				bottomTrailing: 2,
-				topTrailing: 2
-			)
-
-			return UnevenRoundedRectangle(cornerRadii: corners, style: .continuous)
-		}
-	}
 	private var trailingClip: UnevenRoundedRectangle {
 		let corners = RectangleCornerRadii(
 			topLeading: 12,
@@ -106,30 +80,6 @@ struct ConnectionInfo: View {
 		if bleManager.isSwitchedOn {
 			if bleManager.isConnected {
 				HStack(spacing: 2) {
-					if let connectedDevice = bleManager.getConnectedDevice() {
-						SignalStrengthIndicator(
-							signalStrength: connectedDevice.getSignalStrength(),
-							size: 16,
-							color: .green
-						)
-						.padding(.vertical, 8)
-						.padding(.leading, 12)
-						.padding(.trailing, 8)
-						.background(.green.opacity(0.3))
-						.clipShape(trailingClip)
-						.onAppear {
-							rssiTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-								connectedDevice.peripheral.readRSSI()
-							}
-						}
-						.onDisappear {
-							rssiTimer?.invalidate()
-						}
-					}
-					else {
-						EmptyView()
-					}
-
 					if let infoLastChanged = bleManager.infoLastChanged {
 						let diff = infoLastChanged.distance(to: .now)
 
@@ -172,22 +122,31 @@ struct ConnectionInfo: View {
 						.padding(.vertical, 8)
 						.padding(.horizontal, 8)
 						.background(infoColorBackground)
-						.clipShape(centerClip)
+						.clipShape(trailingClip)
 					}
 
-					if mqttChannelInfo {
-						MQTTChannelIcon(
-							connected: bleManager.mqttConnected,
-							uplink: mqttUplinkEnabled,
-							downlink: mqttDownlinkEnabled
+					if let connectedDevice = bleManager.getConnectedDevice() {
+						SignalStrengthIndicator(
+							signalStrength: connectedDevice.getSignalStrength(),
+							size: 16,
+							color: .green
 						)
+						.padding(.vertical, 8)
+						.padding(.leading, 8)
+						.padding(.trailing, 12)
+						.background(.green.opacity(0.3))
 						.clipShape(leadingClip)
+						.onAppear {
+							rssiTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+								connectedDevice.peripheral.readRSSI()
+							}
+						}
+						.onDisappear {
+							rssiTimer?.invalidate()
+						}
 					}
 					else {
-						MQTTConnectionIcon(
-							connected: bleManager.mqttConnected
-						)
-						.clipShape(leadingClip)
+						EmptyView()
 					}
 				}
 			}
@@ -204,20 +163,6 @@ struct ConnectionInfo: View {
 			deviceIcon("power", color: .red)
 				.clipShape(singleClip)
 		}
-	}
-
-	init() {
-		self.mqttChannelInfo = false
-	}
-
-	init(
-		mqttUplinkEnabled: Bool = false,
-		mqttDownlinkEnabled: Bool = false
-	) {
-		self.mqttUplinkEnabled = mqttUplinkEnabled
-		self.mqttDownlinkEnabled = mqttDownlinkEnabled
-
-		self.mqttChannelInfo = true
 	}
 
 	@ViewBuilder

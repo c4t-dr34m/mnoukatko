@@ -196,18 +196,6 @@ struct Options: View {
 
 				NavigationLink {
 					NavigationLazyView(
-						MQTTConfig(node: nodeSelected)
-					)
-				} label: {
-					Label {
-						Text("MQTT")
-					} icon: {
-						Image(systemName: "network")
-					}
-				}
-
-				NavigationLink {
-					NavigationLazyView(
 						BluetoothConfig(node: nodeSelected)
 					)
 				} label: {

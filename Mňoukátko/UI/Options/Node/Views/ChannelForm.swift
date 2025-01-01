@@ -31,10 +31,6 @@ struct ChannelForm: View {
 	@Binding
 	var channelRole: Int
 	@Binding
-	var uplink: Bool
-	@Binding
-	var downlink: Bool
-	@Binding
 	var positionPrecision: Double
 	@Binding
 	var preciseLocation: Bool
@@ -194,21 +190,6 @@ struct ChannelForm: View {
 					}
 				}
 				.headerProminence(.increased)
-
-				Section(header: Text("MQTT")) {
-					Toggle(isOn: $downlink) {
-						Text("MQTT → LoRA")
-							.font(.body)
-					}
-					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
-
-					Toggle(isOn: $uplink) {
-						Text("LoRA → MQTT")
-							.font(.body)
-					}
-					.toggleStyle(SwitchToggleStyle(tint: .accentColor))
-				}
-				.headerProminence(.increased)
 			}
 			.navigationTitle("Channel Config")
 			.navigationBarItems(
@@ -268,12 +249,6 @@ struct ChannelForm: View {
 				hasChanges = true
 			}
 			.onChange(of: positionPrecision) {
-				hasChanges = true
-			}
-			.onChange(of: uplink) {
-				hasChanges = true
-			}
-			.onChange(of: downlink) {
 				hasChanges = true
 			}
 		}

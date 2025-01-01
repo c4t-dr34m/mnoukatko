@@ -149,17 +149,7 @@ struct MessageList: View {
 		.navigationTitle(screenTitle)
 		.navigationBarTitleDisplayMode(.large)
 		.navigationBarItems(
-			trailing: ZStack {
-				if let channel {
-					ConnectionInfo(
-						mqttUplinkEnabled: channel.uplinkEnabled,
-						mqttDownlinkEnabled: channel.downlinkEnabled
-					)
-				}
-				else {
-					ConnectionInfo()
-				}
-			}
+			trailing: ConnectionInfo()
 		)
 	}
 

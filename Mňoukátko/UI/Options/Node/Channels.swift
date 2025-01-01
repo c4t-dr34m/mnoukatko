@@ -131,8 +131,6 @@ struct Channels: View {
 						}
 
 						channelName = channel.name ?? ""
-						uplink = channel.uplinkEnabled
-						downlink = channel.downlinkEnabled
 						positionPrecision = Double(channel.positionPrecision)
 
 						if !supportedVersion && channelRole == 1 {
@@ -200,8 +198,6 @@ struct Channels: View {
 					channelKeySize: $channelKeySize,
 					channelKey: $channelKey,
 					channelRole: $channelRole,
-					uplink: $uplink,
-					downlink: $downlink,
 					positionPrecision: $positionPrecision,
 					preciseLocation: $preciseLocation,
 					positionsEnabled: $positionsEnabled,
@@ -293,8 +289,6 @@ struct Channels: View {
 		channel.index = channelIndex
 		channel.settings.name = channelName
 		channel.settings.psk = Data(base64Encoded: channelKey) ?? Data()
-		channel.settings.uplinkEnabled = uplink
-		channel.settings.downlinkEnabled = downlink
 		channel.settings.moduleSettings.positionPrecision = UInt32(positionPrecision)
 
 		if let selectedChannel {
@@ -302,8 +296,6 @@ struct Channels: View {
 			selectedChannel.index = channelIndex
 			selectedChannel.name = channelName
 			selectedChannel.psk = Data(base64Encoded: channelKey) ?? Data()
-			selectedChannel.uplinkEnabled = uplink
-			selectedChannel.downlinkEnabled = downlink
 			selectedChannel.positionPrecision = Int32(positionPrecision)
 		}
 
