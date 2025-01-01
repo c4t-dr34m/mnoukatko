@@ -29,7 +29,7 @@ struct NodeDetail: View {
 	private let coreDataTools = CoreDataTools()
 	private let node: NodeInfoEntity
 	private let isInSheet: Bool
-	private let telemetryDelta: TimeInterval = 30 * 60 // 30 min
+	private let telemetryDelta: TimeInterval = 2 * 60 * 60 // 2hr
 	private let distanceFormatter = MKDistanceFormatter()
 	private let detailInfoTextFont = Font.system(size: 14, weight: .regular, design: .rounded)
 	private let detailInfoIconFont = Font.system(size: 16, weight: .regular, design: .rounded)
@@ -97,27 +97,42 @@ struct NodeDetail: View {
 
 		let historyLength = telemetries.count
 		var measurements: [TelemetryEntity] = []
+		var lastMeasurementAdded: TelemetryEntity?
 
 		for i in 0...(historyLength - 1) {
 			let current = telemetries[i]
 			let next = i < (historyLength - 1) ? telemetries[i + 1] : nil
 
-			if let next {
-				if
-					let currentTime = current.time,
-					currentTime > chartHistory,
-					let nextTime = next.time,
-					currentTime.distance(to: nextTime) >= telemetryDelta
-				{
-					measurements.append(current)
-				}
+			if
+				let prevTime = lastMeasurementAdded?.time,
+				let nextTime = next?.time,
+				prevTime.distance(to: nextTime) < telemetryDelta
+			{
+				continue
 			}
-			else {
+
+			if
+				let currentTime = current.time,
+				currentTime > chartHistory
+			{
 				measurements.append(current)
+				lastMeasurementAdded = current
 			}
 		}
 
-		return measurements
+		return measurements.sorted(by: {
+			if let t1 = $1.time {
+				if let t0 = $0.time {
+					return t0 < t1
+				}
+				else {
+					return true
+				}
+			}
+			else {
+				return false
+			}
+		})
 	}
 	private var nodePressureHistory: [TelemetryEntity]? {
 		nodeEnvironmentHistory?.filter { measurement in
@@ -552,11 +567,9 @@ struct NodeDetail: View {
 						y: .value("Temperature", measurement.temperature)
 					)
 					.symbol {
-						Circle()
-							.fill(.blue)
-							.frame(width: 4, height: 4)
+						measurementSymbol
 					}
-					.interpolationMethod(.cardinal(tension: 0.2))
+					.interpolationMethod(.linear)
 					.foregroundStyle(.blue)
 					.lineStyle(
 						StrokeStyle(lineWidth: 2)
@@ -621,11 +634,9 @@ struct NodeDetail: View {
 						y: .value("Pressure", measurement.barometricPressure)
 					)
 					.symbol {
-						Circle()
-							.fill(.red)
-							.frame(width: 4, height: 4)
+						measurementSymbol
 					}
-					.interpolationMethod(.cardinal(tension: 0.2))
+					.interpolationMethod(.linear)
 					.foregroundStyle(.red)
 					.lineStyle(
 						StrokeStyle(lineWidth: 2)
@@ -1122,6 +1133,13 @@ struct NodeDetail: View {
 	) {
 		self.node = node
 		self.isInSheet = isInSheet
+	}
+
+	@ViewBuilder
+	private var measurementSymbol: some View {
+		Rectangle()
+			.fill(.gray)
+			.frame(width: 1, height: 10)
 	}
 
 	@ViewBuilder
