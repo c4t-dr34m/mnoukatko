@@ -85,6 +85,7 @@ struct MeshMap: View {
 						if showNodeHistory || isNodeDetail {
 							UserHistory(
 								positions: nodeHistoryPositions,
+								heading: $cameraHeading,
 								showVisibleNodes: !isNodeDetail,
 								selectedCoordinate: $showSpiderFor
 							)
@@ -232,13 +233,39 @@ struct MeshMap: View {
 
 	@ViewBuilder
 	private func offlineNodeDot(for node: NodeInfoEntity) -> some View {
-		ZStack(alignment: .center) {
-			RoundedRectangle(cornerRadius: 4)
-				.frame(width: 12, height: 12)
-				.foregroundColor(colorScheme == .dark ? .black : .white)
-			RoundedRectangle(cornerRadius: 2)
-				.frame(width: 8, height: 8)
-				.foregroundColor(node.color)
+		if let showSpiderFor, let distance = node.latestPosition?.coordinate.distance(from: showSpiderFor) {
+			HStack(alignment: .center, spacing: 4) {
+				let distanceFormatted = String(format: "%.0f", distance / 1000.0) + "km"
+
+				RoundedRectangle(cornerRadius: 2)
+					.frame(width: 14)
+					.frame(maxHeight: .infinity)
+					.foregroundColor(node.color)
+
+				Text(distanceFormatted)
+					.font(.system(size: 12, weight: .medium))
+					.foregroundStyle(colorScheme == .dark ? .white : .black)
+					.padding(.trailing, 4)
+			}
+			.background(colorScheme == .dark ? .black : .white)
+			.clipShape(
+				RoundedRectangle(cornerRadius: 7)
+			)
+			.padding(.all, 2)
+			.background(colorScheme == .dark ? .black.opacity(0.5) : .white.opacity(0.5))
+			.clipShape(
+				RoundedRectangle(cornerRadius: 8)
+			)
+		}
+		else {
+			ZStack(alignment: .center) {
+				RoundedRectangle(cornerRadius: 4)
+					.frame(width: 12, height: 12)
+					.foregroundColor(colorScheme == .dark ? .black : .white)
+				RoundedRectangle(cornerRadius: 2)
+					.frame(width: 8, height: 8)
+					.foregroundColor(node.color)
+			}
 		}
 	}
 

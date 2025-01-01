@@ -36,6 +36,8 @@ struct UserHistory: MapContent {
 	@FetchRequest(sortDescriptors: [])
 	private var nodes: FetchedResults<NodeInfoEntity>
 	@Binding
+	private var heading: Double?
+	@Binding
 	private var selectedCoordinate: CLLocationCoordinate2D?
 	private var entries: [Entry] {
 		guard let positions else {
@@ -148,7 +150,7 @@ struct UserHistory: MapContent {
 							.frame(width: 16, height: 16, alignment: .center)
 							.foregroundColor(colorScheme == .dark ? .black : .white)
 							.rotationEffect(
-								Angle(degrees: bearing)
+								Angle(degrees: bearing - (heading ?? 0.0))
 							)
 					}
 					else {
@@ -193,10 +195,12 @@ struct UserHistory: MapContent {
 
 	init(
 		positions: [PositionEntity]?,
+		heading: Binding<Double?>,
 		showVisibleNodes: Bool = true,
 		selectedCoordinate: Binding<CLLocationCoordinate2D?>
 	) {
 		self.positions = positions
+		self._heading = heading
 		self.showVisibleNodes = showVisibleNodes
 		self._selectedCoordinate = selectedCoordinate
 	}

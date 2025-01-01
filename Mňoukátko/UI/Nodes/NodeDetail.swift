@@ -362,7 +362,7 @@ struct NodeDetail: View {
 
 				if let nodePositions, nodePositions.totalDistance() >= MapConstants.distanceSumThresholdForHistory {
 					let kmsTotal = nodePositions.totalDistance() / 1000.0
-					let distanceFormatted = String(format: "%.0f", kmsTotal) + " km"
+					let distanceFormatted = String(format: "%.0f", kmsTotal) + "km"
 
 					HistoryStepsView(size: detailIconSize, foregroundColor: .primary)
 
